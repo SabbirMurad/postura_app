@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
-import 'package:posture_detector_app/features/cpe/controller/assessment_controller_cpe.dart';
+import 'package:posture_detector_app/controller/assessment_controller_cpe.dart';
 import 'package:posture_detector_app/features/cpe/widgets/compliance_card_cpe.dart';
 import 'package:posture_detector_app/features/cpe/widgets/patient_info_card_cpe.dart';
 import 'package:posture_detector_app/features/cpe/widgets/photo_section_cpe.dart';

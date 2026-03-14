@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
-import 'package:posture_detector_app/features/cpe/controller/home_controller_cpe.dart';
+import 'package:posture_detector_app/controller/home_controller_cpe.dart';
 
 enum ComplianceStatus { excellent, good, moderate, low }
 

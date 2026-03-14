@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
-import 'package:posture_detector_app/features/cpe/controller/assessment_controller_cpe.dart';
+import 'package:posture_detector_app/controller/assessment_controller_cpe.dart';
 import 'package:posture_detector_app/features/cpe/widgets/assessment_helpers.dart';
 
 class ComplianceCardCPE extends StatelessWidget {
