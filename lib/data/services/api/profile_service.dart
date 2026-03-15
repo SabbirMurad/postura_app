@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:posture_detector_app/data/models/profile/profile_model.dart';
+import 'package:posture_detector_app/models/profile/profile_model.dart';
 import 'package:posture_detector_app/data/services/network/api_response.dart';
 import 'package:posture_detector_app/data/services/network/custom_http.dart';
 

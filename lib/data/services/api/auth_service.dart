@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:posture_detector_app/data/models/auth/sign_in_model.dart';
+import 'package:posture_detector_app/models/auth/sign_in_model.dart';
 import 'package:posture_detector_app/data/services/network/api_response.dart';
 import 'package:posture_detector_app/data/services/network/custom_http.dart';
 

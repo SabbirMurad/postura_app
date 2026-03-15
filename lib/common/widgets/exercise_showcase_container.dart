@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:posture_detector_app/core/app_credential.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 
 import 'package:posture_detector_app/gen/assets.gen.dart';
@@ -125,10 +126,13 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12.r),
                               child: videoUrl != null
                                   ? CachedNetworkImage(
-                                      imageUrl: videoUrl!,
+                                      imageUrl:
+                                          '${AppCredentials.domain}${videoUrl!}',
                                       fit: BoxFit.contain,
                                       placeholder: (context, url) => Center(
-                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
                                       ),
                                       errorWidget: (context, url, error) {
                                         return Center(
@@ -411,6 +415,11 @@ class ExerciseShowCaseContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final x = videoUrl!.split('/').removeAt(0);
+    print('');
+    print(videoUrl);
+    print('');
+
     return GestureDetector(
       onTap: () => _showDetailsModal(context),
       child: Material(
@@ -438,7 +447,8 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12.r),
                         child: videoUrl != null
                             ? CachedNetworkImage(
-                                imageUrl: videoUrl!,
+                                imageUrl:
+                                    '${AppCredentials.domain}${videoUrl!}',
                                 width: 80.w,
                                 height: 80.h,
                                 fit: BoxFit.cover,
@@ -447,7 +457,9 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                                   height: 80.h,
                                   color: Colors.grey[200],
                                   child: Center(
-                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
                                   ),
                                 ),
                                 errorWidget: (context, url, error) {

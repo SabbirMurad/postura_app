@@ -6,8 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:posture_detector_app/data/services/db/sqlite_service.dart';
 import 'package:posture_detector_app/core/bindings/app_binding.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
-import 'package:posture_detector_app/core/routes/app_pages.dart';
-import 'package:posture_detector_app/core/routes/app_routes.dart';
+import 'package:posture_detector_app/routes.dart';
+import 'package:posture_detector_app/routes.dart';
 
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/data/helpers/app_helper.dart';
@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
         ),
         themeMode: ThemeMode.light,
         initialRoute: AppRoute.splashScreen,
-        getPages: AppPages.routes,
+        getPages: AppRoute.routes,
         initialBinding: AppBindings(),
         scaffoldMessengerKey: scaffoldMessengerKey,
         localizationsDelegates: [

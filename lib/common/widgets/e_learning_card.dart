@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
-import 'package:posture_detector_app/data/models/quiz/module.dart';
-import 'package:posture_detector_app/data/models/quiz/quiz_module.dart';
+import 'package:posture_detector_app/models/quiz/module.dart';
+import 'package:posture_detector_app/models/quiz/quiz_module.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
 
 class ELearningCard extends StatelessWidget {

@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/data/helpers/app_helper.dart';
-import 'package:posture_detector_app/data/models/profile/profile_model.dart';
+import 'package:posture_detector_app/models/profile/profile_model.dart';
 import 'package:posture_detector_app/data/services/api/profile_service.dart';
 
 import 'package:posture_detector_app/common/widgets/custom_toast.dart' as utils;

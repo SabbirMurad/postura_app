@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:posture_detector_app/data/models/analysis/body_region_risk_model.dart';
-import 'package:posture_detector_app/data/models/analysis/analysis_data_model.dart';
+import 'package:posture_detector_app/models/analysis/body_region_risk_model.dart';
+import 'package:posture_detector_app/models/analysis/analysis_data_model.dart';
 
 import 'package:posture_detector_app/controller/report_controller.dart';
 

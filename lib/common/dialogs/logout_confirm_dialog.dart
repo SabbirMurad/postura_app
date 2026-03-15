@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
-import 'package:posture_detector_app/core/routes/app_routes.dart';
+import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/data/helpers/app_helper.dart';
 import 'package:posture_detector_app/controller/signup_controller.dart';
 import 'package:posture_detector_app/controller/onboarding_controller.dart';
@@ -20,10 +20,7 @@ void showLogoutConfirmDialog(BuildContext context) {
         backgroundColor: AppColors.onBoardingSurface,
         title: Text(
           loc.areYouSure,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 20.sp,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20.sp),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -71,9 +68,7 @@ void showLogoutConfirmDialog(BuildContext context) {
             ),
           ],
         ),
-        shape: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.r),
-        ),
+        shape: OutlineInputBorder(borderRadius: BorderRadius.circular(20.r)),
       );
     },
   );

@@ -4,7 +4,7 @@ import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/details_analysis_container.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
-import 'package:posture_detector_app/data/models/analysis/analysis_data_model.dart';
+import 'package:posture_detector_app/models/analysis/analysis_data_model.dart';
 
 class DetailsAnalysisList extends StatelessWidget {
   final Posture posture;
