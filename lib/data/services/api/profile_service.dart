@@ -32,10 +32,10 @@ class ProfileService {
           response.statusCode == 204) {
         return ApiResponse.success(true);
       } else {
-        final json = jsonDecode(response.error!);
-        final errorMessage = json['message'];
+        final json = jsonDecode(response.error ?? '{}');
+        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
 
-        return ApiResponse.error(errorMessage!);
+        return ApiResponse.error(errorMessage);
       }
     } catch (e) {
       debugPrint('ProfileService changePassword error: ${e.runtimeType}');
@@ -61,10 +61,10 @@ class ProfileService {
 
         return ApiResponse.success(userInfo);
       } else {
-        final json = jsonDecode(response.error!);
-        final errorMessage = json['message'];
+        final json = jsonDecode(response.error ?? '{}');
+        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
 
-        return ApiResponse.error(errorMessage!);
+        return ApiResponse.error(errorMessage);
       }
     } catch (e) {
       debugPrint('ProfileService fetchUserInfo error: ${e.runtimeType}');
@@ -126,10 +126,10 @@ class ProfileService {
 
         return ApiResponse.success(true);
       } else {
-        final json = jsonDecode(response.error!);
-        final errorMessage = json['message'];
+        final json = jsonDecode(response.error ?? '{}');
+        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
 
-        return ApiResponse.error(errorMessage!);
+        return ApiResponse.error(errorMessage);
       }
     } catch (e, st) {
       debugPrint('ProfileService updateProfilePic error: ${e.runtimeType}');
@@ -155,10 +155,10 @@ class ProfileService {
 
         return ApiResponse.success(true);
       } else {
-        final json = jsonDecode(response.error!);
-        final errorMessage = json['message'];
+        final json = jsonDecode(response.error ?? '{}');
+        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
 
-        return ApiResponse.error(errorMessage!);
+        return ApiResponse.error(errorMessage);
       }
     } catch (e) {
       debugPrint('ProfileService updateName error: ${e.runtimeType}');

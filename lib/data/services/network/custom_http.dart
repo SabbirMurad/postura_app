@@ -399,10 +399,18 @@ class CustomHttp {
     bool showFloatingError,
   ) {
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return CustomHttpResult(
-        statusCode: response.statusCode,
-        data: jsonDecode(response.body),
-      );
+      try {
+        return CustomHttpResult(
+          statusCode: response.statusCode,
+          data: jsonDecode(response.body),
+        );
+      } catch (e) {
+        debugPrint('JSON parse error in success response: $e');
+        return CustomHttpResult(
+          statusCode: response.statusCode,
+          error: 'Failed to parse server response',
+        );
+      }
     } else {
       late String message;
       try {

@@ -35,10 +35,10 @@ class AuthService {
         AppHelper.instance.setUserId(response.data['user_id']);
         return ApiResponse.success(true);
       } else {
-        final json = jsonDecode(response.error!);
-        final errorMessage = json['message'];
+        final json = jsonDecode(response.error ?? '{}');
+        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
 
-        return ApiResponse.error(errorMessage!);
+        return ApiResponse.error(errorMessage);
       }
     } catch (e) {
       debugPrint('AuthService error: ${e.runtimeType}');
@@ -76,10 +76,10 @@ class AuthService {
 
         return ApiResponse.success(data);
       } else {
-        final json = jsonDecode(response.error!);
-        final errorMessage = json['message'];
+        final json = jsonDecode(response.error ?? '{}');
+        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
 
-        return ApiResponse.error(errorMessage!);
+        return ApiResponse.error(errorMessage);
       }
     } catch (e) {
       debugPrint('AuthService error: ${e.runtimeType}');
@@ -124,10 +124,10 @@ class AuthService {
           response.statusCode == 204) {
         return ApiResponse.success(true);
       } else {
-        final json = jsonDecode(response.error!);
-        final errorMessage = json['message'];
+        final json = jsonDecode(response.error ?? '{}');
+        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
 
-        return ApiResponse.error(errorMessage!);
+        return ApiResponse.error(errorMessage);
       }
     } catch (e) {
       debugPrint('AuthService error: ${e.runtimeType}');
@@ -165,10 +165,10 @@ class AuthService {
 
         return ApiResponse.success(data);
       } else {
-        final json = jsonDecode(response.error!);
-        final errorMessage = json['message'];
+        final json = jsonDecode(response.error ?? '{}');
+        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
 
-        return ApiResponse.error(errorMessage!);
+        return ApiResponse.error(errorMessage);
       }
     } catch (e) {
       debugPrint('AuthService error: ${e.runtimeType}');
@@ -207,10 +207,10 @@ class AuthService {
 
         return ApiResponse.success(data);
       } else {
-        final json = jsonDecode(response.error!);
-        final errorMessage = json['message'];
+        final json = jsonDecode(response.error ?? '{}');
+        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
 
-        return ApiResponse.error(errorMessage!);
+        return ApiResponse.error(errorMessage);
       }
     } catch (e) {
       debugPrint('AuthService error: ${e.runtimeType}');
@@ -263,10 +263,10 @@ class AuthService {
         AppHelper.instance.setSecretKey(response.data['secret_key']);
         return ApiResponse(success: true, data: true);
       } else {
-        final json = jsonDecode(response.error!);
-        final errorMessage = json['message'];
+        final json = jsonDecode(response.error ?? '{}');
+        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
 
-        return ApiResponse.error(errorMessage!);
+        return ApiResponse.error(errorMessage);
       }
     } catch (e) {
       debugPrint('AuthService error: ${e.runtimeType}');
@@ -355,10 +355,10 @@ class AuthService {
         AppHelper.instance.setIsonBoarding(response.data['has_onboarded']);
         return ApiResponse(success: true, data: true);
       } else {
-        final json = jsonDecode(response.error!);
-        final errorMessage = json['message'];
+        final json = jsonDecode(response.error ?? '{}');
+        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
 
-        return ApiResponse.error(errorMessage!);
+        return ApiResponse.error(errorMessage);
       }
     } catch (e) {
       debugPrint('AuthService error: ${e.runtimeType}');
