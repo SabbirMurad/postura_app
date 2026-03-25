@@ -7,7 +7,6 @@ import 'package:posture_detector_app/data/services/db/sqlite_service.dart';
 import 'package:posture_detector_app/core/bindings/app_binding.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
-import 'package:posture_detector_app/routes.dart';
 
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/data/helpers/app_helper.dart';
@@ -38,7 +37,7 @@ class MyApp extends StatelessWidget {
       designSize: Size(375, 812),
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Posture detector app',
+        title: 'Postura',
         theme: ThemeData(
           fontFamily: GoogleFonts.inter().fontFamily,
           bottomSheetTheme: BottomSheetThemeData(
