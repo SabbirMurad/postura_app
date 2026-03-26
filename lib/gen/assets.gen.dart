@@ -205,13 +205,13 @@ class $AssetsIconsNavGen {
   SvgGenImage get cameraScanFilled =>
       const SvgGenImage('assets/icons/nav/camera_scan_filled.svg');
 
-  /// File path: assets/icons/nav/equipment_filled.svg
-  SvgGenImage get equipmentFilled =>
-      const SvgGenImage('assets/icons/nav/equipment_filled.svg');
-
   /// File path: assets/icons/nav/equipment.svg
   SvgGenImage get equipment =>
       const SvgGenImage('assets/icons/nav/equipment.svg');
+
+  /// File path: assets/icons/nav/equipment_fill.svg
+  SvgGenImage get equipmentFill =>
+      const SvgGenImage('assets/icons/nav/equipment_fill.svg');
 
   /// File path: assets/icons/nav/exercise.svg
   SvgGenImage get exercise =>
@@ -240,6 +240,8 @@ class $AssetsIconsNavGen {
   List<SvgGenImage> get values => [
     cameraScan,
     cameraScanFilled,
+    equipment,
+    equipmentFill,
     exercise,
     exerciseFilled,
     home,

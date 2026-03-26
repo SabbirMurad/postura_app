@@ -1,14 +1,11 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:posture_detector_app/core/enums/user_type.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
-import 'package:posture_detector_app/data/services/api/auth_service.dart';
-import 'package:posture_detector_app/data/services/api/onboarding_service.dart';
+import 'package:posture_detector_app/services/api/onboarding_service.dart';
 import 'package:posture_detector_app/core/constants/app_text.dart';
-import 'package:posture_detector_app/core/enums/scan_type.dart';
-import 'package:posture_detector_app/data/helpers/app_helper.dart';
+import 'package:posture_detector_app/models/scan_type.dart';
 import 'package:posture_detector_app/controller/image_capture_controller.dart';
 import 'package:posture_detector_app/controller/camera_flow_controller.dart';
 import 'package:posture_detector_app/controller/report_controller.dart';
@@ -25,7 +22,6 @@ class SignupController extends GetxController {
   Rx<File?> image = Rx<File?>(null);
   RxString lastAssessmentId = RxString('');
 
-  final AuthService _authService = AuthService();
   final OnboardingService _onboardingService = OnboardingService();
   final ImageCaptureController _imageCaptureController = Get.put(
     ImageCaptureController(),
@@ -94,15 +90,6 @@ class SignupController extends GetxController {
   TextEditingController deskIdController = TextEditingController();
   TextEditingController departmentController = TextEditingController();
 
-  /// ------------------- personal module -------------------------- ///
-  final formKey = GlobalKey<FormState>();
-  RxBool isSeen = RxBool(true);
-  TextEditingController personalNameController = TextEditingController();
-  TextEditingController personalEmailController = TextEditingController();
-  TextEditingController personalPasswordController = TextEditingController();
-  String otp = '';
-  String verifyUserOtp = '';
-
   void reset() {
     userRole.value = '';
     selectedLanguage.value = 'english';
@@ -121,40 +108,6 @@ class SignupController extends GetxController {
     employeeIdController.clear();
     deskIdController.clear();
     departmentController.clear();
-    personalNameController.clear();
-    personalEmailController.clear();
-    personalPasswordController.clear();
-
-    otp = '';
-    verifyUserOtp = '';
-  }
-
-  Future<bool> businessSignup() async {
-    isLoading.value = true;
-
-    final id = int.tryParse(employeeIdController.text.trim());
-
-    final response = await _authService.businessSignup(
-      mode: Users.EMPLOYEE.name,
-      language: selectedLanguage.value,
-      name: userNameController.text.trim().toString(),
-      email: companyEmailController.text.trim().toString(),
-      password: companyPasswordController.text.trim().toString(),
-      companyCode: companyCodeController.text.trim().toString(),
-      employeeId: id!,
-      deskLocation: deskIdController.text.trim().toString(),
-      department: departmentController.text.trim().toString(),
-      deskRole: workRole.value,
-    );
-    if (response.data == true) {
-      isLoading.value = false;
-      return true;
-    } else {
-      isLoading.value = false;
-      // EN: "Something went wrong"
-      showCustomToast(text: response.error ?? _loc.somethingWentWrong);
-    }
-    return false;
   }
 
   Future<bool> poseAnalysisProcess(type) async {
@@ -218,47 +171,6 @@ class SignupController extends GetxController {
     return false;
   }
 
-  Future<void> verifyOtp() async {
-    isLoading.value = true;
-
-    final id = await AppHelper.instance.getUserId();
-    if (id == null) {
-      isLoading.value = false;
-      return;
-    }
-
-    final response = await _authService.resetPassOtpVerify(id, otp);
-    if (response.data == true) {
-      isLoading.value = false;
-      // Get.offAllNamed(AppRoute.congratulationScreen);
-    } else {
-      isLoading.value = false;
-      // EN: "Something went wrong"
-      showCustomToast(text: response.error ?? _loc.somethingWentWrong);
-    }
-  }
-
-  Future<bool> verifyUser() async {
-    isLoading.value = true;
-
-    final id = await AppHelper.instance.getUserId();
-    if (id == null) {
-      isLoading.value = false;
-      return false;
-    }
-
-    final response = await _authService.verifyUserOtp(id, verifyUserOtp);
-    if (response.data == true) {
-      isLoading.value = false;
-      return true;
-    } else {
-      isLoading.value = false;
-      // EN: "Something went wrong"
-      showCustomToast(text: response.error ?? _loc.somethingWentWrong);
-    }
-    return false;
-  }
-
   @override
   void onClose() {
     companyCodeController.dispose();
@@ -268,33 +180,6 @@ class SignupController extends GetxController {
     employeeIdController.dispose();
     deskIdController.dispose();
     departmentController.dispose();
-    personalNameController.dispose();
-    personalEmailController.dispose();
-    personalPasswordController.dispose();
     super.onClose();
-  }
-
-  Future<void> resendOtp() async {
-    isLoading.value = true;
-    final userId = await AppHelper.instance.getUserId();
-
-    if (userId == null) {
-      isLoading.value = false;
-      return;
-    }
-    final response = await _authService.resendOtp(userId);
-
-    if (response.success) {
-      isLoading.value = false;
-      showCustomToast(
-        // EN: "OTP sent to your email"
-        text: _loc.otpSentToEmail,
-        toastType: ToastTypesInfo(ToastTypes.success),
-      );
-    } else {
-      isLoading.value = false;
-      // EN: "Something went wrong"
-      showCustomToast(text: response.error ?? _loc.somethingWentWrong);
-    }
   }
 }

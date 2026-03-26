@@ -10,7 +10,7 @@ import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/core/constants/app_text.dart';
 import 'package:posture_detector_app/controller/e_learning_controller.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
-import 'package:posture_detector_app/data/helpers/app_helper.dart';
+import 'package:posture_detector_app/helpers/app_helper.dart';
 
 class BusinessLanguageScreen extends StatelessWidget {
   const BusinessLanguageScreen({super.key});

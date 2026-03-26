@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:posture_detector_app/core/app_credential.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
-import 'package:posture_detector_app/data/services/network/connectivity_helper.dart';
-import 'package:posture_detector_app/data/helpers/app_helper.dart';
+import 'package:posture_detector_app/services/network/connectivity_helper.dart';
+import 'package:posture_detector_app/helpers/app_helper.dart';
 
 class CustomHttpResult {
   final dynamic data;

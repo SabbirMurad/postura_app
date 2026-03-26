@@ -1,13 +1,3 @@
-// To parse this JSON data, do
-//
-//     final privateSignInModel = privateSignInModelFromJson(jsonString);
-
-import 'dart:convert';
-
-PrivateSignInModel privateSignInModelFromJson(String str) => PrivateSignInModel.fromJson(json.decode(str));
-
-String privateSignInModelToJson(PrivateSignInModel data) => json.encode(data.toJson());
-
 class PrivateSignInModel {
   String message;
   String accessToken;

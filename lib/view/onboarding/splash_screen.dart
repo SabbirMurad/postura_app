@@ -6,10 +6,10 @@ import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/core/constants/app_text.dart';
-import 'package:posture_detector_app/data/helpers/app_helper.dart';
+import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/controller/onboarding_controller.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
-import 'package:posture_detector_app/core/enums/user_type.dart';
+import 'package:posture_detector_app/models/user_type.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -67,12 +67,6 @@ class _SplashScreenState extends State<SplashScreen>
     final phoneOnboard = await AppHelper.instance.getPhoneOnboard();
     final isonBoarding = await AppHelper.instance.getIsonBoarding();
 
-    print('');
-    print('token: $token');
-    print('userRole: $userRole');
-    print('phoneOnboard: $phoneOnboard');
-    print('');
-
     if (token == null || userRole == null) {
       if (phoneOnboard == true) {
         Get.toNamed(AppRoute.welcomeScreen);
@@ -80,7 +74,7 @@ class _SplashScreenState extends State<SplashScreen>
         Get.offAllNamed(AppRoute.onBoardingScreen);
       }
     } else if (token.isNotEmpty && userRole.isNotEmpty) {
-      if (userRole == Users.CPE.name) {
+      if (userRole == UserType.ERGONOMIST.name) {
         Get.offAllNamed(AppRoute.bottomNavCpe);
       } else {
         if (isonBoarding == true) {

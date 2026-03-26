@@ -3,10 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/view/auth/signup/equipment_screen_business.dart';
 // import 'package:posture_detector_app/features/auth/signup/business/equipment_screen_business.dart';
 // import 'package:posture_detector_app/features/auth/signup/business/exercise_screen_business.dart';
-import 'package:posture_detector_app/view/business/home/screens/home_screen_business.dart';
-import 'package:posture_detector_app/view/business/profile/screens/business_profile_screen.dart';
-import 'package:posture_detector_app/view/business/scan/screens/scan_business_screen.dart';
-import 'package:posture_detector_app/view/business/exercises/screens/exercise_business_screen.dart';
+import 'package:posture_detector_app/view/business/home/home_screen_business.dart';
+import 'package:posture_detector_app/view/business/profile/business_profile_screen.dart';
+import 'package:posture_detector_app/view/business/scan/scan_business_screen.dart';
+import 'package:posture_detector_app/view/business/exercises/exercise_business_screen.dart';
 
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
@@ -92,7 +92,7 @@ class _BottomNavState extends State<BottomNavBusiness> {
             label: 'Equipment',
             activeIcon: Padding(
               padding: EdgeInsets.only(top: 4.h, bottom: 5.h),
-              child: Assets.icons.nav.equipmentFilled.svg(
+              child: Assets.icons.nav.equipmentFill.svg(
                 width: 24.h,
                 height: 24.h,
                 colorFilter: ColorFilter.mode(

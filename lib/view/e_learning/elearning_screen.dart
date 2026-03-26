@@ -6,7 +6,7 @@ import 'package:posture_detector_app/common/widgets/back_button.dart';
 import 'package:posture_detector_app/common/widgets/e_learning_card.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/controller/e_learning_controller.dart';
-import 'package:posture_detector_app/view/e_learning/screens/quiz_screen.dart';
+import 'package:posture_detector_app/view/e_learning/quiz_screen.dart';
 
 class ELearningScreen extends StatefulWidget {
   const ELearningScreen({super.key});

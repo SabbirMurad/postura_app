@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:posture_detector_app/data/services/network/custom_http.dart';
+import 'package:posture_detector_app/services/network/custom_http.dart';
 
 // ─────────────────────────────────────────
 // Models

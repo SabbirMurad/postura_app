@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:posture_detector_app/core/enums/user_type.dart';
+import 'package:posture_detector_app/models/user_type.dart';
 import 'package:posture_detector_app/controller/signup_controller.dart';
 
 import 'package:posture_detector_app/core/constants/app_colors.dart';
@@ -12,7 +12,7 @@ class UserTypeCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final SignupController controller;
-  final Users userType;
+  final UserType userType;
 
   const UserTypeCard({
     super.key,

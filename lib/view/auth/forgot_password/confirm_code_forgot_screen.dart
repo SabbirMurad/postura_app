@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:posture_detector_app/routes.dart';
-import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
-import 'package:posture_detector_app/controller/forgot_password_controller.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
+import 'package:posture_detector_app/provider/author.dart';
+import 'package:posture_detector_app/routes.dart';
 
-class ConfirmCodeForgotScreen extends StatelessWidget {
-  ConfirmCodeForgotScreen({super.key});
+class ConfirmCodeForgotScreen extends ConsumerStatefulWidget {
+  const ConfirmCodeForgotScreen({super.key});
 
-  final ForgotPasswordController forgotPasswordController =
-      Get.find<ForgotPasswordController>();
+  @override
+  ConsumerState<ConfirmCodeForgotScreen> createState() =>
+      _ConfirmCodeForgotScreenState();
+}
+
+class _ConfirmCodeForgotScreenState
+    extends ConsumerState<ConfirmCodeForgotScreen> {
+  String _otp = '';
+  bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +70,7 @@ class ConfirmCodeForgotScreen extends StatelessWidget {
                   ),
                   onCodeChanged: (String code) {},
                   onSubmit: (String verificationCode) {
-                    forgotPasswordController.otp = verificationCode;
+                    _otp = verificationCode;
                   },
                 ),
                 SizedBox(height: 16.h),
@@ -78,9 +86,8 @@ class ConfirmCodeForgotScreen extends StatelessWidget {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {
-                        forgotPasswordController.resendOtp();
-                      },
+                      onPressed: () =>
+                          ref.read(authorNotifierProvider.notifier).resendOtp(),
                       child: Text(
                         // EN: "Resend code"
                         loc.resendCode,
@@ -99,28 +106,28 @@ class ConfirmCodeForgotScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomSheet: Obx(() {
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-          child: PrimaryButton(
-            loading: forgotPasswordController.isLoading.value,
-            // EN: "Confirm Code"
-            text: loc.confirmCode,
-            onTap: () async {
-              final res = await forgotPasswordController.verifyOtp();
-              if (res) {
-                Get.toNamed(AppRoute.forgotPasswordScreen);
-              }
-            },
-            backgroundColor: AppColors.primaryColor,
-            textStyle: TextStyle(
-              color: AppColors.surface,
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w500,
-            ),
+      bottomSheet: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+        child: PrimaryButton(
+          loading: _loading,
+          // EN: "Confirm Code"
+          text: loc.confirmCode,
+          onTap: () async {
+            setState(() => _loading = true);
+            final res = await ref
+                .read(authorNotifierProvider.notifier)
+                .verifyOtp(_otp);
+            setState(() => _loading = false);
+            if (res) Get.toNamed(AppRoute.forgotPasswordScreen);
+          },
+          backgroundColor: AppColors.primaryColor,
+          textStyle: TextStyle(
+            color: AppColors.surface,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w500,
           ),
-        );
-      }),
+        ),
+      ),
     );
   }
 }

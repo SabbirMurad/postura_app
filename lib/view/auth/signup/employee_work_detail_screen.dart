@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
@@ -9,11 +10,54 @@ import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/custom_text_field.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/controller/signup_controller.dart';
+import 'package:posture_detector_app/provider/author.dart';
 
-class EmployeeWorkDetailScreen extends StatelessWidget {
-  EmployeeWorkDetailScreen({super.key});
+class EmployeeWorkDetailScreen extends ConsumerStatefulWidget {
+  const EmployeeWorkDetailScreen({super.key});
 
+  @override
+  ConsumerState<EmployeeWorkDetailScreen> createState() =>
+      _EmployeeWorkDetailScreenState();
+}
+
+class _EmployeeWorkDetailScreenState
+    extends ConsumerState<EmployeeWorkDetailScreen> {
   final SignupController signupController = Get.find<SignupController>();
+  bool _loading = false;
+
+  void _signUp(AppLocalizations loc) async {
+    if (signupController.deskIdController.text.isEmpty ||
+        signupController.departmentController.text.isEmpty ||
+        signupController.workRole.value.isEmpty) {
+      // EN: "Please fill all the requirements"
+      showCustomToast(text: loc.pleaseFillAllRequirements);
+      return;
+    }
+
+    setState(() => _loading = true);
+
+    final id = int.tryParse(signupController.employeeIdController.text.trim());
+
+    final res = await ref
+        .read(authorNotifierProvider.notifier)
+        .signUp(
+          language: signupController.selectedLanguage.value,
+          name: signupController.userNameController.text.trim(),
+          email: signupController.companyEmailController.text.trim(),
+          password: signupController.companyPasswordController.text.trim(),
+          companyCode: signupController.companyCodeController.text.trim(),
+          employeeId: id!,
+          deskLocation: signupController.deskIdController.text.trim(),
+          department: signupController.departmentController.text.trim(),
+          deskRole: signupController.workRole.value,
+        );
+
+    setState(() => _loading = false);
+
+    if (res == true) {
+      Get.offAll(WaitingCompanyResponse());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +74,6 @@ class EmployeeWorkDetailScreen extends StatelessWidget {
               children: [
                 SizedBox(height: 20.h),
                 AppTopSection(
-                  // EN: userDeskWorkZone = "User Desk or Work Zone", userDeskWorkZoneSubtitle = "Link your assessment to your desk and department"
                   title: loc.userDeskWorkZone,
                   subtitle: loc.userDeskWorkZoneSubtitle,
                 ),
@@ -88,52 +131,56 @@ class EmployeeWorkDetailScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 6.h),
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    // EN: "Select your role"
-                    hintText: loc.roleHint,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 14.h,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                      borderSide: BorderSide(
-                        color: AppColors.blackDeemed,
-                        width: 1.5,
+                Obx(
+                  () => DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      // EN: "Select your role"
+                      hintText: loc.roleHint,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 14.h,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: BorderSide(
+                          color: AppColors.blackDeemed,
+                          width: 1.5,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: BorderSide(
+                          color: AppColors.blackDeemed,
+                          width: 1.5,
+                        ),
                       ),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                      borderSide: BorderSide(
-                        color: AppColors.blackDeemed,
-                        width: 1.5,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.text,
+                    ),
+                    borderRadius: BorderRadius.circular(10.r),
+                    dropdownColor: AppColors.surface,
+                    value: signupController.workRole.value.isEmpty
+                        ? null
+                        : signupController.workRole.value,
+                    items: [
+                      DropdownMenuItem(value: 'DESK', child: Text(loc.desk)),
+                      DropdownMenuItem(
+                        value: 'STANDING',
+                        child: Text(loc.standingDesk),
                       ),
-                    ),
+                      DropdownMenuItem(
+                        value: 'HYBRID',
+                        child: Text(loc.hybrid),
+                      ),
+                      DropdownMenuItem(value: 'OTHER', child: Text(loc.other)),
+                    ],
+                    onChanged: (value) {
+                      signupController.workRole.value = value ?? '';
+                    },
                   ),
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.text,
-                  ),
-                  borderRadius: BorderRadius.circular(10.r),
-                  dropdownColor: AppColors.surface,
-                  items: [
-                    // EN: desk = "Desk"
-                    DropdownMenuItem(value: 'DESK', child: Text(loc.desk)),
-                    // EN: standingDesk = "Standing desk"
-                    DropdownMenuItem(
-                      value: 'STANDING',
-                      child: Text(loc.standingDesk),
-                    ),
-                    // EN: hybrid = "Hybrid"
-                    DropdownMenuItem(value: 'HYBRID', child: Text(loc.hybrid)),
-                    // EN: other = "Other"
-                    DropdownMenuItem(value: 'OTHER', child: Text(loc.other)),
-                  ],
-                  onChanged: (value) {
-                    signupController.workRole.value = value ?? '';
-                  },
                 ),
                 SizedBox(height: 120.h),
               ],
@@ -145,34 +192,18 @@ class EmployeeWorkDetailScreen extends StatelessWidget {
       bottomSheet: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 25.h, horizontal: 20.w),
-          child: SizedBox(
-            child: Obx(() {
-              return PrimaryButton(
-                loading: signupController.isLoading.value,
-                onTap: () async {
-                  if (signupController.deskIdController.text.isEmpty ||
-                      signupController.departmentController.text.isEmpty ||
-                      signupController.workRole.value.isEmpty) {
-                    // EN: "Please fill all the requirements"
-                    showCustomToast(text: loc.pleaseFillAllRequirements);
-                    return;
-                  }
-                  final res = await signupController.businessSignup();
-                  if (res) {
-                    Get.offAll(WaitingCompanyResponse());
-                  }
-                },
-                // EN: "Continue"
-                text: loc.continueButton,
-                backgroundColor: AppColors.primaryColor,
-                textStyle: TextStyle(
-                  color: AppColors.surface,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                ),
-                borderRadius: BorderRadius.circular(14.r),
-              );
-            }),
+          child: PrimaryButton(
+            loading: _loading,
+            onTap: () => _signUp(loc),
+            // EN: "Continue"
+            text: loc.continueButton,
+            backgroundColor: AppColors.primaryColor,
+            textStyle: TextStyle(
+              color: AppColors.surface,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+            ),
+            borderRadius: BorderRadius.circular(14.r),
           ),
         ),
       ),

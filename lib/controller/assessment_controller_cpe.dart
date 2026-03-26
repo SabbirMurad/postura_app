@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
-import 'package:posture_detector_app/data/services/network/custom_http.dart';
+import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/controller/home_controller_cpe.dart';
 
 // ─────────────────────────────────────────

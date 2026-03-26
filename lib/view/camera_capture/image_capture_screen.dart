@@ -8,7 +8,7 @@ import 'package:posture_detector_app/controller/image_capture_controller.dart';
 import 'package:posture_detector_app/view/camera_capture/widgets/scan_confirmation_dialog.dart';
 import 'package:posture_detector_app/view/camera_capture/widgets/camera_bottom_bar.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
-import 'package:posture_detector_app/core/enums/scan_type.dart';
+import 'package:posture_detector_app/models/scan_type.dart';
 
 class ImageCaptureScreen extends StatefulWidget {
   final ScanType type;

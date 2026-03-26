@@ -5,7 +5,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:posture_detector_app/common/dialogs/edit_name_dialog.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
-import 'package:posture_detector_app/view/business/profile/screens/business_change_password_screen.dart';
+import 'package:posture_detector_app/view/business/profile/business_change_password_screen.dart';
 import 'package:posture_detector_app/controller/business_profile_controller.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/profile_info.dart';

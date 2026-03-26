@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/core/constants/app_text.dart';
-import 'package:posture_detector_app/core/enums/user_type.dart';
+import 'package:posture_detector_app/models/user_type.dart';
 import 'package:posture_detector_app/controller/signup_controller.dart';
 import 'package:posture_detector_app/view/auth/signup/widgets/language_selected_card.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
@@ -12,7 +12,7 @@ import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
-import 'package:posture_detector_app/data/helpers/app_helper.dart';
+import 'package:posture_detector_app/helpers/app_helper.dart';
 
 class SelectLanguageScreen extends StatelessWidget {
   SelectLanguageScreen({super.key});

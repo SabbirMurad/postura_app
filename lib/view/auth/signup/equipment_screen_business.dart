@@ -5,8 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
-import 'package:posture_detector_app/data/services/network/custom_http.dart';
-import 'package:posture_detector_app/data/helpers/app_helper.dart';
+import 'package:posture_detector_app/models/auth/sign_in_model.dart';
+import 'package:posture_detector_app/services/network/custom_http.dart';
+import 'package:posture_detector_app/helpers/app_helper.dart';
 
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:share_plus/share_plus.dart';
@@ -18,7 +19,7 @@ import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
-import 'package:posture_detector_app/core/enums/user_type.dart';
+import 'package:posture_detector_app/models/user_type.dart';
 import 'package:posture_detector_app/controller/signup_controller.dart';
 import 'package:posture_detector_app/controller/report_controller.dart';
 
@@ -52,7 +53,7 @@ class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
   Future<void> _initializeRole() async {
     try {
       final role = await AppHelper.instance.getAuthRole();
-      debugPrint("Fetched user role: $role ${Users.EMPLOYEE}");
+      debugPrint("Fetched user role: $role ${UserType.EMPLOYEE}");
       userRole.value = role ?? '';
     } catch (e) {
       debugPrint('Error getting auth role: $e');

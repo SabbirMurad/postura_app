@@ -2,9 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'dart:math';
 import 'package:posture_detector_app/models/quiz/quiz_module.dart';
-import 'package:posture_detector_app/data/services/db/sqlite_service.dart';
-import 'package:posture_detector_app/data/services/network/custom_http.dart';
-import 'package:posture_detector_app/data/services/light_nudges_service.dart';
+import 'package:posture_detector_app/services/db/sqlite_service.dart';
+import 'package:posture_detector_app/services/network/custom_http.dart';
+import 'package:posture_detector_app/services/light_nudges_service.dart';
 import 'package:posture_detector_app/view/e_learning/data/e_learning_module_data.dart';
 
 class ELearningController extends GetxController {

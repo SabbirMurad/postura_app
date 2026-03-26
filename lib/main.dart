@@ -3,13 +3,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:posture_detector_app/data/services/db/sqlite_service.dart';
+import 'package:posture_detector_app/services/db/sqlite_service.dart';
 import 'package:posture_detector_app/core/bindings/app_binding.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
-import 'package:posture_detector_app/data/helpers/app_helper.dart';
+import 'package:posture_detector_app/helpers/app_helper.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -22,7 +22,7 @@ void main() async {
 
   final savedLang = await AppHelper.instance.getLanguage();
 
-  runApp(MyApp(savedLocale: savedLang != null ? Locale(savedLang) : null));
+  runApp(ProviderScope(child: MyApp(savedLocale: savedLang != null ? Locale(savedLang) : null)));
 }
 
 //

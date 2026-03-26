@@ -7,7 +7,7 @@ import 'package:posture_detector_app/common/widgets/scan_container.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
-import 'package:posture_detector_app/core/enums/scan_type.dart';
+import 'package:posture_detector_app/models/scan_type.dart';
 
 class ScanBusinessScreen extends StatefulWidget {
   const ScanBusinessScreen({super.key});

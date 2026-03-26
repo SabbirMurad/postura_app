@@ -6,7 +6,7 @@ import 'package:posture_detector_app/common/widgets/custom_text_field.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/controller/signup_controller.dart';
-import 'package:posture_detector_app/data/services/network/custom_http.dart';
+import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/routes.dart';

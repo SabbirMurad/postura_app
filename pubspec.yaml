@@ -38,14 +38,17 @@ dependencies:
   dio: ^5.4.0
   flutter_downloader: ^1.11.7
   share_plus: ^7.2.1
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.4.6
   flutter_gen_runner: ^5.12.0
   flutter_lints: ^5.0.0
   flutter_launcher_icons: ^0.14.4
+  riverpod_generator: ^2.6.1
+  build_runner: 2.4.14
 
 flutter_launcher_icons:
   android: "launcher_icon"
