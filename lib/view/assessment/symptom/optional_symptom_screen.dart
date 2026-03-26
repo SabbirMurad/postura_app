@@ -27,6 +27,7 @@ class BusinessOptionalSymptomScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // EN: optionalSymptom = "Optional Symptom", optionalSymptomSubtitle = "Select your optional symptoms"
               AppTopSection(
                 title: loc.optionalSymptom,
                 subtitle: loc.optionalSymptomSubtitle,
@@ -72,6 +73,7 @@ class BusinessOptionalSymptomScreen extends StatelessWidget {
               onTap: () {
                 Get.toNamed(AppRoute.cameraGuideScreen);
               },
+              // EN: "Continue"
               text: loc.continueButton,
               backgroundColor: AppColors.primaryColor,
               textStyle: TextStyle(

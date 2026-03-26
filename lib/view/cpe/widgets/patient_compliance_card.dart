@@ -100,6 +100,7 @@ class PatientComplianceCard extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 2.h),
+              // EN: "COMPLIANCE"
               Text(
                 loc.complianceLabel,
                 style: TextStyle(

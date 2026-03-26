@@ -27,9 +27,7 @@ class ProfileService {
         showFloatingError: false,
       );
 
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.statusCode == 204) {
+      if (response.ok) {
         return ApiResponse.success(true);
       } else {
         final json = jsonDecode(response.error ?? '{}');
@@ -52,9 +50,7 @@ class ProfileService {
         showFloatingError: false,
       );
 
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.statusCode == 204) {
+      if (response.ok) {
         final json = response.data;
 
         final userInfo = ProfileModel.fromJson(json);
@@ -119,11 +115,7 @@ class ProfileService {
         files: [multipartFile],
       );
 
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.statusCode == 204) {
-        final json = response.data;
-
+      if (response.ok) {
         return ApiResponse.success(true);
       } else {
         final json = jsonDecode(response.error ?? '{}');
@@ -148,11 +140,7 @@ class ProfileService {
         body: {'full_name': name},
       );
 
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.statusCode == 204) {
-        final json = response.data;
-
+      if (response.ok) {
         return ApiResponse.success(true);
       } else {
         final json = jsonDecode(response.error ?? '{}');

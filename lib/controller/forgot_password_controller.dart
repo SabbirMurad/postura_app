@@ -31,6 +31,7 @@ class ForgotPasswordController extends GetxController {
       return true;
     } else {
       isLoading.value = false;
+      // EN: "Please enter a valid email"
       showCustomToast(text: response.error ?? _loc.pleaseEnterValidEmail);
     }
     return false;
@@ -53,6 +54,7 @@ class ForgotPasswordController extends GetxController {
       return true;
     } else {
       isLoading.value = false;
+      // EN: "Please enter a valid OTP"
       showCustomToast(text: response.error ?? _loc.pleaseEnterValidOtp);
     }
     return false;
@@ -79,12 +81,14 @@ class ForgotPasswordController extends GetxController {
     if (response.success) {
       isLoading.value = false;
       showCustomToast(
+        // EN: "Password changed successfully"
         text: _loc.passwordChangedSuccessfully,
         toastType: ToastTypesInfo(ToastTypes.success),
       );
       return true;
     } else {
       isLoading.value = false;
+      // EN: "Something went wrong"
       showCustomToast(text: response.error ?? _loc.somethingWentWrong);
     }
     return false;
@@ -103,11 +107,13 @@ class ForgotPasswordController extends GetxController {
     if (response.success) {
       isLoading.value = false;
       showCustomToast(
+        // EN: "OTP sent to your email"
         text: _loc.otpSentToEmail,
         toastType: ToastTypesInfo(ToastTypes.success),
       );
     } else {
       isLoading.value = false;
+      // EN: "Something went wrong"
       showCustomToast(text: response.error ?? _loc.somethingWentWrong);
     }
   }

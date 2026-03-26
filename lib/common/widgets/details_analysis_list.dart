@@ -17,30 +17,35 @@ class DetailsAnalysisList extends StatelessWidget {
     final items = [
       _DetailItem(
         severity: posture.neckFlexion.severity,
+        // EN: "Neck Flexion"
         title: loc.neckFlexion,
         iso: posture.neckFlexion.iso,
         angle: posture.neckFlexion.angle,
       ),
       _DetailItem(
         severity: posture.shoulderElevation.severity,
+        // EN: "Shoulder Elevation"
         title: loc.shoulderElevation,
         iso: posture.shoulderElevation.iso,
         angle: posture.shoulderElevation.angle,
       ),
       _DetailItem(
         severity: posture.elbowAngle.severity,
+        // EN: "Elbow Angle"
         title: loc.elbowAngle,
         iso: posture.elbowAngle.iso,
         angle: posture.elbowAngle.deviation,
       ),
       _DetailItem(
         severity: posture.wristDeviation.severity,
+        // EN: "Wrist Deviation"
         title: loc.wristDeviation,
         iso: posture.wristDeviation.iso,
         angle: posture.wristDeviation.deviation,
       ),
       _DetailItem(
         severity: posture.pelvicTilt.severity,
+        // EN: "Pelvic Tilt"
         title: loc.pelvicTilt,
         iso: posture.pelvicTilt.iso,
         angle: posture.pelvicTilt.deviation,

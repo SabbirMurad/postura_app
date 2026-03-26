@@ -60,12 +60,14 @@ class HomeScreenCPE extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              loc.somethingWentWrong,
+              // EN: "Something went wrong"
+            loc.somethingWentWrong,
               style: TextStyle(fontSize: 14.sp, color: Colors.red),
             ),
             SizedBox(height: 12.h),
             ElevatedButton(
               onPressed: controller.refresh,
+              // EN: "Retry"
               child: Text(loc.retry),
             ),
           ],
@@ -76,6 +78,7 @@ class HomeScreenCPE extends StatelessWidget {
     if (controller.scanList.isEmpty) {
       return Center(
         child: Text(
+          // EN: "No patients found"
           loc.noPatientsFound,
           style: TextStyle(fontSize: 14.sp, color: const Color(0xFF8A8FA3)),
         ),

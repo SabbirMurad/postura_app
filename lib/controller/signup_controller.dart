@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:posture_detector_app/core/enums/user_type.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/data/services/api/auth_service.dart';
@@ -128,51 +129,29 @@ class SignupController extends GetxController {
     verifyUserOtp = '';
   }
 
-  /// ------------------------ private signup ---------------------------------- ///
-
-  Future<bool> privateSignup() async {
-    isLoading.value = true;
-
-    final response = await _authService.privateSignup(
-      userRole.value,
-      selectedLanguage.value,
-      personalNameController.text.trim().toString(),
-      personalEmailController.text.trim().toString(),
-      personalPasswordController.text.trim().toString(),
-    );
-
-    if (response.data == true) {
-      isLoading.value = false;
-      return true;
-    } else {
-      isLoading.value = false;
-      showCustomToast(text: response.error ?? _loc.somethingWentWrong);
-    }
-    return false;
-  }
-
   Future<bool> businessSignup() async {
     isLoading.value = true;
 
     final id = int.tryParse(employeeIdController.text.trim());
 
     final response = await _authService.businessSignup(
-      userRole.value,
-      selectedLanguage.value,
-      userNameController.text.trim().toString(),
-      companyEmailController.text.trim().toString(),
-      companyPasswordController.text.trim().toString(),
-      companyCodeController.text.trim().toString(),
-      id ?? 0,
-      deskIdController.text.trim().toString(),
-      departmentController.text.trim().toString(),
-      workRole.value,
+      mode: Users.EMPLOYEE.name,
+      language: selectedLanguage.value,
+      name: userNameController.text.trim().toString(),
+      email: companyEmailController.text.trim().toString(),
+      password: companyPasswordController.text.trim().toString(),
+      companyCode: companyCodeController.text.trim().toString(),
+      employeeId: id!,
+      deskLocation: deskIdController.text.trim().toString(),
+      department: departmentController.text.trim().toString(),
+      deskRole: workRole.value,
     );
     if (response.data == true) {
       isLoading.value = false;
       return true;
     } else {
       isLoading.value = false;
+      // EN: "Something went wrong"
       showCustomToast(text: response.error ?? _loc.somethingWentWrong);
     }
     return false;
@@ -184,6 +163,7 @@ class SignupController extends GetxController {
 
       if (_imageCaptureController.image.value == null) {
         isLoadingAnalysis.value = false;
+        // EN: "No image selected"
         showCustomToast(text: _loc.noImageSelected);
         return false;
       }
@@ -226,11 +206,13 @@ class SignupController extends GetxController {
         return true;
       } else {
         isLoadingAnalysis.value = false;
+        // EN: "Failed to process analysis"
         showCustomToast(text: response.error ?? _loc.failedToProcessAnalysis);
       }
     } catch (e) {
       isLoadingAnalysis.value = false;
       debugPrint('Pose analysis error: $e');
+      // EN: "An unexpected error occurred"
       showCustomToast(text: _loc.unexpectedError);
     }
     return false;
@@ -251,6 +233,7 @@ class SignupController extends GetxController {
       // Get.offAllNamed(AppRoute.congratulationScreen);
     } else {
       isLoading.value = false;
+      // EN: "Something went wrong"
       showCustomToast(text: response.error ?? _loc.somethingWentWrong);
     }
   }
@@ -270,6 +253,7 @@ class SignupController extends GetxController {
       return true;
     } else {
       isLoading.value = false;
+      // EN: "Something went wrong"
       showCustomToast(text: response.error ?? _loc.somethingWentWrong);
     }
     return false;
@@ -303,11 +287,13 @@ class SignupController extends GetxController {
     if (response.success) {
       isLoading.value = false;
       showCustomToast(
+        // EN: "OTP sent to your email"
         text: _loc.otpSentToEmail,
         toastType: ToastTypesInfo(ToastTypes.success),
       );
     } else {
       isLoading.value = false;
+      // EN: "Something went wrong"
       showCustomToast(text: response.error ?? _loc.somethingWentWrong);
     }
   }

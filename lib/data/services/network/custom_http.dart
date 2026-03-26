@@ -9,10 +9,16 @@ import 'package:posture_detector_app/data/helpers/app_helper.dart';
 
 class CustomHttpResult {
   final dynamic data;
-  final int statusCode;
+  final int status_code;
   final String? error;
+  final bool ok;
 
-  const CustomHttpResult({this.data, required this.statusCode, this.error});
+  const CustomHttpResult({
+    required this.ok,
+    this.data,
+    required this.status_code,
+    this.error,
+  });
 
   void operator [](String other) {}
 }
@@ -36,9 +42,10 @@ class CustomHttp {
     Map<String, String>? headers,
     Map<String, dynamic>? queries,
   }) async {
-    if (!await hasInternet(showError: true)) {
+    if (!await has_internet(show_error: true)) {
       return const CustomHttpResult(
-        statusCode: -1,
+        ok: false,
+        status_code: -1,
         error: 'No internet connection found!',
       );
     }
@@ -47,7 +54,8 @@ class CustomHttp {
       final headers0 = await _buildHeaders(needAuth: needAuth, extra: headers);
       if (headers0 == null) {
         return const CustomHttpResult(
-          statusCode: 401,
+          ok: false,
+          status_code: 401,
           error: 'Session expired, Please sign in again!',
         );
       }
@@ -74,15 +82,16 @@ class CustomHttp {
           .get(uri, headers: headers0)
           .timeout(_requestTimeout);
 
-      return handleResponse(response, showFloatingError);
+      return _handle_response(response, showFloatingError);
     } on TimeoutException {
       return const CustomHttpResult(
-        statusCode: -3,
+        ok: false,
+        status_code: -3,
         error: 'Request timed out. Please try again.',
       );
     } catch (e) {
       debugPrint('GET ERROR [$endpoint]: $e');
-      return CustomHttpResult(statusCode: -2, error: e.toString());
+      return CustomHttpResult(ok: false, status_code: -2, error: e.toString());
     }
   }
 
@@ -93,15 +102,14 @@ class CustomHttp {
     dynamic body,
     bool showFloatingError = true,
     bool needAuth = true,
-  }) =>
-      commonRequests(
-        endpoint: endpoint,
-        headers: headers,
-        body: body,
-        showFloatingError: showFloatingError,
-        needAuth: needAuth,
-        method: CommonCustomMethods.POST,
-      );
+  }) => commonRequests(
+    endpoint: endpoint,
+    headers: headers,
+    body: body,
+    showFloatingError: showFloatingError,
+    needAuth: needAuth,
+    method: CommonCustomMethods.POST,
+  );
 
   static Future<CustomHttpResult> patch({
     required String endpoint,
@@ -109,15 +117,14 @@ class CustomHttp {
     dynamic body,
     bool showFloatingError = true,
     bool needAuth = true,
-  }) =>
-      commonRequests(
-        endpoint: endpoint,
-        headers: headers,
-        body: body,
-        showFloatingError: showFloatingError,
-        needAuth: needAuth,
-        method: CommonCustomMethods.PATCH,
-      );
+  }) => commonRequests(
+    endpoint: endpoint,
+    headers: headers,
+    body: body,
+    showFloatingError: showFloatingError,
+    needAuth: needAuth,
+    method: CommonCustomMethods.PATCH,
+  );
 
   static Future<CustomHttpResult> put({
     required String endpoint,
@@ -125,15 +132,14 @@ class CustomHttp {
     dynamic body,
     bool showFloatingError = true,
     bool needAuth = true,
-  }) =>
-      commonRequests(
-        endpoint: endpoint,
-        headers: headers,
-        body: body,
-        showFloatingError: showFloatingError,
-        needAuth: needAuth,
-        method: CommonCustomMethods.PUT,
-      );
+  }) => commonRequests(
+    endpoint: endpoint,
+    headers: headers,
+    body: body,
+    showFloatingError: showFloatingError,
+    needAuth: needAuth,
+    method: CommonCustomMethods.PUT,
+  );
 
   static Future<CustomHttpResult> delete({
     required String endpoint,
@@ -141,15 +147,14 @@ class CustomHttp {
     dynamic body,
     bool showFloatingError = true,
     bool needAuth = true,
-  }) =>
-      commonRequests(
-        endpoint: endpoint,
-        headers: headers,
-        body: body,
-        showFloatingError: showFloatingError,
-        needAuth: needAuth,
-        method: CommonCustomMethods.DELETE,
-      );
+  }) => commonRequests(
+    endpoint: endpoint,
+    headers: headers,
+    body: body,
+    showFloatingError: showFloatingError,
+    needAuth: needAuth,
+    method: CommonCustomMethods.DELETE,
+  );
 
   // ─── MULTIPART ──────────────────────────────────────────────────────
   static Future<CustomHttpResult> multipart({
@@ -182,26 +187,30 @@ class CustomHttp {
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.body.isEmpty || response.body.trim().isEmpty) {
           return CustomHttpResult(
-            statusCode: response.statusCode,
+            ok: false,
+            status_code: response.statusCode,
             error: 'Server returned empty response',
           );
         }
         try {
           final decodedData = jsonDecode(response.body);
           return CustomHttpResult(
-            statusCode: response.statusCode,
+            ok: false,
+            status_code: response.statusCode,
             data: decodedData,
           );
         } catch (e) {
           debugPrint('MULTIPART JSON parse error: $e');
           return CustomHttpResult(
-            statusCode: response.statusCode,
+            ok: false,
+            status_code: response.statusCode,
             error: 'Failed to parse server response',
           );
         }
       } else {
         return CustomHttpResult(
-          statusCode: response.statusCode,
+          ok: false,
+          status_code: response.statusCode,
           error: response.body.isNotEmpty
               ? response.body
               : 'Request failed with status ${response.statusCode}',
@@ -209,12 +218,13 @@ class CustomHttp {
       }
     } on TimeoutException {
       return const CustomHttpResult(
-        statusCode: -3,
+        ok: false,
+        status_code: -3,
         error: 'Upload timed out. Please try again.',
       );
     } catch (e) {
       debugPrint('MULTIPART ERROR: $e');
-      return CustomHttpResult(statusCode: -2, error: e.toString());
+      return CustomHttpResult(ok: false, status_code: -2, error: e.toString());
     }
   }
 
@@ -228,9 +238,10 @@ class CustomHttp {
     required CommonCustomMethods method,
     bool retry = true,
   }) async {
-    if (!await hasInternet(showError: true)) {
+    if (!await has_internet(show_error: true)) {
       return const CustomHttpResult(
-        statusCode: -1,
+        ok: false,
+        status_code: -1,
         error: 'No internet connection found!',
       );
     }
@@ -239,7 +250,8 @@ class CustomHttp {
       final headers0 = await _buildHeaders(needAuth: needAuth, extra: headers);
       if (headers0 == null) {
         return const CustomHttpResult(
-          statusCode: 401,
+          ok: false,
+          status_code: 401,
           error: 'Session expired, Please sign in again!',
         );
       }
@@ -256,19 +268,39 @@ class CustomHttp {
       switch (method) {
         case CommonCustomMethods.POST:
           response = await http
-              .post(uri, body: encodedBody, headers: headers0, encoding: encoding)
+              .post(
+                uri,
+                body: encodedBody,
+                headers: headers0,
+                encoding: encoding,
+              )
               .timeout(_requestTimeout);
         case CommonCustomMethods.PUT:
           response = await http
-              .put(uri, body: encodedBody, headers: headers0, encoding: encoding)
+              .put(
+                uri,
+                body: encodedBody,
+                headers: headers0,
+                encoding: encoding,
+              )
               .timeout(_requestTimeout);
         case CommonCustomMethods.PATCH:
           response = await http
-              .patch(uri, body: encodedBody, headers: headers0, encoding: encoding)
+              .patch(
+                uri,
+                body: encodedBody,
+                headers: headers0,
+                encoding: encoding,
+              )
               .timeout(_requestTimeout);
         case CommonCustomMethods.DELETE:
           response = await http
-              .delete(uri, body: encodedBody, headers: headers0, encoding: encoding)
+              .delete(
+                uri,
+                body: encodedBody,
+                headers: headers0,
+                encoding: encoding,
+              )
               .timeout(_requestTimeout);
       }
 
@@ -294,15 +326,16 @@ class CustomHttp {
         }
       }
 
-      return handleResponse(response, showFloatingError);
+      return _handle_response(response, showFloatingError);
     } on TimeoutException {
       return const CustomHttpResult(
-        statusCode: -3,
+        ok: false,
+        status_code: -3,
         error: 'Request timed out. Please try again.',
       );
     } catch (e) {
       debugPrint('${method.name} ERROR [$endpoint]: $e');
-      return CustomHttpResult(statusCode: -2, error: e.toString());
+      return CustomHttpResult(ok: false, status_code: -2, error: e.toString());
     }
   }
 
@@ -393,38 +426,44 @@ class CustomHttp {
   // Keep this public for backward compat
   static Future<bool> setNewAccessToken() => _refreshTokenSafe();
 
-  // ─── HANDLE RESPONSE ───────────────────────────────────────────────
-  static CustomHttpResult handleResponse(
+  /// Parses an [http.Response] into a [CustomHttpResult].
+  static CustomHttpResult _handle_response(
     http.Response response,
-    bool showFloatingError,
+    bool show_floating_error,
   ) {
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      try {
-        return CustomHttpResult(
-          statusCode: response.statusCode,
-          data: jsonDecode(response.body),
-        );
-      } catch (e) {
-        debugPrint('JSON parse error in success response: $e');
-        return CustomHttpResult(
-          statusCode: response.statusCode,
-          error: 'Failed to parse server response',
-        );
-      }
-    } else {
-      late String message;
-      try {
-        final body = jsonDecode(response.body);
-        message = body['errors'][0];
-      } catch (e) {
-        message = response.body.toString();
-      }
+    const success_codes = {200, 201, 202, 203, 204};
 
-      if (showFloatingError) {
-        showCustomToast(text: message);
-      }
+    if (success_codes.contains(response.statusCode)) {
+      final data = response.body.isNotEmpty ? jsonDecode(response.body) : null;
+      return CustomHttpResult(
+        ok: true,
+        status_code: response.statusCode,
+        data: data,
+      );
+    }
 
-      return CustomHttpResult(statusCode: response.statusCode, error: message);
+    final message = _parse_error_message(response);
+
+    if (show_floating_error) showCustomToast(text: message);
+
+    return CustomHttpResult(
+      status_code: response.statusCode,
+      error: message,
+      ok: false,
+    );
+  }
+
+  static String _parse_error_message(http.Response response) {
+    try {
+      final body = jsonDecode(response.body);
+      return body['message'] as String? ?? 'Something went wrong.';
+    } catch (_) {
+      if (response.statusCode == 404) return 'Endpoint not found!';
+      if (response.statusCode == 400) return response.body;
+      debugPrint(
+        'Unhandled HTTP error: ${response.statusCode}\n${response.body}',
+      );
+      return 'Something went wrong.';
     }
   }
 }

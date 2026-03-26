@@ -33,6 +33,7 @@ class WaitingCompanyResponse extends StatelessWidget {
             ),
             SizedBox(height: 30.h),
             Text(
+              // EN: "Congratulations"
               loc.congrats,
               style: TextStyle(
                 fontWeight: FontWeight.w400,
@@ -42,6 +43,7 @@ class WaitingCompanyResponse extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             Text(
+              // EN: "Please wait for company admin approval, Contact your company admin."
               loc.waitForCompanyApproval,
               style: TextStyle(fontWeight: FontWeight.w400, fontSize: 20.sp),
               textAlign: TextAlign.center,
@@ -49,6 +51,7 @@ class WaitingCompanyResponse extends StatelessWidget {
 
             SizedBox(height: 58.h),
             PrimaryButton(
+              // EN: "Go to Login"
               text: loc.goToLogin,
               backgroundColor: AppColors.primaryColor,
               textColor: AppColors.onBoardingSurface,

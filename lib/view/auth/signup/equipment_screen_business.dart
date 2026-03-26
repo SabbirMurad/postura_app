@@ -23,7 +23,12 @@ import 'package:posture_detector_app/controller/signup_controller.dart';
 import 'package:posture_detector_app/controller/report_controller.dart';
 
 class EquipmentScreenBusiness extends StatefulWidget {
-  const EquipmentScreenBusiness({super.key});
+  final bool canSendListToCompany;
+
+  const EquipmentScreenBusiness({
+    super.key,
+    required this.canSendListToCompany,
+  });
 
   @override
   State<EquipmentScreenBusiness> createState() =>
@@ -58,11 +63,11 @@ class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
     try {
       await CustomHttp.post(
         endpoint: 'companies/share-data',
-        body: {},
         showFloatingError: true,
         needAuth: true,
       );
       showCustomToast(
+        // EN: "Recommendations sent to HR"
         text: AppLocalizations.of(Get.context!)!.recommendationsSentToHr,
         toastType: ToastTypesInfo(ToastTypes.success),
       );
@@ -79,6 +84,7 @@ class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
       final pdfUrl =
           reportController.analysisData.value?.aiResult.equipmentPdfUrl;
       if (pdfUrl == null || pdfUrl.isEmpty) {
+        // EN: "No PDF available"
         showCustomToast(text: loc.noPdfAvailable);
         return;
       }
@@ -89,6 +95,7 @@ class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
 
       await Dio().download(pdfUrl, filePath);
 
+      // EN: "Your report PDF"
       await Share.shareXFiles([
         XFile(filePath),
       ], text: AppLocalizations.of(Get.context!)!.yourReportPdf);
@@ -96,6 +103,7 @@ class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
       // showCustomToast(text: "PDF downloadeded completely");
     } catch (e) {
       debugPrint('$e');
+      // EN: "Something went wrong"
       showCustomToast(text: loc.somethingWentWrong);
     }
   }
@@ -110,82 +118,98 @@ class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
         bottom: false,
         child: Column(
           children: [
-            // Header Section
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-              child: AppTopSection(
-                title: loc.equipmentRecommendations,
-                subtitle: loc.equipmentRecommendationsSubtitle,
-              ),
-            ),
-
-            SizedBox(height: 14.h),
-
-            // Content Area (Scrollable)
             Expanded(
-              child: Obx(() {
-                final equipmentList =
-                    reportController.analysisData.value?.aiResult.equipment ??
-                    [];
+              child: SizedBox(
+                width: double.infinity,
+                height: double.infinity,
+                child: SingleChildScrollView(
+                  child: Obx(() {
+                    final equipmentList =
+                        reportController
+                            .analysisData
+                            .value
+                            ?.aiResult
+                            .equipment ??
+                        [];
 
-                if (equipmentList.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    return Column(
                       children: [
-                        Icon(
-                          Icons.shopping_bag_outlined,
-                          size: 64.sp,
-                          color: AppColors.secondaryText.withValues(alpha: 0.5),
-                        ),
-                        SizedBox(height: 16.h),
-                        Text(
-                          loc.noDataFound,
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.secondaryText,
+                        // Header Section
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20.w,
+                            vertical: 10.h,
+                          ),
+                          child: AppTopSection(
+                            // EN: equipmentRecommendations = "Equipment Recommendations", equipmentRecommendationsSubtitle = "Based on your posture analysis, the following equipment is recommended to improve your ergonomic setup"
+                            title: loc.equipmentRecommendations,
+                            subtitle: loc.equipmentRecommendationsSubtitle,
                           ),
                         ),
+                        SizedBox(height: 14.h),
+                        if (equipmentList.isEmpty)
+                          Padding(
+                            padding: EdgeInsets.only(top: 72.w),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.shopping_bag_outlined,
+                                  size: 64.sp,
+                                  color: AppColors.secondaryText.withValues(
+                                    alpha: 0.5,
+                                  ),
+                                ),
+                                SizedBox(height: 16.h),
+                                Text(
+                                  // EN: "No data found"
+                                  loc.noDataFound,
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.secondaryText,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (equipmentList.isNotEmpty)
+                          ...equipmentList.map((equipment) {
+                            final isHigh = equipment.priority == 'high';
+                            final isMedium = equipment.priority == 'medium';
+
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                bottom: 12.h,
+                                left: 20.w,
+                                right: 20.w,
+                              ),
+                              child: RecommendationContainer(
+                                title: equipment.name,
+                                subtitle: equipment.description,
+                                priority: isHigh
+                                    ? "High Priority"
+                                    : isMedium
+                                    ? "Medium"
+                                    : "Low",
+                                improvement: equipment.improvementPercentage,
+                                source: equipment.source ?? 'Unknown',
+                                chipColor: isHigh
+                                    ? AppColors.red
+                                    : isMedium
+                                    ? AppColors.warning
+                                    : AppColors.greenish,
+                                chipTextColor: isHigh || isMedium
+                                    ? AppColors.surface
+                                    : AppColors.green,
+                              ),
+                            );
+                          }).toList(),
                       ],
-                    ),
-                  );
-                }
-
-                return ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  itemCount: equipmentList.length,
-                  itemBuilder: (context, index) {
-                    final equipment = equipmentList[index];
-
-                    final isHigh = equipment.priority == 'high';
-                    final isMedium = equipment.priority == 'medium';
-
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: 12.h),
-                      child: RecommendationContainer(
-                        title: equipment.name,
-                        subtitle: equipment.description,
-                        priority: isHigh
-                            ? "High Priority"
-                            : isMedium
-                            ? "Medium"
-                            : "Low",
-                        improvement: equipment.improvementPercentage,
-                        source: equipment.source ?? 'Unknown',
-                        chipColor: isHigh
-                            ? AppColors.red
-                            : isMedium
-                            ? AppColors.warning
-                            : AppColors.greenish,
-                        chipTextColor: isHigh || isMedium
-                            ? AppColors.surface
-                            : AppColors.green,
-                      ),
                     );
-                  },
-                );
-              }),
+                  }),
+                ),
+              ),
             ),
 
             // Bottom Buttons Section
@@ -205,6 +229,7 @@ class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
                           color: AppColors.primaryColor,
                         ),
                         height: 45.h,
+                        // EN: "Download List"
                         text: loc.downloadList,
                         backgroundColor: AppColors.greyDeemed,
                         textColor: AppColors.primaryColor,
@@ -213,13 +238,15 @@ class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
                       SizedBox(height: 8.h),
 
                       // Send to Company (Only Employees)
-                      if (userRole.value == "EMPLOYEE")
+                      if (userRole.value == "EMPLOYEE" &&
+                          widget.canSendListToCompany)
                         Padding(
                           padding: EdgeInsets.only(bottom: 8.h),
                           child: PrimaryButton(
                             onTap: () {
                               _sendCompanyData();
                             },
+                            // EN: "Send data to Company"
                             text: loc.sendDataToCompany,
                             leading: Assets.icons.auth.message.svg(
                               width: 18.w,
@@ -234,13 +261,10 @@ class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
                       // Open Dashboard Button
                       PrimaryButton(
                         onTap: () {
-                          if (userRole.value == "EMPLOYEE") {
-                            Get.offAllNamed(AppRoute.bottomNavBusiness);
-                          } else {
-                            Get.offAllNamed(AppRoute.bottomNavPersonal);
-                          }
+                          Get.offAllNamed(AppRoute.bottomNavBusiness);
                         },
                         height: 45.h,
+                        // EN: "Open Dashboard"
                         text: loc.openDashboard,
                         backgroundColor: AppColors.primaryColor,
                         textColor: AppColors.onBoardingSurface,

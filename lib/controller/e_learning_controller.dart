@@ -84,7 +84,7 @@ class ELearningController extends GetxController {
         showFloatingError: false,
       );
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.ok && response.data != null) {
         final data = response.data;
         final List modules = data['modules'] ?? [];
 
@@ -101,13 +101,17 @@ class ELearningController extends GetxController {
             if (score > module.highestScore) {
               module.highestScore = score;
             }
-            debugPrint('Updated Module $moduleId with score: ${module.highestScore}');
+            debugPrint(
+              'Updated Module $moduleId with score: ${module.highestScore}',
+            );
           } catch (e) {
             debugPrint('Error mapping module: ${e.runtimeType}');
           }
         }
       } else {
-        debugPrint('Failed to fetch progress from backend: ${response.statusCode}');
+        debugPrint(
+          'Failed to fetch progress from backend: ${response.status_code}',
+        );
         // Fallback to local SQLite
         await _fetchLocalResults();
       }
@@ -176,7 +180,9 @@ class ELearningController extends GetxController {
 
       // Already passed — skip backend call and local save
       if (module.highestScore > 3) {
-        debugPrint('Module $moduleId already passed (score: ${module.highestScore}). Skipping submit.');
+        debugPrint(
+          'Module $moduleId already passed (score: ${module.highestScore}). Skipping submit.',
+        );
         await fetchQuizResults();
         return true;
       }
@@ -236,7 +242,9 @@ class ELearningController extends GetxController {
 
   void selectAnswer(int questionIndex, int optionIndex) {
     selectedAnswers[questionIndex] = optionIndex;
-    debugPrint('Selected answer for question $questionIndex: option $optionIndex');
+    debugPrint(
+      'Selected answer for question $questionIndex: option $optionIndex',
+    );
   }
 
   bool isSelected(int questionIndex, int optionIndex) {

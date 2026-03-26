@@ -19,6 +19,7 @@ void showLogoutConfirmDialog(BuildContext context) {
       return AlertDialog(
         backgroundColor: AppColors.onBoardingSurface,
         title: Text(
+          // EN: "Are you sure?"
           loc.areYouSure,
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20.sp),
         ),
@@ -26,6 +27,7 @@ void showLogoutConfirmDialog(BuildContext context) {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
+              // EN: "Do you really want to exit?"
               loc.areYouSureTitle,
               style: TextStyle(
                 fontSize: 14.sp,
@@ -43,6 +45,7 @@ void showLogoutConfirmDialog(BuildContext context) {
                     onTap: () {
                       Get.back();
                     },
+                    // EN: "Cancel"
                     text: loc.cancel,
                     backgroundColor: AppColors.greyDeemed,
                   ),
@@ -59,6 +62,7 @@ void showLogoutConfirmDialog(BuildContext context) {
                       AppHelper.instance.clearAllPrefValue();
                       Get.offAllNamed(AppRoute.loginScreen);
                     },
+                    // EN: "Yes"
                     text: loc.yes,
                     backgroundColor: AppColors.primaryColor,
                     textColor: AppColors.onBoardingSurface,

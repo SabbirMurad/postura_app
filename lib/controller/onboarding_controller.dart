@@ -37,10 +37,5 @@ class OnboardingController extends GetxController {
     pageController.jumpToPage(index);
   }
 
-  void skip() {
-    isSeen.value = true;
-    pageController.jumpToPage(2);
-  }
-
   bool get isLastPage => currentPage.value == 2;
 }

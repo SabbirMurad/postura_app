@@ -48,7 +48,7 @@ class AppTopSection extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(
             title,
-            style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -58,7 +58,7 @@ class AppTopSection extends StatelessWidget {
         Text(
           subtitle,
           style: TextStyle(
-            fontSize: 16.sp,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w400,
             color: AppColors.text.withValues(alpha: 0.7),
           ),

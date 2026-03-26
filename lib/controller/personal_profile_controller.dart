@@ -31,6 +31,7 @@ class PersonalProfileController extends GetxController {
       profileInfo.value = response.data;
     } else {
       isLoading.value = false;
+      // EN: "Data not found"
       utils.showCustomToast(text: _loc.fetchingDataNotFound);
     }
   }
@@ -55,11 +56,13 @@ class PersonalProfileController extends GetxController {
 
     if (response.data == true) {
       utils.showCustomToast(
+        // EN: "Username changed successfully"
         text: _loc.userNameChangedSuccessfully,
         toastType: utils.ToastTypesInfo(utils.ToastTypes.success),
       );
     } else {
       await fetchProfileData();
+      // EN: "Something went wrong"
       utils.showCustomToast(text: _loc.somethingWentWrong);
     }
   }
@@ -72,6 +75,7 @@ class PersonalProfileController extends GetxController {
 
     if (response.data != null) {
       utils.showCustomToast(
+        // EN: "Image uploaded successfully"
         text: _loc.uploadImageSuccessfully,
         toastType: utils.ToastTypesInfo(utils.ToastTypes.success),
       );
@@ -79,6 +83,7 @@ class PersonalProfileController extends GetxController {
       fetchProfileData();
       profileInfo.refresh();
     } else {
+      // EN: "Something went wrong"
       utils.showCustomToast(text: response.error ?? _loc.somethingWentWrong);
     }
   }

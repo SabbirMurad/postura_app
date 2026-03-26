@@ -34,6 +34,7 @@ class BusinessChangePasswordController extends GetxController {
       isLoading.value = false;
       final loc = AppLocalizations.of(Get.context!)!;
       showCustomToast(
+        // EN: "Password changed successfully"
         text: loc.passwordChangedSuccessfully,
         toastType: ToastTypesInfo(ToastTypes.success),
       );
@@ -41,6 +42,7 @@ class BusinessChangePasswordController extends GetxController {
     } else {
       isLoading.value = false;
       final loc = AppLocalizations.of(Get.context!)!;
+      // EN: "Something went wrong"
       showCustomToast(text: response.error ?? loc.somethingWentWrong);
     }
   }

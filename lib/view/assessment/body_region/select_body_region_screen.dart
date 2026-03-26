@@ -31,6 +31,7 @@ class SelectBodyRegionScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 20.h),
+                // EN: "Body Region"
                 AppTopSection(
                   title: loc.bodyRegionTitle,
                   subtitle: AppText.bodyRegionSubtitle,
@@ -75,11 +76,13 @@ class SelectBodyRegionScreen extends StatelessWidget {
             child: PrimaryButton(
               onTap: () {
                 if (signupController.selectedRegion.isEmpty) {
+                  // EN: "Please select a body region"
                   showCustomToast(text: loc.pleaseSelectBodyRegion);
                 } else {
                   Get.toNamed(AppRoute.employeePainIntensityScreen);
                 }
               },
+              // EN: "Continue"
               text: loc.continueButton,
               backgroundColor: AppColors.primaryColor,
               textStyle: TextStyle(

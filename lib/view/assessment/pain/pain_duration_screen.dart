@@ -27,6 +27,7 @@ class BusinessPainDurationScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // EN: painDuration = "Pain Duration", painDurationSubtitle = "Select the duration of your pain"
               AppTopSection(
                 title: loc.painDuration,
                 subtitle: loc.painDurationSubtitle,
@@ -65,11 +66,13 @@ class BusinessPainDurationScreen extends StatelessWidget {
             child: PrimaryButton(
               onTap: () {
                 if (signupController.selectedPainDuration.isEmpty) {
+                  // EN: "Please fill all the fields"
                   showCustomToast(text: loc.pleaseFillAllFields);
                   return;
                 }
                 Get.toNamed(AppRoute.employeeWorkPatternScreen);
               },
+              // EN: "Continue"
               text: loc.continueButton,
               backgroundColor: AppColors.primaryColor,
               textStyle: TextStyle(

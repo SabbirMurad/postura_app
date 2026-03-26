@@ -30,6 +30,7 @@ class QuizResultScreen extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(height: 24.h),
+              // EN: "Your Score"
               Text(
                 AppLocalizations.of(context)!.yourScore,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -65,24 +66,20 @@ class QuizResultScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: PrimaryButton(
+                        // EN: "Home"
                         text: AppLocalizations.of(context)!.home,
                         textColor: AppColors.surface,
                         backgroundColor: AppColors.primaryColor,
                         onTap: () async {
-                          final userRole = await AppHelper.instance
-                              .getAuthRole();
                           controller.selectedAnswers.clear();
-                          if (userRole == Users.EMPLOYEE.name) {
-                            Get.offAllNamed(AppRoute.bottomNavBusiness);
-                          } else {
-                            Get.offAllNamed(AppRoute.bottomNavPersonal);
-                          }
+                          Get.offAllNamed(AppRoute.bottomNavBusiness);
                         },
                       ),
                     ),
                     SizedBox(width: 10.w),
                     Expanded(
                       child: PrimaryButton(
+                        // EN: "Go to E-Learning"
                         text: AppLocalizations.of(context)!.goToElearning,
                         textColor: AppColors.surface,
                         onTap: () async {

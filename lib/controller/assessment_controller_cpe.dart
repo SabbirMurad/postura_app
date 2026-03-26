@@ -235,6 +235,7 @@ class CPEAssessmentController extends GetxController {
       signatureRemoteUrl.value = d['review_signature_url'] as String? ?? '';
     } catch (e) {
       final loc = AppLocalizations.of(Get.context!)!;
+      // EN: error = "Error", failedToParseResponse = "Failed to parse response"
       Get.snackbar(loc.error, '${loc.failedToParseResponse}: $e');
     }
   }
@@ -337,10 +338,12 @@ class CPEAssessmentController extends GetxController {
         }
         Get.back();
         final loc = AppLocalizations.of(Get.context!)!;
+        // EN: success = "Success", reviewSubmittedSuccessfully = "Review submitted successfully"
         Get.snackbar(loc.success, loc.reviewSubmittedSuccessfully);
       }
     } catch (e) {
       final loc = AppLocalizations.of(Get.context!)!;
+      // EN: error = "Error", failedToSubmit = "Failed to submit"
       Get.snackbar(loc.error, '${loc.failedToSubmit}: $e');
     } finally {
       isSubmitting.value = false;

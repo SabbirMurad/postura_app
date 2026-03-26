@@ -25,6 +25,7 @@ class IndiAuth extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // EN: "Email"
           Text(
             loc.email,
             style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
@@ -38,10 +39,12 @@ class IndiAuth extends StatelessWidget {
               color: AppColors.primaryColor.withValues(alpha: 0.8),
               size: 25.h,
             ),
+            // EN: "Enter your email"
             hintText: loc.emailHint,
             keyboardType: TextInputType.text,
           ),
           SizedBox(height: 28.h),
+          // EN: "Password"
           Text(
             loc.password,
             style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
@@ -68,6 +71,7 @@ class IndiAuth extends StatelessWidget {
                       )
                     : Assets.icons.auth.eyeOff.image(),
               ),
+              // EN: "Password"
               hintText: loc.password,
               keyboardType: TextInputType.text,
               isPassword: true,
@@ -81,6 +85,7 @@ class IndiAuth extends StatelessWidget {
               onTap: () {
                 Get.toNamed(AppRoute.verifyEmail);
               },
+              // EN: "Forget Credential"
               child: Text(
                 loc.forgetCredential,
                 style: TextStyle(
@@ -100,27 +105,28 @@ class IndiAuth extends StatelessWidget {
                 return PrimaryButton(
                   loading: loginController.isLoading2.value,
                   onTap: () async {
-                    if (loginController.privateFormKey.currentState!
-                        .validate()) {
-                      if (loginController.userRole.value == Users.PRIVATE) {
-                        final response = await loginController.privateSignIn(
-                          Users.PRIVATE.name,
-                          loginController.emailControllerIndi.text
-                              .trim()
-                              .toString(),
-                          loginController.passwordController.text
-                              .trim()
-                              .toString(),
-                        );
+                    // if (loginController.privateFormKey.currentState!
+                    //     .validate()) {
+                    //   if (loginController.userRole.value == Users.PRIVATE) {
+                    //     final response = await loginController.privateSignIn(
+                    //       Users.PRIVATE.name,
+                    //       loginController.emailControllerIndi.text
+                    //           .trim()
+                    //           .toString(),
+                    //       loginController.passwordController.text
+                    //           .trim()
+                    //           .toString(),
+                    //     );
 
-                        if (response) {
-                          Get.offAllNamed(AppRoute.bottomNavPersonal);
-                        } else {
-                          Get.offAllNamed(AppRoute.employeeSelectBodyRegion);
-                        }
-                      }
-                    }
+                    //     if (response) {
+                    //       Get.offAllNamed(AppRoute.bottomNavPersonal);
+                    //     } else {
+                    //       Get.offAllNamed(AppRoute.employeeSelectBodyRegion);
+                    //     }
+                    //   }
+                    // }
                   },
+                  // EN: "Login"
                   text: loc.login,
                   backgroundColor: AppColors.primaryColor,
                   textStyle: TextStyle(
@@ -134,6 +140,7 @@ class IndiAuth extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // EN: "Don't have an account?"
                   Text(
                     loc.donHaveAnAccount,
                     style: TextStyle(
@@ -144,8 +151,9 @@ class IndiAuth extends StatelessWidget {
                   SizedBox(width: 6.w),
                   GestureDetector(
                     onTap: () {
-                      Get.toNamed(AppRoute.selectUser);
+                      Get.toNamed(AppRoute.companyCredential);
                     },
+                    // EN: "Sign up"
                     child: Text(
                       loc.signUp,
                       style: TextStyle(

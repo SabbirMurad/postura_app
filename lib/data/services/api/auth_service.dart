@@ -8,13 +8,13 @@ import 'package:posture_detector_app/data/helpers/app_helper.dart';
 
 class AuthService {
   /// -------------------------------- Private signup ------------------------------------ ///
-  Future<ApiResponse<bool>> privateSignup(
-    String mode,
-    String language,
-    String name,
-    String email,
-    String password,
-  ) async {
+  Future<ApiResponse<bool>> privateSignup({
+    required String mode,
+    required String language,
+    required String name,
+    required String email,
+    required String password,
+  }) async {
     try {
       final response = await CustomHttp.post(
         endpoint: 'auth/sign-up',
@@ -29,14 +29,15 @@ class AuthService {
         showFloatingError: false,
       );
 
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.statusCode == 204) {
+      if (response.ok) {
         AppHelper.instance.setUserId(response.data['user_id']);
         return ApiResponse.success(true);
       } else {
         final json = jsonDecode(response.error ?? '{}');
-        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
+        final errorMessage =
+            json['message']?.toString() ??
+            response.error ??
+            'Something went wrong';
 
         return ApiResponse.error(errorMessage);
       }
@@ -60,9 +61,7 @@ class AuthService {
         showFloatingError: false,
       );
 
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.statusCode == 204) {
+      if (response.ok) {
         AppHelper.instance.setAccessToken(response.data['access_token']);
         AppHelper.instance.setRefToken(response.data['refresh_token']);
         AppHelper.instance.setTokenValidity(response.data['expires_at']);
@@ -77,7 +76,10 @@ class AuthService {
         return ApiResponse.success(data);
       } else {
         final json = jsonDecode(response.error ?? '{}');
-        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
+        final errorMessage =
+            json['message']?.toString() ??
+            response.error ??
+            'Something went wrong';
 
         return ApiResponse.error(errorMessage);
       }
@@ -88,18 +90,18 @@ class AuthService {
   }
 
   /// -------------------------------- business signup ------------------------------------ ///
-  Future<ApiResponse<bool>> businessSignup(
-    String mode,
-    String language,
-    String name,
-    String email,
-    String password,
-    String companyCode,
-    int employeeId,
-    String deskLocation,
-    String department,
-    String deskRole,
-  ) async {
+  Future<ApiResponse<bool>> businessSignup({
+    required String mode,
+    required String language,
+    required String name,
+    required String email,
+    required String password,
+    required String companyCode,
+    required int employeeId,
+    required String deskLocation,
+    required String department,
+    required String deskRole,
+  }) async {
     try {
       final response = await CustomHttp.post(
         endpoint: 'auth/sign-up',
@@ -119,13 +121,14 @@ class AuthService {
         showFloatingError: false,
       );
 
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.statusCode == 204) {
+      if (response.ok) {
         return ApiResponse.success(true);
       } else {
         final json = jsonDecode(response.error ?? '{}');
-        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
+        final errorMessage =
+            json['message']?.toString() ??
+            response.error ??
+            'Something went wrong';
 
         return ApiResponse.error(errorMessage);
       }
@@ -149,9 +152,7 @@ class AuthService {
         showFloatingError: false,
       );
 
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.statusCode == 204) {
+      if (response.ok) {
         AppHelper.instance.setAccessToken(response.data['access_token']);
         AppHelper.instance.setRefToken(response.data['refresh_token']);
         AppHelper.instance.setTokenValidity(response.data['expires_at']);
@@ -165,14 +166,11 @@ class AuthService {
 
         return ApiResponse.success(data);
       } else {
-        final json = jsonDecode(response.error ?? '{}');
-        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
-
-        return ApiResponse.error(errorMessage);
+        return ApiResponse.error(response.error!);
       }
     } catch (e) {
       debugPrint('AuthService error: ${e.runtimeType}');
-      return ApiResponse.error('Something went wrong 404');
+      return ApiResponse.error('Something went wrong');
     }
   }
 
@@ -194,9 +192,7 @@ class AuthService {
         showFloatingError: false,
       );
 
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.statusCode == 204) {
+      if (response.ok) {
         AppHelper.instance.setAccessToken(response.data['access_token']);
         AppHelper.instance.setRefToken(response.data['refresh_token']);
         AppHelper.instance.setTokenValidity(response.data['expires_at']);
@@ -208,7 +204,10 @@ class AuthService {
         return ApiResponse.success(data);
       } else {
         final json = jsonDecode(response.error ?? '{}');
-        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
+        final errorMessage =
+            json['message']?.toString() ??
+            response.error ??
+            'Something went wrong';
 
         return ApiResponse.error(errorMessage);
       }
@@ -228,9 +227,7 @@ class AuthService {
         showFloatingError: false,
       );
 
-      if (response.statusCode == 201 ||
-          response.statusCode == 200 ||
-          response.statusCode == 204) {
+      if (response.ok) {
         await AppHelper.instance.setUserId(response.data['user_id']);
 
         return ApiResponse.success(true);
@@ -259,12 +256,15 @@ class AuthService {
         showFloatingError: false,
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.ok) {
         AppHelper.instance.setSecretKey(response.data['secret_key']);
         return ApiResponse(success: true, data: true);
       } else {
         final json = jsonDecode(response.error ?? '{}');
-        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
+        final errorMessage =
+            json['message']?.toString() ??
+            response.error ??
+            'Something went wrong';
 
         return ApiResponse.error(errorMessage);
       }
@@ -294,9 +294,7 @@ class AuthService {
         showFloatingError: false,
       );
 
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.statusCode == 204) {
+      if (response.ok) {
         return ApiResponse(data: true, success: true);
       } else {
         final decoded = jsonDecode(response.error ?? 'something went wrong');
@@ -320,9 +318,7 @@ class AuthService {
         showFloatingError: false,
       );
 
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.statusCode == 204) {
+      if (response.ok) {
         return ApiResponse(data: true, success: true);
       } else {
         final decoded = jsonDecode(response.error ?? 'something went wrong');
@@ -349,14 +345,17 @@ class AuthService {
         showFloatingError: false,
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.ok) {
         AppHelper.instance.setAccessToken(response.data['access_token']);
         AppHelper.instance.setRefToken(response.data['refresh_token']);
         AppHelper.instance.setIsonBoarding(response.data['has_onboarded']);
         return ApiResponse(success: true, data: true);
       } else {
         final json = jsonDecode(response.error ?? '{}');
-        final errorMessage = json['message']?.toString() ?? response.error ?? 'Something went wrong';
+        final errorMessage =
+            json['message']?.toString() ??
+            response.error ??
+            'Something went wrong';
 
         return ApiResponse.error(errorMessage);
       }

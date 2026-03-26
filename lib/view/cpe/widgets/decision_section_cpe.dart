@@ -15,6 +15,7 @@ class ReviewModeSectionCPE extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // EN: "How did you review this workstation?"
         SectionTitle(loc.howDidYouReview),
         SizedBox(height: 10.h),
         Obx(
@@ -28,6 +29,7 @@ class ReviewModeSectionCPE extends StatelessWidget {
               children: [
                 _ModeButton(
                   icon: Icons.home_outlined,
+                  // EN: "Remote"
                   label: loc.remote,
                   isSelected: controller.reviewMode.value == ReviewMode.remote,
                   onTap: controller.initialReviewStatus.value == 'PENDING'
@@ -36,6 +38,7 @@ class ReviewModeSectionCPE extends StatelessWidget {
                 ),
                 _ModeButton(
                   icon: Icons.wifi_tethering_rounded,
+                  // EN: "Live"
                   label: loc.live,
                   isSelected: controller.reviewMode.value == ReviewMode.live,
                   onTap: controller.initialReviewStatus.value == 'PENDING'
@@ -119,6 +122,7 @@ class DecisionSectionCPE extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // EN: "Decision"
         SectionTitle(loc.decisionLabel),
         SizedBox(height: 8.h),
         Obx(

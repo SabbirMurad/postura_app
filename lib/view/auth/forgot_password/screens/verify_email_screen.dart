@@ -29,7 +29,9 @@ class VerifyEmailScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // EN: "Verify Your Email"
                 AppTopSection(title: loc.verifyEmail, subtitle: ''),
+                // EN: "Email"
                 Text(
                   loc.email,
                   style: TextStyle(
@@ -45,6 +47,7 @@ class VerifyEmailScreen extends StatelessWidget {
                     color: AppColors.primaryColor.withValues(alpha: 0.8),
                     size: 25.h,
                   ),
+                  // EN: "Enter your email"
                   hintText: loc.emailHint,
                   keyboardType: TextInputType.text,
                   validator: (value) {
@@ -64,6 +67,7 @@ class VerifyEmailScreen extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
           child: PrimaryButton(
             loading: forgotPasswordController.isLoading.value,
+            // EN: "Confirm Email"
             text: loc.confirmEmail,
             onTap: () async {
               final res = await forgotPasswordController.verifyEmail();

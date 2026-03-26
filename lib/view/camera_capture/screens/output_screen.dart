@@ -66,6 +66,7 @@ class OutputScreenBusiness extends StatelessWidget {
               children: [
                 CircularProgressIndicator(),
                 SizedBox(height: 16.h),
+                // EN: "Loading analysis data..."
                 Text(loc.loadingAnalysisData),
               ],
             ),
@@ -83,6 +84,7 @@ class OutputScreenBusiness extends StatelessWidget {
               children: [
                 SizedBox(height: 60.h),
                 Center(
+                  // EN: "ISO Ergonomic Analysis"
                   child: Text(
                     loc.isoErgonomicAnalysis,
                     style: TextStyle(
@@ -92,6 +94,7 @@ class OutputScreenBusiness extends StatelessWidget {
                   ),
                 ),
                 Center(
+                  // EN: "Based on ISO 9241"
                   child: Text(
                     loc.basedOnIso9241,
                     style: TextStyle(
@@ -186,6 +189,7 @@ class OutputScreenBusiness extends StatelessWidget {
                 ),
 
                 SizedBox(height: 6.h),
+                // EN: "Immediate correction required"
                 Text(
                   loc.immediateCorrection,
                   style: TextStyle(
@@ -201,7 +205,7 @@ class OutputScreenBusiness extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12.r),
                     child: CachedNetworkImage(
                       imageUrl: analysisData.aiResult.annotatedImageUrl,
-                      height: 219.h,
+                      // height: 400.h,
                       width: double.infinity,
                       fit: BoxFit.cover,
                     ),
@@ -210,6 +214,7 @@ class OutputScreenBusiness extends StatelessWidget {
 
                 Align(
                   alignment: Alignment.centerLeft,
+                  // EN: "Detailed Analysis"
                   child: Text(
                     loc.detailsAnalysis,
                     style: TextStyle(
@@ -226,6 +231,7 @@ class OutputScreenBusiness extends StatelessWidget {
                   iconBgColor: _getColorBySeverity(
                     posture.neckFlexion.severity,
                   ),
+                  // EN: "Neck Flexion"
                   title: AppLocalizations.of(context)!.neckFlexion,
                   subTitle: posture.neckFlexion.iso,
                   comment:
@@ -241,6 +247,7 @@ class OutputScreenBusiness extends StatelessWidget {
                   iconBgColor: _getColorBySeverity(
                     posture.shoulderElevation.severity,
                   ),
+                  // EN: "Shoulder Elevation"
                   title: AppLocalizations.of(context)!.shoulderElevation,
                   subTitle: posture.shoulderElevation.iso,
                   comment:
@@ -254,6 +261,7 @@ class OutputScreenBusiness extends StatelessWidget {
                 DetailsAnalysisContainer(
                   path: _getIconBySeverity(posture.elbowAngle.severity),
                   iconBgColor: _getColorBySeverity(posture.elbowAngle.severity),
+                  // EN: "Elbow Angle"
                   title: AppLocalizations.of(context)!.elbowAngle,
                   subTitle: posture.elbowAngle.iso,
                   comment:
@@ -269,6 +277,7 @@ class OutputScreenBusiness extends StatelessWidget {
                   iconBgColor: _getColorBySeverity(
                     posture.wristDeviation.severity,
                   ),
+                  // EN: "Wrist Deviation"
                   title: AppLocalizations.of(context)!.wristDeviation,
                   subTitle: posture.wristDeviation.iso,
                   comment:
@@ -282,6 +291,7 @@ class OutputScreenBusiness extends StatelessWidget {
                 DetailsAnalysisContainer(
                   path: _getIconBySeverity(posture.pelvicTilt.severity),
                   iconBgColor: _getColorBySeverity(posture.pelvicTilt.severity),
+                  // EN: "Pelvic Tilt"
                   title: AppLocalizations.of(context)!.pelvicTilt,
                   subTitle: posture.pelvicTilt.iso,
                   comment:
@@ -336,9 +346,10 @@ class OutputScreenBusiness extends StatelessWidget {
           children: [
             Expanded(
               child: PrimaryButton(
+                // EN: "Back"
                 text: loc.backButton,
                 onTap: () {
-                  Get.back();
+                  Get.offAllNamed(AppRoute.bottomNavBusiness);
                 },
                 backgroundColor: AppColors.greyDeemed,
                 textColor: AppColors.text,
@@ -350,6 +361,7 @@ class OutputScreenBusiness extends StatelessWidget {
                 onTap: () {
                   Get.toNamed(AppRoute.correctionReportScreenBusiness);
                 },
+                // EN: "View Correction"
                 text: loc.viewCorrection,
                 backgroundColor: AppColors.primaryColor,
                 textColor: AppColors.onBoardingSurface,

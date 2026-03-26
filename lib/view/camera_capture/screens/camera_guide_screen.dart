@@ -29,6 +29,7 @@ class CameraGuideScreen extends StatelessWidget {
               children: [
                 Align(alignment: Alignment.centerLeft, child: AppBackButton()),
                 SizedBox(height: 6.h),
+                // EN: "Photo Capture Guide"
                 Text(
                   loc.photoCaptureGuide,
                   style: TextStyle(
@@ -57,6 +58,7 @@ class CameraGuideScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // EN: "Person A (Subject)"
                         Text(
                           loc.personA,
                           style: TextStyle(
@@ -65,12 +67,16 @@ class CameraGuideScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 12.h),
+                        // EN: "Sit in a natural posture"
                         GuidedItem(number: '1', title: loc.guideA1),
                         SizedBox(height: 12.h),
+                        // EN: "Keep your feet flat on the floor"
                         GuidedItem(number: '2', title: loc.guideA2),
                         SizedBox(height: 12.h),
+                        // EN: "Look at the screen naturally"
                         GuidedItem(number: '3', title: loc.guideA3),
                         SizedBox(height: 12.h),
+                        // EN: "Wear fitted clothing"
                         GuidedItem(number: '4', title: loc.guideA4),
                       ],
                     ),
@@ -91,6 +97,7 @@ class CameraGuideScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // EN: "Person B (Photographer)"
                         Text(
                           loc.personB,
                           style: TextStyle(
@@ -99,13 +106,18 @@ class CameraGuideScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 12.h),
+                        // EN: "Stand 1.5 to 2 meters away"
                         GuidedItem(number: '1', title: loc.guideB1),
                         SizedBox(height: 12.h),
+                        // EN: "Capture from the side (90 degrees)"
                         GuidedItem(number: '2', title: loc.guideB2),
                         SizedBox(height: 12.h),
+                        // EN: "Make sure full body is visible"
                         GuidedItem(number: '3', title: loc.guideB3),
                         SizedBox(height: 12.h),
+                        // EN: "Use good lighting"
                         GuidedItem(number: '4', title: loc.guideB4),
+                        SizedBox(height: 48.h),
                       ],
                     ),
                   ),
@@ -127,6 +139,7 @@ class CameraGuideScreen extends StatelessWidget {
                   arguments: {'type': ScanType.captureImage},
                 );
               },
+              // EN: "Continue"
               text: loc.continueButton,
               backgroundColor: AppColors.primaryColor,
               textStyle: TextStyle(

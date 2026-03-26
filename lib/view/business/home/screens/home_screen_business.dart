@@ -89,6 +89,7 @@ class _HomeScreenBusinessState extends State<HomeScreenBusiness> {
                             ),
                             SizedBox(height: 16.h),
                             Text(
+                              // EN: "No analysis data available"
                               AppLocalizations.of(context)!.noAnalysisDataAvailable,
                               style: TextStyle(
                                 fontSize: 16.sp,
@@ -98,6 +99,7 @@ class _HomeScreenBusinessState extends State<HomeScreenBusiness> {
                             SizedBox(height: 12.h),
                             PrimaryButton(
                               onTap: () => reportController.fetchMyReports(),
+                              // EN: "Retry"
                               text: AppLocalizations.of(context)!.retry,
                               backgroundColor: AppColors.primaryColor,
                               textColor: AppColors.surface,
@@ -135,6 +137,7 @@ class _HomeScreenBusinessState extends State<HomeScreenBusiness> {
                       SizedBox(height: 19.h),
 
                       /// Details analysis header
+                      // EN: "Detailed Analysis"
                       Text(
                         loc.detailsAnalysis,
                         style: TextStyle(
@@ -151,6 +154,7 @@ class _HomeScreenBusinessState extends State<HomeScreenBusiness> {
                         Center(
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 20.h),
+                            // EN: "No posture data available"
                             child: Text(loc.noPostureDataAvailable),
                           ),
                         ),
@@ -162,6 +166,7 @@ class _HomeScreenBusinessState extends State<HomeScreenBusiness> {
                 SizedBox(height: 30.h),
                 Align(
                   alignment: Alignment.centerLeft,
+                  // EN: "Risk by Body Region"
                   child: Text(
                     loc.riskByBodyRegion,
                     style: TextStyle(
@@ -201,6 +206,7 @@ class _HomeScreenBusinessState extends State<HomeScreenBusiness> {
                     onTap: () {
                       reportController.exportReportPDF();
                     },
+                    // EN: "Export ISO Report PDF"
                     text: AppLocalizations.of(context)!.exportIsoReportPdf,
                     backgroundColor: AppColors.primaryColor,
                     textStyle: TextStyle(

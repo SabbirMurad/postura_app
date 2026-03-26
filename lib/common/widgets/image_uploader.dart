@@ -86,6 +86,7 @@ class _ImageUploaderVOneState extends State<ImageUploaderVOne> {
             children: [
               ListTile(
                 leading: const Icon(Icons.camera_alt),
+                // EN: "Take a photo"
                 title: Text(loc.takePhoto),
                 onTap: () {
                   Navigator.pop(context);
@@ -94,6 +95,7 @@ class _ImageUploaderVOneState extends State<ImageUploaderVOne> {
               ),
               ListTile(
                 leading: const Icon(Icons.photo_library),
+                // EN: "Choose from gallery"
                 title: Text(loc.chooseFromGallery),
                 onTap: () {
                   Navigator.pop(context);

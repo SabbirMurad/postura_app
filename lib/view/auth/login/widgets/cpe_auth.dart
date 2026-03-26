@@ -26,6 +26,7 @@ class CpeAuth extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ── Email ───────────────────────────────────
+          // EN: "Email"
           Text(
             loc.email,
             style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
@@ -39,12 +40,14 @@ class CpeAuth extends StatelessWidget {
               color: AppColors.primaryColor.withValues(alpha: 0.8),
               size: 25.h,
             ),
+            // EN: "Enter your email"
             hintText: loc.emailHint,
             keyboardType: TextInputType.emailAddress,
           ),
           SizedBox(height: 28.h),
 
           // ── Password ─────────────────────────────────
+          // EN: "Password"
           Text(
             loc.password,
             style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
@@ -71,6 +74,7 @@ class CpeAuth extends StatelessWidget {
                       )
                     : Assets.icons.auth.eyeOff.image(),
               ),
+              // EN: "Password"
               hintText: loc.password,
               keyboardType: TextInputType.text,
               isPassword: true,
@@ -86,6 +90,7 @@ class CpeAuth extends StatelessWidget {
               onTap: () {
                 Get.toNamed(AppRoute.verifyEmail);
               },
+              // EN: "Forget Credential"
               child: Text(
                 loc.forgetCredential,
                 style: TextStyle(
@@ -117,6 +122,7 @@ class CpeAuth extends StatelessWidget {
                       }
                     }
                   },
+                  // EN: "Login"
                   text: loc.login,
                   backgroundColor: AppColors.primaryColor,
                   textStyle: TextStyle(

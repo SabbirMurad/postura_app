@@ -31,12 +31,14 @@ class EmployeeCredentialScreen extends StatelessWidget {
               children: [
                 SizedBox(height: 20.h),
                 AppTopSection(
+                  // EN: "User Identification"
                   title: loc.userIdentification,
                   subtitle: AppText.userIdentificationSubtitle,
                 ),
 
                 SizedBox(height: 28.h),
                 Text(
+                  // EN: "Email"
                   loc.email,
                   style: TextStyle(
                     fontSize: 14.sp,
@@ -52,11 +54,13 @@ class EmployeeCredentialScreen extends StatelessWidget {
                     color: AppColors.primaryColor.withValues(alpha: 0.8),
                     size: 25.h,
                   ),
+                  // EN: "Enter your email"
                   hintText: loc.emailHint,
                   keyboardType: TextInputType.text,
                 ),
                 SizedBox(height: 28.h),
                 Text(
+                  // EN: "Name"
                   loc.name,
                   style: TextStyle(
                     fontSize: 14.sp,
@@ -72,11 +76,13 @@ class EmployeeCredentialScreen extends StatelessWidget {
                     color: AppColors.primaryColor.withValues(alpha: 0.8),
                     size: 25.h,
                   ),
+                  // EN: "Enter your name"
                   hintText: loc.nameHint,
                   keyboardType: TextInputType.text,
                 ),
                 SizedBox(height: 28.h),
                 Text(
+                  // EN: "Employee ID"
                   loc.employId,
                   style: TextStyle(
                     fontSize: 14.sp,
@@ -92,11 +98,13 @@ class EmployeeCredentialScreen extends StatelessWidget {
                     color: AppColors.primaryColor.withValues(alpha: 0.8),
                     size: 25.h,
                   ),
+                  // EN: "Your employee ID"
                   hintText: loc.employIdHint,
                   keyboardType: TextInputType.number,
                 ),
                 SizedBox(height: 28.h),
                 Text(
+                  // EN: "Password"
                   loc.password,
                   style: TextStyle(
                     fontSize: 14.sp,
@@ -112,6 +120,7 @@ class EmployeeCredentialScreen extends StatelessWidget {
                     color: AppColors.primaryColor.withValues(alpha: 0.8),
                     size: 25.h,
                   ),
+                  // EN: "Password"
                   hintText: loc.password,
                   keyboardType: TextInputType.text,
                 ),
@@ -131,11 +140,13 @@ class EmployeeCredentialScreen extends StatelessWidget {
                     signupController.userNameController.text.isEmpty ||
                     signupController.employeeIdController.text.isEmpty ||
                     signupController.companyPasswordController.text.isEmpty) {
+                  // EN: "All fields must be filled"
                   showCustomToast(text: loc.allFieldsMustBeFilled);
                 } else {
                   Get.toNamed(AppRoute.employeeWorkDetail);
                 }
               },
+              // EN: "Continue"
               text: loc.continueButton,
               backgroundColor: AppColors.primaryColor,
               textStyle: TextStyle(

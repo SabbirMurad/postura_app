@@ -31,6 +31,7 @@ class ImagePreviewScreen extends StatelessWidget {
             child: Column(
               children: [
                 SizedBox(height: 18.h),
+                // EN: "Photo Preview"
                 Text(
                   loc.photoPreview,
                   style: TextStyle(
@@ -74,6 +75,7 @@ class ImagePreviewScreen extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(height: 8.h),
+                                // EN: "Analyzing your posture..."
                                 Text(
                                   loc.analyzingPosture,
                                   style: TextStyle(
@@ -83,6 +85,7 @@ class ImagePreviewScreen extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(height: 3.h),
+                                // EN: "ISO 9241 standard"
                                 Text(
                                   loc.iso9241,
                                   style: TextStyle(
@@ -106,6 +109,7 @@ class ImagePreviewScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: PrimaryButton(
+                        // EN: "Retake"
                         text: loc.retake,
                         textColor: AppColors.text,
                         backgroundColor: AppColors.blackDeemed,
@@ -125,6 +129,7 @@ class ImagePreviewScreen extends StatelessWidget {
                       child: Obx(() {
                         return PrimaryButton(
                           loading: _signupController.isLoading.value,
+                          // EN: "Continue"
                           text: loc.continueButton,
                           textColor: AppColors.surface,
                           backgroundColor: AppColors.primaryColor,

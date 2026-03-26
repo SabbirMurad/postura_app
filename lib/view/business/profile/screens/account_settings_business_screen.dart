@@ -24,6 +24,7 @@ class AccountSettingsBusinessScreen extends StatelessWidget {
       backgroundColor: AppColors.surface,
       appBar: AppBar(
         backgroundColor: AppColors.surface,
+        // EN: "Account Settings"
         title: Text(loc.accountSettings),
         automaticallyImplyLeading: false,
         centerTitle: true,
@@ -40,6 +41,7 @@ class AccountSettingsBusinessScreen extends StatelessWidget {
               SizedBox(height: 24.h),
               Obx(() {
                 return ProfileInfo(
+                  // EN: name = "Name", edit = "Edit"
                   title: loc.name,
                   value:
                       controller.profileInfo.value?.data.fullName ?? 'username',
@@ -65,6 +67,7 @@ class AccountSettingsBusinessScreen extends StatelessWidget {
               Divider(color: AppColors.secondaryText.withValues(alpha: 0.2)),
               SizedBox(height: 24.h),
               ProfileInfo(
+                // EN: "Email"
                 title: loc.email,
                 value:
                     controller.profileInfo.value?.data.email ??
@@ -75,6 +78,7 @@ class AccountSettingsBusinessScreen extends StatelessWidget {
               Divider(color: AppColors.secondaryText.withValues(alpha: 0.2)),
               SizedBox(height: 24.h),
               ProfileInfo(
+                // EN: password = "Password", change = "Change"
                 title: loc.password,
                 value: '••••••••••••',
                 tailingText: loc.change,

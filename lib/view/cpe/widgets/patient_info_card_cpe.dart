@@ -79,6 +79,7 @@ class DeskInfoSectionCPE extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // EN: "Desk Info"
         SectionTitle(loc.deskInfo),
         SizedBox(height: 8.h),
         Container(
@@ -91,6 +92,7 @@ class DeskInfoSectionCPE extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
+                    // EN: "Desk ID / Location"
                     loc.deskIdLocation,
                     style: TextStyle(
                       fontSize: 12.sp,
@@ -98,6 +100,7 @@ class DeskInfoSectionCPE extends StatelessWidget {
                     ),
                   ),
                   Text(
+                    // EN: "Role"
                     loc.roleLabel,
                     style: TextStyle(
                       fontSize: 12.sp,
@@ -159,6 +162,7 @@ class PainSymptomsSectionCPE extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // EN: "Pain & Symptoms"
         SectionTitle(loc.painAndSymptoms),
         SizedBox(height: 8.h),
         ...controller.painSymptoms.map(
@@ -219,6 +223,7 @@ class PainCardCPE extends StatelessWidget {
                 ),
               ),
               Text(
+                // EN: "Pain Intensity"
                 loc.painIntensityLabel,
                 style: TextStyle(
                   fontSize: 12.sp,

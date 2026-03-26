@@ -30,8 +30,10 @@ class ForgotPasswordScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // EN: "Change Password"
               AppTopSection(title: loc.changePassword, subtitle: ''),
               SizedBox(height: 24.h),
+              // EN: "Change Password"
               Text(
                 loc.changePassword,
                 style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
@@ -58,6 +60,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                           )
                         : Assets.icons.auth.eyeOff.image(),
                   ),
+                  // EN: "Password"
                   hintText: loc.password,
                   keyboardType: TextInputType.text,
                   isPassword: true,
@@ -66,6 +69,7 @@ class ForgotPasswordScreen extends StatelessWidget {
               }),
               SizedBox(height: 20.h),
               Text(
+                // EN: "Confirm Password"
                 loc.confirmPassword,
                 style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
               ),
@@ -92,6 +96,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                           )
                         : Assets.icons.auth.eyeOff.image(),
                   ),
+                  // EN: "Password"
                   hintText: loc.password,
                   keyboardType: TextInputType.text,
                   isPassword: true,
@@ -108,6 +113,7 @@ class ForgotPasswordScreen extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
           child: PrimaryButton(
             loading: forgotPasswordController.isLoading.value,
+            // EN: "Confirm Password"
             text: loc.confirmPassword,
             onTap: () async {
               if (forgotPasswordController.passwordController.text
@@ -116,6 +122,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                   forgotPasswordController.confirmPasswordController.text
                       .trim()
                       .toString()) {
+                // EN: "Passwords do not match"
                 showCustomToast(text: loc.passwordNotMatched);
                 return;
               }

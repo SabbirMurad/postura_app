@@ -29,6 +29,7 @@ class BusinessPainIntensityScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 20.h),
+                // EN: painIntensity = "Pain Intensity", painIntensitySubtitle = "Rate the pain intensity for each region"
                 AppTopSection(
                   title: loc.painIntensity,
                   subtitle: loc.painIntensitySubtitle,
@@ -83,6 +84,7 @@ class BusinessPainIntensityScreen extends StatelessWidget {
               onTap: () {
                 Get.toNamed(AppRoute.employeePainDurationScreen);
               },
+              // EN: "Continue"
               text: loc.continueButton,
               backgroundColor: AppColors.primaryColor,
               textStyle: TextStyle(

@@ -35,31 +35,8 @@ class LoginControllerBusiness extends GetxController {
 
   AppLocalizations get _loc => AppLocalizations.of(Get.context!)!;
 
-  // ── Private sign in ──────────────────────────────────────────────────
-  Future<bool> privateSignIn(String mode, String email, String password) async {
-    isLoading2.value = true;
-
-    final response = await _authService.privateSignIn(mode, email, password);
-    final isOnboarding = await AppHelper.instance.getIsonBoarding();
-
-    if (response.data != null) {
-      isLoading2.value = false;
-      // Pre-fetch reports so data is ready when home screen loads
-      _prefetchReports();
-      if (isOnboarding == true) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      isLoading2.value = false;
-      showCustomToast(text: response.error ?? _loc.somethingWentWrong);
-    }
-    return false;
-  }
-
   // ── Business sign in ─────────────────────────────────────────────────
-  Future<bool> businessSignIn(
+  Future<bool?> businessSignIn(
     String mode,
     String email,
     String password,
@@ -72,17 +49,19 @@ class LoginControllerBusiness extends GetxController {
     if (response.data != null) {
       isLoading.value = false;
       // Pre-fetch reports so data is ready when home screen loads
-      _prefetchReports();
+
       if (isOnboarding == true) {
+        _prefetchReports();
         return true;
       } else {
         return false;
       }
     } else {
       isLoading.value = false;
+      // EN: "Something went wrong"
       showCustomToast(text: response.error ?? _loc.somethingWentWrong);
+      return null;
     }
-    return false;
   }
 
   // ── CPE sign in ──────────────────────────────────────────────────────
@@ -103,6 +82,7 @@ class LoginControllerBusiness extends GetxController {
       return true;
     } else {
       isLoadingCpe.value = false;
+      // EN: "Something went wrong"
       showCustomToast(text: response.error ?? _loc.somethingWentWrong);
     }
     return false;

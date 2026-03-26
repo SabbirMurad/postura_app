@@ -15,6 +15,7 @@ class CommentSectionCPE extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // EN: "Comment"
         SectionTitle(loc.commentLabel),
         SizedBox(height: 8.h),
         Container(
@@ -37,6 +38,7 @@ class CommentSectionCPE extends StatelessWidget {
                   color: const Color(0xFF202020),
                 ),
                 decoration: InputDecoration(
+                  // EN: "e.g. this looks good I guess."
                   hintText: loc.commentHint,
                   hintStyle: TextStyle(
                     fontSize: 13.sp,
@@ -108,6 +110,7 @@ class SubmitButtonCPE extends StatelessWidget {
                     ),
                   )
                 : Text(
+                    // EN: "Submit Review"
                     loc.submitReview,
                     style: TextStyle(
                       fontSize: 15.sp,

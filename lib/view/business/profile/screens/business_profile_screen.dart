@@ -30,6 +30,7 @@ class BusinessProfileScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
+                  // EN: "Settings"
                   loc.settings,
                   style: TextStyle(
                     fontSize: 20.sp,
@@ -54,6 +55,7 @@ class BusinessProfileScreen extends StatelessWidget {
                 SizedBox(height: 12.h),
                 SettingsContainer(
                   iconData: Assets.icons.auth.person.path,
+                  // EN: "Account Settings"
                   title: loc.accountSettings,
                   onTap: () {
                     Get.toNamed(AppRoute.businessAccountSettings);
@@ -62,6 +64,7 @@ class BusinessProfileScreen extends StatelessWidget {
                 SizedBox(height: 12.h),
                 SettingsContainer(
                   iconData: Assets.icons.general.notification.path,
+                  // EN: "Notifications"
                   title: loc.notifications,
                   onTap: () {
                     // TODO: Implement notifications navigation
@@ -70,6 +73,7 @@ class BusinessProfileScreen extends StatelessWidget {
                 SizedBox(height: 12.h),
                 SettingsContainer(
                   iconData: Assets.icons.general.learning.path,
+                  // EN: "E-Learning"
                   title: loc.elearning,
                   onTap: () {
                     Get.toNamed(AppRoute.elearning);
@@ -78,6 +82,7 @@ class BusinessProfileScreen extends StatelessWidget {
                 SizedBox(height: 12.h),
                 SettingsContainer(
                   iconData: Assets.icons.general.language.path,
+                  // EN: "Language"
                   title: loc.language,
                   onTap: () {
                     Get.toNamed(AppRoute.businessLanguageScreen);
@@ -86,6 +91,7 @@ class BusinessProfileScreen extends StatelessWidget {
                 SizedBox(height: 12.h),
                 SettingsContainer(
                   iconData: Assets.icons.general.policy.path,
+                  // EN: "Privacy & Policy"
                   title: loc.privacyPolicy,
                   onTap: () {
                     Get.toNamed(AppRoute.privacyPolicy);
@@ -94,6 +100,7 @@ class BusinessProfileScreen extends StatelessWidget {
                 SizedBox(height: 12.h),
                 SettingsContainer(
                   iconData: Assets.icons.general.logout.path,
+                  // EN: "Logout"
                   title: loc.logout,
                   onTap: () {
                     showLogoutConfirmDialog(context);

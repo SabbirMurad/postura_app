@@ -32,6 +32,7 @@ class CorrectionReportScreenBusiness extends StatelessWidget {
             child: Column(
               children: [
                 SizedBox(height: 20.h),
+                // EN: miniIsoCorrection = "Mini ISO Correction", miniIsoCorrectionSubtitle = "Here are some corrections based on ISO 9241 standards"
                 AppTopSection(
                   title: loc.miniIsoCorrection,
                   subtitle: loc.miniIsoCorrectionSubtitle,
@@ -74,6 +75,7 @@ class CorrectionReportScreenBusiness extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 20.h),
           child: BottomButton(
+            // EN: "View Exercise"
             title: loc.viewExercise,
             onTap: () {
               Get.toNamed(AppRoute.exerciseBusiness);

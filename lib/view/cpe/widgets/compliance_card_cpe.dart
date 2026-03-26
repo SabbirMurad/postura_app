@@ -24,6 +24,7 @@ class ComplianceCardCPE extends StatelessWidget {
       child: Column(
         children: [
           Text(
+            // EN: "ISO Ergonomic Analysis"
             loc.isoErgonomicAnalysis,
             style: TextStyle(
               fontSize: 14.sp,
@@ -55,6 +56,7 @@ class ComplianceCardCPE extends StatelessWidget {
                     ),
                   ),
                   Text(
+                    // EN: "COMPLIANCE"
                     loc.complianceLabel,
                     style: TextStyle(
                       fontSize: 11.sp,
@@ -70,6 +72,7 @@ class ComplianceCardCPE extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
+                // EN: "Overall score:"
                 loc.overallScore,
                 style: TextStyle(
                   fontSize: 14.sp,

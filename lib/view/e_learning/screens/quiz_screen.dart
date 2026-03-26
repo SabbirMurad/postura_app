@@ -42,6 +42,7 @@ class _QuizScreenState extends State<QuizScreen> {
             onPressed: () => Get.back(),
           ),
           title: Text(
+            // EN: moduleLabel = "Module"
             "${AppLocalizations.of(context)!.moduleLabel} ${module.id}",
             style: const TextStyle(
               color: Colors.black,
@@ -59,6 +60,7 @@ class _QuizScreenState extends State<QuizScreen> {
             indicatorWeight: 2,
             labelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
             tabs: [
+              // EN: details = "Details", quiz = "Quiz"
               Tab(text: AppLocalizations.of(context)!.details),
               Tab(text: AppLocalizations.of(context)!.quiz),
             ],
@@ -84,6 +86,7 @@ class _QuizScreenState extends State<QuizScreen> {
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 24),
+            // EN: "Objective"
             Text(
               AppLocalizations.of(context)!.objective,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
@@ -102,6 +105,7 @@ class _QuizScreenState extends State<QuizScreen> {
               },
             ),
             const SizedBox(height: 24),
+            // EN: "Content"
             Text(
               AppLocalizations.of(context)!.content,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
@@ -150,6 +154,7 @@ class _QuizScreenState extends State<QuizScreen> {
 
             // Submit button
             PrimaryButton(
+              // EN: "Submit"
               text: AppLocalizations.of(context)!.submit,
               backgroundColor: AppColors.primaryColor,
               textColor: AppColors.surface,
@@ -158,6 +163,7 @@ class _QuizScreenState extends State<QuizScreen> {
                 if (controller.selectedAnswers.length <
                     randomQuestions.length) {
                   Get.snackbar(
+                    // EN: incomplete = "Incomplete", pleaseAnswerAllQuestions = "Please answer all questions"
                     AppLocalizations.of(context)!.incomplete,
                     AppLocalizations.of(context)!.pleaseAnswerAllQuestions,
                     snackPosition: SnackPosition.BOTTOM,
@@ -356,6 +362,7 @@ class _QuizScreenState extends State<QuizScreen> {
                         ),
                       ),
                       SizedBox(height: 12.h),
+                      // EN: "Your Score"
                       Text(
                         AppLocalizations.of(context)!.yourScore,
                         style: TextStyle(
@@ -419,6 +426,7 @@ class _QuizScreenState extends State<QuizScreen> {
 
                       // Title
                       Text(
+                        // EN: wellDone = "Well Done!", keepTrying = "Keep Trying!"
                         passed ? AppLocalizations.of(context)!.wellDone : AppLocalizations.of(context)!.keepTrying,
                         style: TextStyle(
                           fontSize: 22.sp,
@@ -431,6 +439,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       // Subtitle
                       Text(
                         passed
+                            // EN: youPassedModule = "You passed Module {moduleId} successfully", needAtLeast4Correct = "You need at least 4 correct answers to pass"
                             ? AppLocalizations.of(context)!.youPassedModule(moduleId)
                             : AppLocalizations.of(context)!.needAtLeast4Correct,
                         style: TextStyle(
@@ -463,6 +472,7 @@ class _QuizScreenState extends State<QuizScreen> {
                             elevation: 0,
                           ),
                           child: Text(
+                            // EN: continueButton = "Continue", tryAgain = "Try Again"
                             passed ? AppLocalizations.of(context)!.continueButton : AppLocalizations.of(context)!.tryAgain,
                             style: TextStyle(
                               fontSize: 16.sp,

@@ -34,6 +34,7 @@ class AnalysisSectionContainer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // EN: "ISO Ergonomic Analysis"
             Text(
               AppLocalizations.of(context)!.isoErgonomicAnalysis,
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.sp),
@@ -63,6 +64,7 @@ class AnalysisSectionContainer extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
+                        // EN: "Compliance"
                         Text(
                           AppLocalizations.of(context)!.compliance,
                           style: TextStyle(
@@ -97,6 +99,7 @@ class OverAllScore extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // EN: "Your overall score:"
             Text(
               AppLocalizations.of(context)!.yourOverallScore,
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18.sp),
@@ -130,6 +133,7 @@ class OverAllScore extends StatelessWidget {
           ],
         ),
         SizedBox(height: 6.h),
+        // EN: "Immediate correction required!"
         Text(
           AppLocalizations.of(context)!.immediateCorrectionRequired,
           style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400),

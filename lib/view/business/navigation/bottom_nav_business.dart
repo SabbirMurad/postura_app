@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:posture_detector_app/view/auth/signup/equipment_screen_business.dart';
 // import 'package:posture_detector_app/features/auth/signup/business/equipment_screen_business.dart';
 // import 'package:posture_detector_app/features/auth/signup/business/exercise_screen_business.dart';
 import 'package:posture_detector_app/view/business/home/screens/home_screen_business.dart';
@@ -22,6 +23,7 @@ class _BottomNavState extends State<BottomNavBusiness> {
   List<Widget> pages = [
     HomeScreenBusiness(),
     ExerciseBusinessScreen(),
+    EquipmentScreenBusiness(canSendListToCompany: false),
     ScanBusinessScreen(),
     BusinessProfileScreen(),
   ];
@@ -57,7 +59,10 @@ class _BottomNavState extends State<BottomNavBusiness> {
               child: Assets.icons.nav.homeFilled.svg(
                 width: 24.h,
                 height: 24.h,
-                colorFilter: ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  AppColors.primaryColor,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
@@ -72,7 +77,28 @@ class _BottomNavState extends State<BottomNavBusiness> {
               child: Assets.icons.nav.exerciseFilled.svg(
                 width: 24.h,
                 height: 24.h,
-                colorFilter: ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  AppColors.primaryColor,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: EdgeInsets.only(top: 4.h, bottom: 5.h),
+              child: Assets.icons.nav.equipment.svg(width: 24.h, height: 24.h),
+            ),
+            label: 'Equipment',
+            activeIcon: Padding(
+              padding: EdgeInsets.only(top: 4.h, bottom: 5.h),
+              child: Assets.icons.nav.equipmentFilled.svg(
+                width: 24.h,
+                height: 24.h,
+                colorFilter: ColorFilter.mode(
+                  AppColors.primaryColor,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
@@ -87,7 +113,10 @@ class _BottomNavState extends State<BottomNavBusiness> {
               child: Assets.icons.nav.cameraScanFilled.svg(
                 width: 24.h,
                 height: 24.h,
-                colorFilter: ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  AppColors.primaryColor,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
@@ -101,7 +130,10 @@ class _BottomNavState extends State<BottomNavBusiness> {
               child: Assets.icons.nav.settingsFilled.svg(
                 width: 24.h,
                 height: 24.h,
-                colorFilter: ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  AppColors.primaryColor,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
             label: 'settings',

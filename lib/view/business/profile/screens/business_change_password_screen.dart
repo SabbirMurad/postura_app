@@ -22,6 +22,7 @@ class BusinessChangePasswordScreen extends StatelessWidget {
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
+        // EN: "Update Password"
         title: Text(loc.updatePassword),
         backgroundColor: AppColors.surface,
         automaticallyImplyLeading: false,
@@ -47,6 +48,7 @@ class BusinessChangePasswordScreen extends StatelessWidget {
                 SizedBox(height: 25.h),
 
                 CustomTextField(
+                  // EN: "Current Password"
                   hintText: loc.currentPassword,
                   controller: changePassController.currentPassController,
                   isPassword: true,
@@ -61,6 +63,7 @@ class BusinessChangePasswordScreen extends StatelessWidget {
                 SizedBox(height: 24.h),
 
                 CustomTextField(
+                  // EN: "New Password"
                   hintText: loc.newPassword,
                   controller: changePassController.newPassController,
                   isPassword: true,
@@ -74,6 +77,7 @@ class BusinessChangePasswordScreen extends StatelessWidget {
 
                 SizedBox(height: 24.h),
                 CustomTextField(
+                  // EN: "Confirm Password"
                   hintText: loc.confirmPassword,
                   controller: changePassController.confirmPassController,
                   isPassword: true,
@@ -89,6 +93,7 @@ class BusinessChangePasswordScreen extends StatelessWidget {
                   bottom: true,
                   child: Obx(() {
                     return PrimaryButton(
+                      // EN: "Update"
                       text: loc.update,
                       loading: changePassController.isLoading.value,
                       textStyle: TextStyle(
@@ -104,6 +109,7 @@ class BusinessChangePasswordScreen extends StatelessWidget {
                                   .toString()) {
                             changePassController.changePassword();
                           } else {
+                            // EN: "Passwords do not match"
                             showCustomToast(text: loc.passwordNotMatched);
                           }
                         }

@@ -29,6 +29,7 @@ class ExerciseBusinessScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 8.h),
+                  // EN: "Personalized Exercise Program"
                   Text(
                     loc.personalizedExerciseProgram,
                     style: TextStyle(
@@ -37,6 +38,7 @@ class ExerciseBusinessScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 8.h),
+                  // EN: "Follow these exercises tailored to your posture analysis"
                   Text(
                     loc.personalizedExerciseProgramSubtitle,
                     style: TextStyle(

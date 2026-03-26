@@ -145,6 +145,7 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                                                 size: 40.sp,
                                               ),
                                               SizedBox(height: 8.h),
+                                              // EN: "Image not available"
                                               Text(loc.imageNotAvailable),
                                             ],
                                           ),

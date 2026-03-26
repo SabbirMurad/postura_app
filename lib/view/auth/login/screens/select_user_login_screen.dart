@@ -8,7 +8,7 @@ import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/core/enums/user_type.dart';
 import 'package:posture_detector_app/controller/signup_controller.dart';
-import 'package:posture_detector_app/view/auth/signup/business/widgets/user_type_card.dart';
+import 'package:posture_detector_app/view/auth/signup/widgets/user_type_card.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 
@@ -39,11 +39,13 @@ class SelectUserLoginScreen extends StatelessWidget {
             ),
             SizedBox(height: 17.h),
             Text(
+              // EN: "Choose Your Mode"
               loc.chooseModeTitle,
               style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 12.h),
             Text(
+              // EN: "ISO-aligned ergonomic assessment and recommendations"
               loc.chooseModeSubtitle,
               style: TextStyle(
                 fontSize: 16.sp,
@@ -59,6 +61,7 @@ class SelectUserLoginScreen extends StatelessWidget {
               },
               child: UserTypeCard(
                 image: Assets.icons.auth.business.svg(),
+                // EN: business = "Business", businessTitle = "Companies, HR, Admin, Desk Workers"
                 title: loc.business,
                 subtitle: loc.businessTitle,
                 controller: signupController,
@@ -68,23 +71,11 @@ class SelectUserLoginScreen extends StatelessWidget {
             SizedBox(height: 12.h),
             GestureDetector(
               onTap: () {
-                signupController.userRole.value = Users.PRIVATE.name;
-              },
-              child: UserTypeCard(
-                image: Assets.icons.auth.private.svg(),
-                title: loc.private,
-                subtitle: loc.privateTitle,
-                controller: signupController,
-                userType: Users.PRIVATE,
-              ),
-            ),
-            SizedBox(height: 12.h),
-            GestureDetector(
-              onTap: () {
                 signupController.userRole.value = Users.CPE.name;
               },
               child: UserTypeCard(
                 image: Assets.icons.auth.cpe.svg(),
+                // EN: cpe = "CPE", ergonomistCpe = "Ergonomist / CPE"
                 title: AppLocalizations.of(context)!.cpe,
                 subtitle: AppLocalizations.of(context)!.ergonomistCpe,
                 controller: signupController,
@@ -104,12 +95,14 @@ class SelectUserLoginScreen extends StatelessWidget {
                 PrimaryButton(
                   onTap: () {
                     if (signupController.userRole.isEmpty) {
+                      // EN: "Please select a user mode"
                       showCustomToast(text: loc.pleaseSelectUserMode);
                     }
                     if (signupController.userRole.isNotEmpty) {
                       Get.toNamed(AppRoute.loginScreen);
                     }
                   },
+                  // EN: "Continue"
                   text: loc.continueButton,
                   backgroundColor: AppColors.primaryColor,
                   textColor: AppColors.surface,
@@ -120,6 +113,7 @@ class SelectUserLoginScreen extends StatelessWidget {
                   onTap: () {
                     Get.back();
                   },
+                  // EN: "Back"
                   text: loc.backButton,
                   backgroundColor: AppColors.greyDeemed,
                   borderRadius: BorderRadius.circular(14.r),

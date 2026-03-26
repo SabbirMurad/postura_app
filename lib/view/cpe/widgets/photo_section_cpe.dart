@@ -17,6 +17,7 @@ class PhotoSectionCPE extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // EN: "Photos"
         SectionTitle(AppLocalizations.of(context)!.photos),
         SizedBox(height: 10.h),
         Obx(

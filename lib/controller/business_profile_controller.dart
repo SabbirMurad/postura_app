@@ -30,6 +30,7 @@ class BusinessProfileController extends GetxController {
       profileInfo.value = response.data;
     } else {
       isLoading.value = false;
+      // EN: "Data not found"
       utils.showCustomToast(text: _loc.fetchingDataNotFound);
     }
   }
@@ -46,11 +47,13 @@ class BusinessProfileController extends GetxController {
       fetchProfileData();
       profileInfo.refresh();
       utils.showCustomToast(
+        // EN: "Username changed successfully"
         text: _loc.userNameChangedSuccessfully,
         toastType: utils.ToastTypesInfo(utils.ToastTypes.success),
       );
     } else {
       isLoading.value = false;
+      // EN: "Data not found"
       utils.showCustomToast(text: _loc.fetchingDataNotFound);
     }
   }
@@ -63,6 +66,7 @@ class BusinessProfileController extends GetxController {
 
     if (response.data != null) {
       utils.showCustomToast(
+        // EN: "Image uploaded successfully"
         text: _loc.uploadImageSuccessfully,
         toastType: utils.ToastTypesInfo(utils.ToastTypes.success),
       );
@@ -70,6 +74,7 @@ class BusinessProfileController extends GetxController {
       fetchProfileData();
       profileInfo.refresh();
     } else {
+      // EN: "Something went wrong"
       utils.showCustomToast(text: response.error ?? _loc.somethingWentWrong);
     }
   }

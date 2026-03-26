@@ -17,6 +17,7 @@ class SignatureSectionCPE extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // EN: "Add Signature"
         SectionTitle(AppLocalizations.of(context)!.addSignature),
         SizedBox(height: 10.h),
         Obx(() {
@@ -111,6 +112,7 @@ class SignatureSectionCPE extends StatelessWidget {
                         ),
                         SizedBox(height: 8.h),
                         Text(
+                          // EN: "Upload Signature"
                           AppLocalizations.of(context)!.uploadSignature,
                           style: TextStyle(
                             fontSize: 13.sp,

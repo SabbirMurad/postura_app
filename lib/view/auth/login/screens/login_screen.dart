@@ -34,6 +34,7 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(height: 17.h),
                 Center(
                   child: Text(
+                    // EN: "Welcome back"
                     loc.welcomeBackWithName,
                     style: TextStyle(
                       fontSize: 24.sp,
@@ -79,13 +80,15 @@ class _UserTypeDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final options = [
-      _UserOption(
-        user: Users.PRIVATE,
-        label: loc.individualUser,
-        icon: Icons.person_outline_rounded,
-      ),
+      // _UserOption(
+      //   user: Users.PRIVATE,
+      //   // EN: "Individual User"
+      //   label: loc.individualUser,
+      //   icon: Icons.person_outline_rounded,
+      // ),
       _UserOption(
         user: Users.EMPLOYEE,
+        // EN: "Company User"
         label: loc.companyUser,
         icon: Icons.business_center_outlined,
       ),

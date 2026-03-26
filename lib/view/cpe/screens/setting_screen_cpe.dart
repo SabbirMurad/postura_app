@@ -30,6 +30,7 @@ class SettingScreenCPE extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
+                  // EN: "Settings"
                   loc.settings,
                   style: TextStyle(
                     fontSize: 20.sp,
@@ -54,6 +55,7 @@ class SettingScreenCPE extends StatelessWidget {
                 SizedBox(height: 12.h),
                 SettingsContainer(
                   iconData: Assets.icons.auth.person.path,
+                  // EN: "Account Settings"
                   title: loc.accountSettings,
                   onTap: () {
                     Get.toNamed(AppRoute.businessAccountSettings);
@@ -63,6 +65,7 @@ class SettingScreenCPE extends StatelessWidget {
 
                 SettingsContainer(
                   iconData: Assets.icons.general.language.path,
+                  // EN: "Language"
                   title: loc.language,
                   onTap: () {
                     Get.toNamed(AppRoute.businessLanguageScreen);
@@ -71,6 +74,7 @@ class SettingScreenCPE extends StatelessWidget {
                 SizedBox(height: 12.h),
                 SettingsContainer(
                   iconData: Assets.icons.general.policy.path,
+                  // EN: "Privacy & Policy"
                   title: loc.privacyPolicy,
                   onTap: () {
                     Get.toNamed(AppRoute.privacyPolicy);
@@ -79,6 +83,7 @@ class SettingScreenCPE extends StatelessWidget {
                 SizedBox(height: 12.h),
                 SettingsContainer(
                   iconData: Assets.icons.general.logout.path,
+                  // EN: "Logout"
                   title: loc.logout,
                   onTap: () {
                     showLogoutConfirmDialog(context);

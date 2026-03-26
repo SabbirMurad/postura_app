@@ -24,6 +24,7 @@ void showEditNameDialog(
     builder: (context) {
       return AlertDialog(
         backgroundColor: AppColors.onBoardingSurface,
+        // EN: "Full Name"
         title: Text(
           loc.fullName,
           style: TextStyle(
@@ -34,6 +35,7 @@ void showEditNameDialog(
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // EN: "This name must match your Government ID"
             Text(
               loc.govtId,
               style: TextStyle(
@@ -56,6 +58,7 @@ void showEditNameDialog(
                     onTap: () {
                       Get.back();
                     },
+                    // EN: "Cancel"
                     text: loc.cancel,
                     backgroundColor: AppColors.greyDeemed,
                   ),
@@ -64,6 +67,7 @@ void showEditNameDialog(
                 Expanded(
                   child: Obx(() {
                     return PrimaryButton(
+                      // EN: "Save"
                       text: loc.save,
                       backgroundColor: AppColors.primaryColor,
                       textColor: AppColors.onBoardingSurface,

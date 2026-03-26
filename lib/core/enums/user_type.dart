@@ -1,1 +1,1 @@
-enum Users { EMPLOYEE, PRIVATE, CPE, ERGONOMIST }
+enum Users { EMPLOYEE, CPE }

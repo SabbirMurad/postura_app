@@ -29,6 +29,7 @@ class BusinessLanguageScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 20.h),
+              // EN: selectLanguage = "Select Language", selectLanguageSubtitle = "Select your preferred language"
               AppTopSection(
                 title: loc.selectLanguage,
                 subtitle: loc.selectLanguageSubtitle,
@@ -119,6 +120,7 @@ class BusinessLanguageScreen extends StatelessWidget {
                       Get.find<ELearningController>().loadModulesForLocale(lang);
                     }
                   },
+                  // EN: "Continue"
                   text: loc.continueButton,
                   backgroundColor: AppColors.primaryColor,
                   textStyle: TextStyle(

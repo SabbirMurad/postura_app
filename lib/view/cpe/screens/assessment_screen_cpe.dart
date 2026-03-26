@@ -54,6 +54,7 @@ class CPEAssessmentScreen extends StatelessWidget {
 
                       /// Title
                       Text(
+                        // EN: "CPE Assessment Review"
                         loc.cpeAssessmentReview,
                         style: TextStyle(
                           fontSize: 20.sp,
@@ -63,6 +64,7 @@ class CPEAssessmentScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 2.h),
                       Text(
+                        // EN: "Review data and complete checklist to approve."
                         loc.cpeAssessmentSubtitle,
                         style: TextStyle(
                           fontSize: 13.sp,

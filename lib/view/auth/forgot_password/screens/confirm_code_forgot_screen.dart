@@ -29,11 +29,13 @@ class ConfirmCodeForgotScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AppTopSection(
+                  // EN: confirmEmail = "Confirm Email", weSend6digitCode = "We send a 4 digit verification code to your email."
                   title: loc.confirmEmail,
                   subtitle: loc.weSend6digitCode,
                 ),
                 SizedBox(height: 28.h),
                 Text(
+                  // EN: "Enter OTP"
                   loc.enterOTP,
                   style: TextStyle(
                     fontSize: 14.sp,
@@ -68,6 +70,7 @@ class ConfirmCodeForgotScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
+                      // EN: "Didn't get the code?"
                       loc.donGetCode,
                       style: TextStyle(
                         fontSize: 14.sp,
@@ -79,6 +82,7 @@ class ConfirmCodeForgotScreen extends StatelessWidget {
                         forgotPasswordController.resendOtp();
                       },
                       child: Text(
+                        // EN: "Resend code"
                         loc.resendCode,
                         style: TextStyle(
                           fontSize: 14.sp,
@@ -100,6 +104,7 @@ class ConfirmCodeForgotScreen extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
           child: PrimaryButton(
             loading: forgotPasswordController.isLoading.value,
+            // EN: "Confirm Code"
             text: loc.confirmCode,
             onTap: () async {
               final res = await forgotPasswordController.verifyOtp();

@@ -24,6 +24,7 @@ class CpeHomeHeader extends StatelessWidget {
           children: [
             Row(
               children: [
+                // EN: "Hi"
                 Text(
                   '${loc.hi} $userName ',
                   style: TextStyle(
@@ -37,6 +38,7 @@ class CpeHomeHeader extends StatelessWidget {
             ),
             SizedBox(height: 2.h),
             Text(
+              // EN: "Stand Tall, Feel Great"
               loc.welcomeTitle,
               style: TextStyle(
                 fontSize: 13.sp,

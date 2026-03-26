@@ -14,6 +14,7 @@ class ApprovalsSectionCPE extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // EN: "Approvals"
         SectionTitle(AppLocalizations.of(context)!.approvals),
         SizedBox(height: 12.h),
         Obx(

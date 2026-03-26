@@ -43,11 +43,9 @@ class OnboardingService {
       );
 
       debugPrint('===== ONBOARDING RESPONSE =====');
-      debugPrint('Status code: ${connection.statusCode}');
+      debugPrint('Status code: ${connection.status_code}');
 
-      if (connection.statusCode == 200 ||
-          connection.statusCode == 201 ||
-          connection.statusCode == 204) {
+      if (connection.ok) {
         // Check if connection.data is null
         if (connection.data == null) {
           debugPrint('ERROR: connection.data is null');
@@ -88,7 +86,7 @@ class OnboardingService {
           );
         }
       } else {
-        debugPrint('ERROR: Non-success status code: ${connection.statusCode}');
+        debugPrint('ERROR: Non-success status code: ${connection.status_code}');
 
         try {
           final json = connection.error != null
@@ -108,7 +106,7 @@ class OnboardingService {
         } catch (e) {
           debugPrint('Error parsing error response: ${e.runtimeType}');
           return ApiResponse.error(
-            'Request failed with status ${connection.statusCode}',
+            'Request failed with status ${connection.status_code}',
           );
         }
       }
@@ -131,9 +129,9 @@ class OnboardingService {
       );
 
       debugPrint('===== FETCH MY REPORTS RESPONSE =====');
-      debugPrint('Status code: ${connection.statusCode}');
+      debugPrint('Status code: ${connection.status_code}');
 
-      if (connection.statusCode == 200 || connection.statusCode == 201) {
+      if (connection.ok) {
         // Check if connection.data is null
         if (connection.data == null) {
           debugPrint('ERROR: connection.data is null');
@@ -174,7 +172,7 @@ class OnboardingService {
           );
         }
       } else {
-        debugPrint('ERROR: Non-success status code: ${connection.statusCode}');
+        debugPrint('ERROR: Non-success status code: ${connection.status_code}');
 
         try {
           final json = connection.error != null
@@ -194,7 +192,7 @@ class OnboardingService {
         } catch (e) {
           debugPrint('Error parsing error response: ${e.runtimeType}');
           return ApiResponse.error(
-            'Request failed with status ${connection.statusCode}',
+            'Request failed with status ${connection.status_code}',
           );
         }
       }
@@ -219,9 +217,9 @@ class OnboardingService {
       );
 
       debugPrint('===== EXPORT REPORT PDF RESPONSE =====');
-      debugPrint('Status code: ${connection.statusCode}');
+      debugPrint('Status code: ${connection.status_code}');
 
-      if (connection.statusCode == 200) {
+      if (connection.ok) {
         debugPrint('PDF exported successfully');
         // Assuming the response contains a download URL or file path
         final data = connection.data;
@@ -235,7 +233,7 @@ class OnboardingService {
 
         return ApiResponse.error('Unable to extract PDF URL from response');
       } else {
-        debugPrint('ERROR: Non-success status code: ${connection.statusCode}');
+        debugPrint('ERROR: Non-success status code: ${connection.status_code}');
         return ApiResponse.error('Failed to export PDF');
       }
     } catch (e, stackTrace) {

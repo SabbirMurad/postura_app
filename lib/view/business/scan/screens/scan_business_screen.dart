@@ -36,6 +36,7 @@ class _ScanBusinessScreenState extends State<ScanBusinessScreen> {
 
                 /// Header
                 Text(
+                  // EN: "Scan your posture!"
                   loc.scanYourPosture,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
@@ -43,6 +44,7 @@ class _ScanBusinessScreenState extends State<ScanBusinessScreen> {
                   ),
                 ),
                 Text(
+                  // EN: "Scan and get personalized posture"
                   loc.scanYourPostureSubtitle,
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
@@ -65,6 +67,7 @@ class _ScanBusinessScreenState extends State<ScanBusinessScreen> {
 
                 /// Instant Scan Button
                 ScanContainer(
+                  // EN: instantScan = "Instant Scan", instantScanInfo = "If you perform an instant scan, you will get a new set of suggestions and score and your previous scores and suggestions will be replaced by the new."
                   title: loc.instantScan,
                   subtitle: loc.instantScanInfo,
                   iconPath: Assets.icons.general.instantScan.path,
@@ -80,6 +83,7 @@ class _ScanBusinessScreenState extends State<ScanBusinessScreen> {
 
                 /// Primary Scan Button
                 ScanContainer(
+                  // EN: primaryScan = "Primary Scan", primaryScanInfo = "If you perform a primary scan, you will get a new set of suggestions and score and your previous scores and suggestions will be replaced by the new OR You can perform an Instant scan!"
                   title: loc.primaryScan,
                   subtitle: loc.primaryScanInfo,
                   iconPath: Assets.icons.nav.cameraScan.path,

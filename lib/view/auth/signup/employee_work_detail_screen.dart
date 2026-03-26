@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
-import 'package:posture_detector_app/view/auth/signup/business/waiting_company_response.dart';
+import 'package:posture_detector_app/view/auth/signup/waiting_company_response.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/custom_text_field.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
@@ -30,11 +30,13 @@ class EmployeeWorkDetailScreen extends StatelessWidget {
               children: [
                 SizedBox(height: 20.h),
                 AppTopSection(
+                  // EN: userDeskWorkZone = "User Desk or Work Zone", userDeskWorkZoneSubtitle = "Link your assessment to your desk and department"
                   title: loc.userDeskWorkZone,
                   subtitle: loc.userDeskWorkZoneSubtitle,
                 ),
                 SizedBox(height: 28.h),
                 Text(
+                  // EN: "Desk ID or Location (Recommended)"
                   loc.deskId,
                   style: TextStyle(
                     fontSize: 14.sp,
@@ -50,11 +52,13 @@ class EmployeeWorkDetailScreen extends StatelessWidget {
                     color: AppColors.primaryColor.withValues(alpha: 0.8),
                     size: 25.h,
                   ),
+                  // EN: "e.g. Floor 3, Desk 42"
                   hintText: loc.deskIdHint,
                   keyboardType: TextInputType.text,
                 ),
                 SizedBox(height: 28.h),
                 Text(
+                  // EN: "Department"
                   loc.department,
                   style: TextStyle(
                     fontSize: 14.sp,
@@ -70,11 +74,13 @@ class EmployeeWorkDetailScreen extends StatelessWidget {
                     color: AppColors.primaryColor.withValues(alpha: 0.8),
                     size: 25.h,
                   ),
+                  // EN: "e.g. Marketing"
                   hintText: loc.departmentHint,
                   keyboardType: TextInputType.text,
                 ),
                 SizedBox(height: 28.h),
                 Text(
+                  // EN: "Role"
                   loc.role,
                   style: TextStyle(
                     fontSize: 14.sp,
@@ -84,6 +90,7 @@ class EmployeeWorkDetailScreen extends StatelessWidget {
                 SizedBox(height: 6.h),
                 DropdownButtonFormField<String>(
                   decoration: InputDecoration(
+                    // EN: "Select your role"
                     hintText: loc.roleHint,
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: 12.w,
@@ -112,12 +119,16 @@ class EmployeeWorkDetailScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10.r),
                   dropdownColor: AppColors.surface,
                   items: [
+                    // EN: desk = "Desk"
                     DropdownMenuItem(value: 'DESK', child: Text(loc.desk)),
+                    // EN: standingDesk = "Standing desk"
                     DropdownMenuItem(
                       value: 'STANDING',
                       child: Text(loc.standingDesk),
                     ),
+                    // EN: hybrid = "Hybrid"
                     DropdownMenuItem(value: 'HYBRID', child: Text(loc.hybrid)),
+                    // EN: other = "Other"
                     DropdownMenuItem(value: 'OTHER', child: Text(loc.other)),
                   ],
                   onChanged: (value) {
@@ -142,6 +153,7 @@ class EmployeeWorkDetailScreen extends StatelessWidget {
                   if (signupController.deskIdController.text.isEmpty ||
                       signupController.departmentController.text.isEmpty ||
                       signupController.workRole.value.isEmpty) {
+                    // EN: "Please fill all the requirements"
                     showCustomToast(text: loc.pleaseFillAllRequirements);
                     return;
                   }
@@ -150,6 +162,7 @@ class EmployeeWorkDetailScreen extends StatelessWidget {
                     Get.offAll(WaitingCompanyResponse());
                   }
                 },
+                // EN: "Continue"
                 text: loc.continueButton,
                 backgroundColor: AppColors.primaryColor,
                 textStyle: TextStyle(

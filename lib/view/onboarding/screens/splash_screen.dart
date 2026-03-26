@@ -65,6 +65,7 @@ class _SplashScreenState extends State<SplashScreen>
     final token = await AppHelper.instance.getAccessToken();
     final userRole = await AppHelper.instance.getAuthRole();
     final phoneOnboard = await AppHelper.instance.getPhoneOnboard();
+    final isonBoarding = await AppHelper.instance.getIsonBoarding();
 
     print('');
     print('token: $token');
@@ -74,19 +75,22 @@ class _SplashScreenState extends State<SplashScreen>
 
     if (token == null || userRole == null) {
       if (phoneOnboard == true) {
-        Get.offAllNamed(AppRoute.loginScreen);
+        Get.toNamed(AppRoute.welcomeScreen);
       } else {
         Get.offAllNamed(AppRoute.onBoardingScreen);
       }
     } else if (token.isNotEmpty && userRole.isNotEmpty) {
-      if (userRole == Users.PRIVATE.name) {
-        Get.offAllNamed(AppRoute.bottomNavPersonal);
-      } else if (userRole == Users.ERGONOMIST.name) {
+      if (userRole == Users.CPE.name) {
         Get.offAllNamed(AppRoute.bottomNavCpe);
       } else {
-        Get.offAllNamed(AppRoute.bottomNavBusiness);
+        if (isonBoarding == true) {
+          Get.offAllNamed(AppRoute.bottomNavBusiness);
+        } else {
+          Get.offAllNamed(AppRoute.employeeSelectBodyRegion);
+        }
       }
     } else {
+      // EN: "Login first"
       showCustomToast(
         text: AppLocalizations.of(context)?.loginFirst ?? 'Login first',
       );

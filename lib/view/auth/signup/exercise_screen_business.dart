@@ -32,6 +32,7 @@ class ExerciseScreenBusiness extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 8.h),
+                  // EN: "Personalized Exercise Program"
                   Text(
                     loc.personalizedExerciseProgram,
                     style: TextStyle(
@@ -40,6 +41,7 @@ class ExerciseScreenBusiness extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 8.h),
+                  // EN: "The following exercise are recommended based on your posture analysis:"
                   Text(
                     loc.personalizedExerciseProgramSubtitle,
                     style: TextStyle(
@@ -437,6 +439,7 @@ class ExerciseScreenBusiness extends StatelessWidget {
           bottom: MediaQuery.of(context).padding.bottom + 16.h,
         ),
         child: BottomButton(
+          // EN: "Equipment Recommendations"
           title: loc.equipmentRecommendations,
           onTap: () => Get.toNamed(AppRoute.equipmentScreenBusiness),
         ),

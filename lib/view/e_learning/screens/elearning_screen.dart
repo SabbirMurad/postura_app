@@ -66,6 +66,7 @@ class _ELearningScreenState extends State<ELearningScreen>
                     AppBackButton(),
                     Spacer(),
                     Text(
+                      // EN: "E-Learning"
                       loc.elearning,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,

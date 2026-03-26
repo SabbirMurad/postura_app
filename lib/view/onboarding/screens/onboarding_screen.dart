@@ -36,16 +36,19 @@ class OnboardingScreen extends StatelessWidget {
                 OnboardingPage(
                   onboardingController: onboardingController,
                   image: Assets.images.onboarding.onboarding1,
+                  // EN: "Improve Posture. Reduce Pain"
                   title: loc.onboardingTitle1,
                 ),
                 OnboardingPage(
                   onboardingController: onboardingController,
                   image: Assets.images.onboarding.onboarding2,
+                  // EN: "Start Your ISO-Aligned Assessment"
                   title: loc.onboardingTitle2,
                 ),
                 OnboardingPage(
                   onboardingController: onboardingController,
                   image: Assets.images.onboarding.onboarding3,
+                  // EN: "Science-Backed Posture Insights"
                   title: loc.onboardingTitle3,
                 ),
               ],
@@ -60,9 +63,11 @@ class OnboardingScreen extends StatelessWidget {
                 children: [
                   TextButton(
                     onPressed: () {
-                      onboardingController.skip();
+                      AppHelper.instance.setPhoneOnboard(true);
+                      Get.offAllNamed(AppRoute.welcomeScreen);
                     },
                     child: Text(
+                      // EN: "Skip"
                       loc.skip,
                       style: TextStyle(
                         fontSize: 20.sp,

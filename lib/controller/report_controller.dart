@@ -71,11 +71,13 @@ class ReportController extends GetxController {
         return;
       } else {
         isLoading.value = false;
+        // EN: "Failed to fetch reports"
         showCustomToast(text: response.error ?? _loc.failedToFetchReports);
       }
     } catch (e) {
       isLoading.value = false;
       debugPrint('Fetch reports error: $e');
+      // EN: "Failed to fetch reports"
       showCustomToast(text: _loc.failedToFetchReports);
     }
   }
@@ -86,6 +88,7 @@ class ReportController extends GetxController {
       final pdfUrl = analysisData.value?.aiResult.pdfReportUrl;
       if (pdfUrl == null || pdfUrl.isEmpty) {
         isExportingPDF.value = false;
+        // EN: "No PDF available"
         showCustomToast(text: _loc.noPdfAvailable);
         return;
       }
@@ -97,10 +100,12 @@ class ReportController extends GetxController {
       await Dio().download(pdfUrl, filePath);
       isExportingPDF.value = false;
 
+      // EN: "Your report PDF"
       await Share.shareXFiles([XFile(filePath)], text: _loc.yourReportPdf);
     } catch (e) {
       isExportingPDF.value = false;
       debugPrint('Export PDF error: $e');
+      // EN: "Something went wrong"
       showCustomToast(text: _loc.somethingWentWrong);
     }
   }
