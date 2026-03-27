@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/core/constants/app_text.dart';
-import 'package:posture_detector_app/models/user_type.dart';
-import 'package:posture_detector_app/controller/signup_controller.dart';
 import 'package:posture_detector_app/view/auth/signup/widgets/language_selected_card.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
@@ -13,15 +12,20 @@ import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
+import 'package:posture_detector_app/provider/signup.dart';
 
-class SelectLanguageScreen extends StatelessWidget {
-  SelectLanguageScreen({super.key});
-
-  final SignupController signupController = Get.find<SignupController>();
+class SelectLanguageScreen extends ConsumerWidget {
+  const SelectLanguageScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context)!;
+    final selectedLanguage = ref.watch(signupNotifierProvider).language;
+    final notifier = ref.read(signupNotifierProvider.notifier);
+
+    void selectLanguage(String lang) {
+      notifier.setLanguage(lang);
+    }
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -39,11 +43,8 @@ class SelectLanguageScreen extends StatelessWidget {
               ),
               SizedBox(height: 48.h),
 
-              /// ------------------------------ Language Selected card ------------------------------ ///
               GestureDetector(
-                onTap: () {
-                  signupController.selectedLanguage.value = 'en';
-                },
+                onTap: () => selectLanguage('en'),
                 child: LanguageSelectCard(
                   countryImage: Assets.icons.flags.flagEn.svg(
                     width: 26.w,
@@ -51,15 +52,13 @@ class SelectLanguageScreen extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                   countryName: AppText.english,
-                  controller: signupController,
+                  selectedLanguage: selectedLanguage,
                   selectedLan: 'en',
                 ),
               ),
               SizedBox(height: 12.h),
               GestureDetector(
-                onTap: () {
-                  signupController.selectedLanguage.value = 'nl';
-                },
+                onTap: () => selectLanguage('nl'),
                 child: LanguageSelectCard(
                   countryImage: Assets.icons.flags.flagNl.svg(
                     width: 26.w,
@@ -67,15 +66,13 @@ class SelectLanguageScreen extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                   countryName: AppText.dutch,
-                  controller: signupController,
+                  selectedLanguage: selectedLanguage,
                   selectedLan: 'nl',
                 ),
               ),
               SizedBox(height: 12.h),
               GestureDetector(
-                onTap: () {
-                  signupController.selectedLanguage.value = 'de';
-                },
+                onTap: () => selectLanguage('de'),
                 child: LanguageSelectCard(
                   countryImage: Assets.icons.flags.flagDe.svg(
                     width: 26.w,
@@ -83,15 +80,13 @@ class SelectLanguageScreen extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                   countryName: AppText.german,
-                  controller: signupController,
+                  selectedLanguage: selectedLanguage,
                   selectedLan: 'de',
                 ),
               ),
               SizedBox(height: 12.h),
               GestureDetector(
-                onTap: () {
-                  signupController.selectedLanguage.value = 'es';
-                },
+                onTap: () => selectLanguage('es'),
                 child: LanguageSelectCard(
                   countryImage: Assets.icons.flags.flagEs.svg(
                     width: 26.w,
@@ -99,7 +94,7 @@ class SelectLanguageScreen extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                   countryName: AppText.spanish,
-                  controller: signupController,
+                  selectedLanguage: selectedLanguage,
                   selectedLan: 'es',
                 ),
               ),
@@ -116,16 +111,14 @@ class SelectLanguageScreen extends StatelessWidget {
               children: [
                 PrimaryButton(
                   onTap: () {
-                    if (signupController.selectedLanguage.isEmpty) {
+                    if (selectedLanguage.isEmpty) {
                       // EN: "Please select a language"
                       showCustomToast(text: loc.pleaseSelectLanguage);
+                      return;
                     }
-                    if (signupController.selectedLanguage.isNotEmpty) {
-                      Get.toNamed(AppRoute.companyCredential);
-                    }
-                    final lang = signupController.selectedLanguage.value;
-                    AppHelper.instance.setLanguage(lang);
-                    Get.updateLocale(Locale(lang));
+                    AppHelper.instance.setLanguage(selectedLanguage);
+                    Get.updateLocale(Locale(selectedLanguage));
+                    Get.toNamed(AppRoute.companyCredential);
                   },
                   // EN: "Continue"
                   text: loc.continueButton,

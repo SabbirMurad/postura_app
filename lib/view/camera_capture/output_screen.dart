@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -7,19 +8,15 @@ import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/core/constants/app_text.dart';
-import 'package:posture_detector_app/controller/camera_flow_controller.dart';
-import 'package:posture_detector_app/controller/report_controller.dart';
+import 'package:posture_detector_app/models/analysis/body_region_risk_model.dart';
+import 'package:posture_detector_app/provider/report.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/details_analysis_container.dart';
 import 'package:posture_detector_app/common/widgets/risky_body_region_menu.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 
-class OutputScreenBusiness extends StatelessWidget {
-  OutputScreenBusiness({super.key});
-
-  final CameraFlowController cameraFlowController =
-      Get.find<CameraFlowController>();
-  final ReportController _reportController = Get.find<ReportController>();
+class OutputScreenBusiness extends ConsumerWidget {
+  const OutputScreenBusiness({super.key});
 
   /// ✅ Helper method to get color based on severity
   Color _getColorBySeverity(String severity) {
@@ -50,14 +47,14 @@ class OutputScreenBusiness extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context)!;
+    final reportState = ref.watch(reportNotifierProvider);
+    final analysisData = reportState.analysisData;
 
     return Scaffold(
       backgroundColor: AppColors.surface,
-      body: Obx(() {
-        // Add null check
-        final analysisData = _reportController.analysisData.value;
+      body: Builder(builder: (context) {
 
         if (analysisData == null) {
           return Center(
@@ -312,11 +309,20 @@ class OutputScreenBusiness extends StatelessWidget {
                 ),
 
                 SizedBox(height: 12.h),
-                Obx(() {
+                Builder(builder: (context) {
+                  final risks = analysisData?.aiResult.bodyRegionRisks;
+                  final menuItems = risks == null
+                      ? <BodyRegionRiskModel>[]
+                      : [
+                          BodyRegionRiskModel(region: 'Elbows', risk: risks.elbows),
+                          BodyRegionRiskModel(region: 'Shoulder', risk: risks.shoulder),
+                          BodyRegionRiskModel(region: 'Wrist', risk: risks.wrist),
+                          BodyRegionRiskModel(region: 'Lower Back', risk: risks.lowerBack),
+                        ];
                   return GridView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: cameraFlowController.menuItems.length,
+                    itemCount: menuItems.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 12.h,
@@ -324,7 +330,7 @@ class OutputScreenBusiness extends StatelessWidget {
                       mainAxisExtent: 120,
                     ),
                     itemBuilder: (context, index) {
-                      final item = cameraFlowController.menuItems[index];
+                      final item = menuItems[index];
                       return RiskBodyRegionMenu(
                         region: item.region,
                         risk: item.risk,

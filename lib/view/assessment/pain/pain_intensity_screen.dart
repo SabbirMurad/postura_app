@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
-import 'package:posture_detector_app/controller/signup_controller.dart';
-
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/common/widgets/slider_widget.dart';
+import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/routes.dart';
 
-class BusinessPainIntensityScreen extends StatelessWidget {
-  BusinessPainIntensityScreen({super.key});
-
-  final SignupController signupController = Get.find<SignupController>();
+class BusinessPainIntensityScreen extends ConsumerWidget {
+  const BusinessPainIntensityScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context)!;
+    final assessment = ref.watch(assessmentNotifierProvider);
+    final notifier = ref.read(assessmentNotifierProvider.notifier);
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -37,40 +37,22 @@ class BusinessPainIntensityScreen extends StatelessWidget {
                 SizedBox(height: 51.h),
 
                 ListView.separated(
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   padding: EdgeInsets.symmetric(vertical: 30.h),
                   shrinkWrap: true,
-                  separatorBuilder: (context, index) {
-                    return SizedBox(height: 22.h);
-                  },
-                  itemCount: signupController.selectedRegion.length,
+                  separatorBuilder: (_, __) => SizedBox(height: 22.h),
+                  itemCount: assessment.selectedRegions.length,
                   itemBuilder: (context, index) {
-                    final region = signupController.selectedRegion[index];
-
+                    final region = assessment.selectedRegions[index];
                     return AppSliderWidget(
                       title: region,
-                      sliderValue: signupController.getPainValueForRegion(
-                        region,
-                      ),
+                      value: assessment.painIntensity[region] ?? 1.0,
+                      onChanged: (value) => notifier.setPainForRegion(region, value),
                     );
                   },
                 ),
 
                 SizedBox(height: 80.h),
-                // AppSliderWidget(
-                //   title: '${loc.neck}:',
-                //   sliderValue: signupController.neckPain,
-                // ),
-                // SizedBox(height: 56.h),
-                // AppSliderWidget(
-                //   title: '${loc.upperBack}:',
-                //   sliderValue: signupController.upperBack,
-                // ),
-                // SizedBox(height: 56.h),
-                // AppSliderWidget(
-                //   title: '${loc.wrist}:',
-                //   sliderValue: signupController.wrists,
-                // ),
               ],
             ),
           ),
@@ -79,21 +61,17 @@ class BusinessPainIntensityScreen extends StatelessWidget {
       bottomSheet: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 25.h, horizontal: 20.w),
-          child: SizedBox(
-            child: PrimaryButton(
-              onTap: () {
-                Get.toNamed(AppRoute.employeePainDurationScreen);
-              },
-              // EN: "Continue"
-              text: loc.continueButton,
-              backgroundColor: AppColors.primaryColor,
-              textStyle: TextStyle(
-                color: AppColors.surface,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500,
-              ),
-              borderRadius: BorderRadius.circular(14.r),
+          child: PrimaryButton(
+            onTap: () => Get.toNamed(AppRoute.employeePainDurationScreen),
+            // EN: "Continue"
+            text: loc.continueButton,
+            backgroundColor: AppColors.primaryColor,
+            textStyle: TextStyle(
+              color: AppColors.surface,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
             ),
+            borderRadius: BorderRadius.circular(14.r),
           ),
         ),
       ),

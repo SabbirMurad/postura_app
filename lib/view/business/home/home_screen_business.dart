@@ -2,16 +2,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
-import 'package:posture_detector_app/controller/report_controller.dart';
-import 'package:posture_detector_app/controller/personal_home_controller.dart';
+import 'package:posture_detector_app/provider/report.dart';
 import 'package:posture_detector_app/common/widgets/analysis_section_container.dart';
 import 'package:posture_detector_app/common/widgets/details_analysis_list.dart';
 import 'package:posture_detector_app/common/widgets/home_top_section.dart';
 import 'package:posture_detector_app/common/widgets/risky_body_region_menu.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/models/analysis/body_region_risk_model.dart';
 import 'package:posture_detector_app/provider/author.dart';
 
 class HomeScreenBusiness extends ConsumerStatefulWidget {
@@ -22,17 +21,12 @@ class HomeScreenBusiness extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
-  late final PersonalHomeController personalHomeController;
-  late final ReportController reportController;
-
   @override
   void initState() {
     super.initState();
-    personalHomeController = Get.find<PersonalHomeController>();
-    reportController = Get.find<ReportController>();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      reportController.fetchMyReports();
+      ref.read(reportNotifierProvider.notifier).fetchMyReports();
     });
   }
 
@@ -40,6 +34,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final profileData = ref.watch(authorNotifierProvider).value?.data;
+    final reportState = ref.watch(reportNotifierProvider);
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -52,12 +47,12 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
               children: [
                 SizedBox(height: 16.h),
 
-                Obx(() {
-                  final analysisData = reportController.analysisData.value;
+                Builder(builder: (context) {
+                  final analysisData = reportState.analysisData;
                   final posture =
                       analysisData?.aiResult.detailedAnalysis.posture;
 
-                  if (analysisData == null && reportController.isLoading.value) {
+                  if (analysisData == null && reportState.isLoading) {
                     return Center(
                       child: Padding(
                         padding: EdgeInsets.symmetric(vertical: 100.h),
@@ -91,7 +86,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                             ),
                             SizedBox(height: 12.h),
                             PrimaryButton(
-                              onTap: () => reportController.fetchMyReports(),
+                              onTap: () => ref.read(reportNotifierProvider.notifier).fetchMyReports(),
                               // EN: "Retry"
                               text: AppLocalizations.of(context)!.retry,
                               backgroundColor: AppColors.primaryColor,
@@ -106,6 +101,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+
                       HomeTopSection(
                         name: profileData?.fullName ?? 'User',
                         image: profileData?.avatar != null &&
@@ -164,11 +160,20 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                 ),
 
                 SizedBox(height: 12.h),
-                Obx(() {
+                Builder(builder: (context) {
+                  final risks = reportState.analysisData?.aiResult.bodyRegionRisks;
+                  final menuItems = risks == null
+                      ? <BodyRegionRiskModel>[]
+                      : [
+                          BodyRegionRiskModel(region: 'Elbows', risk: risks.elbows),
+                          BodyRegionRiskModel(region: 'Shoulder', risk: risks.shoulder),
+                          BodyRegionRiskModel(region: 'Wrist', risk: risks.wrist),
+                          BodyRegionRiskModel(region: 'Lower Back', risk: risks.lowerBack),
+                        ];
                   return GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: personalHomeController.menuItems.length,
+                    itemCount: menuItems.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 12.h,
@@ -176,7 +181,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                       mainAxisExtent: 120,
                     ),
                     itemBuilder: (context, index) {
-                      final item = personalHomeController.menuItems[index];
+                      final item = menuItems[index];
                       return RiskBodyRegionMenu(
                         region: item.region,
                         risk: item.risk,
@@ -186,11 +191,10 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                 }),
                 SizedBox(height: 30.h),
 
-                Obx(
-                  () => PrimaryButton(
-                    loading: reportController.isExportingPDF.value,
+                PrimaryButton(
+                    loading: reportState.isExportingPDF,
                     onTap: () {
-                      reportController.exportReportPDF();
+                      ref.read(reportNotifierProvider.notifier).exportReportPDF();
                     },
                     // EN: "Export ISO Report PDF"
                     text: AppLocalizations.of(context)!.exportIsoReportPdf,
@@ -205,7 +209,6 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                     prefixIconColor: AppColors.surface,
                     prefixIconSize: 22.sp,
                   ),
-                ),
 
                 SizedBox(height: 20.h),
               ],

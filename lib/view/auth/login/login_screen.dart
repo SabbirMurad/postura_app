@@ -10,7 +10,7 @@ import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/models/user_type.dart';
-import 'package:posture_detector_app/controller/report_controller.dart';
+import 'package:posture_detector_app/provider/report.dart';
 import 'package:posture_detector_app/provider/author.dart';
 import 'package:posture_detector_app/routes.dart';
 
@@ -55,7 +55,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (res == true) {
         setState(() => _loading = true);
         await Future.wait([
-          Get.find<ReportController>().fetchMyReports(),
+          ref.read(reportNotifierProvider.notifier).fetchMyReports(),
           ref.read(authorNotifierProvider.notifier).refreshProfile(),
         ]);
         setState(() => _loading = false);

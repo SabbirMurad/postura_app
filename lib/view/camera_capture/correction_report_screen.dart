@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
-import 'package:posture_detector_app/controller/report_controller.dart';
+import 'package:posture_detector_app/provider/report.dart';
 
 import 'package:posture_detector_app/common/widgets/bottom_button.dart';
 import 'package:posture_detector_app/common/widgets/expansion_container.dart';
 
-class CorrectionReportScreenBusiness extends StatelessWidget {
-  CorrectionReportScreenBusiness({super.key});
-
-  final ReportController _reportController = Get.find<ReportController>();
+class CorrectionReportScreenBusiness extends ConsumerWidget {
+  const CorrectionReportScreenBusiness({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final reportState = ref.watch(reportNotifierProvider);
     final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
@@ -41,10 +41,9 @@ class CorrectionReportScreenBusiness extends StatelessWidget {
                 SizedBox(height: 14.h),
 
                 // ✅ ListView কে removed করা হয়েছে, শুধু Column রাখা
-                Obx(() {
-                  final corrections = _reportController
-                      .analysisData
-                      .value
+                Builder(
+                  builder: (context) {
+                  final corrections = reportState.analysisData
                       ?.aiResult
                       .corrections;
 
@@ -61,7 +60,8 @@ class CorrectionReportScreenBusiness extends StatelessWidget {
                       );
                     }),
                   );
-                }),
+                  },
+                ),
 
                 // ✅ Bottom button এর জন্য space (padding)
                 SizedBox(height: 90.h),

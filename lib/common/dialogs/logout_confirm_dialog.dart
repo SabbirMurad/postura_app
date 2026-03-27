@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
@@ -6,15 +7,16 @@ import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
-import 'package:posture_detector_app/controller/signup_controller.dart';
-import 'package:posture_detector_app/controller/report_controller.dart';
+import 'package:posture_detector_app/provider/signup.dart';
+import 'package:posture_detector_app/provider/assessment.dart';
+import 'package:posture_detector_app/provider/report.dart';
 
 void showLogoutConfirmDialog(BuildContext context) {
   final loc = AppLocalizations.of(context)!;
 
   showDialog(
     context: context,
-    builder: (context) {
+    builder: (dialogContext) {
       return AlertDialog(
         backgroundColor: AppColors.onBoardingSurface,
         title: Text(
@@ -54,9 +56,10 @@ void showLogoutConfirmDialog(BuildContext context) {
                   child: PrimaryButton(
                     height: 46.h,
                     onTap: () {
-                      Get.find<SignupController>().reset();
-                      Get.find<ReportController>().analysisData.value = null;
-                      Get.delete<SignupController>();
+                      final container = ProviderScope.containerOf(context);
+                      container.read(signupNotifierProvider.notifier).reset();
+                      container.read(assessmentNotifierProvider.notifier).reset();
+                      container.read(reportNotifierProvider.notifier).clearData();
                       AppHelper.instance.clearAllPrefValue();
                       Get.offAllNamed(AppRoute.loginScreen);
                     },

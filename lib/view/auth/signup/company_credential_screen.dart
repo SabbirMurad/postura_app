@@ -1,36 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/common/widgets/custom_text_field.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
-import 'package:posture_detector_app/controller/signup_controller.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
+import 'package:posture_detector_app/provider/signup.dart';
 import 'package:posture_detector_app/routes.dart';
 
-class CompanyCredentialScreen extends StatelessWidget {
-  CompanyCredentialScreen({super.key});
+class CompanyCredentialScreen extends ConsumerStatefulWidget {
+  const CompanyCredentialScreen({super.key});
 
-  final SignupController signupController = Get.find<SignupController>();
+  @override
+  ConsumerState<CompanyCredentialScreen> createState() => _CompanyCredentialScreenState();
+}
+
+class _CompanyCredentialScreenState extends ConsumerState<CompanyCredentialScreen> {
+  final _companyCodeController = TextEditingController();
+
+  @override
+  void dispose() {
+    _companyCodeController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _checkCompanyCode(AppLocalizations loc) async {
+    final code = _companyCodeController.text.trim();
+    if (code.isEmpty) {
+      // EN: "Please enter company code"
+      showCustomToast(text: loc.pleaseEnterCompanyCode);
+      return;
+    }
+
+    final response = await CustomHttp.post(
+      endpoint: 'auth/validate-company-code',
+      body: {'company_code': code},
+      needAuth: false,
+    );
+
+    if (response.ok) {
+      ref.read(signupNotifierProvider.notifier).setCompanyCode(code);
+      Get.toNamed(AppRoute.employeeCredential);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-
-    Future<void> _checkCompanyCode(code) async {
-      final response = await CustomHttp.post(
-        endpoint: 'auth/validate-company-code',
-        body: {'company_code': code},
-        needAuth: false,
-      );
-
-      if (response.ok) {
-        Get.toNamed(AppRoute.employeeCredential);
-      }
-    }
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -63,7 +83,7 @@ class CompanyCredentialScreen extends StatelessWidget {
                 prefixIcon: null,
                 filled: true,
                 filColor: AppColors.onBoardingSurface,
-                controller: signupController.companyCodeController,
+                controller: _companyCodeController,
                 // EN: "e.g. COMPANY-123"
                 hintText: loc.enterYourCompanyCodeHint,
                 keyboardType: TextInputType.text,
@@ -80,17 +100,7 @@ class CompanyCredentialScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 PrimaryButton(
-                  onTap: () {
-                    if (signupController.companyCodeController.text.isEmpty) {
-                      // EN: "Please enter company code"
-                      showCustomToast(text: loc.pleaseEnterCompanyCode);
-                      return;
-                    }
-
-                    _checkCompanyCode(
-                      signupController.companyCodeController.text,
-                    );
-                  },
+                  onTap: () => _checkCompanyCode(loc),
                   // EN: "Continue"
                   text: loc.continueButton,
                   backgroundColor: AppColors.primaryColor,

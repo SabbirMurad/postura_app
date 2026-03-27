@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
@@ -19,10 +20,9 @@ import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/models/user_type.dart';
-import 'package:posture_detector_app/controller/signup_controller.dart';
-import 'package:posture_detector_app/controller/report_controller.dart';
+import 'package:posture_detector_app/provider/report.dart';
 
-class EquipmentScreenBusiness extends StatefulWidget {
+class EquipmentScreenBusiness extends ConsumerStatefulWidget {
   final bool canSendListToCompany;
 
   const EquipmentScreenBusiness({
@@ -31,16 +31,13 @@ class EquipmentScreenBusiness extends StatefulWidget {
   });
 
   @override
-  State<EquipmentScreenBusiness> createState() =>
+  ConsumerState<EquipmentScreenBusiness> createState() =>
       _EquipmentScreenBusinessState();
 }
 
-class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
-  final SignupController signupController = Get.find<SignupController>();
-  final ReportController reportController = Get.find<ReportController>();
+class _EquipmentScreenBusinessState extends ConsumerState<EquipmentScreenBusiness> {
 
-  /// Reactive user role using enum
-  Rx<String> userRole = ''.obs;
+  String _userRole = '';
 
   @override
   void initState() {
@@ -53,7 +50,7 @@ class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
     try {
       final role = await AppHelper.instance.getAuthRole();
       debugPrint("Fetched user role: $role ${UserType.EMPLOYEE}");
-      userRole.value = role ?? '';
+      setState(() => _userRole = role ?? '');
     } catch (e) {
       debugPrint('Error getting auth role: $e');
     }
@@ -81,8 +78,7 @@ class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
   Future<void> _exportReportPDF() async {
     final loc = AppLocalizations.of(context)!;
     try {
-      final pdfUrl =
-          reportController.analysisData.value?.aiResult.equipmentPdfUrl;
+      final pdfUrl = ref.read(reportNotifierProvider).analysisData?.aiResult.equipmentPdfUrl;
       if (pdfUrl == null || pdfUrl.isEmpty) {
         // EN: "No PDF available"
         showCustomToast(text: loc.noPdfAvailable);
@@ -96,11 +92,7 @@ class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
       await Dio().download(pdfUrl, filePath);
 
       // EN: "Your report PDF"
-      await Share.shareXFiles([
-        XFile(filePath),
-      ], text: AppLocalizations.of(Get.context!)!.yourReportPdf);
-
-      // showCustomToast(text: "PDF downloadeded completely");
+      await Share.shareXFiles([XFile(filePath)], text: loc.yourReportPdf);
     } catch (e) {
       debugPrint('$e');
       // EN: "Something went wrong"
@@ -123,14 +115,10 @@ class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
                 width: double.infinity,
                 height: double.infinity,
                 child: SingleChildScrollView(
-                  child: Obx(() {
+                  child: Builder(builder: (context) {
+                    final reportState = ref.watch(reportNotifierProvider);
                     final equipmentList =
-                        reportController
-                            .analysisData
-                            .value
-                            ?.aiResult
-                            .equipment ??
-                        [];
+                        reportState.analysisData?.aiResult.equipment ?? [];
 
                     return Column(
                       children: [
@@ -217,8 +205,7 @@ class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
               top: false,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-                child: Obx(() {
-                  return Column(
+                child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // Download Button
@@ -238,7 +225,7 @@ class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
                       SizedBox(height: 8.h),
 
                       // Send to Company (Only Employees)
-                      if (userRole.value == "EMPLOYEE" &&
+                      if (_userRole == "EMPLOYEE" &&
                           widget.canSendListToCompany)
                         Padding(
                           padding: EdgeInsets.only(bottom: 8.h),
@@ -270,8 +257,7 @@ class _EquipmentScreenBusinessState extends State<EquipmentScreenBusiness> {
                         textColor: AppColors.onBoardingSurface,
                       ),
                     ],
-                  );
-                }),
+                  ),
               ),
             ),
           ],

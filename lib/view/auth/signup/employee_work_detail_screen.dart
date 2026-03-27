@@ -9,8 +9,8 @@ import 'package:posture_detector_app/view/auth/signup/waiting_company_response.d
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/custom_text_field.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
-import 'package:posture_detector_app/controller/signup_controller.dart';
 import 'package:posture_detector_app/provider/author.dart';
+import 'package:posture_detector_app/provider/signup.dart';
 
 class EmployeeWorkDetailScreen extends ConsumerStatefulWidget {
   const EmployeeWorkDetailScreen({super.key});
@@ -22,34 +22,48 @@ class EmployeeWorkDetailScreen extends ConsumerStatefulWidget {
 
 class _EmployeeWorkDetailScreenState
     extends ConsumerState<EmployeeWorkDetailScreen> {
-  final SignupController signupController = Get.find<SignupController>();
+  final _deskIdController = TextEditingController();
+  final _departmentController = TextEditingController();
+  String _workRole = '';
   bool _loading = false;
 
+  @override
+  void dispose() {
+    _deskIdController.dispose();
+    _departmentController.dispose();
+    super.dispose();
+  }
+
   void _signUp(AppLocalizations loc) async {
-    if (signupController.deskIdController.text.isEmpty ||
-        signupController.departmentController.text.isEmpty ||
-        signupController.workRole.value.isEmpty) {
+    if (_deskIdController.text.isEmpty ||
+        _departmentController.text.isEmpty ||
+        _workRole.isEmpty) {
       // EN: "Please fill all the requirements"
+      showCustomToast(text: loc.pleaseFillAllRequirements);
+      return;
+    }
+
+    final signup = ref.read(signupNotifierProvider);
+    final id = int.tryParse(signup.employeeId);
+    if (id == null) {
       showCustomToast(text: loc.pleaseFillAllRequirements);
       return;
     }
 
     setState(() => _loading = true);
 
-    final id = int.tryParse(signupController.employeeIdController.text.trim());
-
     final res = await ref
         .read(authorNotifierProvider.notifier)
         .signUp(
-          language: signupController.selectedLanguage.value,
-          name: signupController.userNameController.text.trim(),
-          email: signupController.companyEmailController.text.trim(),
-          password: signupController.companyPasswordController.text.trim(),
-          companyCode: signupController.companyCodeController.text.trim(),
-          employeeId: id!,
-          deskLocation: signupController.deskIdController.text.trim(),
-          department: signupController.departmentController.text.trim(),
-          deskRole: signupController.workRole.value,
+          language: signup.language,
+          name: signup.name,
+          email: signup.email,
+          password: signup.password,
+          companyCode: signup.companyCode,
+          employeeId: id,
+          deskLocation: _deskIdController.text.trim(),
+          department: _departmentController.text.trim(),
+          deskRole: _workRole,
         );
 
     setState(() => _loading = false);
@@ -81,15 +95,12 @@ class _EmployeeWorkDetailScreenState
                 Text(
                   // EN: "Desk ID or Location (Recommended)"
                   loc.deskId,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: 6.h),
                 CustomTextField(
                   filled: true,
-                  controller: signupController.deskIdController,
+                  controller: _deskIdController,
                   prefixIcon: Icon(
                     Icons.person,
                     color: AppColors.primaryColor.withValues(alpha: 0.8),
@@ -103,15 +114,12 @@ class _EmployeeWorkDetailScreenState
                 Text(
                   // EN: "Department"
                   loc.department,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: 6.h),
                 CustomTextField(
                   filled: true,
-                  controller: signupController.departmentController,
+                  controller: _departmentController,
                   prefixIcon: Icon(
                     Icons.perm_contact_cal_outlined,
                     color: AppColors.primaryColor.withValues(alpha: 0.8),
@@ -125,62 +133,41 @@ class _EmployeeWorkDetailScreenState
                 Text(
                   // EN: "Role"
                   loc.role,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: 6.h),
-                Obx(
-                  () => DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      // EN: "Select your role"
-                      hintText: loc.roleHint,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 14.h,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(
-                          color: AppColors.blackDeemed,
-                          width: 1.5,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(
-                          color: AppColors.blackDeemed,
-                          width: 1.5,
-                        ),
-                      ),
+                DropdownButtonFormField<String>(
+                  value: _workRole.isEmpty ? null : _workRole,
+                  decoration: InputDecoration(
+                    // EN: "Select your role"
+                    hintText: loc.roleHint,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 14.h,
                     ),
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.text,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                      borderSide: BorderSide(color: AppColors.blackDeemed, width: 1.5),
                     ),
-                    borderRadius: BorderRadius.circular(10.r),
-                    dropdownColor: AppColors.surface,
-                    value: signupController.workRole.value.isEmpty
-                        ? null
-                        : signupController.workRole.value,
-                    items: [
-                      DropdownMenuItem(value: 'DESK', child: Text(loc.desk)),
-                      DropdownMenuItem(
-                        value: 'STANDING',
-                        child: Text(loc.standingDesk),
-                      ),
-                      DropdownMenuItem(
-                        value: 'HYBRID',
-                        child: Text(loc.hybrid),
-                      ),
-                      DropdownMenuItem(value: 'OTHER', child: Text(loc.other)),
-                    ],
-                    onChanged: (value) {
-                      signupController.workRole.value = value ?? '';
-                    },
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                      borderSide: BorderSide(color: AppColors.blackDeemed, width: 1.5),
+                    ),
                   ),
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.text,
+                  ),
+                  borderRadius: BorderRadius.circular(10.r),
+                  dropdownColor: AppColors.surface,
+                  items: [
+                    DropdownMenuItem(value: 'DESK', child: Text(loc.desk)),
+                    DropdownMenuItem(value: 'STANDING', child: Text(loc.standingDesk)),
+                    DropdownMenuItem(value: 'HYBRID', child: Text(loc.hybrid)),
+                    DropdownMenuItem(value: 'OTHER', child: Text(loc.other)),
+                  ],
+                  onChanged: (value) => setState(() => _workRole = value ?? ''),
                 ),
                 SizedBox(height: 120.h),
               ],

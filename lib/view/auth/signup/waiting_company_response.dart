@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/provider/signup.dart';
 import 'package:posture_detector_app/routes.dart';
-import 'package:posture_detector_app/controller/signup_controller.dart';
 
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 
-class WaitingCompanyResponse extends StatelessWidget {
+class WaitingCompanyResponse extends ConsumerWidget {
   const WaitingCompanyResponse({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
@@ -56,8 +57,8 @@ class WaitingCompanyResponse extends StatelessWidget {
               backgroundColor: AppColors.primaryColor,
               textColor: AppColors.onBoardingSurface,
               onTap: () {
+                ref.read(signupNotifierProvider.notifier).reset();
                 Get.offAllNamed(AppRoute.loginScreen);
-                Get.delete<SignupController>();
               },
             ),
           ],

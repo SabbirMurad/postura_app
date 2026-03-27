@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:posture_detector_app/common/widgets/clinical_projection_card.dart';
 import 'package:posture_detector_app/common/widgets/exercise_showcase_container.dart';
-import 'package:posture_detector_app/controller/report_controller.dart';
+import 'package:posture_detector_app/provider/report.dart';
 
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
 
-class ExerciseBusinessScreen extends StatelessWidget {
+class ExerciseBusinessScreen extends ConsumerWidget {
   const ExerciseBusinessScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context)!;
-    final ReportController reportController = Get.find<ReportController>();
+    final reportState = ref.watch(reportNotifierProvider);
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -59,17 +59,14 @@ class ExerciseBusinessScreen extends StatelessWidget {
 
             /// Content
             Expanded(
-              child: Obx(() {
-                final exercises = reportController
-                    .analysisData
-                    .value
+              child: Builder(
+                builder: (context) {
+                final exercises = reportState.analysisData
                     ?.aiResult
                     .exercises
                     .recommendedSession;
 
-                final clinicalProjection = reportController
-                    .analysisData
-                    .value
+                final clinicalProjection = reportState.analysisData
                     ?.aiResult
                     .exercises
                     .clinicalProjection;
@@ -183,7 +180,8 @@ class ExerciseBusinessScreen extends StatelessWidget {
                       ),
                   ],
                 );
-              }),
+                },
+              ),
             ),
           ],
         ),
