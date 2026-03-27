@@ -1,34 +1,30 @@
-class ProfileModel {
+class AuthorModel {
   String message;
-  Data data;
+  AuthorData data;
 
-  ProfileModel({required this.message, required this.data});
+  AuthorModel({required this.message, required this.data});
 
-  ProfileModel copyWith({String? message, Data? data}) =>
-      ProfileModel(message: message ?? this.message, data: data ?? this.data);
+  AuthorModel copyWith({String? message, AuthorData? data}) =>
+      AuthorModel(message: message ?? this.message, data: data ?? this.data);
 
-  factory ProfileModel.fromJson(Map<String, dynamic> json) {
-    print('');
-    print(json);
-    print('');
-
-    return ProfileModel(
+  factory AuthorModel.fromJson(Map<String, dynamic> json) {
+    return AuthorModel(
       message: json["message"],
-      data: Data.fromJson(json["data"]),
+      data: AuthorData.fromJson(json["data"]),
     );
   }
 
   Map<String, dynamic> toJson() => {"message": message, "data": data.toJson()};
 }
 
-class Data {
+class AuthorData {
   int id;
   String fullName;
   String email;
   String? avatar;
   String role;
 
-  Data({
+  AuthorData({
     required this.id,
     required this.fullName,
     required this.email,
@@ -36,13 +32,13 @@ class Data {
     required this.role,
   });
 
-  Data copyWith({
+  AuthorData copyWith({
     int? id,
     String? fullName,
     String? email,
     String? avatar,
     String? role,
-  }) => Data(
+  }) => AuthorData(
     id: id ?? this.id,
     fullName: fullName ?? this.fullName,
     email: email ?? this.email,
@@ -50,7 +46,7 @@ class Data {
     role: role ?? this.role,
   );
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory AuthorData.fromJson(Map<String, dynamic> json) => AuthorData(
     id: json["id"],
     fullName: json["full_name"],
     email: json["email"],

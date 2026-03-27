@@ -5,15 +5,41 @@ import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
-import 'package:posture_detector_app/controller/onboarding_controller.dart';
 import 'package:posture_detector_app/view/onboarding/widgets/onboarding_page.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 
-class OnboardingScreen extends StatelessWidget {
-  OnboardingScreen({super.key});
+class OnboardingScreen extends StatefulWidget {
+  const OnboardingScreen({super.key});
 
-  final OnboardingController onboardingController =
-      Get.find<OnboardingController>();
+  @override
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
+}
+
+class _OnboardingScreenState extends State<OnboardingScreen> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  static const int _totalPages = 3;
+
+  bool get _isLastPage => _currentPage == _totalPages - 1;
+
+  void _nextPage() {
+    if (_isLastPage) {
+      AppHelper.instance.setPhoneOnboard(true);
+      Get.toNamed(AppRoute.welcomeScreen);
+      return;
+    }
+    _pageController.nextPage(
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.linear,
+    );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,25 +54,26 @@ class OnboardingScreen extends StatelessWidget {
           children: [
             PageView(
               scrollDirection: Axis.horizontal,
-              controller: onboardingController.pageController,
-              onPageChanged: (index) {
-                onboardingController.updatePageIndicator(index);
-              },
+              controller: _pageController,
+              onPageChanged: (index) => setState(() => _currentPage = index),
               children: [
                 OnboardingPage(
-                  onboardingController: onboardingController,
+                  pageController: _pageController,
+                  currentPage: _currentPage,
                   image: Assets.images.onboarding.onboarding1,
                   // EN: "Improve Posture. Reduce Pain"
                   title: loc.onboardingTitle1,
                 ),
                 OnboardingPage(
-                  onboardingController: onboardingController,
+                  pageController: _pageController,
+                  currentPage: _currentPage,
                   image: Assets.images.onboarding.onboarding2,
                   // EN: "Start Your ISO-Aligned Assessment"
                   title: loc.onboardingTitle2,
                 ),
                 OnboardingPage(
-                  onboardingController: onboardingController,
+                  pageController: _pageController,
+                  currentPage: _currentPage,
                   image: Assets.images.onboarding.onboarding3,
                   // EN: "Science-Backed Posture Insights"
                   title: loc.onboardingTitle3,
@@ -77,12 +104,7 @@ class OnboardingScreen extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () async {
-                      AppHelper.instance.setPhoneOnboard(true);
-                      onboardingController.isLastPage
-                          ? Get.toNamed(AppRoute.welcomeScreen)
-                          : onboardingController.nextPage();
-                    },
+                    onTap: _nextPage,
                     child: Container(
                       padding: EdgeInsets.all(12.h),
                       decoration: BoxDecoration(

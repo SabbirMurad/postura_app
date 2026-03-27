@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
@@ -7,31 +8,76 @@ import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/common/widgets/custom_text_field.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
-import 'package:posture_detector_app/controller/business_change_password_controller.dart';
+import 'package:posture_detector_app/provider/author.dart';
 
-class BusinessChangePasswordScreen extends StatelessWidget {
-  BusinessChangePasswordScreen({super.key});
+class BusinessChangePasswordScreen extends ConsumerStatefulWidget {
+  const BusinessChangePasswordScreen({super.key});
 
-  final BusinessChangePasswordController changePassController = Get.put(
-    BusinessChangePasswordController(),
-  );
+  @override
+  ConsumerState<BusinessChangePasswordScreen> createState() =>
+      _BusinessChangePasswordScreenState();
+}
+
+class _BusinessChangePasswordScreenState
+    extends ConsumerState<BusinessChangePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
+  bool _loading = false;
+
+  final _currentPassController = TextEditingController();
+  final _newPassController = TextEditingController();
+  final _confirmPassController = TextEditingController();
+
+  @override
+  void dispose() {
+    _currentPassController.dispose();
+    _newPassController.dispose();
+    _confirmPassController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit(AppLocalizations loc) async {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (_newPassController.text != _confirmPassController.text) {
+      showCustomToast(text: loc.passwordNotMatched);
+      return;
+    }
+
+    setState(() => _loading = true);
+
+    final success = await ref
+        .read(authorNotifierProvider.notifier)
+        .changePassword(
+          currentPassword: _currentPassController.text.trim(),
+          newPassword: _newPassController.text.trim(),
+          confirmPassword: _confirmPassController.text.trim(),
+        );
+
+    setState(() => _loading = false);
+
+    if (success) {
+      _currentPassController.clear();
+      _newPassController.clear();
+      _confirmPassController.clear();
+      showCustomToast(
+        text: loc.passwordChangedSuccessfully,
+        toastType: ToastTypesInfo(ToastTypes.success),
+      );
+      Get.back();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        // EN: "Update Password"
         title: Text(loc.updatePassword),
         backgroundColor: AppColors.surface,
         automaticallyImplyLeading: false,
         leading: IconButton(
-          onPressed: () {
-            Get.back();
-            changePassController.clearAll();
-          },
-          icon: Icon(Icons.arrow_back),
+          onPressed: () => Get.back(),
+          icon: const Icon(Icons.arrow_back),
         ),
       ),
       backgroundColor: AppColors.surface,
@@ -48,9 +94,8 @@ class BusinessChangePasswordScreen extends StatelessWidget {
                 SizedBox(height: 25.h),
 
                 CustomTextField(
-                  // EN: "Current Password"
                   hintText: loc.currentPassword,
-                  controller: changePassController.currentPassController,
+                  controller: _currentPassController,
                   isPassword: true,
                   validator: (value) {
                     if (value.length < 8) {
@@ -63,9 +108,8 @@ class BusinessChangePasswordScreen extends StatelessWidget {
                 SizedBox(height: 24.h),
 
                 CustomTextField(
-                  // EN: "New Password"
                   hintText: loc.newPassword,
-                  controller: changePassController.newPassController,
+                  controller: _newPassController,
                   isPassword: true,
                   validator: (value) {
                     if (value.length < 8) {
@@ -76,10 +120,10 @@ class BusinessChangePasswordScreen extends StatelessWidget {
                 ),
 
                 SizedBox(height: 24.h),
+
                 CustomTextField(
-                  // EN: "Confirm Password"
                   hintText: loc.confirmPassword,
-                  controller: changePassController.confirmPassController,
+                  controller: _confirmPassController,
                   isPassword: true,
                   validator: (value) {
                     if (value.length < 8) {
@@ -88,35 +132,22 @@ class BusinessChangePasswordScreen extends StatelessWidget {
                     return null;
                   },
                 ),
-                Spacer(),
+
+                const Spacer(),
+
                 SafeArea(
                   bottom: true,
-                  child: Obx(() {
-                    return PrimaryButton(
-                      // EN: "Update"
-                      text: loc.update,
-                      loading: changePassController.isLoading.value,
-                      textStyle: TextStyle(
-                        color: AppColors.surface,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      onTap: () async {
-                        if (_formKey.currentState!.validate()) {
-                          if (changePassController.newPassController.text
-                                  .toString() ==
-                              changePassController.confirmPassController.text
-                                  .toString()) {
-                            changePassController.changePassword();
-                          } else {
-                            // EN: "Passwords do not match"
-                            showCustomToast(text: loc.passwordNotMatched);
-                          }
-                        }
-                      },
-                      backgroundColor: AppColors.primaryColor,
-                    );
-                  }),
+                  child: PrimaryButton(
+                    text: loc.update,
+                    loading: _loading,
+                    textStyle: TextStyle(
+                      color: AppColors.surface,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    onTap: () => _submit(loc),
+                    backgroundColor: AppColors.primaryColor,
+                  ),
                 ),
               ],
             ),

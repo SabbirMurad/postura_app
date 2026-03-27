@@ -7,7 +7,6 @@ import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/core/constants/app_text.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
-import 'package:posture_detector_app/controller/onboarding_controller.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/models/user_type.dart';
 
@@ -20,7 +19,6 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  late OnboardingController onboardingController;
   late AnimationController _animController;
   late Animation<double> _fadeIn;
   late Animation<Offset> _slideUp;
@@ -28,7 +26,6 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-    onboardingController = Get.find<OnboardingController>();
 
     _animController = AnimationController(
       vsync: this,

@@ -1,22 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/controller/home_controller_cpe.dart';
+import 'package:posture_detector_app/provider/author.dart';
 import 'package:posture_detector_app/view/cpe/widgets/cpe_home_header.dart';
 import 'package:posture_detector_app/view/cpe/widgets/patient_compliance_card.dart';
-import 'package:posture_detector_app/controller/personal_profile_controller.dart';
 
-class HomeScreenCPE extends StatelessWidget {
-  HomeScreenCPE({super.key});
+class HomeScreenCPE extends ConsumerStatefulWidget {
+  const HomeScreenCPE({super.key});
 
+  @override
+  ConsumerState<HomeScreenCPE> createState() => _HomeScreenCPEState();
+}
+
+class _HomeScreenCPEState extends ConsumerState<HomeScreenCPE> {
   final controller = Get.put(HomeCPEController());
-  final personalController = Get.put(PersonalProfileController());
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final profile = ref.watch(authorNotifierProvider).value;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF2F4F7),
@@ -28,16 +34,13 @@ class HomeScreenCPE extends StatelessWidget {
             children: [
               SizedBox(height: 20.h),
 
-              Obx(() {
-                final profile = personalController.profileInfo.value;
-                if (profile == null) {
-                  return SizedBox(height: 48.h);
-                }
-                return CpeHomeHeader(
+              if (profile != null)
+                CpeHomeHeader(
                   userName: profile.data.fullName,
                   avatarUrl: profile.data.avatar?.toString() ?? '',
-                );
-              }),
+                )
+              else
+                SizedBox(height: 48.h),
 
               SizedBox(height: 24.h),
               Expanded(child: Obx(() => _buildBody(controller, loc))),
@@ -61,7 +64,7 @@ class HomeScreenCPE extends StatelessWidget {
           children: [
             Text(
               // EN: "Something went wrong"
-            loc.somethingWentWrong,
+              loc.somethingWentWrong,
               style: TextStyle(fontSize: 14.sp, color: Colors.red),
             ),
             SizedBox(height: 12.h),
@@ -123,6 +126,5 @@ class HomeCPEBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<HomeCPEController>(() => HomeCPEController());
-    Get.lazyPut(() => PersonalProfileController());
   }
 }

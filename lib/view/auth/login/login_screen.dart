@@ -53,19 +53,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     if (_userType == UserType.EMPLOYEE) {
       if (res == true) {
-        setState(() {
-          _loading = true;
-        });
-        await Get.find<ReportController>().fetchMyReports();
-        setState(() {
-          _loading = false;
-        });
+        setState(() => _loading = true);
+        await Future.wait([
+          Get.find<ReportController>().fetchMyReports(),
+          ref.read(authorNotifierProvider.notifier).refreshProfile(),
+        ]);
+        setState(() => _loading = false);
         Get.offAllNamed(AppRoute.bottomNavBusiness);
       } else if (res == false) {
         Get.offAllNamed(AppRoute.employeeSelectBodyRegion);
       }
     } else {
       if (res == true) {
+        ref.read(authorNotifierProvider.notifier).refreshProfile();
         Get.offAllNamed(AppRoute.bottomNavCpe);
       }
     }
@@ -82,164 +82,166 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Form(
             key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 10.h),
-                AppBackButton(),
-                SizedBox(height: 17.h),
-                Center(
-                  child: Text(
-                    // EN: "Welcome back"
-                    loc.welcomeBackWithName,
-                    style: TextStyle(
-                      fontSize: 24.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 17.h),
-
-                _UserTypeDropdown(
-                  userType: _userType,
-                  loc: loc,
-                  onChange: (type) => setState(() => _userType = type),
-                ),
-                SizedBox(height: 29.h),
-
-                // EN: "Email"
-                Text(
-                  loc.email,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: 6.h),
-                CustomTextField(
-                  filled: true,
-                  controller: _emailController,
-                  prefixIcon: Icon(
-                    Iconsax.sms,
-                    color: AppColors.primaryColor.withValues(alpha: 0.8),
-                    size: 25.h,
-                  ),
-                  // EN: "Enter your email"
-                  hintText: loc.emailHint,
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Email is required';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 28.h),
-
-                // EN: "Password"
-                Text(
-                  loc.password,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: 6.h),
-                CustomTextField(
-                  filled: true,
-                  controller: _passwordController,
-                  prefixIcon: Icon(
-                    Icons.lock,
-                    color: AppColors.primaryColor.withValues(alpha: 0.8),
-                    size: 25.h,
-                  ),
-                  suffixIcon: GestureDetector(
-                    onTap: () => setState(
-                      () => _isPasswordObscured = !_isPasswordObscured,
-                    ),
-                    child: _isPasswordObscured
-                        ? Icon(
-                            Icons.remove_red_eye_outlined,
-                            size: 20.w,
-                            color: AppColors.text.withValues(alpha: 0.4),
-                          )
-                        : Assets.icons.auth.eyeOff.image(),
-                  ),
-                  // EN: "Password"
-                  hintText: loc.password,
-                  keyboardType: TextInputType.text,
-                  isPassword: true,
-                  isObscureText: _isPasswordObscured,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Password is required';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16.h),
-
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () => Get.toNamed(AppRoute.verifyEmail),
-                    // EN: "Forget Credential"
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 10.h),
+                  AppBackButton(),
+                  SizedBox(height: 17.h),
+                  Center(
                     child: Text(
-                      loc.forgetCredential,
+                      // EN: "Welcome back"
+                      loc.welcomeBackWithName,
                       style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.primaryColor,
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: 235.h),
+                  SizedBox(height: 17.h),
 
-                PrimaryButton(
-                  loading: _loading,
-                  onTap: _submit,
-                  // EN: "Login"
-                  text: loc.login,
-                  backgroundColor: AppColors.primaryColor,
-                  textStyle: TextStyle(
-                    color: AppColors.surface,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w500,
+                  _UserTypeDropdown(
+                    userType: _userType,
+                    loc: loc,
+                    onChange: (type) => setState(() => _userType = type),
                   ),
-                ),
+                  SizedBox(height: 29.h),
 
-                if (_userType == UserType.EMPLOYEE)
-                  Padding(
-                    padding: EdgeInsets.only(top: 12.h),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // EN: "Don't have an account?"
-                        Text(
-                          loc.donHaveAnAccount,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        SizedBox(width: 6.w),
-                        GestureDetector(
-                          onTap: () => Get.toNamed(AppRoute.companyCredential),
-                          // EN: "Sign up"
-                          child: Text(
-                            loc.signUp,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
+                  // EN: "Email"
+                  Text(
+                    loc.email,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                SafeArea(top: false, child: SizedBox(height: 18.h)),
-              ],
+                  SizedBox(height: 6.h),
+                  CustomTextField(
+                    filled: true,
+                    controller: _emailController,
+                    prefixIcon: Icon(
+                      Iconsax.sms,
+                      color: AppColors.primaryColor.withValues(alpha: 0.8),
+                      size: 25.h,
+                    ),
+                    // EN: "Enter your email"
+                    hintText: loc.emailHint,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Email is required';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 28.h),
+
+                  // EN: "Password"
+                  Text(
+                    loc.password,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 6.h),
+                  CustomTextField(
+                    filled: true,
+                    controller: _passwordController,
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      color: AppColors.primaryColor.withValues(alpha: 0.8),
+                      size: 25.h,
+                    ),
+                    suffixIcon: GestureDetector(
+                      onTap: () => setState(
+                        () => _isPasswordObscured = !_isPasswordObscured,
+                      ),
+                      child: _isPasswordObscured
+                          ? Icon(
+                              Icons.remove_red_eye_outlined,
+                              size: 20.w,
+                              color: AppColors.text.withValues(alpha: 0.4),
+                            )
+                          : Assets.icons.auth.eyeOff.image(),
+                    ),
+                    // EN: "Password"
+                    hintText: loc.password,
+                    keyboardType: TextInputType.text,
+                    isPassword: true,
+                    isObscureText: _isPasswordObscured,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Password is required';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 16.h),
+
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () => Get.toNamed(AppRoute.verifyEmail),
+                      // EN: "Forget Credential"
+                      child: Text(
+                        loc.forgetCredential,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 224.h),
+                  PrimaryButton(
+                    loading: _loading,
+                    onTap: _submit,
+                    // EN: "Login"
+                    text: loc.login,
+                    backgroundColor: AppColors.primaryColor,
+                    textStyle: TextStyle(
+                      color: AppColors.surface,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+
+                  if (_userType == UserType.EMPLOYEE)
+                    Padding(
+                      padding: EdgeInsets.only(top: 12.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // EN: "Don't have an account?"
+                          Text(
+                            loc.donHaveAnAccount,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          SizedBox(width: 6.w),
+                          GestureDetector(
+                            onTap: () =>
+                                Get.toNamed(AppRoute.companyCredential),
+                            // EN: "Sign up"
+                            child: Text(
+                              loc.signUp,
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  SafeArea(top: false, child: SizedBox(height: 18.h)),
+                ],
+              ),
             ),
           ),
         ),

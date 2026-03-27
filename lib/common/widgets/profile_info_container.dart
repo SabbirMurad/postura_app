@@ -1,31 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:posture_detector_app/controller/business_profile_controller.dart';
-import 'package:posture_detector_app/controller/personal_profile_controller.dart';
-
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/provider/author.dart';
 import 'image_uploader.dart';
 
-class ProfileInfoContainer extends StatelessWidget {
+class ProfileInfoContainer extends ConsumerWidget {
   final String userName;
   final String role;
-  final String image;
-  final PersonalProfileController? controller;
-  final BusinessProfileController? businessController;
 
   const ProfileInfoContainer({
     super.key,
     required this.userName,
     required this.role,
-    required this.image,
-    this.controller,
-    this.businessController,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentImage =
+        ref.watch(authorNotifierProvider).value?.data.avatar;
+
     return Material(
       elevation: 1,
       borderRadius: BorderRadius.circular(18.r),
@@ -41,25 +36,13 @@ class ProfileInfoContainer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Obx(() {
-              final currentImage =
-                  controller?.profileInfo.value?.data.avatar ??
-                  businessController?.profileInfo.value?.data.avatar;
-
-              return ImageUploaderVOne(
-                currentImage: currentImage,
-                defaultImage: currentImage ?? Assets.icons.auth.user.path,
-                onImageSelected: (file) {
-                  if (controller != null) {
-                    controller!.selectedImage.value = file;
-                    controller!.updateImage();
-                  } else if (businessController != null) {
-                    businessController!.selectedImage.value = file;
-                    businessController!.updateImage();
-                  }
-                },
-              );
-            }),
+            ImageUploaderVOne(
+              currentImage: currentImage,
+              defaultImage: currentImage ?? Assets.icons.auth.user.path,
+              onImageSelected: (file) {
+                ref.read(authorNotifierProvider.notifier).updateImage(file);
+              },
+            ),
 
             SizedBox(height: 12.h),
             Text(

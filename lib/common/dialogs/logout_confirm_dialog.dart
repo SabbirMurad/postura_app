@@ -7,7 +7,6 @@ import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/controller/signup_controller.dart';
-import 'package:posture_detector_app/controller/onboarding_controller.dart';
 import 'package:posture_detector_app/controller/report_controller.dart';
 
 void showLogoutConfirmDialog(BuildContext context) {
@@ -58,7 +57,6 @@ void showLogoutConfirmDialog(BuildContext context) {
                       Get.find<SignupController>().reset();
                       Get.find<ReportController>().analysisData.value = null;
                       Get.delete<SignupController>();
-                      Get.delete<OnboardingController>();
                       AppHelper.instance.clearAllPrefValue();
                       Get.offAllNamed(AppRoute.loginScreen);
                     },

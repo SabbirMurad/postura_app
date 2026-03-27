@@ -1,39 +1,36 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/controller/report_controller.dart';
 import 'package:posture_detector_app/controller/personal_home_controller.dart';
-import 'package:posture_detector_app/controller/personal_profile_controller.dart';
 import 'package:posture_detector_app/common/widgets/analysis_section_container.dart';
 import 'package:posture_detector_app/common/widgets/details_analysis_list.dart';
 import 'package:posture_detector_app/common/widgets/home_top_section.dart';
 import 'package:posture_detector_app/common/widgets/risky_body_region_menu.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/provider/author.dart';
 
-class HomeScreenBusiness extends StatefulWidget {
+class HomeScreenBusiness extends ConsumerStatefulWidget {
   const HomeScreenBusiness({super.key});
 
   @override
-  State<HomeScreenBusiness> createState() => _HomeScreenBusinessState();
+  ConsumerState<HomeScreenBusiness> createState() => _HomeScreenBusinessState();
 }
 
-class _HomeScreenBusinessState extends State<HomeScreenBusiness> {
-  // ✅ Initialize controllers safely
+class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
   late final PersonalHomeController personalHomeController;
-  late final PersonalProfileController profileController;
   late final ReportController reportController;
 
   @override
   void initState() {
     super.initState();
     personalHomeController = Get.find<PersonalHomeController>();
-    profileController = Get.find<PersonalProfileController>();
     reportController = Get.find<ReportController>();
 
-    // Defer fetch until after first frame renders
     WidgetsBinding.instance.addPostFrameCallback((_) {
       reportController.fetchMyReports();
     });
@@ -42,6 +39,7 @@ class _HomeScreenBusinessState extends State<HomeScreenBusiness> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final profileData = ref.watch(authorNotifierProvider).value?.data;
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -54,16 +52,12 @@ class _HomeScreenBusinessState extends State<HomeScreenBusiness> {
               children: [
                 SizedBox(height: 16.h),
 
-                /// ✅ Top Section with proper null handling
                 Obx(() {
                   final analysisData = reportController.analysisData.value;
-                  final profileData = profileController.profileInfo.value?.data;
                   final posture =
                       analysisData?.aiResult.detailedAnalysis.posture;
 
-                  // ✅ Loading state
-                  if (analysisData == null &&
-                      reportController.isLoading.value) {
+                  if (analysisData == null && reportController.isLoading.value) {
                     return Center(
                       child: Padding(
                         padding: EdgeInsets.symmetric(vertical: 100.h),
@@ -74,7 +68,6 @@ class _HomeScreenBusinessState extends State<HomeScreenBusiness> {
                     );
                   }
 
-                  // ✅ Empty state
                   if (analysisData == null) {
                     return Center(
                       child: Padding(
@@ -110,11 +103,9 @@ class _HomeScreenBusinessState extends State<HomeScreenBusiness> {
                     );
                   }
 
-                  // ✅ Data loaded successfully
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      /// Home header
                       HomeTopSection(
                         name: profileData?.fullName ?? 'User',
                         image: profileData?.avatar != null &&
@@ -125,20 +116,18 @@ class _HomeScreenBusinessState extends State<HomeScreenBusiness> {
 
                       SizedBox(height: 15.h),
 
-                      /// Analysis section
                       AnalysisSectionContainer(
                         percentageText:
-                            (analysisData.aiResult.complianceScore )
+                            (analysisData.aiResult.complianceScore)
                                 .toStringAsFixed(1),
                         percentage:
-                            (analysisData.aiResult.complianceScore ) / 100,
+                            (analysisData.aiResult.complianceScore) / 100,
                         result: analysisData.aiResult,
                       ),
                       SizedBox(height: 19.h),
 
-                      /// Details analysis header
-                      // EN: "Detailed Analysis"
                       Text(
+                        // EN: "Detailed Analysis"
                         loc.detailsAnalysis,
                         style: TextStyle(
                           fontSize: 18.sp,
@@ -147,7 +136,6 @@ class _HomeScreenBusinessState extends State<HomeScreenBusiness> {
                       ),
                       SizedBox(height: 12.h),
 
-                      /// Details analysis containers
                       if (posture != null)
                         DetailsAnalysisList(posture: posture)
                       else
@@ -162,12 +150,11 @@ class _HomeScreenBusinessState extends State<HomeScreenBusiness> {
                   );
                 }),
 
-                /// Body region section
                 SizedBox(height: 30.h),
                 Align(
                   alignment: Alignment.centerLeft,
-                  // EN: "Risk by Body Region"
                   child: Text(
+                    // EN: "Risk by Body Region"
                     loc.riskByBodyRegion,
                     style: TextStyle(
                       fontSize: 18.sp,
@@ -199,7 +186,6 @@ class _HomeScreenBusinessState extends State<HomeScreenBusiness> {
                 }),
                 SizedBox(height: 30.h),
 
-                /// Export PDF button
                 Obx(
                   () => PrimaryButton(
                     loading: reportController.isExportingPDF.value,
@@ -229,5 +215,4 @@ class _HomeScreenBusinessState extends State<HomeScreenBusiness> {
       ),
     );
   }
-
 }

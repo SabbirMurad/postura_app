@@ -11,7 +11,7 @@ String _$authorNotifierHash() => r'c155b2cf5a94c49b914ee0b8212e40e1b19c630b';
 /// See also [AuthorNotifier].
 @ProviderFor(AuthorNotifier)
 final authorNotifierProvider =
-    AsyncNotifierProvider<AuthorNotifier, void>.internal(
+    AsyncNotifierProvider<AuthorNotifier, AuthorModel?>.internal(
       AuthorNotifier.new,
       name: r'authorNotifierProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -21,6 +21,6 @@ final authorNotifierProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$AuthorNotifier = AsyncNotifier<void>;
+typedef _$AuthorNotifier = AsyncNotifier<AuthorModel?>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

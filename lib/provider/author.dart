@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:http/http.dart' as http;
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
+import 'package:posture_detector_app/models/profile/author_model.dart';
 import 'package:posture_detector_app/models/user_type.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -9,8 +13,62 @@ part 'author.g.dart';
 @Riverpod(keepAlive: true)
 class AuthorNotifier extends _$AuthorNotifier {
   @override
-  FutureOr<void> build() async {
-    return null;
+  Future<AuthorModel?> build() async {
+    final token = await AppHelper.instance.getAccessToken();
+    if (token == null) return null;
+    return _fetchProfile();
+  }
+
+  Future<AuthorModel?> _fetchProfile() async {
+    final response = await CustomHttp.get(
+      endpoint: 'settings/personal-info/me',
+      needAuth: true,
+      showFloatingError: false,
+    );
+    if (!response.ok) return null;
+    try {
+      return AuthorModel.fromJson(response.data);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> refreshProfile() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(_fetchProfile);
+  }
+
+  Future<bool> updateName(String name) async {
+    final response = await CustomHttp.put(
+      endpoint: 'settings/personal-info/me',
+      needAuth: true,
+      showFloatingError: false,
+      body: {'full_name': name},
+    );
+    if (!response.ok) {
+      showCustomToast(text: response.error ?? 'Something went wrong');
+      return false;
+    }
+    await refreshProfile();
+    return true;
+  }
+
+  Future<bool> updateImage(File image) async {
+    final multipartFile = await http.MultipartFile.fromPath(
+      'avatar',
+      image.path,
+    );
+    final response = await CustomHttp.multipart(
+      endpoint: 'settings/personal-info/me',
+      method: CommonCustomMethods.PUT,
+      files: [multipartFile],
+    );
+    if (!response.ok) {
+      showCustomToast(text: response.error ?? 'Something went wrong');
+      return false;
+    }
+    await refreshProfile();
+    return true;
   }
 
   /// Returns true (onboarded), false (not onboarded), or null (error).
@@ -19,10 +77,6 @@ class AuthorNotifier extends _$AuthorNotifier {
     required String email_address,
     required String password,
   }) async {
-    print('');
-    print(user_type.name);
-    print('');
-
     final response = await CustomHttp.post(
       endpoint: 'auth/sign-in',
       body: {
@@ -50,6 +104,8 @@ class AuthorNotifier extends _$AuthorNotifier {
       final isOnboarded = await AppHelper.instance.getIsonBoarding();
       return isOnboarded == true;
     }
+
+    await refreshProfile();
 
     return true;
   }
@@ -135,6 +191,26 @@ class AuthorNotifier extends _$AuthorNotifier {
         'confirm_password': confirmPassword,
       },
       needAuth: false,
+    );
+
+    return response.ok;
+  }
+
+  /// Returns true on success, false on error.
+  Future<bool> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    final response = await CustomHttp.post(
+      endpoint: 'auth/change-password',
+      body: {
+        'current_password': currentPassword,
+        'new_password': newPassword,
+        'confirm_password': confirmPassword,
+      },
+      needAuth: true,
+      showFloatingError: false,
     );
 
     return response.ok;

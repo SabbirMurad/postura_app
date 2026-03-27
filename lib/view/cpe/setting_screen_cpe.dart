@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/core/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
-import 'package:posture_detector_app/controller/business_profile_controller.dart';
+import 'package:posture_detector_app/provider/author.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/dialogs/logout_confirm_dialog.dart';
 import 'package:posture_detector_app/common/widgets/profile_info_container.dart';
 import 'package:posture_detector_app/common/widgets/settings_container.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 
-class SettingScreenCPE extends StatelessWidget {
-  SettingScreenCPE({super.key});
-
-  final BusinessProfileController _profileController =
-      Get.find<BusinessProfileController>();
+class SettingScreenCPE extends ConsumerWidget {
+  const SettingScreenCPE({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context)!;
+    final profile = ref.watch(authorNotifierProvider).value;
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -38,19 +37,10 @@ class SettingScreenCPE extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 15.h),
-                Obx(() {
-                  return ProfileInfoContainer(
-                    userName:
-                        _profileController.profileInfo.value?.data.fullName ??
-                        "username",
-                    role:
-                        _profileController.profileInfo.value?.data.role ??
-                        "role",
-                    image:
-                        _profileController.profileInfo.value?.data.avatar ?? '',
-                    businessController: _profileController,
-                  );
-                }),
+                ProfileInfoContainer(
+                  userName: profile?.data.fullName ?? 'username',
+                  role: profile?.data.role ?? 'role',
+                ),
 
                 SizedBox(height: 12.h),
                 SettingsContainer(
@@ -62,7 +52,6 @@ class SettingScreenCPE extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: 12.h),
-
                 SettingsContainer(
                   iconData: Assets.icons.general.language.path,
                   // EN: "Language"

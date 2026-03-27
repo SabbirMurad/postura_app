@@ -187,7 +187,7 @@ class CustomHttp {
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.body.isEmpty || response.body.trim().isEmpty) {
           return CustomHttpResult(
-            ok: false,
+            ok: true,
             status_code: response.statusCode,
             error: 'Server returned empty response',
           );
@@ -195,14 +195,14 @@ class CustomHttp {
         try {
           final decodedData = jsonDecode(response.body);
           return CustomHttpResult(
-            ok: false,
+            ok: true,
             status_code: response.statusCode,
             data: decodedData,
           );
         } catch (e) {
           debugPrint('MULTIPART JSON parse error: $e');
           return CustomHttpResult(
-            ok: false,
+            ok: true,
             status_code: response.statusCode,
             error: 'Failed to parse server response',
           );
