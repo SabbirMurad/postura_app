@@ -6,7 +6,7 @@ part of 'report.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$reportNotifierHash() => r'reportNotifierHash';
+String _$reportNotifierHash() => r'fa85f7b543eaf35e5de06fe74b139a3383b3447a';
 
 /// See also [ReportNotifier].
 @ProviderFor(ReportNotifier)

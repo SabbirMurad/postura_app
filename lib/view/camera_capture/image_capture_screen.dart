@@ -1,29 +1,29 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/routes.dart';
-import 'package:posture_detector_app/core/constants/app_text.dart';
-import 'package:posture_detector_app/controller/image_capture_controller.dart';
+import 'package:posture_detector_app/constants/app_text.dart';
+import 'package:posture_detector_app/provider/image_capture.dart';
 import 'package:posture_detector_app/view/camera_capture/widgets/scan_confirmation_dialog.dart';
 import 'package:posture_detector_app/view/camera_capture/widgets/camera_bottom_bar.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/models/scan_type.dart';
 
-class ImageCaptureScreen extends StatefulWidget {
+class ImageCaptureScreen extends ConsumerStatefulWidget {
   final ScanType type;
 
   const ImageCaptureScreen({super.key, required this.type});
 
   @override
-  State<ImageCaptureScreen> createState() => _ImageCaptureScreenState();
+  ConsumerState<ImageCaptureScreen> createState() => _ImageCaptureScreenState();
 }
 
-class _ImageCaptureScreenState extends State<ImageCaptureScreen> {
+class _ImageCaptureScreenState extends ConsumerState<ImageCaptureScreen> {
   CameraController? cameraController;
   late List<CameraDescription> _cameras;
   late Future<void> _initializeController;
-  late ImageCaptureController _imageCaptureController;
 
   bool isFlashOn = false;
   bool _primaryScan = false;
@@ -33,9 +33,6 @@ class _ImageCaptureScreenState extends State<ImageCaptureScreen> {
   @override
   void initState() {
     super.initState();
-
-    _imageCaptureController = Get.put(ImageCaptureController());
-
     _initializeController = initCamera();
   }
 
@@ -93,7 +90,7 @@ class _ImageCaptureScreenState extends State<ImageCaptureScreen> {
       final XFile image = await cameraController!.takePicture();
       await cameraController!.setFlashMode(FlashMode.off);
 
-      _imageCaptureController.image.value = image;
+      ref.read(imageCaptureNotifierProvider.notifier).setImage(image);
 
       await Get.toNamed(
         AppRoute.imagePreview,
@@ -107,6 +104,7 @@ class _ImageCaptureScreenState extends State<ImageCaptureScreen> {
   @override
   void dispose() {
     cameraController?.dispose();
+    ref.read(imageCaptureNotifierProvider.notifier).clear();
     super.dispose();
   }
 

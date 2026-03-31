@@ -1,9 +1,10 @@
-import 'package:get/get.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
-import 'package:posture_detector_app/controller/home_controller_cpe.dart';
+import 'package:posture_detector_app/provider/cpe_home.dart';
+import 'package:get/get.dart';
 
 // ─────────────────────────────────────────
 // Models
@@ -23,13 +24,19 @@ class PainSymptom {
 class ApprovalItem {
   final String label;
   final String apiKey;
-  bool isChecked;
+  final bool isChecked;
 
-  ApprovalItem({
+  const ApprovalItem({
     required this.label,
     required this.apiKey,
     this.isChecked = false,
   });
+
+  ApprovalItem copyWith({bool? isChecked}) => ApprovalItem(
+        label: label,
+        apiKey: apiKey,
+        isChecked: isChecked ?? this.isChecked,
+      );
 }
 
 class PhotoItem {
@@ -40,9 +47,9 @@ class PhotoItem {
   const PhotoItem.local(this.path) : remoteUrl = null, isRemote = false;
 
   const PhotoItem.remote(String url)
-    : path = '',
-      remoteUrl = url,
-      isRemote = true;
+      : path = '',
+        remoteUrl = url,
+        isRemote = true;
 }
 
 enum ReviewMode { remote, live }
@@ -70,49 +77,53 @@ enum ReviewDecision {
 }
 
 // ─────────────────────────────────────────
-// Controller
+// State
 // ─────────────────────────────────────────
-class CPEAssessmentController extends GetxController {
-  final _picker = ImagePicker();
+class CpeAssessmentState {
+  final bool isLoading;
+  final bool isSubmitting;
+  final String initialReviewStatus;
+  final String patientName;
+  final String patientId;
+  final int compliance;
+  final String riskLevel;
+  final String deskLocation;
+  final String deskRole;
+  final List<PainSymptom> painSymptoms;
+  final List<PhotoItem> photoItems;
+  final List<ApprovalItem> approvalItems;
+  final ReviewMode reviewMode;
+  final ReviewDecision decision;
+  final String comment;
+  final int maxCommentLength;
+  final String signaturePath;
+  final String signatureRemoteUrl;
 
-  // Passed from HomeScreenCPE: arguments: {'scan_id': scan.scanId}
-  int get scanId => (Get.arguments?['scan_id'] ?? 0) as int;
+  const CpeAssessmentState({
+    this.isLoading = true,
+    this.isSubmitting = false,
+    this.initialReviewStatus = '',
+    this.patientName = '',
+    this.patientId = '',
+    this.compliance = 0,
+    this.riskLevel = '',
+    this.deskLocation = '',
+    this.deskRole = '',
+    this.painSymptoms = const [],
+    this.photoItems = const [],
+    this.approvalItems = const [],
+    this.reviewMode = ReviewMode.remote,
+    this.decision = ReviewDecision.pending,
+    this.comment = '',
+    this.maxCommentLength = 500,
+    this.signaturePath = '',
+    this.signatureRemoteUrl = '',
+  });
 
-  // ── State ──────────────────────────────
-  final isLoading = true.obs;
-  final isSubmitting = false.obs;
-  // Tracks the original status from API — button only shows when initially PENDING
-  final initialReviewStatus = ''.obs;
-
-  final patientName = ''.obs;
-  final patientId = ''.obs;
-
-  final compliance = 0.obs;
-  final riskLevel = ''.obs;
-
-  final deskLocation = ''.obs;
-  final deskRole = ''.obs;
-
-  final painSymptoms = <PainSymptom>[].obs;
-  final photoItems = <PhotoItem>[].obs;
-  final approvalItems = <ApprovalItem>[].obs;
-
-  final reviewMode = ReviewMode.remote.obs;
-  final decision = ReviewDecision.pending.obs;
-
-  final comment = ''.obs;
-  final maxCommentLength = 500;
-
-  // Local file path picked by user
-  final signaturePath = ''.obs;
-  // Remote URL from API (review_signature_url)
-  final signatureRemoteUrl = ''.obs;
-
-  // ── Computed ───────────────────────────
-  double get compliancePercent => (compliance.value / 100.0).clamp(0.0, 1.0);
+  double get compliancePercent => (compliance / 100.0).clamp(0.0, 1.0);
 
   String get complianceLabel {
-    switch (riskLevel.value.toLowerCase()) {
+    switch (riskLevel.toLowerCase()) {
       case 'red':
         return 'Red';
       case 'yellow':
@@ -120,9 +131,8 @@ class CPEAssessmentController extends GetxController {
       case 'green':
         return 'Good';
       default:
-        final v = compliance.value;
-        if (v < 40) return 'Red';
-        if (v < 70) return 'Moderate';
+        if (compliance < 40) return 'Red';
+        if (compliance < 70) return 'Moderate';
         return 'Good';
     }
   }
@@ -138,70 +148,107 @@ class CPEAssessmentController extends GetxController {
     }
   }
 
-  String get decisionLabel => decision.value.label;
+  String get decisionLabel => decision.label;
   bool get canAddMorePhotos => photoItems.length < 4;
 
-  // ── Lifecycle ──────────────────────────
+  CpeAssessmentState copyWith({
+    bool? isLoading,
+    bool? isSubmitting,
+    String? initialReviewStatus,
+    String? patientName,
+    String? patientId,
+    int? compliance,
+    String? riskLevel,
+    String? deskLocation,
+    String? deskRole,
+    List<PainSymptom>? painSymptoms,
+    List<PhotoItem>? photoItems,
+    List<ApprovalItem>? approvalItems,
+    ReviewMode? reviewMode,
+    ReviewDecision? decision,
+    String? comment,
+    String? signaturePath,
+    String? signatureRemoteUrl,
+  }) =>
+      CpeAssessmentState(
+        isLoading: isLoading ?? this.isLoading,
+        isSubmitting: isSubmitting ?? this.isSubmitting,
+        initialReviewStatus: initialReviewStatus ?? this.initialReviewStatus,
+        patientName: patientName ?? this.patientName,
+        patientId: patientId ?? this.patientId,
+        compliance: compliance ?? this.compliance,
+        riskLevel: riskLevel ?? this.riskLevel,
+        deskLocation: deskLocation ?? this.deskLocation,
+        deskRole: deskRole ?? this.deskRole,
+        painSymptoms: painSymptoms ?? this.painSymptoms,
+        photoItems: photoItems ?? this.photoItems,
+        approvalItems: approvalItems ?? this.approvalItems,
+        reviewMode: reviewMode ?? this.reviewMode,
+        decision: decision ?? this.decision,
+        comment: comment ?? this.comment,
+        maxCommentLength: maxCommentLength,
+        signaturePath: signaturePath ?? this.signaturePath,
+        signatureRemoteUrl: signatureRemoteUrl ?? this.signatureRemoteUrl,
+      );
+}
+
+// ─────────────────────────────────────────
+// Notifier
+// ─────────────────────────────────────────
+class CpeAssessmentNotifier
+    extends AutoDisposeFamilyNotifier<CpeAssessmentState, int> {
+  final _picker = ImagePicker();
+
   @override
-  void onInit() {
-    super.onInit();
-    _loadData();
+  CpeAssessmentState build(int scanId) {
+    _loadData(scanId);
+    return const CpeAssessmentState();
   }
 
   // ─────────────────────────────────────
   // GET  cpe/ergonomist/company/assessment/detail/{scan_id}/
   // ─────────────────────────────────────
-  Future<void> _loadData() async {
-    isLoading.value = true;
-
+  Future<void> _loadData(int scanId) async {
     final result = await CustomHttp.get(
       endpoint: 'cpe/ergonomist/company/assessment/detail/$scanId',
       needAuth: true,
       showFloatingError: true,
     );
 
-    isLoading.value = false;
-
-    if (result.error != null) return;
+    if (result.error != null) {
+      state = state.copyWith(isLoading: false);
+      return;
+    }
     final data = result.data;
-    if (data == null) return;
+    if (data == null) {
+      state = state.copyWith(isLoading: false);
+      return;
+    }
 
     try {
       final d = Map<String, dynamic>.from(data['scan_detail'] ?? data);
 
-      patientName.value = d['employee_name'] ?? '';
-      patientId.value = '${d['employee_id'] ?? ''}';
-
       final rawRisk = (d['risk_score'] ?? 0).toDouble();
-      compliance.value = rawRisk.toInt();
-      riskLevel.value = d['risk_level'] ?? '';
-
-      deskLocation.value = d['desk_location'] ?? '';
-      final wp = d['work_pattern'] as Map<String, dynamic>?;
-      deskRole.value = wp?['device_usage'] ?? '';
 
       final painDuration = d['pain_duration'] ?? '';
       final intensities = d['pain_intensities'] as List<dynamic>? ?? [];
-      painSymptoms.assignAll(
-        intensities.map((e) {
-          final m = Map<String, dynamic>.from(e);
-          return PainSymptom(
-            area: m['body_region'] ?? '',
-            duration: painDuration,
-            intensity: (m['intensity'] ?? 0) as int,
-          );
-        }),
-      );
+      final painSymptoms = intensities.map((e) {
+        final m = Map<String, dynamic>.from(e);
+        return PainSymptom(
+          area: m['body_region'] ?? '',
+          duration: painDuration,
+          intensity: (m['intensity'] ?? 0) as int,
+        );
+      }).toList();
 
-      // Seed photos with annotated image from API
-      photoItems.clear();
+      final photoItems = <PhotoItem>[];
       final annotatedUrl = d['annotated_image_url'] as String?;
       if (annotatedUrl != null && annotatedUrl.isNotEmpty) {
         photoItems.add(PhotoItem.remote(annotatedUrl));
       }
 
       final approvalsMap = d['approvals'] as Map<String, dynamic>? ?? {};
-      approvalItems.assignAll([
+      final approvalItems = [
         ApprovalItem(
           label: 'Posture landmarks are valid and accurate',
           apiKey: 'landmarks_verified',
@@ -222,21 +269,32 @@ class CPEAssessmentController extends GetxController {
           apiKey: 'recommendations_verified',
           isChecked: approvalsMap['recommendations_verified'] == true,
         ),
-      ]);
+      ];
 
-      decision.value = ReviewDecision.fromApi(d['review_status']);
-      initialReviewStatus.value = d['review_status'] ?? '';
-      comment.value = d['review_comment'] ?? '';
+      final wp = d['work_pattern'] as Map<String, dynamic>?;
       final reviewType = d['review_type'] as String?;
-      reviewMode.value = reviewType == 'LIVE'
-          ? ReviewMode.live
-          : ReviewMode.remote;
-      // Pre-fill signature from API if already reviewed
-      signatureRemoteUrl.value = d['review_signature_url'] as String? ?? '';
+
+      state = CpeAssessmentState(
+        isLoading: false,
+        patientName: d['employee_name'] ?? '',
+        patientId: '${d['employee_id'] ?? ''}',
+        compliance: rawRisk.toInt(),
+        riskLevel: d['risk_level'] ?? '',
+        deskLocation: d['desk_location'] ?? '',
+        deskRole: wp?['device_usage'] ?? '',
+        painSymptoms: painSymptoms,
+        photoItems: photoItems,
+        approvalItems: approvalItems,
+        decision: ReviewDecision.fromApi(d['review_status']),
+        initialReviewStatus: d['review_status'] ?? '',
+        comment: d['review_comment'] ?? '',
+        reviewMode: reviewType == 'LIVE' ? ReviewMode.live : ReviewMode.remote,
+        signatureRemoteUrl: d['review_signature_url'] as String? ?? '',
+      );
     } catch (e) {
       final loc = AppLocalizations.of(Get.context!)!;
-      // EN: error = "Error", failedToParseResponse = "Failed to parse response"
       Get.snackbar(loc.error, '${loc.failedToParseResponse}: $e');
+      state = state.copyWith(isLoading: false);
     }
   }
 
@@ -244,14 +302,10 @@ class CPEAssessmentController extends GetxController {
   // Approvals
   // ─────────────────────────────────────
   void toggleApproval(int index) {
-    if (index < 0 || index >= approvalItems.length) return;
-    final item = approvalItems[index];
-    approvalItems[index] = ApprovalItem(
-      label: item.label,
-      apiKey: item.apiKey,
-      isChecked: !item.isChecked,
-    );
-    approvalItems.refresh();
+    if (index < 0 || index >= state.approvalItems.length) return;
+    final items = List<ApprovalItem>.from(state.approvalItems);
+    items[index] = items[index].copyWith(isChecked: !items[index].isChecked);
+    state = state.copyWith(approvalItems: items);
   }
 
   // ─────────────────────────────────────
@@ -263,90 +317,77 @@ class CPEAssessmentController extends GetxController {
       imageQuality: 90,
     );
     if (picked != null) {
-      signaturePath.value = picked.path;
-      signatureRemoteUrl.value = ''; // clear remote when user picks new
+      state = state.copyWith(
+        signaturePath: picked.path,
+        signatureRemoteUrl: '',
+      );
     }
   }
 
   void removeSignature() {
-    signaturePath.value = '';
-    signatureRemoteUrl.value = '';
+    state = state.copyWith(signaturePath: '', signatureRemoteUrl: '');
   }
 
   // ─────────────────────────────────────
   // Setters
   // ─────────────────────────────────────
-  void setReviewMode(ReviewMode mode) => reviewMode.value = mode;
-  void setDecision(ReviewDecision d) => decision.value = d;
+  void setReviewMode(ReviewMode mode) => state = state.copyWith(reviewMode: mode);
+  void setDecision(ReviewDecision d) => state = state.copyWith(decision: d);
 
   void setComment(String value) {
-    if (value.length <= maxCommentLength) comment.value = value;
+    if (value.length <= state.maxCommentLength) {
+      state = state.copyWith(comment: value);
+    }
   }
 
   // ─────────────────────────────────────
   // Submit
   // POST cpe/ergonomist/assessment/submit-review/{scan_id}/
-  // Content-Type: multipart/form-data
-  //
-  // Fields:
-  //   landmarks_verified        → "True" | "False"
-  //   workstation_verified      → "True" | "False"
-  //   rosa_verified             → "True" | "False"
-  //   recommendations_verified  → "True" | "False"
-  //   review_type               → "REMOTE" | "LIVE"
-  //   review_status             → "APPROVED" | "REJECTED" | "FOLLOW_UP_REQUIRED" | "NEED_CHANGES" | "PENDING"
-  //   review_comment            → string
-  //   review_signature          → File (image)
   // ─────────────────────────────────────
   Future<void> submitReview() async {
-    isSubmitting.value = true;
+    state = state.copyWith(isSubmitting: true);
     try {
-      // ── Text fields ──
       final fields = <String, String>{
-        // Approvals — API expects "True" / "False" strings
-        for (final item in approvalItems)
+        for (final item in state.approvalItems)
           item.apiKey: item.isChecked ? 'True' : 'False',
-
-        'review_type': reviewMode.value.apiValue,
-        'review_status': decision.value.apiValue,
-        'review_comment': comment.value,
+        'review_type': state.reviewMode.apiValue,
+        'review_status': state.decision.apiValue,
+        'review_comment': state.comment,
       };
 
-      // ── File fields ──
       final files = <http.MultipartFile>[];
-      if (signaturePath.value.isNotEmpty) {
+      if (state.signaturePath.isNotEmpty) {
         files.add(
           await http.MultipartFile.fromPath(
             'review_signature',
-            signaturePath.value,
+            state.signaturePath,
           ),
         );
       }
 
-      // ── Send via CustomHttp.multipart ──
       final result = await CustomHttp.multipart(
-        endpoint: 'cpe/ergonomist/assessment/submit-review/$scanId',
+        endpoint: 'cpe/ergonomist/assessment/submit-review/$arg',
         method: CommonCustomMethods.POST,
         fields: fields,
         files: files,
       );
 
       if (result.error == null) {
-        // Refresh CPE home list so the updated status shows
-        if (Get.isRegistered<HomeCPEController>()) {
-          Get.find<HomeCPEController>().fetchAssessmentList();
-        }
+        ref.read(cpeHomeNotifierProvider.notifier).fetchAssessmentList();
         Get.back();
         final loc = AppLocalizations.of(Get.context!)!;
-        // EN: success = "Success", reviewSubmittedSuccessfully = "Review submitted successfully"
         Get.snackbar(loc.success, loc.reviewSubmittedSuccessfully);
       }
     } catch (e) {
       final loc = AppLocalizations.of(Get.context!)!;
-      // EN: error = "Error", failedToSubmit = "Failed to submit"
       Get.snackbar(loc.error, '${loc.failedToSubmit}: $e');
     } finally {
-      isSubmitting.value = false;
+      state = state.copyWith(isSubmitting: false);
     }
   }
 }
+
+final cpeAssessmentNotifierProvider = NotifierProvider.autoDispose
+    .family<CpeAssessmentNotifier, CpeAssessmentState, int>(
+  CpeAssessmentNotifier.new,
+);

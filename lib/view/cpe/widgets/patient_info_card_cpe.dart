@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
-import 'package:posture_detector_app/controller/assessment_controller_cpe.dart';
+import 'package:posture_detector_app/provider/cpe_assessment.dart';
 import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
 
 class PatientInfoCardCPE extends StatelessWidget {
-  final CPEAssessmentController controller;
-  const PatientInfoCardCPE({super.key, required this.controller});
+  final CpeAssessmentState state;
+  const PatientInfoCardCPE({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class PatientInfoCardCPE extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  controller.patientName.value,
+                  state.patientName,
                   style: TextStyle(
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w700,
@@ -40,7 +40,7 @@ class PatientInfoCardCPE extends StatelessWidget {
                     ),
                     SizedBox(width: 4.w),
                     Text(
-                      controller.patientId.value,
+                      state.patientId,
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: const Color(0xFF4A4F65),
@@ -55,12 +55,12 @@ class PatientInfoCardCPE extends StatelessWidget {
             width: 36.w,
             height: 36.w,
             decoration: BoxDecoration(
-              color: statusBgColor(controller.decision.value),
+              color: statusBgColor(state.decision),
               borderRadius: BorderRadius.circular(10.r),
             ),
             child: Padding(
               padding: EdgeInsets.all(8.w),
-              child: decisionSvgIcon(controller.decision.value, size: 20.w),
+              child: decisionSvgIcon(state.decision, size: 20.w),
             ),
           ),
         ],
@@ -70,8 +70,8 @@ class PatientInfoCardCPE extends StatelessWidget {
 }
 
 class DeskInfoSectionCPE extends StatelessWidget {
-  final CPEAssessmentController controller;
-  const DeskInfoSectionCPE({super.key, required this.controller});
+  final CpeAssessmentState state;
+  const DeskInfoSectionCPE({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +79,6 @@ class DeskInfoSectionCPE extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // EN: "Desk Info"
         SectionTitle(loc.deskInfo),
         SizedBox(height: 8.h),
         Container(
@@ -92,7 +91,6 @@ class DeskInfoSectionCPE extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    // EN: "Desk ID / Location"
                     loc.deskIdLocation,
                     style: TextStyle(
                       fontSize: 12.sp,
@@ -100,7 +98,6 @@ class DeskInfoSectionCPE extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    // EN: "Role"
                     loc.roleLabel,
                     style: TextStyle(
                       fontSize: 12.sp,
@@ -125,7 +122,7 @@ class DeskInfoSectionCPE extends StatelessWidget {
                       ),
                       SizedBox(width: 4.w),
                       Text(
-                        controller.deskLocation.value,
+                        state.deskLocation,
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
@@ -135,7 +132,7 @@ class DeskInfoSectionCPE extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    controller.deskRole.value,
+                    state.deskRole,
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
@@ -153,8 +150,8 @@ class DeskInfoSectionCPE extends StatelessWidget {
 }
 
 class PainSymptomsSectionCPE extends StatelessWidget {
-  final CPEAssessmentController controller;
-  const PainSymptomsSectionCPE({super.key, required this.controller});
+  final CpeAssessmentState state;
+  const PainSymptomsSectionCPE({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {
@@ -162,10 +159,9 @@ class PainSymptomsSectionCPE extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // EN: "Pain & Symptoms"
         SectionTitle(loc.painAndSymptoms),
         SizedBox(height: 8.h),
-        ...controller.painSymptoms.map(
+        ...state.painSymptoms.map(
           (symptom) => Padding(
             padding: EdgeInsets.only(bottom: 10.h),
             child: PainCardCPE(symptom: symptom),
@@ -223,7 +219,6 @@ class PainCardCPE extends StatelessWidget {
                 ),
               ),
               Text(
-                // EN: "Pain Intensity"
                 loc.painIntensityLabel,
                 style: TextStyle(
                   fontSize: 12.sp,

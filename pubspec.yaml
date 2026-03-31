@@ -13,7 +13,6 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   flutter_gen: ^5.12.0
-  get: ^4.7.3
   google_fonts: ^6.3.2
   flutter_screenutil: ^5.9.3
   smooth_page_indicator: ^1.2.1
@@ -40,6 +39,7 @@ dependencies:
   share_plus: ^7.2.1
   flutter_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
+  go_router: ^14.2.3
 
 dev_dependencies:
   flutter_test:

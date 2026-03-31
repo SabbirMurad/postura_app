@@ -6,7 +6,8 @@ part of 'assessment.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$assessmentNotifierHash() => r'assessmentNotifierHash';
+String _$assessmentNotifierHash() =>
+    r'8506a0ac8893b3b4637c76a420c3ee4a381b9bad';
 
 /// See also [AssessmentNotifier].
 @ProviderFor(AssessmentNotifier)

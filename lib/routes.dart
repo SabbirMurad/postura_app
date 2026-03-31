@@ -29,6 +29,7 @@ import 'package:posture_detector_app/view/onboarding/splash_screen.dart';
 
 import 'package:posture_detector_app/view/auth/signup/employee_work_detail_screen.dart';
 import 'package:posture_detector_app/common/screens/privacy_policy_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class AppRoute {
   AppRoute._();
@@ -89,107 +90,153 @@ class AppRoute {
   // ── Shared ──
   static const privacyPolicy = '/privacy-policy';
 
-  static final routes = [
-    /// -------------------------------------- Auth ------------------------------ ///
-    GetPage(name: AppRoute.splashScreen, page: () => SplashScreen()),
-    GetPage(name: AppRoute.onBoardingScreen, page: () => OnboardingScreen()),
-    GetPage(name: AppRoute.welcomeScreen, page: () => WelcomingScreen()),
-    GetPage(name: AppRoute.loginScreen, page: () => LoginScreen()),
+  static void push(String route) => allRoutes.push(route);
+  static void go(String route) => allRoutes.go(route);
+  static void pop() {
+    if (allRoutes.canPop()) {
+      allRoutes.pop();
+    } else {
+      allRoutes.go(splashScreen);
+    }
+  }
 
-    /// -------------------------------- forgot password ------------------------------ ///
-    GetPage(name: AppRoute.verifyEmail, page: () => VerifyEmailScreen()),
-    GetPage(
-      name: AppRoute.confirmCodeForgot,
-      page: () => ConfirmCodeForgotScreen(),
-    ),
-    GetPage(
-      name: AppRoute.forgotPasswordScreen,
-      page: () => ForgotPasswordScreen(),
-    ),
+  static final allRoutes = GoRouter(
+    routes: [
+      /// -------------------------------------- Auth ------------------------------ ///
+      GoRoute(
+        path: AppRoute.splashScreen,
+        builder: (context, state) => SplashScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.onBoardingScreen,
+        builder: (context, state) => OnboardingScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.welcomeScreen,
+        builder: (context, state) => WelcomingScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.loginScreen,
+        builder: (context, state) => LoginScreen(),
+      ),
 
-    /// ------------------------------------------------------------------------------- ///
-    GetPage(name: AppRoute.selectLanguage, page: () => SelectLanguageScreen()),
-    GetPage(
-      name: AppRoute.companyCredential,
-      page: () => CompanyCredentialScreen(),
-    ),
-    GetPage(
-      name: AppRoute.employeeCredential,
-      page: () => EmployeeCredentialScreen(),
-    ),
-    GetPage(
-      name: AppRoute.employeeWorkDetail,
-      page: () => EmployeeWorkDetailScreen(),
-    ),
-    GetPage(
-      name: AppRoute.employeeSelectBodyRegion,
-      page: () => SelectBodyRegionScreen(),
-    ),
-    GetPage(
-      name: AppRoute.employeePainIntensityScreen,
-      page: () => BusinessPainIntensityScreen(),
-    ),
-    GetPage(
-      name: AppRoute.employeePainDurationScreen,
-      page: () => BusinessPainDurationScreen(),
-    ),
-    GetPage(
-      name: AppRoute.employeeWorkPatternScreen,
-      page: () => BusinessWorkPatternScreen(),
-    ),
-    GetPage(
-      name: AppRoute.employeeOptionalSymptom,
-      page: () => BusinessOptionalSymptomScreen(),
-    ),
-    GetPage(name: AppRoute.cameraGuideScreen, page: () => CameraGuideScreen()),
-    GetPage(
-      name: AppRoute.imageCaptureView,
-      page: () => ImageCaptureScreen(type: Get.arguments['type']),
-    ),
-    GetPage(name: AppRoute.imagePreview, page: () => ImagePreviewScreen()),
-    GetPage(
-      name: AppRoute.outputScreenBusiness,
-      page: () => OutputScreenBusiness(),
-    ),
-    GetPage(
-      name: AppRoute.correctionReportScreenBusiness,
-      page: () => CorrectionReportScreenBusiness(),
-    ),
-    GetPage(
-      name: AppRoute.exerciseBusiness,
-      page: () => ExerciseScreenBusiness(),
-    ),
-    GetPage(
-      name: AppRoute.equipmentScreenBusiness,
-      page: () => EquipmentScreenBusiness(canSendListToCompany: true),
-    ),
+      /// -------------------------------- forgot password ------------------------------ ///
+      GoRoute(
+        path: AppRoute.verifyEmail,
+        builder: (context, state) => VerifyEmailScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.confirmCodeForgot,
+        builder: (context, state) => ConfirmCodeForgotScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.forgotPasswordScreen,
+        builder: (context, state) => ForgotPasswordScreen(),
+      ),
 
-    /// ------------------------- Business Dashboard ---------------------------------- ///
-    GetPage(
-      name: AppRoute.businessAccountSettings,
-      page: () => AccountSettingsBusinessScreen(),
-    ),
+      /// ------------------------------------------------------------------------------- ///
+      GoRoute(
+        path: AppRoute.selectLanguage,
+        builder: (context, state) => SelectLanguageScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.companyCredential,
+        builder: (context, state) => CompanyCredentialScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.employeeCredential,
+        builder: (context, state) => EmployeeCredentialScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.employeeWorkDetail,
+        builder: (context, state) => EmployeeWorkDetailScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.employeeSelectBodyRegion,
+        builder: (context, state) => SelectBodyRegionScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.employeePainIntensityScreen,
+        builder: (context, state) => BusinessPainIntensityScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.employeePainDurationScreen,
+        builder: (context, state) => BusinessPainDurationScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.employeeWorkPatternScreen,
+        builder: (context, state) => BusinessWorkPatternScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.employeeOptionalSymptom,
+        builder: (context, state) => BusinessOptionalSymptomScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.cameraGuideScreen,
+        builder: (context, state) => CameraGuideScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.imageCaptureView,
+        builder: (context, state) =>
+            ImageCaptureScreen(type: Get.arguments['type']),
+      ),
+      GoRoute(
+        path: AppRoute.imagePreview,
+        builder: (context, state) => ImagePreviewScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.outputScreenBusiness,
+        builder: (context, state) => OutputScreenBusiness(),
+      ),
+      GoRoute(
+        path: AppRoute.correctionReportScreenBusiness,
+        builder: (context, state) => CorrectionReportScreenBusiness(),
+      ),
+      GoRoute(
+        path: AppRoute.exerciseBusiness,
+        builder: (context, state) => ExerciseScreenBusiness(),
+      ),
+      GoRoute(
+        path: AppRoute.equipmentScreenBusiness,
+        builder: (context, state) =>
+            EquipmentScreenBusiness(canSendListToCompany: true),
+      ),
 
-    /// ---------------------------- Bottom Nav business ----------------------------------- ///
-    GetPage(name: AppRoute.bottomNavBusiness, page: () => BottomNavBusiness()),
+      /// ------------------------- Business Dashboard ---------------------------------- ///
+      GoRoute(
+        path: AppRoute.businessAccountSettings,
+        builder: (context, state) => AccountSettingsBusinessScreen(),
+      ),
 
-    /// ---------------------------- Bottom Nav CPE ----------------------------------- ///
-    GetPage(name: AppRoute.bottomNavCpe, page: () => BottomNavCPE()),
+      /// ---------------------------- Bottom Nav business ----------------------------------- ///
+      GoRoute(
+        path: AppRoute.bottomNavBusiness,
+        builder: (context, state) => BottomNavBusiness(),
+      ),
 
-    /// -------------------------  e-learning ----------------------------------- ///
-    GetPage(name: AppRoute.elearning, page: () => ELearningScreen()),
+      /// ---------------------------- Bottom Nav CPE ----------------------------------- ///
+      GoRoute(
+        path: AppRoute.bottomNavCpe,
+        builder: (context, state) => BottomNavCPE(),
+      ),
 
-    /// -------------------------  cpe ----------------------------------- ///
-    GetPage(
-      name: AppRoute.cpeAssessment,
-      page: () => const CPEAssessmentScreen(),
-      binding: CPEAssessmentBinding(),
-    ),
+      /// -------------------------  e-learning ----------------------------------- ///
+      GoRoute(
+        path: AppRoute.elearning,
+        builder: (context, state) => ELearningScreen(),
+      ),
 
-    /// -------------------------  Shared ----------------------------------- ///
-    GetPage(
-      name: AppRoute.privacyPolicy,
-      page: () => const PrivacyPolicyScreen(),
-    ),
-  ];
+      /// -------------------------  cpe ----------------------------------- ///
+      GoRoute(
+        path: AppRoute.cpeAssessment,
+        builder: (context, state) => const CPEAssessmentScreen(),
+      ),
+
+      /// -------------------------  Shared ----------------------------------- ///
+      GoRoute(
+        path: AppRoute.privacyPolicy,
+        builder: (context, state) => const PrivacyPolicyScreen(),
+      ),
+    ],
+  );
 }

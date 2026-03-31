@@ -1,31 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/models/quiz/quiz_module.dart';
-import 'package:posture_detector_app/controller/e_learning_controller.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/provider/e_learning.dart';
+import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 
-class QuizScreen extends StatefulWidget {
+class QuizScreen extends ConsumerStatefulWidget {
   final QuizModule module;
 
   const QuizScreen({super.key, required this.module});
 
   @override
-  State<QuizScreen> createState() => _QuizScreenState();
+  ConsumerState<QuizScreen> createState() => _QuizScreenState();
 }
 
-class _QuizScreenState extends State<QuizScreen> {
-  final ELearningController controller = Get.find<ELearningController>();
+class _QuizScreenState extends ConsumerState<QuizScreen> {
   late QuizModule module;
 
   @override
   void initState() {
     super.initState();
     module = widget.module;
-    // Load random 5 questions when screen opens
-    controller.loadRandomQuestions(module.id);
+    ref.read(eLearningNotifierProvider.notifier).loadRandomQuestions(module.id);
   }
 
   @override
@@ -42,7 +41,6 @@ class _QuizScreenState extends State<QuizScreen> {
             onPressed: () => Get.back(),
           ),
           title: Text(
-            // EN: moduleLabel = "Module"
             "${AppLocalizations.of(context)!.moduleLabel} ${module.id}",
             style: const TextStyle(
               color: Colors.black,
@@ -58,16 +56,15 @@ class _QuizScreenState extends State<QuizScreen> {
             indicatorSize: TabBarIndicatorSize.tab,
             dividerColor: Colors.transparent,
             indicatorWeight: 2,
-            labelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+            labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
             tabs: [
-              // EN: details = "Details", quiz = "Quiz"
               Tab(text: AppLocalizations.of(context)!.details),
               Tab(text: AppLocalizations.of(context)!.quiz),
             ],
           ),
         ),
         body: TabBarView(
-          children: [_buildDetailsTab(context), _buildQuizTab(controller)],
+          children: [_buildDetailsTab(context), _buildQuizTab(context)],
         ),
       ),
     );
@@ -86,29 +83,24 @@ class _QuizScreenState extends State<QuizScreen> {
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 24),
-            // EN: "Objective"
             Text(
               AppLocalizations.of(context)!.objective,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 12),
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: module.objectives.length,
-              separatorBuilder: (context, index) {
-                return SizedBox(height: 12.h);
-              },
+              separatorBuilder: (context, index) => SizedBox(height: 12.h),
               itemBuilder: (context, index) {
-                final objectiveText = module.objectives[index];
-                return _buildBulletPoint(objectiveText);
+                return _buildBulletPoint(module.objectives[index]);
               },
             ),
             const SizedBox(height: 24),
-            // EN: "Content"
             Text(
               AppLocalizations.of(context)!.content,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 12),
             Text(
@@ -125,97 +117,82 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-  Widget _buildQuizTab(ELearningController controller) {
+  Widget _buildQuizTab(BuildContext context) {
+    final randomQuestions = ref.watch(
+      eLearningNotifierProvider.select((s) => s.currentQuizQuestions),
+    );
+
+    if (randomQuestions.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Container(
       color: AppColors.onBoardingSurface,
-      child: Obx(() {
-        // Check if random questions are loaded
-        if (controller.currentQuizQuestions.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      child: ListView(
+        padding: const EdgeInsets.all(24.0),
+        children: [
+          ...randomQuestions.asMap().entries.map((entry) {
+            final item = entry.value;
+            final idx = entry.key;
+            return Padding(
+              padding: EdgeInsets.only(bottom: 48.h),
+              child: _buildQuizQuestion(idx, item),
+            );
+          }).toList(),
 
-        final randomQuestions = controller.currentQuizQuestions;
+          const SizedBox(height: 24),
 
-        return ListView(
-          padding: const EdgeInsets.all(24.0),
-          children: [
-            // Display all random questions
-            ...randomQuestions.asMap().entries.map((entry) {
-              final item = entry.value;
-              final idx = entry.key;
-
-              return Padding(
-                padding: EdgeInsets.only(bottom: 48.h),
-                child: _buildQuizQuestion(idx, item, controller),
+          PrimaryButton(
+            text: AppLocalizations.of(context)!.submit,
+            backgroundColor: AppColors.primaryColor,
+            textColor: AppColors.surface,
+            onTap: () async {
+              final notifier = ref.read(eLearningNotifierProvider.notifier);
+              final selectedAnswers = ref.read(
+                eLearningNotifierProvider.select((s) => s.selectedAnswers),
               );
-            }).toList(),
 
-            const SizedBox(height: 24),
-
-            // Submit button
-            PrimaryButton(
-              // EN: "Submit"
-              text: AppLocalizations.of(context)!.submit,
-              backgroundColor: AppColors.primaryColor,
-              textColor: AppColors.surface,
-              onTap: () async {
-                // Check if all questions are answered
-                if (controller.selectedAnswers.length <
-                    randomQuestions.length) {
-                  Get.snackbar(
-                    // EN: incomplete = "Incomplete", pleaseAnswerAllQuestions = "Please answer all questions"
-                    AppLocalizations.of(context)!.incomplete,
-                    AppLocalizations.of(context)!.pleaseAnswerAllQuestions,
-                    snackPosition: SnackPosition.BOTTOM,
-                  );
-                  return;
-                }
-
-                // Calculate score
-                int correctAnswers = 0;
-                for (int i = 0; i < randomQuestions.length; i++) {
-                  final selectedAnswer = controller.selectedAnswers[i];
-                  final correctAnswer = randomQuestions[i].answer;
-
-                  // Compare selected answer with correct answer
-                  if (selectedAnswer == correctAnswer) {
-                    correctAnswers++;
-                  }
-                }
-
-                // Submit quiz (this will activate nudges if Module 1)
-                await controller.submitQuiz(
-                  moduleId: module.id,
-                  score: correctAnswers,
+              if (selectedAnswers.length < randomQuestions.length) {
+                Get.snackbar(
+                  AppLocalizations.of(context)!.incomplete,
+                  AppLocalizations.of(context)!.pleaseAnswerAllQuestions,
+                  snackPosition: SnackPosition.BOTTOM,
                 );
+                return;
+              }
 
-                // Show score card modal
-                if (context.mounted) {
-                  _showScoreModal(
-                    context,
-                    score: correctAnswers,
-                    total: randomQuestions.length,
-                    moduleId: module.id,
-                  );
+              int correctAnswers = 0;
+              for (int i = 0; i < randomQuestions.length; i++) {
+                if (selectedAnswers[i] == randomQuestions[i].answer) {
+                  correctAnswers++;
                 }
-              },
-            ),
-            const SizedBox(height: 24),
-          ],
-        );
-      }),
+              }
+
+              await notifier.submitQuiz(
+                moduleId: module.id,
+                score: correctAnswers,
+              );
+
+              if (context.mounted) {
+                _showScoreModal(
+                  context,
+                  score: correctAnswers,
+                  total: randomQuestions.length,
+                  moduleId: module.id,
+                );
+              }
+            },
+          ),
+          const SizedBox(height: 24),
+        ],
+      ),
     );
   }
 
-  Widget _buildQuizQuestion(
-    int index,
-    QuizItemModel quiz,
-    ELearningController controller,
-  ) {
+  Widget _buildQuizQuestion(int index, QuizItemModel quiz) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Question number and text
         Text(
           'Q${index + 1}. ${quiz.question}',
           style: const TextStyle(
@@ -225,78 +202,68 @@ class _QuizScreenState extends State<QuizScreen> {
           ),
         ),
         SizedBox(height: 24.h),
-
-        // All options
         ...quiz.options.asMap().entries.map((entry) {
           final option = entry.value;
           final optionIndex = entry.key;
-
           return Padding(
             padding: EdgeInsets.only(bottom: 18.h),
-            child: _buildRadioOption(index, optionIndex, option, controller),
+            child: _buildRadioOption(index, optionIndex, option),
           );
         }).toList(),
       ],
     );
   }
 
-  Widget _buildRadioOption(
-    int questionIndex,
-    int optionIndex,
-    String option,
-    ELearningController controller,
-  ) {
-    return Obx(() {
-      final isSelected =
-          controller.selectedAnswers[questionIndex] == optionIndex;
+  Widget _buildRadioOption(int questionIndex, int optionIndex, String option) {
+    final isSelected = ref.watch(
+      eLearningNotifierProvider.select(
+        (s) => s.selectedAnswers[questionIndex] == optionIndex,
+      ),
+    );
 
-      return InkWell(
-        onTap: () {
-          controller.selectAnswer(questionIndex, optionIndex);
-        },
-        child: Row(
-          children: [
-            // Radio button
-            Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isSelected ? AppColors.primaryColor : Colors.grey,
-                  width: 2,
-                ),
-              ),
-              child: Center(
-                child: isSelected
-                    ? Container(
-                        width: 10,
-                        height: 10,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.primaryColor,
-                        ),
-                      )
-                    : null,
+    return InkWell(
+      onTap: () {
+        ref.read(eLearningNotifierProvider.notifier).selectAnswer(questionIndex, optionIndex);
+      },
+      child: Row(
+        children: [
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isSelected ? AppColors.primaryColor : Colors.grey,
+                width: 2,
               ),
             ),
-            const SizedBox(width: 12),
-
-            // Option text
-            Expanded(
-              child: Text(
-                option,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: isSelected ? AppColors.primaryColor : Colors.black87,
-                  fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
-                ),
+            child: Center(
+              child: isSelected
+                  ? Container(
+                      width: 10,
+                      height: 10,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.primaryColor,
+                      ),
+                    )
+                  : null,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              option,
+              style: TextStyle(
+                fontSize: 14,
+                color: isSelected ? AppColors.primaryColor : Colors.black87,
+                fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
               ),
             ),
-          ],
-        ),
-      );
-    });
+          ),
+        ],
+      ),
+    );
   }
 
   void _showScoreModal(
@@ -331,7 +298,6 @@ class _QuizScreenState extends State<QuizScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Top colored banner
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(vertical: 32.h),
@@ -347,7 +313,6 @@ class _QuizScreenState extends State<QuizScreen> {
                   ),
                   child: Column(
                     children: [
-                      // Icon
                       Container(
                         width: 56.w,
                         height: 56.w,
@@ -362,7 +327,6 @@ class _QuizScreenState extends State<QuizScreen> {
                         ),
                       ),
                       SizedBox(height: 12.h),
-                      // EN: "Your Score"
                       Text(
                         AppLocalizations.of(context)!.yourScore,
                         style: TextStyle(
@@ -372,7 +336,6 @@ class _QuizScreenState extends State<QuizScreen> {
                         ),
                       ),
                       SizedBox(height: 4.h),
-                      // Big score
                       RichText(
                         text: TextSpan(
                           children: [
@@ -400,13 +363,10 @@ class _QuizScreenState extends State<QuizScreen> {
                     ],
                   ),
                 ),
-
-                // Bottom white section
                 Padding(
                   padding: EdgeInsets.fromLTRB(24.w, 24.h, 24.w, 28.h),
                   child: Column(
                     children: [
-                      // Stars row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(total, (i) {
@@ -423,11 +383,10 @@ class _QuizScreenState extends State<QuizScreen> {
                         }),
                       ),
                       SizedBox(height: 16.h),
-
-                      // Title
                       Text(
-                        // EN: wellDone = "Well Done!", keepTrying = "Keep Trying!"
-                        passed ? AppLocalizations.of(context)!.wellDone : AppLocalizations.of(context)!.keepTrying,
+                        passed
+                            ? AppLocalizations.of(context)!.wellDone
+                            : AppLocalizations.of(context)!.keepTrying,
                         style: TextStyle(
                           fontSize: 22.sp,
                           fontWeight: FontWeight.w700,
@@ -435,11 +394,8 @@ class _QuizScreenState extends State<QuizScreen> {
                         ),
                       ),
                       SizedBox(height: 6.h),
-
-                      // Subtitle
                       Text(
                         passed
-                            // EN: youPassedModule = "You passed Module {moduleId} successfully", needAtLeast4Correct = "You need at least 4 correct answers to pass"
                             ? AppLocalizations.of(context)!.youPassedModule(moduleId)
                             : AppLocalizations.of(context)!.needAtLeast4Correct,
                         style: TextStyle(
@@ -451,15 +407,13 @@ class _QuizScreenState extends State<QuizScreen> {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 24.h),
-
-                      // Button
                       SizedBox(
                         width: double.infinity,
                         height: 52.h,
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.pop(ctx);
-                            controller.selectedAnswers.clear();
+                            ref.read(eLearningNotifierProvider.notifier).clearSelectedAnswers();
                             Get.back();
                           },
                           style: ElevatedButton.styleFrom(
@@ -472,8 +426,9 @@ class _QuizScreenState extends State<QuizScreen> {
                             elevation: 0,
                           ),
                           child: Text(
-                            // EN: continueButton = "Continue", tryAgain = "Try Again"
-                            passed ? AppLocalizations.of(context)!.continueButton : AppLocalizations.of(context)!.tryAgain,
+                            passed
+                                ? AppLocalizations.of(context)!.continueButton
+                                : AppLocalizations.of(context)!.tryAgain,
                             style: TextStyle(
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w600,

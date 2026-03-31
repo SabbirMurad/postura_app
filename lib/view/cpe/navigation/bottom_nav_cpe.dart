@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/app_colors.dart';
 
 import 'package:posture_detector_app/view/cpe/home_screen_cpe.dart';
 import 'package:posture_detector_app/view/cpe/setting_screen_cpe.dart';

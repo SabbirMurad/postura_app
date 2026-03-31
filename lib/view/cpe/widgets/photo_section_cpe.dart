@@ -3,36 +3,32 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
-import 'package:posture_detector_app/controller/assessment_controller_cpe.dart';
+import 'package:posture_detector_app/provider/cpe_assessment.dart';
 import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
 
 class PhotoSectionCPE extends StatelessWidget {
-  final CPEAssessmentController controller;
-  const PhotoSectionCPE({super.key, required this.controller});
+  final CpeAssessmentState state;
+  const PhotoSectionCPE({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // EN: "Photos"
         SectionTitle(AppLocalizations.of(context)!.photos),
         SizedBox(height: 10.h),
-        Obx(
-          () => SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                ...controller.photoItems.map(
-                  (item) => Padding(
-                    padding: EdgeInsets.only(right: 10.w),
-                    child: PhotoThumbnailCPE(item: item),
-                  ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              ...state.photoItems.map(
+                (item) => Padding(
+                  padding: EdgeInsets.only(right: 10.w),
+                  child: PhotoThumbnailCPE(item: item),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ],

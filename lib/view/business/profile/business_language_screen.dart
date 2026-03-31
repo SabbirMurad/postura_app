@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
-import 'package:posture_detector_app/core/constants/app_text.dart';
-import 'package:posture_detector_app/controller/e_learning_controller.dart';
+import 'package:posture_detector_app/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/app_text.dart';
+import 'package:posture_detector_app/provider/e_learning.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
 
-class BusinessLanguageScreen extends StatefulWidget {
+class BusinessLanguageScreen extends ConsumerStatefulWidget {
   const BusinessLanguageScreen({super.key});
 
   @override
-  State<BusinessLanguageScreen> createState() => _BusinessLanguageScreenState();
+  ConsumerState<BusinessLanguageScreen> createState() => _BusinessLanguageScreenState();
 }
 
-class _BusinessLanguageScreenState extends State<BusinessLanguageScreen> {
+class _BusinessLanguageScreenState extends ConsumerState<BusinessLanguageScreen> {
   String _selectedLanguage = 'en';
 
   @override
@@ -123,9 +124,7 @@ class _BusinessLanguageScreenState extends State<BusinessLanguageScreen> {
                 onTap: () {
                   AppHelper.instance.setLanguage(_selectedLanguage);
                   Get.updateLocale(Locale(_selectedLanguage));
-                  if (Get.isRegistered<ELearningController>()) {
-                    Get.find<ELearningController>().loadModulesForLocale(_selectedLanguage);
-                  }
+                  ref.read(eLearningNotifierProvider.notifier).loadModulesForLocale(_selectedLanguage);
                 },
                 // EN: "Continue"
                 text: loc.continueButton,

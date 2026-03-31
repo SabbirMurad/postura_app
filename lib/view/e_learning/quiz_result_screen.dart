@@ -1,28 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/models/quiz/quiz_module.dart';
 import 'package:posture_detector_app/routes.dart';
-import 'package:posture_detector_app/models/user_type.dart';
-import 'package:posture_detector_app/helpers/app_helper.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
-import 'package:posture_detector_app/controller/e_learning_controller.dart';
+import 'package:posture_detector_app/provider/e_learning.dart';
 
-class QuizResultScreen extends StatelessWidget {
+class QuizResultScreen extends ConsumerWidget {
   final QuizModule quizModule;
-  final ELearningController controller;
 
   const QuizResultScreen({
     super.key,
     required this.quizModule,
-    required this.controller,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedAnswers = ref.watch(
+      eLearningNotifierProvider.select((s) => s.selectedAnswers),
+    );
+
     return Scaffold(
       backgroundColor: AppColors.onBoardingSurface,
       body: SafeArea(
@@ -30,7 +31,6 @@ class QuizResultScreen extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(height: 24.h),
-              // EN: "Your Score"
               Text(
                 AppLocalizations.of(context)!.yourScore,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -48,30 +48,26 @@ class QuizResultScreen extends StatelessWidget {
               ),
               SizedBox(height: 16.h),
 
-              // Quiz list
               ...quizModule.quizzes.asMap().entries.map((entry) {
                 final item = entry.value;
                 final idx = entry.key;
-
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  child: _buildQuizQuestion(idx, item, controller),
+                  child: _buildQuizQuestion(idx, item, selectedAnswers),
                 );
               }).toList(),
 
-              // Buttons
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
                 child: Row(
                   children: [
                     Expanded(
                       child: PrimaryButton(
-                        // EN: "Home"
                         text: AppLocalizations.of(context)!.home,
                         textColor: AppColors.surface,
                         backgroundColor: AppColors.primaryColor,
                         onTap: () async {
-                          controller.selectedAnswers.clear();
+                          ref.read(eLearningNotifierProvider.notifier).clearSelectedAnswers();
                           Get.offAllNamed(AppRoute.bottomNavBusiness);
                         },
                       ),
@@ -79,19 +75,12 @@ class QuizResultScreen extends StatelessWidget {
                     SizedBox(width: 10.w),
                     Expanded(
                       child: PrimaryButton(
-                        // EN: "Go to E-Learning"
                         text: AppLocalizations.of(context)!.goToElearning,
                         textColor: AppColors.surface,
                         onTap: () async {
-                          controller.selectedAnswers.clear();
+                          ref.read(eLearningNotifierProvider.notifier).clearSelectedAnswers();
                           Get.back();
                           Get.back();
-
-                          // if (userRole == Users.EMPLOYEE.name) {
-                          //   Get.offAllNamed(AppRoute.bottomNavBusiness);
-                          // } else {
-                          //   Get.offAllNamed(AppRoute.bottomNavPersonal);
-                          // }
                         },
                         backgroundColor: AppColors.primaryColor,
                       ),
@@ -109,7 +98,7 @@ class QuizResultScreen extends StatelessWidget {
   Widget _buildQuizQuestion(
     int index,
     QuizItemModel quiz,
-    ELearningController controller,
+    Map<int, int> selectedAnswers,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,14 +115,13 @@ class QuizResultScreen extends StatelessWidget {
         ...quiz.options.asMap().entries.map((entry) {
           final option = entry.value;
           final optionIndex = entry.key;
-
           return Padding(
             padding: EdgeInsets.only(bottom: 18.h),
             child: _buildRadioOption(
               index,
               optionIndex,
               option,
-              controller,
+              selectedAnswers,
               quiz.answer,
             ),
           );
@@ -146,42 +134,37 @@ class QuizResultScreen extends StatelessWidget {
     int questionIndex,
     int optionIndex,
     String option,
-    ELearningController controller,
+    Map<int, int> selectedAnswers,
     int correctAnswer,
   ) {
-    return Obx(() {
-      final selectedAnswer = controller.selectedAnswers[questionIndex];
-      final isCorrectAnswer = selectedAnswer == correctAnswer;
-      final isSelected = selectedAnswer == optionIndex;
+    final selectedAnswer = selectedAnswers[questionIndex];
+    final isCorrectAnswer = selectedAnswer == correctAnswer;
+    final isSelected = selectedAnswer == optionIndex;
 
-      return Row(
-        children: [
-          // Green check: only if user selected THIS option AND it's correct
-          if (isSelected && isCorrectAnswer)
-            Assets.icons.status.check.svg(width: 24.w, height: 24.w),
-          // Red X: only if user selected THIS option AND it's wrong
-          if (isSelected && !isCorrectAnswer)
-            Assets.icons.status.cancelCircle.svg(width: 24.w, height: 24.w),
-          // Black dot: all other options
-          if (!isSelected)
-            Container(
-              width: 10,
-              height: 10,
-              margin: EdgeInsets.only(left: 8.w),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.text,
-              ),
-            ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              option,
-              style: TextStyle(fontSize: 14, color: Colors.black87),
+    return Row(
+      children: [
+        if (isSelected && isCorrectAnswer)
+          Assets.icons.status.check.svg(width: 24.w, height: 24.w),
+        if (isSelected && !isCorrectAnswer)
+          Assets.icons.status.cancelCircle.svg(width: 24.w, height: 24.w),
+        if (!isSelected)
+          Container(
+            width: 10,
+            height: 10,
+            margin: EdgeInsets.only(left: 8.w),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.text,
             ),
           ),
-        ],
-      );
-    });
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            option,
+            style: const TextStyle(fontSize: 14, color: Colors.black87),
+          ),
+        ),
+      ],
+    );
   }
 }

@@ -5,11 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
-import 'package:posture_detector_app/controller/image_capture_controller.dart';
+import 'package:posture_detector_app/provider/image_capture.dart';
 
 class ImagePreviewScreen extends ConsumerWidget {
   const ImagePreviewScreen({super.key});
@@ -106,7 +106,7 @@ class ImagePreviewScreen extends ConsumerWidget {
                         textColor: AppColors.text,
                         backgroundColor: AppColors.blackDeemed,
                         onTap: () {
-                          Get.find<ImageCaptureController>().image.value = null;
+                          ref.read(imageCaptureNotifierProvider.notifier).clear();
                           Get.back();
                         },
                       ),

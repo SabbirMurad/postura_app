@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:posture_detector_app/services/db/sqlite_service.dart';
-import 'package:posture_detector_app/core/bindings/app_binding.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
@@ -22,7 +20,11 @@ void main() async {
 
   final savedLang = await AppHelper.instance.getLanguage();
 
-  runApp(ProviderScope(child: MyApp(savedLocale: savedLang != null ? Locale(savedLang) : null)));
+  runApp(
+    ProviderScope(
+      child: MyApp(savedLocale: savedLang != null ? Locale(savedLang) : null),
+    ),
+  );
 }
 
 //
@@ -35,7 +37,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: Size(375, 812),
-      child: GetMaterialApp(
+      child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         title: 'Postura',
         theme: ThemeData(
@@ -45,9 +47,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         themeMode: ThemeMode.light,
-        initialRoute: AppRoute.splashScreen,
-        getPages: AppRoute.routes,
-        initialBinding: AppBindings(),
+        routerConfig: AppRoute.allRoutes,
         scaffoldMessengerKey: scaffoldMessengerKey,
         localizationsDelegates: [
           AppLocalizations.delegate,
@@ -61,8 +61,14 @@ class MyApp extends StatelessWidget {
           Locale('de'),
           Locale('nl'),
         ],
-        locale: savedLocale ?? Get.deviceLocale,
-        fallbackLocale: Locale('en'),
+        locale: savedLocale,
+        localeResolutionCallback: (locale, supportedLocales) {
+          if (savedLocale != null) return savedLocale;
+          for (final supported in supportedLocales) {
+            if (supported.languageCode == locale?.languageCode) return supported;
+          }
+          return const Locale('en');
+        },
       ),
     );
   }

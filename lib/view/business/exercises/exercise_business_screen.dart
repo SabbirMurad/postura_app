@@ -6,7 +6,7 @@ import 'package:posture_detector_app/common/widgets/exercise_showcase_container.
 import 'package:posture_detector_app/provider/report.dart';
 
 import 'package:posture_detector_app/l10n/app_localizations.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/app_colors.dart';
 
 class ExerciseBusinessScreen extends ConsumerWidget {
   const ExerciseBusinessScreen({super.key});

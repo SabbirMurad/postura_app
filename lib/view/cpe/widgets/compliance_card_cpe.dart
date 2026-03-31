@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
-import 'package:posture_detector_app/controller/assessment_controller_cpe.dart';
+import 'package:posture_detector_app/constants/app_colors.dart';
+import 'package:posture_detector_app/provider/cpe_assessment.dart';
 import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
 
 class ComplianceCardCPE extends StatelessWidget {
-  final CPEAssessmentController controller;
-  const ComplianceCardCPE({super.key, required this.controller});
+  final CpeAssessmentState state;
+  const ComplianceCardCPE({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {
-    final label = controller.complianceLabel;
-    final subtitle = controller.complianceSubtitle;
+    final label = state.complianceLabel;
+    final subtitle = state.complianceSubtitle;
     final isRed = label == 'Red';
     final loc = AppLocalizations.of(context)!;
 
@@ -24,7 +24,6 @@ class ComplianceCardCPE extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            // EN: "ISO Ergonomic Analysis"
             loc.isoErgonomicAnalysis,
             style: TextStyle(
               fontSize: 14.sp,
@@ -44,19 +43,18 @@ class ComplianceCardCPE extends StatelessWidget {
               lineWidth: 14,
               progressColor: AppColors.text,
               backgroundColor: AppColors.text.withValues(alpha: 0.1),
-              percent: controller.compliancePercent,
+              percent: state.compliancePercent,
               center: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '${controller.compliance.value}%',
+                    '${state.compliance}%',
                     style: TextStyle(
                       fontSize: 28.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   Text(
-                    // EN: "COMPLIANCE"
                     loc.complianceLabel,
                     style: TextStyle(
                       fontSize: 11.sp,
@@ -72,7 +70,6 @@ class ComplianceCardCPE extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                // EN: "Overall score:"
                 loc.overallScore,
                 style: TextStyle(
                   fontSize: 14.sp,

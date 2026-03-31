@@ -9,7 +9,7 @@ import 'package:posture_detector_app/common/widgets/analysis_section_container.d
 import 'package:posture_detector_app/common/widgets/details_analysis_list.dart';
 import 'package:posture_detector_app/common/widgets/home_top_section.dart';
 import 'package:posture_detector_app/common/widgets/risky_body_region_menu.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/models/analysis/body_region_risk_model.dart';
 import 'package:posture_detector_app/provider/author.dart';
 

@@ -2,12 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
-import 'package:posture_detector_app/controller/image_capture_controller.dart';
-import 'package:posture_detector_app/core/constants/app_text.dart';
+import 'package:posture_detector_app/provider/image_capture.dart';
+import 'package:posture_detector_app/constants/app_text.dart';
 import 'package:posture_detector_app/provider/report.dart';
 import 'package:posture_detector_app/models/scan_type.dart';
 import 'package:posture_detector_app/services/api/onboarding_service.dart';
-import 'package:get/get.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'assessment.g.dart';
@@ -133,8 +132,8 @@ class AssessmentNotifier extends _$AssessmentNotifier {
   /// Submits the assessment with the currently captured image.
   /// Returns true on success, false on failure.
   Future<bool> submitAnalysis(dynamic type) async {
-    final imageController = Get.find<ImageCaptureController>();
-    if (imageController.image.value == null) {
+    final capturedImage = ref.read(imageCaptureNotifierProvider);
+    if (capturedImage == null) {
       showCustomToast(text: 'No image selected');
       return false;
     }
@@ -150,7 +149,7 @@ class AssessmentNotifier extends _$AssessmentNotifier {
         scan_type: type == ScanType.primaryScan || type == ScanType.captureImage
             ? 'primary'
             : 'instant',
-        image: File(imageController.image.value!.path),
+        image: File(capturedImage.path),
         bodyRegions: state.selectedRegions,
         painIntensity: painIntensityMap,
         durationPattern: state.selectedPainDuration,

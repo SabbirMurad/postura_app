@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
-import 'package:posture_detector_app/controller/assessment_controller_cpe.dart';
+import 'package:posture_detector_app/provider/cpe_assessment.dart';
 import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
 
 class ReviewModeSectionCPE extends StatelessWidget {
-  final CPEAssessmentController controller;
-  const ReviewModeSectionCPE({super.key, required this.controller});
+  final CpeAssessmentState state;
+  final CpeAssessmentNotifier notifier;
+  const ReviewModeSectionCPE({super.key, required this.state, required this.notifier});
 
   @override
   Widget build(BuildContext context) {
@@ -15,38 +16,33 @@ class ReviewModeSectionCPE extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // EN: "How did you review this workstation?"
         SectionTitle(loc.howDidYouReview),
         SizedBox(height: 10.h),
-        Obx(
-          () => Container(
-            padding: EdgeInsets.all(4.w),
-            decoration: BoxDecoration(
-              color: const Color(0xFFEEEEEE),
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            child: Row(
-              children: [
-                _ModeButton(
-                  icon: Icons.home_outlined,
-                  // EN: "Remote"
-                  label: loc.remote,
-                  isSelected: controller.reviewMode.value == ReviewMode.remote,
-                  onTap: controller.initialReviewStatus.value == 'PENDING'
-                      ? () => controller.setReviewMode(ReviewMode.remote)
-                      : () {},
-                ),
-                _ModeButton(
-                  icon: Icons.wifi_tethering_rounded,
-                  // EN: "Live"
-                  label: loc.live,
-                  isSelected: controller.reviewMode.value == ReviewMode.live,
-                  onTap: controller.initialReviewStatus.value == 'PENDING'
-                      ? () => controller.setReviewMode(ReviewMode.live)
-                      : () {},
-                ),
-              ],
-            ),
+        Container(
+          padding: EdgeInsets.all(4.w),
+          decoration: BoxDecoration(
+            color: const Color(0xFFEEEEEE),
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Row(
+            children: [
+              _ModeButton(
+                icon: Icons.home_outlined,
+                label: loc.remote,
+                isSelected: state.reviewMode == ReviewMode.remote,
+                onTap: state.initialReviewStatus == 'PENDING'
+                    ? () => notifier.setReviewMode(ReviewMode.remote)
+                    : () {},
+              ),
+              _ModeButton(
+                icon: Icons.wifi_tethering_rounded,
+                label: loc.live,
+                isSelected: state.reviewMode == ReviewMode.live,
+                onTap: state.initialReviewStatus == 'PENDING'
+                    ? () => notifier.setReviewMode(ReviewMode.live)
+                    : () {},
+              ),
+            ],
           ),
         ),
       ],
@@ -113,8 +109,9 @@ class _ModeButton extends StatelessWidget {
 }
 
 class DecisionSectionCPE extends StatelessWidget {
-  final CPEAssessmentController controller;
-  const DecisionSectionCPE({super.key, required this.controller});
+  final CpeAssessmentState state;
+  final CpeAssessmentNotifier notifier;
+  const DecisionSectionCPE({super.key, required this.state, required this.notifier});
 
   @override
   Widget build(BuildContext context) {
@@ -122,39 +119,36 @@ class DecisionSectionCPE extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // EN: "Decision"
         SectionTitle(loc.decisionLabel),
         SizedBox(height: 8.h),
-        Obx(
-          () => GestureDetector(
-            onTap: controller.initialReviewStatus.value == 'PENDING'
-                ? () => _showDecisionPicker(context, controller)
-                : null,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
-              decoration: cardDecoration(),
-              child: Row(
-                children: [
-                  decisionSvgIcon(controller.decision.value, size: 20.w),
-                  SizedBox(width: 8.w),
-                  Expanded(
-                    child: Text(
-                      controller.decisionLabel,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF202020),
-                      ),
+        GestureDetector(
+          onTap: state.initialReviewStatus == 'PENDING'
+              ? () => _showDecisionPicker(context)
+              : null,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+            decoration: cardDecoration(),
+            child: Row(
+              children: [
+                decisionSvgIcon(state.decision, size: 20.w),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: Text(
+                    state.decisionLabel,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF202020),
                     ),
                   ),
-                  if (controller.initialReviewStatus.value == 'PENDING')
-                    Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      size: 20.sp,
-                      color: const Color(0xFF4A4A4A),
-                    ),
-                ],
-              ),
+                ),
+                if (state.initialReviewStatus == 'PENDING')
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    size: 20.sp,
+                    color: const Color(0xFF4A4A4A),
+                  ),
+              ],
             ),
           ),
         ),
@@ -162,10 +156,7 @@ class DecisionSectionCPE extends StatelessWidget {
     );
   }
 
-  void _showDecisionPicker(
-    BuildContext context,
-    CPEAssessmentController controller,
-  ) {
+  void _showDecisionPicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -179,7 +170,7 @@ class DecisionSectionCPE extends StatelessWidget {
             return ListTile(
               title: Text(d.label),
               onTap: () {
-                controller.setDecision(d);
+                notifier.setDecision(d);
                 Get.back();
               },
             );

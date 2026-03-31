@@ -1,34 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
 import 'package:posture_detector_app/common/widgets/e_learning_card.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
-import 'package:posture_detector_app/controller/e_learning_controller.dart';
+import 'package:posture_detector_app/constants/app_colors.dart';
+import 'package:posture_detector_app/provider/e_learning.dart';
 import 'package:posture_detector_app/view/e_learning/quiz_screen.dart';
 
-class ELearningScreen extends StatefulWidget {
+class ELearningScreen extends ConsumerStatefulWidget {
   const ELearningScreen({super.key});
 
   @override
-  State<ELearningScreen> createState() => _ELearningScreenState();
+  ConsumerState<ELearningScreen> createState() => _ELearningScreenState();
 }
 
-class _ELearningScreenState extends State<ELearningScreen>
+class _ELearningScreenState extends ConsumerState<ELearningScreen>
     with WidgetsBindingObserver {
-  final ELearningController _eLearningController = Get.put(
-    ELearningController(),
-  );
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-
-    // Initial nudge check when screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _eLearningController.checkNudges();
+      ref.read(eLearningNotifierProvider.notifier).checkNudges();
     });
   }
 
@@ -41,16 +37,17 @@ class _ELearningScreenState extends State<ELearningScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-
-    // Check nudges when app comes to foreground
     if (state == AppLifecycleState.resumed) {
-      _eLearningController.checkNudges();
+      ref.read(eLearningNotifierProvider.notifier).checkNudges();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final modules = ref.watch(
+      eLearningNotifierProvider.select((s) => s.quizModules),
+    );
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -66,7 +63,6 @@ class _ELearningScreenState extends State<ELearningScreen>
                     AppBackButton(),
                     Spacer(),
                     Text(
-                      // EN: "E-Learning"
                       loc.elearning,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
@@ -77,27 +73,20 @@ class _ELearningScreenState extends State<ELearningScreen>
                 ),
                 SizedBox(height: 20.h),
 
-                // Wrap with Obx to rebuild when quizModules changes
-                Obx(
-                  () => ListView.separated(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: _eLearningController.quizModules.length,
-                    separatorBuilder: (context, index) {
-                      return SizedBox(height: 12.h);
-                    },
-                    itemBuilder: (context, index) {
-                      final quizModule =
-                          _eLearningController.quizModules[index];
-
-                      return ELearningCard(
-                        quizModule: quizModule,
-                        onTap: () {
-                          Get.to(() => QuizScreen(module: quizModule));
-                        },
-                      );
-                    },
-                  ),
+                ListView.separated(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: modules.length,
+                  separatorBuilder: (context, index) => SizedBox(height: 12.h),
+                  itemBuilder: (context, index) {
+                    final quizModule = modules[index];
+                    return ELearningCard(
+                      quizModule: quizModule,
+                      onTap: () {
+                        Get.to(() => QuizScreen(module: quizModule));
+                      },
+                    );
+                  },
                 ),
 
                 SizedBox(height: 50.h),

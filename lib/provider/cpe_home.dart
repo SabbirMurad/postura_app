@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 
 // ─────────────────────────────────────────
@@ -34,8 +34,7 @@ class ScanItem {
   final double riskScore;
   final String riskLevel; // "yellow" | "red" | "green"
   final double vasScore;
-  final String
-  reviewStatus; // "PENDING" | "FOLLOW_UP_REQUIRED" | "APPROVED" | "REJECTED"
+  final String reviewStatus; // "PENDING" | "FOLLOW_UP_REQUIRED" | "APPROVED" | "REJECTED"
   final String? reviewType; // "LIVE" | "REMOTE" | null
   final String reviewComment;
   final String? reviewedBy;
@@ -80,41 +79,49 @@ class ScanItem {
     );
   }
 
-  /// compliance % shown on card — inverse of riskScore
   int get compliance => riskScore.toInt();
-
   bool get isPending => reviewStatus == 'PENDING';
 }
 
 // ─────────────────────────────────────────
-// Controller
+// State
 // ─────────────────────────────────────────
-class HomeCPEController extends GetxController {
-  // ── Observables ──────────────────────────────────────────────────
-  final RxString userName = ''.obs;
-  final RxString userAvatar = ''.obs;
+class CpeHomeState {
+  final CpeCompany? company;
+  final List<ScanItem> scanList;
+  final int totalCount;
+  final int totalPages;
+  final int currentPage;
+  final bool isLoading;
+  final String? error;
 
-  final Rx<CpeCompany?> company = Rx<CpeCompany?>(null);
-  final RxList<ScanItem> scanList = <ScanItem>[].obs;
+  const CpeHomeState({
+    this.company,
+    this.scanList = const [],
+    this.totalCount = 0,
+    this.totalPages = 1,
+    this.currentPage = 1,
+    this.isLoading = false,
+    this.error,
+  });
+}
 
-  final RxInt totalCount = 0.obs;
-  final RxInt totalPages = 1.obs;
-  final RxInt currentPage = 1.obs;
-
-  final RxBool isLoading = false.obs;
-  final RxnString error = RxnString();
-
-  // ── Lifecycle ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────
+// Notifier
+// ─────────────────────────────────────────
+class CpeHomeNotifier extends Notifier<CpeHomeState> {
   @override
-  void onInit() {
-    super.onInit();
+  CpeHomeState build() {
     fetchAssessmentList();
+    return const CpeHomeState(isLoading: true);
   }
 
-  // ── API ───────────────────────────────────────────────────────────
   Future<void> fetchAssessmentList() async {
-    isLoading.value = true;
-    error.value = null;
+    state = CpeHomeState(
+      company: state.company,
+      scanList: state.scanList,
+      isLoading: true,
+    );
 
     final result = await CustomHttp.get(
       endpoint: 'cpe/ergonomist/company/assessment-list',
@@ -122,43 +129,57 @@ class HomeCPEController extends GetxController {
       showFloatingError: false,
     );
 
-    isLoading.value = false;
-
-    // ── Error / no connection ─────────────────────────────────────
     if (result.error != null) {
-      error.value = result.error;
+      state = CpeHomeState(
+        company: state.company,
+        scanList: state.scanList,
+        isLoading: false,
+        error: result.error,
+      );
       return;
     }
 
-    // ── Parse response body ───────────────────────────────────────
     final data = result.data;
     if (data == null) {
-      error.value = 'No data received';
+      state = CpeHomeState(
+        company: state.company,
+        scanList: state.scanList,
+        isLoading: false,
+        error: 'No data received',
+      );
       return;
     }
 
     try {
+      CpeCompany? company;
       if (data['company'] != null) {
-        company.value = CpeCompany.fromJson(
-          Map<String, dynamic>.from(data['company']),
-        );
+        company = CpeCompany.fromJson(Map<String, dynamic>.from(data['company']));
       }
 
-      totalCount.value = data['count'] ?? 0;
-      totalPages.value = data['total_pages'] ?? 1;
-      currentPage.value = data['current_page'] ?? 1;
-
       final List<dynamic> list = data['scan_list'] ?? [];
-      scanList.assignAll(
-        list.map((e) => ScanItem.fromJson(Map<String, dynamic>.from(e))),
+      final scanList = list
+          .map((e) => ScanItem.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
+
+      state = CpeHomeState(
+        company: company,
+        scanList: scanList,
+        totalCount: data['count'] ?? 0,
+        totalPages: data['total_pages'] ?? 1,
+        currentPage: data['current_page'] ?? 1,
+        isLoading: false,
       );
     } catch (e) {
-      error.value = e.toString();
+      state = CpeHomeState(
+        company: state.company,
+        scanList: state.scanList,
+        isLoading: false,
+        error: e.toString(),
+      );
     }
   }
-
-  // ── Helpers ───────────────────────────────────────────────────────
-  void setUserName(String name) => userName.value = name;
-  void setUserAvatar(String url) => userAvatar.value = url;
-  void refresh() => fetchAssessmentList();
 }
+
+final cpeHomeNotifierProvider = NotifierProvider<CpeHomeNotifier, CpeHomeState>(
+  CpeHomeNotifier.new,
+);

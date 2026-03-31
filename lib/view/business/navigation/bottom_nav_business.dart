@@ -9,7 +9,7 @@ import 'package:posture_detector_app/view/business/scan/scan_business_screen.dar
 import 'package:posture_detector_app/view/business/exercises/exercise_business_screen.dart';
 
 import 'package:posture_detector_app/gen/assets.gen.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/app_colors.dart';
 
 class BottomNavBusiness extends StatefulWidget {
   const BottomNavBusiness({super.key});
