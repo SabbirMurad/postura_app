@@ -11,6 +11,7 @@ import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/models/user_type.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
+import 'package:posture_detector_app/utils/print_helper.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -69,17 +70,15 @@ class _SplashScreenState extends State<SplashScreen>
       if (savedToken == fcmToken) return;
 
       final response = await CustomHttp.post(
-        endpoint: 'auth/fcm-token',
-        body: {'fcm_token': fcmToken},
-        needAuth: true,
-        showFloatingError: false,
+        endpoint: 'notifications/fcm/register/',
+        body: {'token': fcmToken},
       );
 
       if (response.ok) {
         await AppHelper.instance.setFcmToken(fcmToken);
       }
     } catch (e) {
-      debugPrint('SplashScreen _saveFcmToken error: $e');
+      printLine('SplashScreen _saveFcmToken error: $e');
     }
   }
 

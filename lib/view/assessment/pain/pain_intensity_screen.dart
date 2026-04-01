@@ -10,8 +10,8 @@ import 'package:posture_detector_app/common/widgets/slider_widget.dart';
 import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/routes.dart';
 
-class BusinessPainIntensityScreen extends ConsumerWidget {
-  const BusinessPainIntensityScreen({super.key});
+class PainIntensityScreen extends ConsumerWidget {
+  const PainIntensityScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

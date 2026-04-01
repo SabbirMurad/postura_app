@@ -11,8 +11,8 @@ import 'package:posture_detector_app/common/widgets/selectional_container.dart';
 import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/routes.dart';
 
-class BusinessPainDurationScreen extends ConsumerWidget {
-  const BusinessPainDurationScreen({super.key});
+class PainDurationScreen extends ConsumerWidget {
+  const PainDurationScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,7 +35,8 @@ class BusinessPainDurationScreen extends ConsumerWidget {
               SizedBox(height: 51.h),
               Wrap(
                 children: AssessmentState.painDurations.map((duration) {
-                  final isSelected = assessment.selectedPainDuration == duration;
+                  final isSelected =
+                      assessment.selectedPainDuration == duration;
                   return GestureDetector(
                     onTap: () => ref
                         .read(assessmentNotifierProvider.notifier)

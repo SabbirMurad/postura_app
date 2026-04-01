@@ -10,10 +10,11 @@
     <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
-    android:label="Postura"
-    android:name="${applicationName}"
-    android:icon="@mipmap/launcher_icon"
-    android:usesCleartextTraffic="true">  <!-- ✅ Add this line -->
+        android:label="Postura"
+        android:name="${applicationName}"
+        android:icon="@mipmap/launcher_icon"
+        android:usesCleartextTraffic="true"
+        android:enableOnBackInvokedCallback="true">
 
     <provider
         android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"

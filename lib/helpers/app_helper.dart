@@ -171,6 +171,11 @@ class AppHelper {
     return pref.setString('fcm_token', token);
   }
 
+  Future<bool> removeFcmToken() async {
+    final pref = await _pref;
+    return pref.remove('fcm_token');
+  }
+
   Future<String?> getFcmToken() async {
     final pref = await _pref;
     return pref.getString('fcm_token');

@@ -11,8 +11,8 @@ import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/routes.dart';
 
-class BusinessWorkPatternScreen extends ConsumerWidget {
-  const BusinessWorkPatternScreen({super.key});
+class WorkPatternScreen extends ConsumerWidget {
+  const WorkPatternScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,27 +40,54 @@ class BusinessWorkPatternScreen extends ConsumerWidget {
                 style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
               ),
               DropdownButtonFormField<String>(
-                value: assessment.hourDeskPerDay.isEmpty ? null : assessment.hourDeskPerDay,
+                value: assessment.hourDeskPerDay.isEmpty
+                    ? null
+                    : assessment.hourDeskPerDay,
                 decoration: InputDecoration(
                   hintText: loc.hoursAtDeskPerDay,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 14.h,
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(color: AppColors.blackDeemed, width: 1.5),
+                    borderSide: BorderSide(
+                      color: AppColors.blackDeemed,
+                      width: 1.5,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(color: AppColors.blackDeemed, width: 1.5),
+                    borderSide: BorderSide(
+                      color: AppColors.blackDeemed,
+                      width: 1.5,
+                    ),
                   ),
                 ),
-                style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500, color: AppColors.text),
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.text,
+                ),
                 borderRadius: BorderRadius.circular(10.r),
                 dropdownColor: AppColors.surface,
                 items: [
-                  DropdownMenuItem(value: '0-4', child: Text(loc.zeroToFourHours)),
-                  DropdownMenuItem(value: '4-6', child: Text(loc.fourToSixHours)),
-                  DropdownMenuItem(value: '6-8', child: Text(loc.sixToEightHours)),
-                  DropdownMenuItem(value: '8+', child: Text(loc.eightPlusHours)),
+                  DropdownMenuItem(
+                    value: '0-4',
+                    child: Text(loc.zeroToFourHours),
+                  ),
+                  DropdownMenuItem(
+                    value: '4-6',
+                    child: Text(loc.fourToSixHours),
+                  ),
+                  DropdownMenuItem(
+                    value: '6-8',
+                    child: Text(loc.sixToEightHours),
+                  ),
+                  DropdownMenuItem(
+                    value: '8+',
+                    child: Text(loc.eightPlusHours),
+                  ),
                 ],
                 onChanged: (value) => notifier.setHourDeskPerDay(value ?? ''),
               ),
@@ -72,26 +99,44 @@ class BusinessWorkPatternScreen extends ConsumerWidget {
                 style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
               ),
               DropdownButtonFormField<String>(
-                value: assessment.breakHabit.isEmpty ? null : assessment.breakHabit,
+                value: assessment.breakHabit.isEmpty
+                    ? null
+                    : assessment.breakHabit,
                 decoration: InputDecoration(
                   hintText: loc.breakHabits,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 14.h,
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(color: AppColors.blackDeemed, width: 1.5),
+                    borderSide: BorderSide(
+                      color: AppColors.blackDeemed,
+                      width: 1.5,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(color: AppColors.blackDeemed, width: 1.5),
+                    borderSide: BorderSide(
+                      color: AppColors.blackDeemed,
+                      width: 1.5,
+                    ),
                   ),
                 ),
-                style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500, color: AppColors.text),
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.text,
+                ),
                 borderRadius: BorderRadius.circular(10.r),
                 dropdownColor: AppColors.surface,
                 items: [
                   DropdownMenuItem(value: '1H', child: Text(loc.everyOneHour)),
                   DropdownMenuItem(value: '2H', child: Text(loc.everyTwoHours)),
-                  DropdownMenuItem(value: '3H', child: Text(loc.everyThreeHours)),
+                  DropdownMenuItem(
+                    value: '3H',
+                    child: Text(loc.everyThreeHours),
+                  ),
                   DropdownMenuItem(value: 'RARE', child: Text(loc.rarely)),
                 ],
                 onChanged: (value) => notifier.setBreakHabit(value ?? ''),
@@ -104,25 +149,43 @@ class BusinessWorkPatternScreen extends ConsumerWidget {
               ),
               SizedBox(height: 6.h),
               DropdownButtonFormField<String>(
-                value: assessment.workPatternRole.isEmpty ? null : assessment.workPatternRole,
+                value: assessment.workPatternRole.isEmpty
+                    ? null
+                    : assessment.workPatternRole,
                 decoration: InputDecoration(
                   hintText: loc.selectDeviceUsage,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 14.h,
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(color: AppColors.blackDeemed, width: 1.5),
+                    borderSide: BorderSide(
+                      color: AppColors.blackDeemed,
+                      width: 1.5,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(color: AppColors.blackDeemed, width: 1.5),
+                    borderSide: BorderSide(
+                      color: AppColors.blackDeemed,
+                      width: 1.5,
+                    ),
                   ),
                 ),
-                style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500, color: AppColors.text),
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.text,
+                ),
                 borderRadius: BorderRadius.circular(10.r),
                 dropdownColor: AppColors.surface,
                 items: [
                   DropdownMenuItem(value: 'LAPTOP', child: Text(loc.laptop)),
-                  DropdownMenuItem(value: 'SINGLE', child: Text(loc.singleScreen)),
+                  DropdownMenuItem(
+                    value: 'SINGLE',
+                    child: Text(loc.singleScreen),
+                  ),
                   DropdownMenuItem(value: 'DUAL', child: Text(loc.dualScreen)),
                 ],
                 onChanged: (value) => notifier.setWorkPatternRole(value ?? ''),

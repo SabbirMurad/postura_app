@@ -112,7 +112,7 @@ class CpeHomeState {
 class CpeHomeNotifier extends Notifier<CpeHomeState> {
   @override
   CpeHomeState build() {
-    fetchAssessmentList();
+    Future.microtask(fetchAssessmentList);
     return const CpeHomeState(isLoading: true);
   }
 

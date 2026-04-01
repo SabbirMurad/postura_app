@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,11 +9,14 @@ import 'package:posture_detector_app/common/widgets/custom_text_field.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
+import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/models/user_type.dart';
 import 'package:posture_detector_app/provider/report.dart';
 import 'package:posture_detector_app/provider/author.dart';
 import 'package:posture_detector_app/routes.dart';
+import 'package:posture_detector_app/services/network/custom_http.dart';
+import 'package:posture_detector_app/utils/print_helper.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -37,6 +41,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
+  Future<void> _saveFcmToken() async {
+    try {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken == null) return;
+
+      final savedToken = await AppHelper.instance.getFcmToken();
+      if (savedToken == fcmToken) return;
+
+      final response = await CustomHttp.post(
+        endpoint: 'notifications/fcm/register/',
+        body: {'token': fcmToken},
+      );
+
+      if (response.ok) {
+        await AppHelper.instance.setFcmToken(fcmToken);
+      }
+    } catch (e) {
+      printLine('_saveFcmToken error: $e');
+    }
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
@@ -48,6 +73,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           email_address: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
+
+    await _saveFcmToken();
 
     setState(() => _loading = false);
 

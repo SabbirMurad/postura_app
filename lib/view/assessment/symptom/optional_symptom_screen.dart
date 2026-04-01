@@ -10,8 +10,8 @@ import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/routes.dart';
 
-class BusinessOptionalSymptomScreen extends ConsumerWidget {
-  const BusinessOptionalSymptomScreen({super.key});
+class OptionalSymptomScreen extends ConsumerWidget {
+  const OptionalSymptomScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,7 +35,9 @@ class BusinessOptionalSymptomScreen extends ConsumerWidget {
               SizedBox(height: 51.h),
               Wrap(
                 children: AssessmentState.symptoms.map((symptom) {
-                  final isSelected = assessment.selectedSymptoms.contains(symptom);
+                  final isSelected = assessment.selectedSymptoms.contains(
+                    symptom,
+                  );
                   return GestureDetector(
                     onTap: () => ref
                         .read(assessmentNotifierProvider.notifier)

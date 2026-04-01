@@ -157,19 +157,19 @@ class AppRoute {
       ),
       GoRoute(
         path: AppRoute.employeePainIntensityScreen,
-        builder: (context, state) => BusinessPainIntensityScreen(),
+        builder: (context, state) => PainIntensityScreen(),
       ),
       GoRoute(
         path: AppRoute.employeePainDurationScreen,
-        builder: (context, state) => BusinessPainDurationScreen(),
+        builder: (context, state) => PainDurationScreen(),
       ),
       GoRoute(
         path: AppRoute.employeeWorkPatternScreen,
-        builder: (context, state) => BusinessWorkPatternScreen(),
+        builder: (context, state) => WorkPatternScreen(),
       ),
       GoRoute(
         path: AppRoute.employeeOptionalSymptom,
-        builder: (context, state) => BusinessOptionalSymptomScreen(),
+        builder: (context, state) => OptionalSymptomScreen(),
       ),
       GoRoute(
         path: AppRoute.cameraGuideScreen,
