@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:posture_detector_app/models/scan_type.dart';
 import 'package:posture_detector_app/view/auth/forgot_password/confirm_code_forgot_screen.dart';
 import 'package:posture_detector_app/view/auth/forgot_password/forgot_password_screen.dart';
 import 'package:posture_detector_app/view/auth/forgot_password/verify_email_screen.dart';
@@ -102,7 +102,7 @@ class AppRoute {
 
   static final allRoutes = GoRouter(
     routes: [
-      /// -------------------------------------- Auth ------------------------------ ///
+      /// ------------------------ Auth ------------------------------ ///
       GoRoute(
         path: AppRoute.splashScreen,
         builder: (context, state) => SplashScreen(),
@@ -120,7 +120,7 @@ class AppRoute {
         builder: (context, state) => LoginScreen(),
       ),
 
-      /// -------------------------------- forgot password ------------------------------ ///
+      /// ---------------------- forgot password ------------------------ ///
       GoRoute(
         path: AppRoute.verifyEmail,
         builder: (context, state) => VerifyEmailScreen(),
@@ -134,7 +134,7 @@ class AppRoute {
         builder: (context, state) => ForgotPasswordScreen(),
       ),
 
-      /// ------------------------------------------------------------------------------- ///
+      /// ---------------------------------------------------------------- ///
       GoRoute(
         path: AppRoute.selectLanguage,
         builder: (context, state) => SelectLanguageScreen(),
@@ -177,8 +177,16 @@ class AppRoute {
       ),
       GoRoute(
         path: AppRoute.imageCaptureView,
-        builder: (context, state) =>
-            ImageCaptureScreen(type: Get.arguments['type']),
+        builder: (context, state) {
+          final query = state.uri.queryParameters;
+          final type = query['type']!;
+
+          return ImageCaptureScreen(
+            type: type == 'primary'
+                ? ScanType.primaryScan
+                : ScanType.captureImage,
+          );
+        },
       ),
       GoRoute(
         path: AppRoute.imagePreview,

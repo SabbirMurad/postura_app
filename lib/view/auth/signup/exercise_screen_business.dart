@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/common/widgets/bottom_button.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
@@ -439,7 +439,7 @@ class ExerciseScreenBusiness extends ConsumerWidget {
         child: BottomButton(
           // EN: "Equipment Recommendations"
           title: loc.equipmentRecommendations,
-          onTap: () => Get.toNamed(AppRoute.equipmentScreenBusiness),
+          onTap: () => context.push(AppRoute.equipmentScreenBusiness),
         ),
       ),
     );

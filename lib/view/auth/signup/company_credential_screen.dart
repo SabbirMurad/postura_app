@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/common/widgets/custom_text_field.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
@@ -44,7 +44,7 @@ class _CompanyCredentialScreenState extends ConsumerState<CompanyCredentialScree
 
     if (response.ok) {
       ref.read(signupNotifierProvider.notifier).setCompanyCode(code);
-      Get.toNamed(AppRoute.employeeCredential);
+      context.push(AppRoute.employeeCredential);
     }
   }
 

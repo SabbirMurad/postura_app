@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:posture_detector_app/constants/app_colors.dart';
 
@@ -14,10 +14,7 @@ class AppBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (Get.isSnackbarOpen) {
-          Get.closeAllSnackbars();
-        }
-        Get.back();
+        context.pop();
       },
       child: Container(
         width: 40.w,

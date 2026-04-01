@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/provider/author.dart';
@@ -48,7 +48,7 @@ class SettingScreenCPE extends ConsumerWidget {
                   // EN: "Account Settings"
                   title: loc.accountSettings,
                   onTap: () {
-                    Get.toNamed(AppRoute.businessAccountSettings);
+                    context.push(AppRoute.businessAccountSettings);
                   },
                 ),
                 SizedBox(height: 12.h),
@@ -57,7 +57,7 @@ class SettingScreenCPE extends ConsumerWidget {
                   // EN: "Language"
                   title: loc.language,
                   onTap: () {
-                    Get.toNamed(AppRoute.businessLanguageScreen);
+                    context.push(AppRoute.businessLanguageScreen);
                   },
                 ),
                 SizedBox(height: 12.h),
@@ -66,7 +66,7 @@ class SettingScreenCPE extends ConsumerWidget {
                   // EN: "Privacy & Policy"
                   title: loc.privacyPolicy,
                   onTap: () {
-                    Get.toNamed(AppRoute.privacyPolicy);
+                    context.push(AppRoute.privacyPolicy);
                   },
                 ),
                 SizedBox(height: 12.h),

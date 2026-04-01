@@ -2,7 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/constants/app_text.dart';
 import 'package:posture_detector_app/provider/image_capture.dart';
@@ -92,9 +92,9 @@ class _ImageCaptureScreenState extends ConsumerState<ImageCaptureScreen> {
 
       ref.read(imageCaptureNotifierProvider.notifier).setImage(image);
 
-      await Get.toNamed(
+      await context.push(
         AppRoute.imagePreview,
-        arguments: {'imagePath': image.path, 'type': widget.type},
+        extra: {'imagePath': image.path, 'type': widget.type},
       );
     } catch (e) {
       debugPrint("Error capturing image: $e");
@@ -116,8 +116,8 @@ class _ImageCaptureScreenState extends ConsumerState<ImageCaptureScreen> {
       icon: Assets.icons.nav.cameraScan.svg(height: 46.h, width: 46.w),
       title: AppText.primaryScan,
       content: AppText.primaryScanInfo,
-      onCancel: () => Get.offNamed(AppRoute.bottomNavBusiness),
-      onConfirm: () => Get.back(),
+      onCancel: () => context.go(AppRoute.bottomNavBusiness),
+      onConfirm: () => context.pop(),
     );
   }
 
@@ -129,8 +129,8 @@ class _ImageCaptureScreenState extends ConsumerState<ImageCaptureScreen> {
       icon: Assets.icons.general.instantScan.svg(height: 46.h, width: 46.w),
       title: AppText.instantScan,
       content: AppText.instantScanInfo,
-      onCancel: () => Get.offNamed(AppRoute.bottomNavBusiness),
-      onConfirm: () => Get.back(),
+      onCancel: () => context.go(AppRoute.bottomNavBusiness),
+      onConfirm: () => context.pop(),
     );
   }
 
@@ -142,8 +142,8 @@ class _ImageCaptureScreenState extends ConsumerState<ImageCaptureScreen> {
       icon: Assets.icons.nav.cameraScan.svg(height: 46.h, width: 46.w),
       title: AppText.consentToUpload,
       content: AppText.consentToUploadInfo,
-      onCancel: () => Get.offNamed(AppRoute.cameraGuideScreen),
-      onConfirm: () => Get.back(),
+      onCancel: () => context.go(AppRoute.cameraGuideScreen),
+      onConfirm: () => context.pop(),
     );
   }
 

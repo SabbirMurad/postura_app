@@ -165,4 +165,14 @@ class AppHelper {
     final pref = await _pref;
     return pref.getString('selected_language');
   }
+
+  Future<bool> setFcmToken(String token) async {
+    final pref = await _pref;
+    return pref.setString('fcm_token', token);
+  }
+
+  Future<String?> getFcmToken() async {
+    final pref = await _pref;
+    return pref.getString('fcm_token');
+  }
 }

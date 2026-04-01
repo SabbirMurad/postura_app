@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:share_plus/share_plus.dart';
@@ -10,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
+import 'package:posture_detector_app/main.dart';
 import 'package:posture_detector_app/models/analysis/analysis_data_model.dart';
 import 'package:posture_detector_app/services/api/onboarding_service.dart';
 
@@ -42,7 +42,7 @@ class ReportState {
 class ReportNotifier extends _$ReportNotifier {
   final OnboardingService _onboardingService = OnboardingService();
 
-  AppLocalizations get _loc => AppLocalizations.of(Get.context!)!;
+  AppLocalizations get _loc => AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;
 
   @override
   ReportState build() {

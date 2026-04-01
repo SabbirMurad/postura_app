@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/provider/signup.dart';
@@ -58,7 +58,7 @@ class WaitingCompanyResponse extends ConsumerWidget {
               textColor: AppColors.onBoardingSurface,
               onTap: () {
                 ref.read(signupNotifierProvider.notifier).reset();
-                Get.offAllNamed(AppRoute.loginScreen);
+                context.go(AppRoute.loginScreen);
               },
             ),
           ],

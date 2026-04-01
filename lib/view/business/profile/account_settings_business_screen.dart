@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:posture_detector_app/common/dialogs/edit_name_dialog.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
-import 'package:posture_detector_app/view/business/profile/business_change_password_screen.dart';
+import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/provider/author.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/profile_info.dart';
+import 'package:posture_detector_app/view/business/profile/business_change_password_screen.dart';
 
 class AccountSettingsBusinessScreen extends ConsumerStatefulWidget {
   const AccountSettingsBusinessScreen({super.key});
@@ -22,7 +23,7 @@ class AccountSettingsBusinessScreen extends ConsumerStatefulWidget {
 class _AccountSettingsBusinessScreenState
     extends ConsumerState<AccountSettingsBusinessScreen> {
   final _nameController = TextEditingController();
-  final RxBool _isLoading = false.obs;
+  final ValueNotifier<bool> _isLoading = ValueNotifier(false);
 
   @override
   void dispose() {
@@ -74,7 +75,7 @@ class _AccountSettingsBusinessScreenState
                       _isLoading.value = false;
                       if (success) {
                         _nameController.clear();
-                        Get.back();
+                        if (context.mounted) context.pop();
                       }
                     },
                   );
@@ -99,7 +100,13 @@ class _AccountSettingsBusinessScreenState
                 tailingText: loc.change,
                 iconData: Iconsax.edit,
                 onTap: () {
-                  Get.to(() => const BusinessChangePasswordScreen());
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) {
+                        return const BusinessChangePasswordScreen();
+                      },
+                    ),
+                  );
                 },
               ),
               SizedBox(height: 24.h),

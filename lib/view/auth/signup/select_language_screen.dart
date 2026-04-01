@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/constants/app_text.dart';
 import 'package:posture_detector_app/view/auth/signup/widgets/language_selected_card.dart';
@@ -12,6 +12,7 @@ import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
+import 'package:posture_detector_app/provider/locale_provider.dart';
 import 'package:posture_detector_app/provider/signup.dart';
 
 class SelectLanguageScreen extends ConsumerWidget {
@@ -117,8 +118,8 @@ class SelectLanguageScreen extends ConsumerWidget {
                       return;
                     }
                     AppHelper.instance.setLanguage(selectedLanguage);
-                    Get.updateLocale(Locale(selectedLanguage));
-                    Get.toNamed(AppRoute.companyCredential);
+                    ref.read(localeProvider.notifier).state = Locale(selectedLanguage);
+                    context.push(AppRoute.companyCredential);
                   },
                   // EN: "Continue"
                   text: loc.continueButton,
@@ -133,7 +134,7 @@ class SelectLanguageScreen extends ConsumerWidget {
                 SizedBox(height: 12.h),
                 PrimaryButton(
                   onTap: () {
-                    Get.back();
+                    context.pop();
                   },
                   // EN: "Back"
                   text: loc.backButton,

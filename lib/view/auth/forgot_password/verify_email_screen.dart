@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/common/widgets/custom_text_field.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
@@ -85,7 +85,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                 .read(authorNotifierProvider.notifier)
                 .verifyEmail(_emailController.text.trim());
             setState(() => _loading = false);
-            if (res) Get.toNamed(AppRoute.confirmCodeForgot);
+            if (res) context.push(AppRoute.confirmCodeForgot);
           },
           backgroundColor: AppColors.primaryColor,
           textStyle: TextStyle(

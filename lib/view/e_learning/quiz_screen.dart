@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/models/quiz/quiz_module.dart';
 import 'package:posture_detector_app/provider/e_learning.dart';
@@ -38,7 +38,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () => Get.back(),
+            onPressed: () => context.pop(),
           ),
           title: Text(
             "${AppLocalizations.of(context)!.moduleLabel} ${module.id}",
@@ -153,10 +153,13 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
               );
 
               if (selectedAnswers.length < randomQuestions.length) {
-                Get.snackbar(
-                  AppLocalizations.of(context)!.incomplete,
-                  AppLocalizations.of(context)!.pleaseAnswerAllQuestions,
-                  snackPosition: SnackPosition.BOTTOM,
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      '${AppLocalizations.of(context)!.incomplete}: ${AppLocalizations.of(context)!.pleaseAnswerAllQuestions}',
+                    ),
+                    behavior: SnackBarBehavior.floating,
+                  ),
                 );
                 return;
               }
@@ -414,7 +417,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                           onPressed: () {
                             Navigator.pop(ctx);
                             ref.read(eLearningNotifierProvider.notifier).clearSelectedAnswers();
-                            Get.back();
+                            context.pop();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: passed

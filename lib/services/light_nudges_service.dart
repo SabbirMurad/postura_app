@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:posture_detector_app/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Light Nudges V2 Service
@@ -145,22 +145,27 @@ class LightNudgesService {
 
   /// Show in-app nudge banner
   void _showNudgeBanner(String message) {
-    Get.showSnackbar(
-      GetSnackBar(
-        message: message,
+    scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(
+              Icons.lightbulb_outline,
+              color: Colors.white,
+              size: 28,
+            ),
+            const SizedBox(width: 12),
+            Expanded(child: Text(message)),
+          ],
+        ),
         duration: const Duration(seconds: 30),
         backgroundColor: Colors.blue.shade700,
-        borderRadius: 12,
+        behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        icon: const Icon(
-          Icons.lightbulb_outline,
-          color: Colors.white,
-          size: 28,
-        ),
-        shouldIconPulse: false,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         dismissDirection: DismissDirection.horizontal,
-        animationDuration: const Duration(milliseconds: 400),
+        animation: const AlwaysStoppedAnimation(1),
       ),
     );
   }

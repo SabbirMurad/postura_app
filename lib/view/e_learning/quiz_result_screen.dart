@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/models/quiz/quiz_module.dart';
@@ -68,7 +68,7 @@ class QuizResultScreen extends ConsumerWidget {
                         backgroundColor: AppColors.primaryColor,
                         onTap: () async {
                           ref.read(eLearningNotifierProvider.notifier).clearSelectedAnswers();
-                          Get.offAllNamed(AppRoute.bottomNavBusiness);
+                          context.go(AppRoute.bottomNavBusiness);
                         },
                       ),
                     ),
@@ -79,8 +79,8 @@ class QuizResultScreen extends ConsumerWidget {
                         textColor: AppColors.surface,
                         onTap: () async {
                           ref.read(eLearningNotifierProvider.notifier).clearSelectedAnswers();
-                          Get.back();
-                          Get.back();
+                          context.pop();
+                          context.pop();
                         },
                         backgroundColor: AppColors.primaryColor,
                       ),

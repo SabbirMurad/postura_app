@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
 import 'package:posture_detector_app/common/widgets/custom_text_field.dart';
@@ -59,14 +59,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ref.read(authorNotifierProvider.notifier).refreshProfile(),
         ]);
         setState(() => _loading = false);
-        Get.offAllNamed(AppRoute.bottomNavBusiness);
+        if (mounted) context.go(AppRoute.bottomNavBusiness);
       } else if (res == false) {
-        Get.offAllNamed(AppRoute.employeeSelectBodyRegion);
+        if (mounted) context.go(AppRoute.employeeSelectBodyRegion);
       }
     } else {
       if (res == true) {
         ref.read(authorNotifierProvider.notifier).refreshProfile();
-        Get.offAllNamed(AppRoute.bottomNavCpe);
+        if (mounted) context.go(AppRoute.bottomNavCpe);
       }
     }
   }
@@ -183,7 +183,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
-                      onTap: () => Get.toNamed(AppRoute.verifyEmail),
+                      onTap: () => context.push(AppRoute.verifyEmail),
                       // EN: "Forget Credential"
                       child: Text(
                         loc.forgetCredential,
@@ -226,7 +226,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           SizedBox(width: 6.w),
                           GestureDetector(
                             onTap: () =>
-                                Get.toNamed(AppRoute.companyCredential),
+                                context.push(AppRoute.companyCredential),
                             // EN: "Sign up"
                             child: Text(
                               loc.signUp,

@@ -4,7 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/provider/cpe_home.dart';
-import 'package:get/get.dart';
+import 'package:posture_detector_app/common/widgets/custom_toast.dart';
+import 'package:posture_detector_app/main.dart';
 
 // ─────────────────────────────────────────
 // Models
@@ -33,10 +34,10 @@ class ApprovalItem {
   });
 
   ApprovalItem copyWith({bool? isChecked}) => ApprovalItem(
-        label: label,
-        apiKey: apiKey,
-        isChecked: isChecked ?? this.isChecked,
-      );
+    label: label,
+    apiKey: apiKey,
+    isChecked: isChecked ?? this.isChecked,
+  );
 }
 
 class PhotoItem {
@@ -47,9 +48,9 @@ class PhotoItem {
   const PhotoItem.local(this.path) : remoteUrl = null, isRemote = false;
 
   const PhotoItem.remote(String url)
-      : path = '',
-        remoteUrl = url,
-        isRemote = true;
+    : path = '',
+      remoteUrl = url,
+      isRemote = true;
 }
 
 enum ReviewMode { remote, live }
@@ -169,27 +170,26 @@ class CpeAssessmentState {
     String? comment,
     String? signaturePath,
     String? signatureRemoteUrl,
-  }) =>
-      CpeAssessmentState(
-        isLoading: isLoading ?? this.isLoading,
-        isSubmitting: isSubmitting ?? this.isSubmitting,
-        initialReviewStatus: initialReviewStatus ?? this.initialReviewStatus,
-        patientName: patientName ?? this.patientName,
-        patientId: patientId ?? this.patientId,
-        compliance: compliance ?? this.compliance,
-        riskLevel: riskLevel ?? this.riskLevel,
-        deskLocation: deskLocation ?? this.deskLocation,
-        deskRole: deskRole ?? this.deskRole,
-        painSymptoms: painSymptoms ?? this.painSymptoms,
-        photoItems: photoItems ?? this.photoItems,
-        approvalItems: approvalItems ?? this.approvalItems,
-        reviewMode: reviewMode ?? this.reviewMode,
-        decision: decision ?? this.decision,
-        comment: comment ?? this.comment,
-        maxCommentLength: maxCommentLength,
-        signaturePath: signaturePath ?? this.signaturePath,
-        signatureRemoteUrl: signatureRemoteUrl ?? this.signatureRemoteUrl,
-      );
+  }) => CpeAssessmentState(
+    isLoading: isLoading ?? this.isLoading,
+    isSubmitting: isSubmitting ?? this.isSubmitting,
+    initialReviewStatus: initialReviewStatus ?? this.initialReviewStatus,
+    patientName: patientName ?? this.patientName,
+    patientId: patientId ?? this.patientId,
+    compliance: compliance ?? this.compliance,
+    riskLevel: riskLevel ?? this.riskLevel,
+    deskLocation: deskLocation ?? this.deskLocation,
+    deskRole: deskRole ?? this.deskRole,
+    painSymptoms: painSymptoms ?? this.painSymptoms,
+    photoItems: photoItems ?? this.photoItems,
+    approvalItems: approvalItems ?? this.approvalItems,
+    reviewMode: reviewMode ?? this.reviewMode,
+    decision: decision ?? this.decision,
+    comment: comment ?? this.comment,
+    maxCommentLength: maxCommentLength,
+    signaturePath: signaturePath ?? this.signaturePath,
+    signatureRemoteUrl: signatureRemoteUrl ?? this.signatureRemoteUrl,
+  );
 }
 
 // ─────────────────────────────────────────
@@ -292,8 +292,8 @@ class CpeAssessmentNotifier
         signatureRemoteUrl: d['review_signature_url'] as String? ?? '',
       );
     } catch (e) {
-      final loc = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(loc.error, '${loc.failedToParseResponse}: $e');
+      final loc = AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;
+      showCustomToast(text: '${loc.error}: ${loc.failedToParseResponse}: $e');
       state = state.copyWith(isLoading: false);
     }
   }
@@ -331,7 +331,8 @@ class CpeAssessmentNotifier
   // ─────────────────────────────────────
   // Setters
   // ─────────────────────────────────────
-  void setReviewMode(ReviewMode mode) => state = state.copyWith(reviewMode: mode);
+  void setReviewMode(ReviewMode mode) =>
+      state = state.copyWith(reviewMode: mode);
   void setDecision(ReviewDecision d) => state = state.copyWith(decision: d);
 
   void setComment(String value) {
@@ -344,7 +345,7 @@ class CpeAssessmentNotifier
   // Submit
   // POST cpe/ergonomist/assessment/submit-review/{scan_id}/
   // ─────────────────────────────────────
-  Future<void> submitReview() async {
+  Future<bool> submitReview() async {
     state = state.copyWith(isSubmitting: true);
     try {
       final fields = <String, String>{
@@ -374,20 +375,27 @@ class CpeAssessmentNotifier
 
       if (result.error == null) {
         ref.read(cpeHomeNotifierProvider.notifier).fetchAssessmentList();
-        Get.back();
-        final loc = AppLocalizations.of(Get.context!)!;
-        Get.snackbar(loc.success, loc.reviewSubmittedSuccessfully);
+        final ctx = scaffoldMessengerKey.currentContext;
+        if (ctx != null) {
+          final loc = AppLocalizations.of(ctx)!;
+          showCustomToast(
+            text: '${loc.success}: ${loc.reviewSubmittedSuccessfully}',
+          );
+          // ignore: use_build_context_synchronously
+          return true;
+        }
       }
     } catch (e) {
-      final loc = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(loc.error, '${loc.failedToSubmit}: $e');
+      final loc = AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;
+      showCustomToast(text: '${loc.error}: ${loc.failedToSubmit}: $e');
     } finally {
       state = state.copyWith(isSubmitting: false);
     }
+    return false;
   }
 }
 
 final cpeAssessmentNotifierProvider = NotifierProvider.autoDispose
     .family<CpeAssessmentNotifier, CpeAssessmentState, int>(
-  CpeAssessmentNotifier.new,
-);
+      CpeAssessmentNotifier.new,
+    );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/provider/cpe_home.dart';
@@ -88,9 +88,9 @@ class HomeScreenCPE extends ConsumerWidget {
         itemBuilder: (context, index) {
           final scan = state.scanList[index];
           return GestureDetector(
-            onTap: () => Get.toNamed(
+            onTap: () => context.push(
               AppRoute.cpeAssessment,
-              arguments: {
+              extra: {
                 'scan_id': scan.scanId,
                 'assessment_id': scan.assessmentId,
                 'name': scan.employeeName,

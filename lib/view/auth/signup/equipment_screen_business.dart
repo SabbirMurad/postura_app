@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
@@ -20,6 +20,7 @@ import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/models/user_type.dart';
+import 'package:posture_detector_app/main.dart';
 import 'package:posture_detector_app/provider/report.dart';
 
 class EquipmentScreenBusiness extends ConsumerStatefulWidget {
@@ -65,7 +66,7 @@ class _EquipmentScreenBusinessState extends ConsumerState<EquipmentScreenBusines
       );
       showCustomToast(
         // EN: "Recommendations sent to HR"
-        text: AppLocalizations.of(Get.context!)!.recommendationsSentToHr,
+        text: AppLocalizations.of(scaffoldMessengerKey.currentContext!)!.recommendationsSentToHr,
         toastType: ToastTypesInfo(ToastTypes.success),
       );
     } catch (e) {
@@ -248,7 +249,7 @@ class _EquipmentScreenBusinessState extends ConsumerState<EquipmentScreenBusines
                       // Open Dashboard Button
                       PrimaryButton(
                         onTap: () {
-                          Get.offAllNamed(AppRoute.bottomNavBusiness);
+                          context.go(AppRoute.bottomNavBusiness);
                         },
                         height: 45.h,
                         // EN: "Open Dashboard"

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 
@@ -63,7 +63,7 @@ class _BusinessChangePasswordScreenState
         text: loc.passwordChangedSuccessfully,
         toastType: ToastTypesInfo(ToastTypes.success),
       );
-      Get.back();
+      if (mounted) context.pop();
     }
   }
 
@@ -76,7 +76,7 @@ class _BusinessChangePasswordScreenState
         backgroundColor: AppColors.surface,
         automaticallyImplyLeading: false,
         leading: IconButton(
-          onPressed: () => Get.back(),
+          onPressed: () => context.pop(),
           icon: const Icon(Icons.arrow_back),
         ),
       ),

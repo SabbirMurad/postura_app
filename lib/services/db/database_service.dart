@@ -1,14 +1,13 @@
 // lib/services/database_service.dart
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:posture_detector_app/models/quiz/module.dart';
 import 'package:posture_detector_app/models/quiz/question_model.dart';
 import 'package:posture_detector_app/models/quiz/quiz_attempt.dart';
 
-class DatabaseService extends GetxService {
+class DatabaseService {
   static final DatabaseService instance = DatabaseService._init();
   Database? _database;
 

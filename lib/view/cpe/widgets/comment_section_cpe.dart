@@ -7,7 +7,11 @@ import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
 class CommentSectionCPE extends StatefulWidget {
   final CpeAssessmentState state;
   final CpeAssessmentNotifier notifier;
-  const CommentSectionCPE({super.key, required this.state, required this.notifier});
+  const CommentSectionCPE({
+    super.key,
+    required this.state,
+    required this.notifier,
+  });
 
   @override
   State<CommentSectionCPE> createState() => _CommentSectionCPEState();
@@ -19,8 +23,9 @@ class _CommentSectionCPEState extends State<CommentSectionCPE> {
   @override
   void initState() {
     super.initState();
-    _textController = TextEditingController(text: widget.state.comment)
-      ..selection = TextSelection.collapsed(offset: widget.state.comment.length);
+    _textController = TextEditingController(
+      text: widget.state.comment,
+    )..selection = TextSelection.collapsed(offset: widget.state.comment.length);
   }
 
   @override
@@ -91,7 +96,11 @@ class _CommentSectionCPEState extends State<CommentSectionCPE> {
 class SubmitButtonCPE extends StatelessWidget {
   final CpeAssessmentState state;
   final CpeAssessmentNotifier notifier;
-  const SubmitButtonCPE({super.key, required this.state, required this.notifier});
+  const SubmitButtonCPE({
+    super.key,
+    required this.state,
+    required this.notifier,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -107,11 +116,19 @@ class SubmitButtonCPE extends StatelessWidget {
         width: double.infinity,
         height: 50.h,
         child: ElevatedButton(
-          onPressed: state.isSubmitting ? null : notifier.submitReview,
+          onPressed: state.isSubmitting
+              ? null
+              : () async {
+                  final result = await notifier.submitReview();
+                  if (result) {
+                    Navigator.pop(context);
+                  }
+                },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF2563EB),
-            disabledBackgroundColor:
-                const Color(0xFF2563EB).withValues(alpha: 0.5),
+            disabledBackgroundColor: const Color(
+              0xFF2563EB,
+            ).withValues(alpha: 0.5),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14.r),
             ),

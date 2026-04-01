@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
@@ -26,7 +26,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _nextPage() {
     if (_isLastPage) {
       AppHelper.instance.setPhoneOnboard(true);
-      Get.toNamed(AppRoute.welcomeScreen);
+      context.push(AppRoute.welcomeScreen);
       return;
     }
     _pageController.nextPage(
@@ -91,7 +91,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   TextButton(
                     onPressed: () {
                       AppHelper.instance.setPhoneOnboard(true);
-                      Get.offAllNamed(AppRoute.welcomeScreen);
+                      context.go(AppRoute.welcomeScreen);
                     },
                     child: Text(
                       // EN: "Skip"

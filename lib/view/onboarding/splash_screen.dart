@@ -1,6 +1,7 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
@@ -9,6 +10,7 @@ import 'package:posture_detector_app/constants/app_text.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/models/user_type.dart';
+import 'package:posture_detector_app/services/network/custom_http.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -58,6 +60,29 @@ class _SplashScreenState extends State<SplashScreen>
     super.dispose();
   }
 
+  Future<void> _saveFcmToken() async {
+    try {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken == null) return;
+
+      final savedToken = await AppHelper.instance.getFcmToken();
+      if (savedToken == fcmToken) return;
+
+      final response = await CustomHttp.post(
+        endpoint: 'auth/fcm-token',
+        body: {'fcm_token': fcmToken},
+        needAuth: true,
+        showFloatingError: false,
+      );
+
+      if (response.ok) {
+        await AppHelper.instance.setFcmToken(fcmToken);
+      }
+    } catch (e) {
+      debugPrint('SplashScreen _saveFcmToken error: $e');
+    }
+  }
+
   void goTo() async {
     final token = await AppHelper.instance.getAccessToken();
     final userRole = await AppHelper.instance.getAuthRole();
@@ -66,18 +91,19 @@ class _SplashScreenState extends State<SplashScreen>
 
     if (token == null || userRole == null) {
       if (phoneOnboard == true) {
-        Get.toNamed(AppRoute.welcomeScreen);
+        if (mounted) context.push(AppRoute.welcomeScreen);
       } else {
-        Get.offAllNamed(AppRoute.onBoardingScreen);
+        if (mounted) context.go(AppRoute.onBoardingScreen);
       }
     } else if (token.isNotEmpty && userRole.isNotEmpty) {
+      await _saveFcmToken();
       if (userRole == UserType.ERGONOMIST.name) {
-        Get.offAllNamed(AppRoute.bottomNavCpe);
+        if (mounted) context.go(AppRoute.bottomNavCpe);
       } else {
         if (isonBoarding == true) {
-          Get.offAllNamed(AppRoute.bottomNavBusiness);
+          if (mounted) context.go(AppRoute.bottomNavBusiness);
         } else {
-          Get.offAllNamed(AppRoute.employeeSelectBodyRegion);
+          if (mounted) context.go(AppRoute.employeeSelectBodyRegion);
         }
       }
     } else {

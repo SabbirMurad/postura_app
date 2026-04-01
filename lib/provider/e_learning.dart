@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:posture_detector_app/models/quiz/quiz_module.dart';
+import 'package:posture_detector_app/provider/locale_provider.dart';
 import 'package:posture_detector_app/services/db/sqlite_service.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/services/light_nudges_service.dart';
@@ -49,7 +49,7 @@ class ELearningNotifier extends Notifier<ELearningState> {
 
   @override
   ELearningState build() {
-    final locale = Get.locale?.languageCode ?? 'en';
+    final locale = ref.watch(localeProvider).languageCode;
     final modules = ELearningModuleData.getModules(locale);
     Future.microtask(fetchQuizResults);
     return ELearningState(quizModules: modules, currentLocale: locale);

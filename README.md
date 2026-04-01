@@ -20,3 +20,9 @@ samples, guidance on mobile development, and a full API reference.
 ```bash
 flutter pub run build_runner watch
 ```
+
+- To run add without the unnecessary refresh logs
+
+```bash
+flutter run 2>&1 | grep -v "^D/"
+```

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/dialogs/primary_scan_alert_dialog.dart';
 import 'package:posture_detector_app/common/widgets/scan_container.dart';
@@ -8,6 +8,7 @@ import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/models/scan_type.dart';
+import 'package:posture_detector_app/view/camera_capture/image_capture_screen.dart';
 
 class ScanBusinessScreen extends StatefulWidget {
   const ScanBusinessScreen({super.key});
@@ -72,9 +73,12 @@ class _ScanBusinessScreenState extends State<ScanBusinessScreen> {
                   subtitle: loc.instantScanInfo,
                   iconPath: Assets.icons.general.instantScan.path,
                   onTap: () {
-                    Get.toNamed(
-                      AppRoute.imageCaptureView,
-                      arguments: {'type': ScanType.instantScan},
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const ImageCaptureScreen(
+                          type: ScanType.instantScan,
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -93,8 +97,8 @@ class _ScanBusinessScreenState extends State<ScanBusinessScreen> {
                     showPrimaryScanAlert(
                       context,
                       onConfirm: () {
-                        Get.back();
-                        Get.toNamed(AppRoute.employeeSelectBodyRegion);
+                        context.pop();
+                        context.push(AppRoute.employeeSelectBodyRegion);
                       },
                       onCancel: () {
                         _primaryScanShown = false;

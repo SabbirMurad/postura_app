@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
@@ -355,7 +355,7 @@ class OutputScreenBusiness extends ConsumerWidget {
                 // EN: "Back"
                 text: loc.backButton,
                 onTap: () {
-                  Get.offAllNamed(AppRoute.bottomNavBusiness);
+                  context.go(AppRoute.bottomNavBusiness);
                 },
                 backgroundColor: AppColors.greyDeemed,
                 textColor: AppColors.text,
@@ -365,7 +365,7 @@ class OutputScreenBusiness extends ConsumerWidget {
             Expanded(
               child: PrimaryButton(
                 onTap: () {
-                  Get.toNamed(AppRoute.correctionReportScreenBusiness);
+                  context.push(AppRoute.correctionReportScreenBusiness);
                 },
                 // EN: "View Correction"
                 text: loc.viewCorrection,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
@@ -61,7 +61,7 @@ class BusinessPainDurationScreen extends ConsumerWidget {
                 showCustomToast(text: loc.pleaseFillAllFields);
                 return;
               }
-              Get.toNamed(AppRoute.employeeWorkPatternScreen);
+              context.push(AppRoute.employeeWorkPatternScreen);
             },
             // EN: "Continue"
             text: loc.continueButton,

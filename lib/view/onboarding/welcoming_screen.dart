@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/custom_clipper.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
@@ -61,7 +61,7 @@ class WelcomingScreen extends StatelessWidget {
                     textColor: AppColors.surface,
                     borderRadius: BorderRadius.circular(14),
                     onTap: () {
-                      Get.toNamed(AppRoute.companyCredential);
+                      context.push(AppRoute.companyCredential);
                     },
                   ),
                   SizedBox(height: 12.h),
@@ -71,7 +71,7 @@ class WelcomingScreen extends StatelessWidget {
                     backgroundColor: AppColors.greyDeemed,
                     borderRadius: BorderRadius.circular(14),
                     onTap: () {
-                      Get.toNamed(AppRoute.loginScreen);
+                      context.push(AppRoute.loginScreen);
                     },
                   ),
                   SizedBox(height: 14.h),

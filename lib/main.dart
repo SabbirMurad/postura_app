@@ -8,6 +8,7 @@ import 'package:posture_detector_app/routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
+import 'package:posture_detector_app/provider/locale_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -19,22 +20,27 @@ void main() async {
   await Sqlite.instance.init();
 
   final savedLang = await AppHelper.instance.getLanguage();
+  final savedLocale = savedLang != null ? Locale(savedLang) : null;
 
   runApp(
     ProviderScope(
-      child: MyApp(savedLocale: savedLang != null ? Locale(savedLang) : null),
+      overrides: [
+        localeProvider.overrideWith(
+          (ref) => savedLocale ?? const Locale('en'),
+        ),
+      ],
+      child: const MyApp(),
     ),
   );
 }
 
-//
-class MyApp extends StatelessWidget {
-  final Locale? savedLocale;
-
-  const MyApp({super.key, this.savedLocale});
+class MyApp extends ConsumerWidget {
+  const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+
     return ScreenUtilInit(
       designSize: Size(375, 812),
       child: MaterialApp.router(
@@ -61,11 +67,10 @@ class MyApp extends StatelessWidget {
           Locale('de'),
           Locale('nl'),
         ],
-        locale: savedLocale,
-        localeResolutionCallback: (locale, supportedLocales) {
-          if (savedLocale != null) return savedLocale;
+        locale: locale,
+        localeResolutionCallback: (deviceLocale, supportedLocales) {
           for (final supported in supportedLocales) {
-            if (supported.languageCode == locale?.languageCode) return supported;
+            if (supported.languageCode == deviceLocale?.languageCode) return supported;
           }
           return const Locale('en');
         },

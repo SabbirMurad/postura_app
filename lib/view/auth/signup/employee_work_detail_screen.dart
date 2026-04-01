@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
-import 'package:posture_detector_app/view/auth/signup/waiting_company_response.dart';
+import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/custom_text_field.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/provider/author.dart';
 import 'package:posture_detector_app/provider/signup.dart';
+import 'package:posture_detector_app/view/auth/signup/waiting_company_response.dart';
 
 class EmployeeWorkDetailScreen extends ConsumerStatefulWidget {
   const EmployeeWorkDetailScreen({super.key});
@@ -69,7 +70,11 @@ class _EmployeeWorkDetailScreenState
     setState(() => _loading = false);
 
     if (res == true) {
-      Get.offAll(WaitingCompanyResponse());
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const WaitingCompanyResponse()),
+        );
+      }
     }
   }
 
@@ -95,7 +100,10 @@ class _EmployeeWorkDetailScreenState
                 Text(
                   // EN: "Desk ID or Location (Recommended)"
                   loc.deskId,
-                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 SizedBox(height: 6.h),
                 CustomTextField(
@@ -114,7 +122,10 @@ class _EmployeeWorkDetailScreenState
                 Text(
                   // EN: "Department"
                   loc.department,
-                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 SizedBox(height: 6.h),
                 CustomTextField(
@@ -133,7 +144,10 @@ class _EmployeeWorkDetailScreenState
                 Text(
                   // EN: "Role"
                   loc.role,
-                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 SizedBox(height: 6.h),
                 DropdownButtonFormField<String>(
@@ -147,11 +161,17 @@ class _EmployeeWorkDetailScreenState
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.r),
-                      borderSide: BorderSide(color: AppColors.blackDeemed, width: 1.5),
+                      borderSide: BorderSide(
+                        color: AppColors.blackDeemed,
+                        width: 1.5,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.r),
-                      borderSide: BorderSide(color: AppColors.blackDeemed, width: 1.5),
+                      borderSide: BorderSide(
+                        color: AppColors.blackDeemed,
+                        width: 1.5,
+                      ),
                     ),
                   ),
                   style: TextStyle(
@@ -163,7 +183,10 @@ class _EmployeeWorkDetailScreenState
                   dropdownColor: AppColors.surface,
                   items: [
                     DropdownMenuItem(value: 'DESK', child: Text(loc.desk)),
-                    DropdownMenuItem(value: 'STANDING', child: Text(loc.standingDesk)),
+                    DropdownMenuItem(
+                      value: 'STANDING',
+                      child: Text(loc.standingDesk),
+                    ),
                     DropdownMenuItem(value: 'HYBRID', child: Text(loc.hybrid)),
                     DropdownMenuItem(value: 'OTHER', child: Text(loc.other)),
                   ],

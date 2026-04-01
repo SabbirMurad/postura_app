@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/provider/cpe_assessment.dart';
 import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
@@ -171,7 +170,7 @@ class DecisionSectionCPE extends StatelessWidget {
               title: Text(d.label),
               onTap: () {
                 notifier.setDecision(d);
-                Get.back();
+                Navigator.of(context).pop();
               },
             );
           }).toList(),

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
+import 'package:posture_detector_app/provider/locale_provider.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
@@ -123,7 +123,7 @@ class _BusinessLanguageScreenState extends ConsumerState<BusinessLanguageScreen>
               PrimaryButton(
                 onTap: () {
                   AppHelper.instance.setLanguage(_selectedLanguage);
-                  Get.updateLocale(Locale(_selectedLanguage));
+                  ref.read(localeProvider.notifier).state = Locale(_selectedLanguage);
                   ref.read(eLearningNotifierProvider.notifier).loadModulesForLocale(_selectedLanguage);
                 },
                 // EN: "Continue"

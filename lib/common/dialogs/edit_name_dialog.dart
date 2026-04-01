@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/custom_text_field.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
@@ -9,7 +8,7 @@ import 'package:posture_detector_app/constants/app_colors.dart';
 void showEditNameDialog(
   BuildContext context, {
   required TextEditingController nameController,
-  required RxBool isLoading,
+  required ValueNotifier<bool> isLoading,
   required VoidCallback onSave,
   String? initialValue,
 }) {
@@ -56,7 +55,7 @@ void showEditNameDialog(
                 Expanded(
                   child: PrimaryButton(
                     onTap: () {
-                      Get.back();
+                      Navigator.of(context).pop();
                     },
                     // EN: "Cancel"
                     text: loc.cancel,
@@ -65,16 +64,19 @@ void showEditNameDialog(
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
-                  child: Obx(() {
-                    return PrimaryButton(
-                      // EN: "Save"
-                      text: loc.save,
-                      backgroundColor: AppColors.primaryColor,
-                      textColor: AppColors.onBoardingSurface,
-                      onTap: onSave,
-                      loading: isLoading.value,
-                    );
-                  }),
+                  child: ValueListenableBuilder<bool>(
+                    valueListenable: isLoading,
+                    builder: (context, loading, _) {
+                      return PrimaryButton(
+                        // EN: "Save"
+                        text: loc.save,
+                        backgroundColor: AppColors.primaryColor,
+                        textColor: AppColors.onBoardingSurface,
+                        onTap: onSave,
+                        loading: loading,
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

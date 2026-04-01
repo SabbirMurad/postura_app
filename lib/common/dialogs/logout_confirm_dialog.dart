@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
@@ -44,7 +44,7 @@ void showLogoutConfirmDialog(BuildContext context) {
                   child: PrimaryButton(
                     height: 46.h,
                     onTap: () {
-                      Get.back();
+                      Navigator.of(dialogContext).pop();
                     },
                     // EN: "Cancel"
                     text: loc.cancel,
@@ -61,7 +61,7 @@ void showLogoutConfirmDialog(BuildContext context) {
                       container.read(assessmentNotifierProvider.notifier).reset();
                       container.read(reportNotifierProvider.notifier).clearData();
                       AppHelper.instance.clearAllPrefValue();
-                      Get.offAllNamed(AppRoute.loginScreen);
+                      dialogContext.go(AppRoute.loginScreen);
                     },
                     // EN: "Yes"
                     text: loc.yes,

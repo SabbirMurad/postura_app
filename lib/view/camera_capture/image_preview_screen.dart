@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
@@ -17,8 +17,9 @@ class ImagePreviewScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context)!;
-    final imagePath = Get.arguments['imagePath'];
-    final type = Get.arguments['type'];
+    final extra = GoRouterState.of(context).extra as Map<String, dynamic>;
+    final imagePath = extra['imagePath'];
+    final type = extra['type'];
     final isSubmitting = ref.watch(
       assessmentNotifierProvider.select((s) => s.isSubmitting),
     );
@@ -107,7 +108,7 @@ class ImagePreviewScreen extends ConsumerWidget {
                         backgroundColor: AppColors.blackDeemed,
                         onTap: () {
                           ref.read(imageCaptureNotifierProvider.notifier).clear();
-                          Get.back();
+                          context.pop();
                         },
                       ),
                     ),
@@ -125,7 +126,7 @@ class ImagePreviewScreen extends ConsumerWidget {
                                 .read(assessmentNotifierProvider.notifier)
                                 .submitAnalysis(type);
                             if (success) {
-                              Get.offAllNamed(AppRoute.outputScreenBusiness);
+                              context.go(AppRoute.outputScreenBusiness);
                             }
                           }
                         },

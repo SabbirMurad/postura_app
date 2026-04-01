@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/common/widgets/selectional_container.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
@@ -55,7 +55,7 @@ class BusinessOptionalSymptomScreen extends ConsumerWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 25.h, horizontal: 20.w),
           child: PrimaryButton(
-            onTap: () => Get.toNamed(AppRoute.cameraGuideScreen),
+            onTap: () => context.push(AppRoute.cameraGuideScreen),
             // EN: "Continue"
             text: loc.continueButton,
             backgroundColor: AppColors.primaryColor,

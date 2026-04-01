@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
 import 'package:posture_detector_app/provider/cpe_assessment.dart';
@@ -18,7 +18,8 @@ class CPEAssessmentScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final scanId = (Get.arguments?['scan_id'] ?? 0) as int;
+    final args = GoRouterState.of(context).extra as Map<String, dynamic>?;
+    final scanId = (args?['scan_id'] ?? 0) as int;
     final state = ref.watch(cpeAssessmentNotifierProvider(scanId));
     final notifier = ref.read(cpeAssessmentNotifierProvider(scanId).notifier);
     final loc = AppLocalizations.of(context)!;
