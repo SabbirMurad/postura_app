@@ -6,22 +6,20 @@ import 'package:iconsax/iconsax.dart';
 import 'package:posture_detector_app/common/dialogs/edit_name_dialog.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
-import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/provider/author.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/profile_info.dart';
-import 'package:posture_detector_app/view/business/profile/business_change_password_screen.dart';
+import 'package:posture_detector_app/view/business/profile/change_password_screen.dart';
 
-class AccountSettingsBusinessScreen extends ConsumerStatefulWidget {
-  const AccountSettingsBusinessScreen({super.key});
+class AccountSettingsScreen extends ConsumerStatefulWidget {
+  const AccountSettingsScreen({super.key});
 
   @override
-  ConsumerState<AccountSettingsBusinessScreen> createState() =>
-      _AccountSettingsBusinessScreenState();
+  ConsumerState<AccountSettingsScreen> createState() =>
+      _AccountSettingsScreenState();
 }
 
-class _AccountSettingsBusinessScreenState
-    extends ConsumerState<AccountSettingsBusinessScreen> {
+class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
   final _nameController = TextEditingController();
   final ValueNotifier<bool> _isLoading = ValueNotifier(false);
 
@@ -103,7 +101,7 @@ class _AccountSettingsBusinessScreenState
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (_) {
-                        return const BusinessChangePasswordScreen();
+                        return const ChangePasswordScreen();
                       },
                     ),
                   );

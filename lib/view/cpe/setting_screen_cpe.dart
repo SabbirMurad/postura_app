@@ -57,7 +57,7 @@ class SettingScreenCPE extends ConsumerWidget {
                   // EN: "Language"
                   title: loc.language,
                   onTap: () {
-                    context.push(AppRoute.businessLanguageScreen);
+                    context.push(AppRoute.LanguageScreen);
                   },
                 ),
                 SizedBox(height: 12.h),

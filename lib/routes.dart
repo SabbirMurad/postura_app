@@ -19,8 +19,8 @@ import 'package:posture_detector_app/view/auth/signup/equipment_screen_business.
 import 'package:posture_detector_app/view/auth/signup/exercise_screen_business.dart';
 import 'package:posture_detector_app/view/auth/signup/select_language_screen.dart';
 import 'package:posture_detector_app/view/onboarding/welcoming_screen.dart';
-import 'package:posture_detector_app/view/business/navigation/bottom_nav_business.dart';
-import 'package:posture_detector_app/view/business/profile/account_settings_business_screen.dart';
+import 'package:posture_detector_app/view/business/navigation/bottom_nav.dart';
+import 'package:posture_detector_app/view/business/profile/account_settings_screen.dart';
 import 'package:posture_detector_app/view/cpe/assessment_screen_cpe.dart';
 import 'package:posture_detector_app/view/cpe/navigation/bottom_nav_cpe.dart';
 import 'package:posture_detector_app/view/e_learning/elearning_screen.dart';
@@ -79,7 +79,7 @@ class AppRoute {
 
   // ── Business Dashboard ──
   static const businessAccountSettings = '/business-account-settings';
-  static const businessLanguageScreen = '/business-language';
+  static const LanguageScreen = '/business-language';
 
   // ── E-Learning ──
   static const elearning = '/e-learning';
@@ -213,7 +213,7 @@ class AppRoute {
       /// ------------------------- Business Dashboard ---------------------------------- ///
       GoRoute(
         path: AppRoute.businessAccountSettings,
-        builder: (context, state) => AccountSettingsBusinessScreen(),
+        builder: (context, state) => AccountSettingsScreen(),
       ),
 
       /// ---------------------------- Bottom Nav business ----------------------------------- ///

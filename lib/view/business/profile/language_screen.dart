@@ -12,14 +12,14 @@ import 'package:posture_detector_app/provider/e_learning.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
 
-class BusinessLanguageScreen extends ConsumerStatefulWidget {
-  const BusinessLanguageScreen({super.key});
+class LanguageScreen extends ConsumerStatefulWidget {
+  const LanguageScreen({super.key});
 
   @override
-  ConsumerState<BusinessLanguageScreen> createState() => _BusinessLanguageScreenState();
+  ConsumerState<LanguageScreen> createState() => _LanguageScreenState();
 }
 
-class _BusinessLanguageScreenState extends ConsumerState<BusinessLanguageScreen> {
+class _LanguageScreenState extends ConsumerState<LanguageScreen> {
   String _selectedLanguage = 'en';
 
   @override

@@ -11,8 +11,8 @@ import 'package:posture_detector_app/common/widgets/profile_info_container.dart'
 import 'package:posture_detector_app/common/widgets/settings_container.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 
-class BusinessProfileScreen extends ConsumerWidget {
-  const BusinessProfileScreen({super.key});
+class ProfileScreen extends ConsumerWidget {
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -75,7 +75,7 @@ class BusinessProfileScreen extends ConsumerWidget {
                   // EN: "Language"
                   title: loc.language,
                   onTap: () {
-                    context.push(AppRoute.businessLanguageScreen);
+                    context.push(AppRoute.LanguageScreen);
                   },
                 ),
                 SizedBox(height: 12.h),

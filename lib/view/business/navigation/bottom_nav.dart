@@ -4,7 +4,7 @@ import 'package:posture_detector_app/view/auth/signup/equipment_screen_business.
 // import 'package:posture_detector_app/features/auth/signup/business/equipment_screen_business.dart';
 // import 'package:posture_detector_app/features/auth/signup/business/exercise_screen_business.dart';
 import 'package:posture_detector_app/view/business/home/home_screen_business.dart';
-import 'package:posture_detector_app/view/business/profile/business_profile_screen.dart';
+import 'package:posture_detector_app/view/business/profile/profile_screen.dart';
 import 'package:posture_detector_app/view/business/scan/scan_business_screen.dart';
 import 'package:posture_detector_app/view/business/exercises/exercise_business_screen.dart';
 
@@ -25,7 +25,7 @@ class _BottomNavState extends State<BottomNavBusiness> {
     ExerciseBusinessScreen(),
     EquipmentScreenBusiness(canSendListToCompany: false),
     ScanBusinessScreen(),
-    BusinessProfileScreen(),
+    ProfileScreen(),
   ];
 
   @override

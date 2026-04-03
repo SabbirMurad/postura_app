@@ -10,16 +10,16 @@ import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/provider/author.dart';
 
-class BusinessChangePasswordScreen extends ConsumerStatefulWidget {
-  const BusinessChangePasswordScreen({super.key});
+class ChangePasswordScreen extends ConsumerStatefulWidget {
+  const ChangePasswordScreen({super.key});
 
   @override
-  ConsumerState<BusinessChangePasswordScreen> createState() =>
-      _BusinessChangePasswordScreenState();
+  ConsumerState<ChangePasswordScreen> createState() =>
+      _ChangePasswordScreenState();
 }
 
-class _BusinessChangePasswordScreenState
-    extends ConsumerState<BusinessChangePasswordScreen> {
+class _ChangePasswordScreenState
+    extends ConsumerState<ChangePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _loading = false;
 
