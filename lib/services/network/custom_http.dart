@@ -6,6 +6,7 @@ import 'package:posture_detector_app/constants/app_credential.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/services/network/connectivity_helper.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
+import 'package:posture_detector_app/utils/print_helper.dart';
 
 class CustomHttpResult {
   final dynamic data;
@@ -181,39 +182,25 @@ class CustomHttp {
 
       debugPrint('<===== ${method.name} MULTIPART =====> $url');
 
-      var streamedResponse = await request.send().timeout(_multipartTimeout);
-      final response = await http.Response.fromStream(streamedResponse);
+      var response = await request.send().timeout(_multipartTimeout);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        if (response.body.isEmpty || response.body.trim().isEmpty) {
-          return CustomHttpResult(
-            ok: true,
-            status_code: response.statusCode,
-            error: 'Server returned empty response',
-          );
-        }
-        try {
-          final decodedData = jsonDecode(response.body);
-          return CustomHttpResult(
-            ok: true,
-            status_code: response.statusCode,
-            data: decodedData,
-          );
-        } catch (e) {
-          debugPrint('MULTIPART JSON parse error: $e');
-          return CustomHttpResult(
-            ok: true,
-            status_code: response.statusCode,
-            error: 'Failed to parse server response',
-          );
-        }
+        final body = await response.stream.bytesToString();
+        final json = jsonDecode(body);
+        printLine('Response body: ${json}');
+        return CustomHttpResult(
+          ok: true,
+          status_code: response.statusCode,
+          data: json,
+        );
       } else {
+        final body = await response.stream.bytesToString();
+        final json = jsonDecode(body);
+
         return CustomHttpResult(
           ok: false,
           status_code: response.statusCode,
-          error: response.body.isNotEmpty
-              ? response.body
-              : 'Request failed with status ${response.statusCode}',
+          error: json["message"],
         );
       }
     } on TimeoutException {

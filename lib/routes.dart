@@ -15,7 +15,7 @@ import 'package:posture_detector_app/view/assessment/pain/pain_duration_screen.d
 import 'package:posture_detector_app/view/assessment/pain/pain_intensity_screen.dart';
 import 'package:posture_detector_app/view/assessment/body_region/select_body_region_screen.dart';
 import 'package:posture_detector_app/view/auth/signup/employee_credential_screen.dart';
-import 'package:posture_detector_app/view/auth/signup/equipment_screen_business.dart';
+import 'package:posture_detector_app/view/business/equipment/equipment_screen_business.dart';
 import 'package:posture_detector_app/view/auth/signup/exercise_screen_business.dart';
 import 'package:posture_detector_app/view/auth/signup/select_language_screen.dart';
 import 'package:posture_detector_app/view/onboarding/welcoming_screen.dart';
@@ -206,8 +206,11 @@ class AppRoute {
       ),
       GoRoute(
         path: AppRoute.equipmentScreenBusiness,
-        builder: (context, state) =>
-            EquipmentScreenBusiness(canSendListToCompany: true),
+        builder: (context, state) => EquipmentScreenBusiness(
+          canSendListToCompany: true,
+          dashboardButton: true,
+          backButton: true,
+        ),
       ),
 
       /// ------------------------- Business Dashboard ---------------------------------- ///

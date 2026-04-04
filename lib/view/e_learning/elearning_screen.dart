@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
 import 'package:posture_detector_app/common/widgets/e_learning_card.dart';
@@ -93,7 +94,52 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
                     );
                   },
                 ),
-
+                SizedBox(height: 20.h),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 18.w,
+                    vertical: 18.h,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18.r),
+                    color: AppColors.onBoardingSurface,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xFF242424).withValues(alpha: 0.05),
+                        blurRadius: 12.w,
+                        offset: Offset(0, 4.h),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Assets.icons.auth.lock.svg(
+                        width: 24.w,
+                        fit: BoxFit.contain,
+                      ),
+                      SizedBox(height: 6.h),
+                      Text(
+                        'Certificate',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: 6.h),
+                      Text(
+                        'Complete all the modules to claim your certificate.',
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.secondaryText,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
                 SizedBox(height: 50.h),
               ],
             ),

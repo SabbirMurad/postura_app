@@ -45,7 +45,7 @@ class _LogoutModalState extends State<LogoutModal> {
         await AppHelper.instance.removeFcmToken();
       }
     } catch (e) {
-      printLine('_saveFcmToken error: $e');
+      printLine('_removeFcmToken error: $e');
     }
   }
 

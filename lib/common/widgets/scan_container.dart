@@ -27,23 +27,32 @@ class ScanContainer extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         child: Container(
           width: 336.w,
-          padding: EdgeInsets.only(bottom: 6.h),
+          padding: EdgeInsets.all(12.w),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.r),
             color: AppColors.onBoardingSurface,
           ),
-          child: Center(
-            child: ListTile(
-              leading: IconContainer(path: iconPath),
-              title: Text(
-                title,
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18.sp),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  IconContainer(path: iconPath, width: 56.w, height: 56.w),
+                  SizedBox(width: 12.w),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18.sp,
+                    ),
+                  ),
+                ],
               ),
-              subtitle: Text(
+              SizedBox(height: 12.h),
+              Text(
                 subtitle,
-                style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14.sp),
+                style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13.sp),
               ),
-            ),
+            ],
           ),
         ),
       ),

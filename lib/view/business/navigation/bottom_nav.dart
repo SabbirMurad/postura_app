@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:posture_detector_app/view/auth/signup/equipment_screen_business.dart';
+import 'package:posture_detector_app/view/business/equipment/equipment_screen_business.dart';
 // import 'package:posture_detector_app/features/auth/signup/business/equipment_screen_business.dart';
 // import 'package:posture_detector_app/features/auth/signup/business/exercise_screen_business.dart';
 import 'package:posture_detector_app/view/business/home/home_screen_business.dart';
@@ -23,7 +23,11 @@ class _BottomNavState extends State<BottomNavBusiness> {
   List<Widget> pages = [
     HomeScreenBusiness(),
     ExerciseBusinessScreen(),
-    EquipmentScreenBusiness(canSendListToCompany: false),
+    EquipmentScreenBusiness(
+      canSendListToCompany: false,
+      dashboardButton: false,
+      backButton: false,
+    ),
     ScanBusinessScreen(),
     ProfileScreen(),
   ];

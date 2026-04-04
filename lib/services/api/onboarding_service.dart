@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:posture_detector_app/models/analysis/analysis_data_model.dart';
 import 'package:posture_detector_app/services/network/api_response.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
+import 'package:posture_detector_app/utils/print_helper.dart';
 
 class OnboardingService {
   Future<ApiResponse<AnalysisDataModel>> onboardingFlow({
@@ -24,9 +25,9 @@ class OnboardingService {
         imageFile.path,
       );
 
-      debugPrint('===== ONBOARDING REQUEST =====');
-      debugPrint('Endpoint: assessments/scan-analyse');
-      debugPrint('Scan type: $scan_type');
+      printLine('===== ONBOARDING REQUEST =====');
+      printLine('Endpoint: assessments/scan-analyse');
+      printLine('Scan type: $scan_type');
 
       final connection = await CustomHttp.multipart(
         endpoint: 'assessments/scan-analyse',
@@ -42,78 +43,33 @@ class OnboardingService {
         files: [multipartFile],
       );
 
-      debugPrint('===== ONBOARDING RESPONSE =====');
-      debugPrint('Status code: ${connection.status_code}');
-
       if (connection.ok) {
         // Check if connection.data is null
         if (connection.data == null) {
-          debugPrint('ERROR: connection.data is null');
+          printLine('ERROR: connection.data is null');
           return ApiResponse.error('Server returned empty response');
         }
 
-        // Parse the response data
-        Map<String, dynamic> jsonData;
-
-        if (connection.data is String) {
-          // If data is a string, decode it
-          debugPrint('Data is String, decoding...');
-          jsonData = jsonDecode(connection.data as String);
-        } else if (connection.data is Map) {
-          // If data is already a Map, use it directly
-          debugPrint('Data is already a Map');
-          jsonData = connection.data as Map<String, dynamic>;
-        } else {
-          debugPrint('ERROR: Unexpected data type: ${connection.data.runtimeType}');
-          return ApiResponse.error('Invalid response format from server');
-        }
-
-        // Check if the response has the expected structure
-        if (!jsonData.containsKey('ai_result')) {
-          debugPrint('WARNING: Response missing ai_result key');
-          debugPrint('Available keys: ${jsonData.keys.toList()}');
-        }
-
         try {
-          final data = AnalysisDataModel.fromJson(jsonData);
-          debugPrint('Successfully parsed UserAnalysisDataModel');
+          final data = AnalysisDataModel.fromJson(connection.data);
+          printLine('Successfully parsed UserAnalysisDataModel');
           return ApiResponse.success(data);
         } catch (parseError, stackTrace) {
-          debugPrint('ERROR parsing UserAnalysisDataModel: $parseError');
-          debugPrint('Stack trace: $stackTrace');
+          printLine('ERROR parsing UserAnalysisDataModel: $parseError');
+          printLine('Stack trace: $stackTrace');
           return ApiResponse.error(
             'Failed to parse server response: $parseError',
           );
         }
       } else {
-        debugPrint('ERROR: Non-success status code: ${connection.status_code}');
-
-        try {
-          final json = connection.error != null
-              ? (connection.error is String
-                    ? jsonDecode(connection.error!)
-                    : connection.error)
-              : {'message': 'Unknown error'};
-
-          final errorMessage =
-              json['message'] ??
-              json['error'] ??
-              json['detail'] ??
-              'Request failed';
-          debugPrint('Error message: $errorMessage');
-
-          return ApiResponse.error(errorMessage.toString());
-        } catch (e) {
-          debugPrint('Error parsing error response: ${e.runtimeType}');
-          return ApiResponse.error(
-            'Request failed with status ${connection.status_code}',
-          );
-        }
+        return ApiResponse.error(
+          'Status ${connection.status_code}, Error: ${connection.error}',
+        );
       }
     } catch (e, stackTrace) {
-      debugPrint('===== EXCEPTION IN ONBOARDING SERVICE =====');
-      debugPrint('Error: ${e.runtimeType}');
-      debugPrint('Stack trace: $stackTrace');
+      printLine('===== EXCEPTION IN ONBOARDING SERVICE =====');
+      printLine('Error: ${e.runtimeType}');
+      printLine('Stack trace: $stackTrace');
       return ApiResponse.error('Something went wrong');
     }
   }
@@ -121,85 +77,39 @@ class OnboardingService {
   /// Fetch user's assessment reports
   Future<ApiResponse<AnalysisDataModel>> fetchMyReports() async {
     try {
-      debugPrint('===== FETCH MY REPORTS REQUEST =====');
-      debugPrint('Endpoint: /assessments/my-reports');
-
       final connection = await CustomHttp.get(
         endpoint: 'assessments/my-reports',
       );
 
-      debugPrint('===== FETCH MY REPORTS RESPONSE =====');
-      debugPrint('Status code: ${connection.status_code}');
-
       if (connection.ok) {
         // Check if connection.data is null
         if (connection.data == null) {
-          debugPrint('ERROR: connection.data is null');
+          printLine('ERROR: connection.data is null');
           return ApiResponse.error('Server returned empty response');
         }
 
-        // Parse the response data
-        Map<String, dynamic> jsonData;
-
-        if (connection.data is String) {
-          // If data is a string, decode it
-          debugPrint('Data is String, decoding...');
-          jsonData = jsonDecode(connection.data as String);
-        } else if (connection.data is Map) {
-          // If data is already a Map, use it directly
-          debugPrint('Data is already a Map');
-          jsonData = connection.data as Map<String, dynamic>;
-        } else {
-          debugPrint('ERROR: Unexpected data type: ${connection.data.runtimeType}');
-          return ApiResponse.error('Invalid response format from server');
-        }
-
-        // Check if the response has the expected structure
-        if (!jsonData.containsKey('ai_result')) {
-          debugPrint('WARNING: Response missing ai_result key');
-          debugPrint('Available keys: ${jsonData.keys.toList()}');
-        }
+        printLine(connection.data);
 
         try {
-          final data = AnalysisDataModel.fromJson(jsonData);
-          debugPrint('Successfully parsed AnalysisDataModel from my-reports');
+          final data = AnalysisDataModel.fromJson(connection.data);
+          printLine('Successfully parsed AnalysisDataModel from my-reports');
           return ApiResponse.success(data);
         } catch (parseError, stackTrace) {
-          debugPrint('ERROR parsing AnalysisDataModel: $parseError');
-          debugPrint('Stack trace: $stackTrace');
+          printLine('ERROR parsing AnalysisDataModel: $parseError');
+          printLine('Stack trace: $stackTrace');
           return ApiResponse.error(
             'Failed to parse server response: $parseError',
           );
         }
       } else {
-        debugPrint('ERROR: Non-success status code: ${connection.status_code}');
-
-        try {
-          final json = connection.error != null
-              ? (connection.error is String
-                    ? jsonDecode(connection.error!)
-                    : connection.error)
-              : {'message': 'Unknown error'};
-
-          final errorMessage =
-              json['message'] ??
-              json['error'] ??
-              json['detail'] ??
-              'Request failed';
-          debugPrint('Error message: $errorMessage');
-
-          return ApiResponse.error(errorMessage.toString());
-        } catch (e) {
-          debugPrint('Error parsing error response: ${e.runtimeType}');
-          return ApiResponse.error(
-            'Request failed with status ${connection.status_code}',
-          );
-        }
+        return ApiResponse.error(
+          connection.error ?? 'Status ${connection.status_code}',
+        );
       }
     } catch (e, stackTrace) {
-      debugPrint('===== EXCEPTION IN FETCH MY REPORTS SERVICE =====');
-      debugPrint('Error: ${e.runtimeType}');
-      debugPrint('Stack trace: $stackTrace');
+      printLine('===== EXCEPTION IN FETCH MY REPORTS SERVICE =====');
+      printLine('Error: ${e.runtimeType}');
+      printLine('Stack trace: $stackTrace');
       return ApiResponse.error('Something went wrong');
     }
   }
@@ -209,18 +119,18 @@ class OnboardingService {
     required int assessmentId,
   }) async {
     try {
-      debugPrint('===== EXPORT REPORT PDF REQUEST =====');
-      debugPrint('Endpoint: api/assessments/$assessmentId/export-pdf');
+      printLine('===== EXPORT REPORT PDF REQUEST =====');
+      printLine('Endpoint: api/assessments/$assessmentId/export-pdf');
 
       final connection = await CustomHttp.get(
         endpoint: 'api/assessments/$assessmentId/export-pdf',
       );
 
-      debugPrint('===== EXPORT REPORT PDF RESPONSE =====');
-      debugPrint('Status code: ${connection.status_code}');
+      printLine('===== EXPORT REPORT PDF RESPONSE =====');
+      printLine('Status code: ${connection.status_code}');
 
       if (connection.ok) {
-        debugPrint('PDF exported successfully');
+        printLine('PDF exported successfully');
         // Assuming the response contains a download URL or file path
         final data = connection.data;
 
@@ -233,13 +143,13 @@ class OnboardingService {
 
         return ApiResponse.error('Unable to extract PDF URL from response');
       } else {
-        debugPrint('ERROR: Non-success status code: ${connection.status_code}');
+        printLine('ERROR: Non-success status code: ${connection.status_code}');
         return ApiResponse.error('Failed to export PDF');
       }
     } catch (e, stackTrace) {
-      debugPrint('===== EXCEPTION IN EXPORT PDF SERVICE =====');
-      debugPrint('Error: ${e.runtimeType}');
-      debugPrint('Stack trace: $stackTrace');
+      printLine('===== EXCEPTION IN EXPORT PDF SERVICE =====');
+      printLine('Error: ${e.runtimeType}');
+      printLine('Stack trace: $stackTrace');
       return ApiResponse.error('Something went wrong');
     }
   }

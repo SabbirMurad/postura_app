@@ -54,7 +54,7 @@ class _ScanBusinessScreenState extends State<ScanBusinessScreen> {
                   ),
                 ),
 
-                SizedBox(height: 63.h),
+                SizedBox(height: 36.h),
 
                 /// Scan Image
                 Center(
@@ -64,7 +64,7 @@ class _ScanBusinessScreenState extends State<ScanBusinessScreen> {
                   ),
                 ),
 
-                SizedBox(height: 54.h),
+                SizedBox(height: 36.h),
 
                 /// Instant Scan Button
                 ScanContainer(
@@ -83,7 +83,7 @@ class _ScanBusinessScreenState extends State<ScanBusinessScreen> {
                   },
                 ),
 
-                SizedBox(height: 10.h),
+                SizedBox(height: 12.h),
 
                 /// Primary Scan Button
                 ScanContainer(
@@ -107,7 +107,7 @@ class _ScanBusinessScreenState extends State<ScanBusinessScreen> {
                   },
                 ),
 
-                SizedBox(height: 50.h),
+                // SizedBox(height: 44.h),
               ],
             ),
           ),

@@ -33,7 +33,7 @@ class DurationContainer extends StatelessWidget {
           Text(
             icon != null ? "$content " : content,
             style: TextStyle(
-              fontSize: 13.sp,
+              fontSize: 12.sp,
               fontWeight: FontWeight.w400,
               color: textColor ?? AppColors.text,
             ),

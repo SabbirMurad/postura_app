@@ -1,4 +1,6 @@
 // ===================== ROOT =====================
+import 'package:posture_detector_app/utils/print_helper.dart';
+
 class AnalysisDataModel {
   final String message;
   final int assessmentId;
@@ -191,6 +193,7 @@ class AIResult {
   final List<Equipment> equipment;
   final String pdfReportUrl;
   final String equipmentPdfUrl;
+  final String equipmentExcelUrl;
 
   AIResult({
     required this.complianceScore,
@@ -203,34 +206,40 @@ class AIResult {
     required this.equipment,
     required this.pdfReportUrl,
     required this.equipmentPdfUrl,
+    required this.equipmentExcelUrl,
   });
 
-  factory AIResult.fromJson(Map<String, dynamic> json) => AIResult(
-    complianceScore: (json['compliance_score'] ?? 0).toDouble(),
-    overallRisk: json['overall_risk'] ?? '',
-    annotatedImageUrl: json['annotated_image_url'] ?? '',
-    detailedAnalysis: DetailedAnalysis.fromJson(
-      json['detailed_analysis'] ?? {},
-    ),
-    bodyRegionRisks: BodyRegionRisks.fromJson(json['body_region_risks'] ?? {}),
-    corrections: (json['corrections'] as List<dynamic>? ?? [])
-        .map((e) => Correction.fromJson(e as Map<String, dynamic>))
-        .toList(),
-    exercises: json['exercises'] is Map
-        ? Exercises.fromJson(json['exercises'] as Map<String, dynamic>)
-        : Exercises(
-            conditionType: '',
-            focusRegions: [],
-            mainPainRegion: null,
-            averagePainVas: 0,
-            recommendedSession: [],
-          ),
-    equipment: (json['equipment'] as List<dynamic>? ?? [])
-        .map((e) => Equipment.fromJson(e as Map<String, dynamic>))
-        .toList(),
-    pdfReportUrl: json['pdf_report_url'] ?? '',
-    equipmentPdfUrl: json['equipment_pdf_url'] ?? '',
-  );
+  factory AIResult.fromJson(Map<String, dynamic> json) {
+    return AIResult(
+      complianceScore: (json['compliance_score'] ?? 0).toDouble(),
+      overallRisk: json['overall_risk'] ?? '',
+      annotatedImageUrl: json['annotated_image_url'] ?? '',
+      detailedAnalysis: DetailedAnalysis.fromJson(
+        json['detailed_analysis'] ?? {},
+      ),
+      bodyRegionRisks: BodyRegionRisks.fromJson(
+        json['body_region_risks'] ?? {},
+      ),
+      corrections: (json['corrections'] as List<dynamic>? ?? [])
+          .map((e) => Correction.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      exercises: json['exercises'] is Map
+          ? Exercises.fromJson(json['exercises'] as Map<String, dynamic>)
+          : Exercises(
+              conditionType: '',
+              focusRegions: [],
+              mainPainRegion: null,
+              averagePainVas: 0,
+              recommendedSession: [],
+            ),
+      equipment: (json['equipment'] as List<dynamic>? ?? [])
+          .map((e) => Equipment.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      pdfReportUrl: json['pdf_report_url'] ?? '',
+      equipmentPdfUrl: json['equipment_pdf_url'] ?? '',
+      equipmentExcelUrl: json['equipment_excel_url'] ?? '',
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     'compliance_score': complianceScore,
@@ -243,6 +252,7 @@ class AIResult {
     'equipment': equipment.map((e) => e.toJson()).toList(),
     'pdf_report_url': pdfReportUrl,
     'equipment_pdf_url': equipmentPdfUrl,
+    'equipment_excel_url': equipmentExcelUrl,
   };
 }
 
@@ -575,6 +585,7 @@ class Equipment {
   final String priority;
   final String improvementPercentage;
   final String? source;
+  final String status;
 
   Equipment({
     required this.name,
@@ -582,18 +593,23 @@ class Equipment {
     required this.priority,
     required this.improvementPercentage,
     this.source,
+    required this.status,
   });
 
-  factory Equipment.fromJson(Map<String, dynamic> json) => Equipment(
-    name: json['name'] ?? '',
-    description: json['description'] ?? '',
-    priority: json['priority'] ?? '',
-    improvementPercentage: json['improvement_percentage'] ?? '',
-    source: json['source'],
-  );
+  factory Equipment.fromJson(Map<String, dynamic> json) {
+    return Equipment(
+      name: json['name'] ?? '',
+      status: json['status'] ?? '',
+      description: json['description'] ?? '',
+      priority: json['priority'] ?? '',
+      improvementPercentage: json['improvement_percentage'] ?? '',
+      source: json['source'],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     'name': name,
+    'status': status,
     'description': description,
     'priority': priority,
     'improvement_percentage': improvementPercentage,

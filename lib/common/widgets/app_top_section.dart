@@ -11,9 +11,11 @@ class AppTopSection extends StatelessWidget {
   final String title;
   final String subtitle;
   final bool? isSkip;
+  final bool hasBackButton;
 
   const AppTopSection({
     super.key,
+    this.hasBackButton = true,
     required this.title,
     required this.subtitle,
     this.isSkip = false,
@@ -26,7 +28,8 @@ class AppTopSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Align(alignment: Alignment.centerLeft, child: AppBackButton()),
+            if (hasBackButton)
+              Align(alignment: Alignment.centerLeft, child: AppBackButton()),
             if (isSkip ?? false)
               TextButton(
                 onPressed: () {

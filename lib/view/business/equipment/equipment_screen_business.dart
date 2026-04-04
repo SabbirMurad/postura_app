@@ -10,6 +10,7 @@ import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
 
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:posture_detector_app/utils/print_helper.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'package:posture_detector_app/l10n/app_localizations.dart';
@@ -25,10 +26,14 @@ import 'package:posture_detector_app/provider/report.dart';
 
 class EquipmentScreenBusiness extends ConsumerStatefulWidget {
   final bool canSendListToCompany;
+  final bool dashboardButton;
+  final bool backButton;
 
   const EquipmentScreenBusiness({
     super.key,
     required this.canSendListToCompany,
+    required this.dashboardButton,
+    required this.backButton,
   });
 
   @override
@@ -36,14 +41,15 @@ class EquipmentScreenBusiness extends ConsumerStatefulWidget {
       _EquipmentScreenBusinessState();
 }
 
-class _EquipmentScreenBusinessState extends ConsumerState<EquipmentScreenBusiness> {
-
+class _EquipmentScreenBusinessState
+    extends ConsumerState<EquipmentScreenBusiness> {
   String _userRole = '';
 
   @override
   void initState() {
     super.initState();
     _initializeRole();
+    Future(() => ref.read(reportNotifierProvider.notifier).fetchMyReports());
   }
 
   /// Initialize user role async
@@ -66,7 +72,9 @@ class _EquipmentScreenBusinessState extends ConsumerState<EquipmentScreenBusines
       );
       showCustomToast(
         // EN: "Recommendations sent to HR"
-        text: AppLocalizations.of(scaffoldMessengerKey.currentContext!)!.recommendationsSentToHr,
+        text: AppLocalizations.of(
+          scaffoldMessengerKey.currentContext!,
+        )!.recommendationsSentToHr,
         toastType: ToastTypesInfo(ToastTypes.success),
       );
     } catch (e) {
@@ -79,7 +87,11 @@ class _EquipmentScreenBusinessState extends ConsumerState<EquipmentScreenBusines
   Future<void> _exportReportPDF() async {
     final loc = AppLocalizations.of(context)!;
     try {
-      final pdfUrl = ref.read(reportNotifierProvider).analysisData?.aiResult.equipmentPdfUrl;
+      final pdfUrl = ref
+          .read(reportNotifierProvider)
+          .analysisData
+          ?.aiResult
+          .equipmentExcelUrl;
       if (pdfUrl == null || pdfUrl.isEmpty) {
         // EN: "No PDF available"
         showCustomToast(text: loc.noPdfAvailable);
@@ -116,87 +128,91 @@ class _EquipmentScreenBusinessState extends ConsumerState<EquipmentScreenBusines
                 width: double.infinity,
                 height: double.infinity,
                 child: SingleChildScrollView(
-                  child: Builder(builder: (context) {
-                    final reportState = ref.watch(reportNotifierProvider);
-                    final equipmentList =
-                        reportState.analysisData?.aiResult.equipment ?? [];
+                  child: Builder(
+                    builder: (context) {
+                      final reportState = ref.watch(reportNotifierProvider);
+                      final equipmentList =
+                          reportState.analysisData?.aiResult.equipment ?? [];
 
-                    return Column(
-                      children: [
-                        // Header Section
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20.w,
-                            vertical: 10.h,
-                          ),
-                          child: AppTopSection(
-                            // EN: equipmentRecommendations = "Equipment Recommendations", equipmentRecommendationsSubtitle = "Based on your posture analysis, the following equipment is recommended to improve your ergonomic setup"
-                            title: loc.equipmentRecommendations,
-                            subtitle: loc.equipmentRecommendationsSubtitle,
-                          ),
-                        ),
-                        SizedBox(height: 14.h),
-                        if (equipmentList.isEmpty)
+                      return Column(
+                        children: [
+                          // Header Section
                           Padding(
-                            padding: EdgeInsets.only(top: 72.w),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.shopping_bag_outlined,
-                                  size: 64.sp,
-                                  color: AppColors.secondaryText.withValues(
-                                    alpha: 0.5,
-                                  ),
-                                ),
-                                SizedBox(height: 16.h),
-                                Text(
-                                  // EN: "No data found"
-                                  loc.noDataFound,
-                                  style: TextStyle(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.secondaryText,
-                                  ),
-                                ),
-                              ],
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20.w,
+                              vertical: 10.h,
+                            ),
+                            child: AppTopSection(
+                              // EN: equipmentRecommendations = "Equipment Recommendations", equipmentRecommendationsSubtitle = "Based on your posture analysis, the following equipment is recommended to improve your ergonomic setup"
+                              hasBackButton: widget.backButton,
+                              title: loc.equipmentRecommendations,
+                              subtitle: loc.equipmentRecommendationsSubtitle,
                             ),
                           ),
-                        if (equipmentList.isNotEmpty)
-                          ...equipmentList.map((equipment) {
-                            final isHigh = equipment.priority == 'high';
-                            final isMedium = equipment.priority == 'medium';
+                          SizedBox(height: 14.h),
+                          if (equipmentList.isEmpty)
+                            Padding(
+                              padding: EdgeInsets.only(top: 72.w),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.shopping_bag_outlined,
+                                    size: 64.sp,
+                                    color: AppColors.secondaryText.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  ),
+                                  SizedBox(height: 16.h),
+                                  Text(
+                                    // EN: "No data found"
+                                    loc.noDataFound,
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.secondaryText,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          if (equipmentList.isNotEmpty)
+                            ...equipmentList.map((equipment) {
+                              final isHigh = equipment.priority == 'high';
+                              final isMedium = equipment.priority == 'medium';
 
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                bottom: 12.h,
-                                left: 20.w,
-                                right: 20.w,
-                              ),
-                              child: RecommendationContainer(
-                                title: equipment.name,
-                                subtitle: equipment.description,
-                                priority: isHigh
-                                    ? "High Priority"
-                                    : isMedium
-                                    ? "Medium"
-                                    : "Low",
-                                improvement: equipment.improvementPercentage,
-                                source: equipment.source ?? 'Unknown',
-                                chipColor: isHigh
-                                    ? AppColors.red
-                                    : isMedium
-                                    ? AppColors.warning
-                                    : AppColors.greenish,
-                                chipTextColor: isHigh || isMedium
-                                    ? AppColors.surface
-                                    : AppColors.green,
-                              ),
-                            );
-                          }).toList(),
-                      ],
-                    );
-                  }),
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: 12.h,
+                                  left: 20.w,
+                                  right: 20.w,
+                                ),
+                                child: RecommendationContainer(
+                                  title: equipment.name,
+                                  subtitle: equipment.description,
+                                  status: equipment.status,
+                                  priority: isHigh
+                                      ? "High Priority"
+                                      : isMedium
+                                      ? "Medium"
+                                      : "Low",
+                                  improvement: equipment.improvementPercentage,
+                                  source: equipment.source ?? 'Unknown',
+                                  chipColor: isHigh
+                                      ? AppColors.red
+                                      : isMedium
+                                      ? AppColors.warning
+                                      : AppColors.greenish,
+                                  chipTextColor: isHigh || isMedium
+                                      ? AppColors.surface
+                                      : AppColors.green,
+                                ),
+                              );
+                            }).toList(),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
@@ -207,45 +223,44 @@ class _EquipmentScreenBusinessState extends ConsumerState<EquipmentScreenBusines
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
                 child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Download Button
-                      PrimaryButton(
-                        onTap: _exportReportPDF,
-                        leading: Icon(
-                          Icons.file_download_sharp,
-                          color: AppColors.primaryColor,
-                        ),
-                        height: 45.h,
-                        // EN: "Download List"
-                        text: loc.downloadList,
-                        backgroundColor: AppColors.greyDeemed,
-                        textColor: AppColors.primaryColor,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Download Button
+                    PrimaryButton(
+                      onTap: _exportReportPDF,
+                      leading: Icon(
+                        Icons.file_download_sharp,
+                        color: AppColors.primaryColor,
                       ),
+                      height: 45.h,
+                      // EN: "Download List"
+                      text: loc.downloadList,
+                      backgroundColor: AppColors.greyDeemed,
+                      textColor: AppColors.primaryColor,
+                    ),
 
-                      SizedBox(height: 8.h),
+                    SizedBox(height: 8.h),
 
-                      // Send to Company (Only Employees)
-                      if (_userRole == "EMPLOYEE" &&
-                          widget.canSendListToCompany)
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 8.h),
-                          child: PrimaryButton(
-                            onTap: () {
-                              _sendCompanyData();
-                            },
-                            // EN: "Send data to Company"
-                            text: loc.sendDataToCompany,
-                            leading: Assets.icons.auth.message.svg(
-                              width: 18.w,
-                              height: 18.h,
-                            ),
-                            height: 45.h,
-                            backgroundColor: AppColors.warning,
-                            textColor: AppColors.onBoardingSurface,
+                    // Send to Company (Only Employees)
+                    if (_userRole == "EMPLOYEE" && widget.canSendListToCompany)
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 8.h),
+                        child: PrimaryButton(
+                          onTap: () {
+                            _sendCompanyData();
+                          },
+                          // EN: "Send data to Company"
+                          text: loc.sendDataToCompany,
+                          leading: Assets.icons.auth.message.svg(
+                            width: 18.w,
+                            height: 18.h,
                           ),
+                          height: 45.h,
+                          backgroundColor: AppColors.warning,
+                          textColor: AppColors.onBoardingSurface,
                         ),
-
+                      ),
+                    if (widget.dashboardButton)
                       // Open Dashboard Button
                       PrimaryButton(
                         onTap: () {
@@ -257,8 +272,8 @@ class _EquipmentScreenBusinessState extends ConsumerState<EquipmentScreenBusines
                         backgroundColor: AppColors.primaryColor,
                         textColor: AppColors.onBoardingSurface,
                       ),
-                    ],
-                  ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -277,10 +292,12 @@ class RecommendationContainer extends StatelessWidget {
   final Color chipColor;
   final Color chipTextColor;
   final String source;
+  final String status;
 
   const RecommendationContainer({
     super.key,
     required this.title,
+    required this.status,
     required this.subtitle,
     required this.priority,
     required this.improvement,
@@ -296,7 +313,7 @@ class RecommendationContainer extends StatelessWidget {
       borderRadius: BorderRadius.circular(16.r),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.w),
         decoration: BoxDecoration(
           color: AppColors.onBoardingSurface,
           borderRadius: BorderRadius.circular(14.r),
@@ -358,6 +375,26 @@ class RecommendationContainer extends StatelessWidget {
                 DurationContainer(
                   icon: Icons.timeline_rounded,
                   content: improvement,
+                ),
+                SizedBox(width: 8.w),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    color: status == 'ACTIONED'
+                        ? AppColors.green
+                        : status == 'PENDING'
+                        ? AppColors.warning
+                        : AppColors.red,
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Text(
+                    status,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ],
             ),

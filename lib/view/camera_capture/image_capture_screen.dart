@@ -24,6 +24,7 @@ class _ImageCaptureScreenState extends ConsumerState<ImageCaptureScreen> {
   CameraController? cameraController;
   late List<CameraDescription> _cameras;
   late Future<void> _initializeController;
+  late ImageCaptureNotifier _imageCaptureNotifier;
 
   bool isFlashOn = false;
   bool _primaryScan = false;
@@ -34,6 +35,12 @@ class _ImageCaptureScreenState extends ConsumerState<ImageCaptureScreen> {
   void initState() {
     super.initState();
     _initializeController = initCamera();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _imageCaptureNotifier = ref.read(imageCaptureNotifierProvider.notifier);
   }
 
   Future<void> initCamera() async {
@@ -104,7 +111,7 @@ class _ImageCaptureScreenState extends ConsumerState<ImageCaptureScreen> {
   @override
   void dispose() {
     cameraController?.dispose();
-    ref.read(imageCaptureNotifierProvider.notifier).clear();
+    Future(() => _imageCaptureNotifier.clear());
     super.dispose();
   }
 
