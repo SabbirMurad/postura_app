@@ -103,7 +103,7 @@ class _CustomToastNotificationState extends State<CustomToastNotification>
 
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed && mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
       }
     });
 
@@ -210,9 +210,7 @@ void showCustomToast({
       duration: duration,
       toastType: toastType ?? ToastTypesInfo(ToastTypes.error),
       onCloseClick: () {
-        ScaffoldMessenger.of(
-          scaffoldMessengerKey.currentContext!,
-        ).hideCurrentSnackBar();
+        scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
       },
     ),
   );

@@ -75,7 +75,7 @@ class ProfileScreen extends ConsumerWidget {
                   // EN: "Language"
                   title: loc.language,
                   onTap: () {
-                    context.push(AppRoute.LanguageScreen);
+                    context.push(AppRoute.businessLanguage);
                   },
                 ),
                 SizedBox(height: 12.h),
