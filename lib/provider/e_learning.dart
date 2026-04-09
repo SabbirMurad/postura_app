@@ -7,7 +7,22 @@ import 'package:posture_detector_app/provider/locale_provider.dart';
 import 'package:posture_detector_app/services/db/sqlite_service.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/services/light_nudges_service.dart';
+import 'package:posture_detector_app/utils/print_helper.dart';
 import 'package:posture_detector_app/view/e_learning/data/e_learning_module_data.dart';
+
+// ─────────────────────────────────────────
+// Certificate Status
+// ─────────────────────────────────────────
+enum CertificateStatusType { pending, valid, expired }
+
+class CertificateStatus {
+  final CertificateStatusType type;
+  final DateTime? expiryDate;
+
+  const CertificateStatus({required this.type, this.expiryDate});
+
+  static const pending = CertificateStatus(type: CertificateStatusType.pending);
+}
 
 // ─────────────────────────────────────────
 // State
@@ -17,12 +32,16 @@ class ELearningState {
   final List<QuizItemModel> currentQuizQuestions;
   final Map<int, int> selectedAnswers;
   final String currentLocale;
+  final CertificateStatus certificateStatus;
+  final bool isCertificateLoading;
 
   const ELearningState({
     this.quizModules = const [],
     this.currentQuizQuestions = const [],
     this.selectedAnswers = const {},
     this.currentLocale = 'en',
+    this.certificateStatus = CertificateStatus.pending,
+    this.isCertificateLoading = false,
   });
 
   ELearningState copyWith({
@@ -30,13 +49,16 @@ class ELearningState {
     List<QuizItemModel>? currentQuizQuestions,
     Map<int, int>? selectedAnswers,
     String? currentLocale,
-  }) =>
-      ELearningState(
-        quizModules: quizModules ?? this.quizModules,
-        currentQuizQuestions: currentQuizQuestions ?? this.currentQuizQuestions,
-        selectedAnswers: selectedAnswers ?? this.selectedAnswers,
-        currentLocale: currentLocale ?? this.currentLocale,
-      );
+    CertificateStatus? certificateStatus,
+    bool? isCertificateLoading,
+  }) => ELearningState(
+    quizModules: quizModules ?? this.quizModules,
+    currentQuizQuestions: currentQuizQuestions ?? this.currentQuizQuestions,
+    selectedAnswers: selectedAnswers ?? this.selectedAnswers,
+    currentLocale: currentLocale ?? this.currentLocale,
+    certificateStatus: certificateStatus ?? this.certificateStatus,
+    isCertificateLoading: isCertificateLoading ?? this.isCertificateLoading,
+  );
 }
 
 // ─────────────────────────────────────────
@@ -52,7 +74,11 @@ class ELearningNotifier extends Notifier<ELearningState> {
     final locale = ref.watch(localeProvider).languageCode;
     final modules = ELearningModuleData.getModules(locale);
     Future.microtask(fetchQuizResults);
-    return ELearningState(quizModules: modules, currentLocale: locale);
+    return ELearningState(
+      quizModules: modules,
+      currentLocale: locale,
+      isCertificateLoading: true,
+    );
   }
 
   void loadModulesForLocale(String locale) {
@@ -83,13 +109,16 @@ class ELearningNotifier extends Notifier<ELearningState> {
         currentQuizQuestions: allQuestions.take(5).toList(),
         selectedAnswers: {},
       );
-      debugPrint('Loaded ${state.currentQuizQuestions.length} random questions for module $moduleId');
+      debugPrint(
+        'Loaded ${state.currentQuizQuestions.length} random questions for module $moduleId',
+      );
     } catch (e) {
-      debugPrint('Error loading random questions: ${e.runtimeType}');
+      debugPrint('Error loading random questions: $e');
     }
   }
 
   Future<void> fetchQuizResults() async {
+    state = state.copyWith(isCertificateLoading: true);
     try {
       final response = await CustomHttp.get(
         endpoint: 'elearning/progress',
@@ -98,6 +127,8 @@ class ELearningNotifier extends Notifier<ELearningState> {
       );
 
       if (response.ok && response.data != null) {
+        printLine(response.data['certificate']);
+
         final List modules = response.data!['modules'] ?? [];
         debugPrint('Fetched ${modules.length} module results from backend');
 
@@ -113,16 +144,67 @@ class ELearningNotifier extends Notifier<ELearningState> {
           }
         }
 
-        _updateUnlockStatus(quizModules);
-        state = state.copyWith(quizModules: List.from(quizModules));
+        final certStatus = _parseCertificateStatus(
+          response.data!['certificate'],
+          quizModules,
+        );
+
+        // If expired, reset all progress so the user redoes from scratch
+        if (certStatus.type == CertificateStatusType.expired) {
+          _resetModulesForExpiry(quizModules);
+        } else {
+          _updateUnlockStatus(quizModules);
+        }
+
+        state = state.copyWith(
+          quizModules: List.from(quizModules),
+          certificateStatus: certStatus,
+          isCertificateLoading: false,
+        );
       } else {
-        debugPrint('Failed to fetch progress from backend: ${response.status_code}');
+        debugPrint(
+          'Failed to fetch progress from backend: ${response.status_code}',
+        );
         await _fetchLocalResults();
       }
     } catch (e) {
       debugPrint('Error in fetchQuizResults: ${e.runtimeType}');
       await _fetchLocalResults();
     }
+  }
+
+  /// Parses the `certificate` object from the progress response.
+  ///
+  /// Expected shape:
+  /// ```json
+  /// { "certificate_id": null, "issued_at": null,
+  ///   "valid_until": null, "certificate_status": null }
+  /// ```
+  /// `certificate_status` is `null` → pending, `"valid"` → valid, `"expired"` → expired.
+  CertificateStatus _parseCertificateStatus(
+    dynamic cert,
+    List<QuizModule> modules,
+  ) {
+    if (cert == null) return CertificateStatus.pending;
+
+    final statusStr = cert['certificate_status'] as String?;
+
+    if (statusStr == 'valid') {
+      DateTime? expiry;
+      final rawExpiry = cert['valid_until'];
+      if (rawExpiry != null) expiry = DateTime.tryParse(rawExpiry.toString());
+      return CertificateStatus(
+        type: CertificateStatusType.valid,
+        expiryDate: expiry,
+      );
+    }
+
+    if (statusStr == 'expired') {
+      return const CertificateStatus(type: CertificateStatusType.expired);
+    }
+
+    // null or unknown → pending
+    return CertificateStatus.pending;
   }
 
   Future<void> _fetchLocalResults() async {
@@ -144,9 +226,14 @@ class ELearningNotifier extends Notifier<ELearningState> {
       }
 
       _updateUnlockStatus(quizModules);
-      state = state.copyWith(quizModules: List.from(quizModules));
+      // Certificate status stays pending when falling back to local data
+      state = state.copyWith(
+        quizModules: List.from(quizModules),
+        isCertificateLoading: false,
+      );
     } catch (e) {
       debugPrint('Error in _fetchLocalResults: ${e.runtimeType}');
+      state = state.copyWith(isCertificateLoading: false);
     }
   }
 
@@ -160,11 +247,22 @@ class ELearningNotifier extends Notifier<ELearningState> {
     }
   }
 
+  /// Resets all module scores/locks so the user redoes the full course.
+  void _resetModulesForExpiry(List<QuizModule> modules) {
+    for (final m in modules) {
+      m.highestScore = 0;
+      m.unlocked = false;
+    }
+    if (modules.isNotEmpty) modules[0].unlocked = true;
+  }
+
   Future<bool> submitQuiz({required int moduleId, required int score}) async {
     debugPrint('Submitting Quiz - Module ID: $moduleId, Score: $score');
 
     try {
-      final module = state.quizModules.firstWhere((item) => item.id == moduleId);
+      final module = state.quizModules.firstWhere(
+        (item) => item.id == moduleId,
+      );
       if (module.highestScore > 3) {
         debugPrint('Module $moduleId already passed. Skipping submit.');
         await fetchQuizResults();
@@ -185,7 +283,7 @@ class ELearningNotifier extends Notifier<ELearningState> {
         needAuth: true,
       );
     } catch (e) {
-      debugPrint('Error finding module: ${e.runtimeType}');
+      debugPrint('Error finding module: $e');
     }
 
     try {
@@ -195,11 +293,13 @@ class ELearningNotifier extends Notifier<ELearningState> {
         whereArgs: [moduleId],
       );
     } catch (e) {
-      debugPrint('Error deleting: ${e.runtimeType}');
+      debugPrint('Error deleting: $e');
     }
 
     try {
-      final module = state.quizModules.firstWhere((item) => item.id == moduleId);
+      final module = state.quizModules.firstWhere(
+        (item) => item.id == moduleId,
+      );
       final createResult = await _sqlite.insert(
         table: 'quiz_result',
         data: {'id': moduleId, 'score': module.highestScore},
@@ -210,10 +310,13 @@ class ELearningNotifier extends Notifier<ELearningState> {
         debugPrint('Light Nudges V2 activated after Module 1 quiz');
       }
 
+      // fetchQuizResults also re-parses certificate status from the response,
+      // so after module 7 passes the cert card updates automatically.
       await fetchQuizResults();
+
       return createResult;
     } catch (e) {
-      debugPrint('Error inserting: ${e.runtimeType}');
+      debugPrint('Error inserting: $e');
       return false;
     }
   }
@@ -222,7 +325,6 @@ class ELearningNotifier extends Notifier<ELearningState> {
     final answers = Map<int, int>.from(state.selectedAnswers);
     answers[questionIndex] = optionIndex;
     state = state.copyWith(selectedAnswers: answers);
-    debugPrint('Selected answer for question $questionIndex: option $optionIndex');
   }
 
   bool isSelected(int questionIndex, int optionIndex) {
@@ -235,7 +337,6 @@ class ELearningNotifier extends Notifier<ELearningState> {
 
   void clearSelectedAnswers() {
     state = state.copyWith(selectedAnswers: {});
-    debugPrint('Cleared all selected answers');
   }
 
   int getHighestModuleIndex() {
@@ -261,6 +362,4 @@ class ELearningNotifier extends Notifier<ELearningState> {
 }
 
 final eLearningNotifierProvider =
-    NotifierProvider<ELearningNotifier, ELearningState>(
-  ELearningNotifier.new,
-);
+    NotifierProvider<ELearningNotifier, ELearningState>(ELearningNotifier.new);

@@ -29,7 +29,7 @@ QuizModule m1De() => QuizModule(
         "Arbeitnehmer durch Automatisierung ersetzen",
         "Sich ausschliesslich auf Produktivitaet konzentrieren",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Was ist ein typischer Risikofaktor bei der Bildschirmarbeit?",
@@ -39,7 +39,7 @@ QuizModule m1De() => QuizModule(
         "Wasser trinken",
         "Einen Stuhl mit Rueckenstuetze verwenden",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Womit befassen sich Arbeitsplatznormen (wie ISO 9241-5) hauptsaechlich?",
@@ -49,7 +49,7 @@ QuizModule m1De() => QuizModule(
         "Gehaltsabrechnungssysteme",
         "Ausschliesslich Luftqualitaet",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Warum verwenden Unternehmen Beschwerderfrageboegen?",
@@ -59,7 +59,7 @@ QuizModule m1De() => QuizModule(
         "Um die Internetnutzung zu ueberwachen",
         "Um die medizinische Versorgung zu ersetzen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welche Aussage ueber MSE bei Bueroangestellten ist am zutreffendsten?",
@@ -69,7 +69,7 @@ QuizModule m1De() => QuizModule(
         "Schlechte Arbeitsplatzeinrichtung und langes statisches Sitzen koennen zu Nacken- und Armproblemen beitragen",
         "Sie koennen durch Arbeitsplatzaenderungen nicht beeinflusst werden",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Welche Aussage beschreibt eine Muskel-Skelett-Erkrankung (MSE) bei Bueroarbeit am besten?",
@@ -79,7 +79,7 @@ QuizModule m1De() => QuizModule(
         "Eine Beschwerde oder Verletzung, die Muskeln, Sehnen oder Gelenke betrifft und oft mit der Arbeitshaltung zusammenhaengt",
         "Eine Erkrankung, die nur durch Sport verursacht wird",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Welche Kombination von Risikofaktoren ist typisch fuer Bildschirmarbeit?",
@@ -89,7 +89,7 @@ QuizModule m1De() => QuizModule(
         "Hohe Temperaturen und schlechte Beleuchtung",
         "Nur kurze E-Mails und leichtes Tippen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Warum ist es wichtig, die Arbeit an den Menschen anzupassen?",
@@ -99,7 +99,7 @@ QuizModule m1De() => QuizModule(
         "Es reduziert die Belastung und hilft, MSE langfristig vorzubeugen",
         "Es konzentriert sich nur auf die Erhoehung der Tippgeschwindigkeit",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Welche Rolle spielen Arbeitsplatznormen wie ISO 9241-5 in Unternehmen?",
@@ -109,7 +109,7 @@ QuizModule m1De() => QuizModule(
         "Sie geben Hinweise zur Arbeitsplatzgestaltung und zu Haltungsanforderungen",
         "Sie gelten nur fuer Fabrikmaschinen",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Wie koennen Beschwerderfrageboegen und Haltungschecklisten Ergonomieprogramme unterstuetzen?",
@@ -119,7 +119,7 @@ QuizModule m1De() => QuizModule(
         "Durch Ersetzung aller aerztlichen Konsultationen",
         "Durch ausschliessliche Messung von Produktivitaet und Leistung",
       ],
-      answer: 2,
+      answer: 1,
     ),
   ],
 );
@@ -150,12 +150,12 @@ QuizModule m2De() => QuizModule(
         "Fest unter dem Stuhl verschraenkt",
         "Auf den Stuhlrollen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Die vorgestreckte Kopfhaltung erhoeht vor allem die Belastung in welchem Bereich?",
       options: ["Zehen", "Nacken und oberer Ruecken", "Knoechel", "Hueften"],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Was ist eine wichtige Funktion der Rueckenlehne?",
@@ -165,7 +165,7 @@ QuizModule m2De() => QuizModule(
         "Sie weit nach vorne gelehnt halten",
         "Jede Bewegung blockieren",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welche Muskeln werden beim Kinneinziehen hauptsaechlich angesprochen?",
@@ -175,7 +175,7 @@ QuizModule m2De() => QuizModule(
         "Handmuskeln",
         "Bauchmuskeln",
       ],
-      answer: 1,
+      answer: 0,
     ),
     QuizItemModel(
       question: "Was koennen Sie verwenden, wenn Ihre Fuesse den Boden nicht erreichen?",
@@ -185,7 +185,7 @@ QuizModule m2De() => QuizModule(
         "Keine Aenderung notwendig",
         "Die Fuesse auf die Stuhlrollen stellen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welche Beschreibung passt am besten zu einer \"neutralen Sitzhaltung\"?",
@@ -195,7 +195,7 @@ QuizModule m2De() => QuizModule(
         "Auf der Stuhlkante sitzen ohne Rueckenkontakt",
         "Beine fest unter dem Stuhl verschraenkt",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Was ist eine praktische Methode, um die vorgestreckte Kopfhaltung am Schreibtisch zu reduzieren?",
@@ -205,7 +205,7 @@ QuizModule m2De() => QuizModule(
         "Die Rueckenlehne nutzen, den Stuhl naeher an den Schreibtisch ziehen und den Bildschirm in angenehme Sichtweite bringen",
         "Beim Tippen auf den Schoss schauen",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Welches Anzeichen deutet darauf hin, dass Ihr Stuhl den unteren Ruecken nicht richtig stuetzt?",
@@ -215,7 +215,7 @@ QuizModule m2De() => QuizModule(
         "Sie spueren regelmaessig, dass sich Ihr unterer Ruecken rundet und muede oder schmerzend wird",
         "Ihre Fuesse beruehren den Boden",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Was ist der Hauptzweck des Schulterblattzusammenfuehrens in Modul 2?",
@@ -225,7 +225,7 @@ QuizModule m2De() => QuizModule(
         "Gerundete Schultern korrigieren und die obere Rueckenmuskulatur aktivieren",
         "Finger und Handgelenke dehnen",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Wann koennte eine Fussstuetze besonders hilfreich sein?",
@@ -235,7 +235,7 @@ QuizModule m2De() => QuizModule(
         "Wenn Ihr Stuhl nicht tief genug eingestellt werden kann und Ihre Fuesse den Boden nicht erreichen",
         "Wenn Sie sich weit nach vorne lehnen moechten",
       ],
-      answer: 3,
+      answer: 2,
     ),
   ],
 );
@@ -264,7 +264,7 @@ QuizModule m3De() => QuizModule(
         "Auf Kniehoehe",
         "Auf dem Boden",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Was ist ein typischer Betrachtungsabstand zur Reduzierung der Belastung?",
@@ -274,7 +274,7 @@ QuizModule m3De() => QuizModule(
         "Etwa 3 Meter entfernt",
         "Die Nase beruehrend",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wie sollten die Handgelenke beim Tippen oder bei der Mausbenutzung positioniert sein?",
@@ -284,7 +284,7 @@ QuizModule m3De() => QuizModule(
         "Nur auf der Schreibtischkante ruhend",
         "Stark nach aussen gedreht",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wenn Sie hauptsaechlich einen Bildschirm verwenden, wo sollte er platziert werden?",
@@ -294,7 +294,7 @@ QuizModule m3De() => QuizModule(
         "Hinter Ihnen",
         "Auf dem Boden",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Was ist ein Anzeichen dafuer, dass die Maus zu weit entfernt sein koennte?",
@@ -304,7 +304,7 @@ QuizModule m3De() => QuizModule(
         "Sie koennen den Cursor nicht sehen",
         "Sie tippen schneller",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Was kann passieren, wenn der Monitor laengere Zeit zu tief platziert ist?",
@@ -314,7 +314,7 @@ QuizModule m3De() => QuizModule(
         "Der Benutzer wird immer perfekt gerade sitzen",
         "Es beeinflusst nur die Tippgeschwindigkeit",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wenn Ihre Maus zu weit vom Koerper entfernt platziert ist, welche Auswirkung ist wahrscheinlich?",
@@ -324,7 +324,7 @@ QuizModule m3De() => QuizModule(
         "Sie muessen moeglicherweise greifen und die Schulter anheben, was die Spannung erhoeht",
         "Es aendert nur die Bildschirmhelligkeit",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Wo ist die ideale Position fuer die Tastatur relativ zu Ihren Ellbogen?",
@@ -334,7 +334,7 @@ QuizModule m3De() => QuizModule(
         "Etwa auf Ellbogenhoehe, damit die Unterarme ungefaehr horizontal bleiben koennen",
         "Direkt auf dem Schoss mit gebeugten Handgelenken",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Wie ist die beste Platzierung bei gleichmaessiger Nutzung von zwei Bildschirmen?",
@@ -344,7 +344,7 @@ QuizModule m3De() => QuizModule(
         "Einer sehr hoch, einer sehr tief",
         "Einer auf dem Boden, einer an der Wand",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Warum ist es wichtig, die Handgelenke beim Tippen oder bei der Mausbenutzung gerade zu halten?",
@@ -354,7 +354,7 @@ QuizModule m3De() => QuizModule(
         "Es macht die Tastatur ueberfluessig",
         "Es verhindert alle Arten von Augenbelastung",
       ],
-      answer: 2,
+      answer: 1,
     ),
   ],
 );
@@ -382,7 +382,7 @@ QuizModule m4De() => QuizModule(
         "Alle Lichter ausschalten",
         "Die Anwendung schliessen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Warum sind extreme Temperaturen am Arbeitsplatz problematisch?",
@@ -392,7 +392,7 @@ QuizModule m4De() => QuizModule(
         "Sie betreffen nur Computer",
         "Sie verhindern MSE",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Was ist eine Mikropause?",
@@ -402,7 +402,7 @@ QuizModule m4De() => QuizModule(
         "Ein ganzer freier Tag",
         "Ein Mittagsmeeting",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Gute Buerobeleuchtung sollte sein:",
@@ -412,7 +412,7 @@ QuizModule m4De() => QuizModule(
         "Voellig dunkel",
         "Flackernd",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welche ist eine einfache Mikropausenaktivitaet?",
@@ -422,7 +422,7 @@ QuizModule m4De() => QuizModule(
         "Die Luft anhalten",
         "Schneller tippen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Was ist eine haeufige Folge starker Blendung auf Ihrem Bildschirm?",
@@ -432,7 +432,7 @@ QuizModule m4De() => QuizModule(
         "Erhoehte Augenbelastung, moegliche Kopfschmerzen und Schwierigkeiten beim Lesen",
         "Keine Auswirkungen auf die Benutzer",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Wie koennen Sie den Kontrast zwischen einem hellen Fenster und einem dunkleren Bildschirm reduzieren?",
@@ -442,7 +442,7 @@ QuizModule m4De() => QuizModule(
         "Den Bildschirm senkrecht zum Fenster positionieren und Jalousien oder Vorhaenge anpassen",
         "Nur die Bildschirmhelligkeit auf Maximum erhoehen",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Warum werden regelmaessige Mikropausen waehrend der Bildschirmarbeit empfohlen?",
@@ -452,7 +452,7 @@ QuizModule m4De() => QuizModule(
         "Sie sind nur fuer Sportler notwendig",
         "Sie aendern nur die Bildschirmaufloesung",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welche Aussage ueber Temperatur und Konzentration ist am zutreffendsten?",
@@ -462,7 +462,7 @@ QuizModule m4De() => QuizModule(
         "Angenehme Temperaturbereiche unterstuetzen die Konzentration, waehrend Extreme die Muedigkeit erhoehen koennen",
         "Nur der Laermpegel ist fuer die Konzentration relevant",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Was ist ein Beispiel fuer eine einfache Mikropause waehrend der Bildschirmarbeit?",
@@ -472,7 +472,7 @@ QuizModule m4De() => QuizModule(
         "Beim Tippen die Luft anhalten",
         "Nur die Augen schliessen, ohne sich zu bewegen",
       ],
-      answer: 2,
+      answer: 1,
     ),
   ],
 );
@@ -500,7 +500,7 @@ QuizModule m5De() => QuizModule(
         "Ueber dem Kopf",
         "Auf einem ausgestreckten Arm",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welche Bewegung sollte beim Heben vermieden werden?",
@@ -510,7 +510,7 @@ QuizModule m5De() => QuizModule(
         "Atmen",
         "Beide Haende benutzen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wie koennen Sie die Rueckenbelastung beim Heben verringern?",
@@ -520,7 +520,7 @@ QuizModule m5De() => QuizModule(
         "Die Luft anhalten",
         "Schnell mit ruckartiger Bewegung heben",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wann ist es besser, Hilfe oder ein Hilfsmittel zu holen?",
@@ -530,7 +530,7 @@ QuizModule m5De() => QuizModule(
         "Fuer ein Blatt Papier",
         "Niemals",
       ],
-      answer: 1,
+      answer: 0,
     ),
     QuizItemModel(
       question: "Welche Aussage ueber das Heben bei Buerotaetigkeiten ist richtig?",
@@ -540,7 +540,7 @@ QuizModule m5De() => QuizModule(
         "Nur Fabrikarbeit ist relevant",
         "Nur das Sitzen ist wichtig",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Warum ist es so wichtig, eine Last beim Heben koerpernah zu halten?",
@@ -550,7 +550,7 @@ QuizModule m5De() => QuizModule(
         "Es hat keine Auswirkung auf den Koerper",
         "Es hilft nur beim Gleichgewicht, nicht bei der Belastung",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Was ist die sicherste Art, sich beim Tragen eines schweren Gegenstands zu drehen?",
@@ -560,7 +560,7 @@ QuizModule m5De() => QuizModule(
         "Die Fuesse bewegen, um den gesamten Koerper zusammen mit der Last zu drehen",
         "Sich beim Drehen so weit wie moeglich zuruecklehnen",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Welche Bewegungsstrategie ist beim Heben vom Boden besser?",
@@ -570,7 +570,7 @@ QuizModule m5De() => QuizModule(
         "Die Beine gerade halten und nur mit den Armen ziehen",
         "Springen und die Last in der Luft fangen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wann ist es im Buero am sinnvollsten, einen Transportwagen zu benutzen oder um Hilfe zu bitten?",
@@ -580,7 +580,7 @@ QuizModule m5De() => QuizModule(
         "Niemals, da Buerolasten immer sicher sind",
         "Nur fuer sehr kleine Gegenstaende",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welche Situation erhoeht das Risiko einer Rueckenbelastung beim Heben im Buero?",
@@ -590,7 +590,7 @@ QuizModule m5De() => QuizModule(
         "Einen Kugelschreiber in der Tasche tragen",
         "Eine leichte Tastatur mit beiden Haenden halten",
       ],
-      answer: 2,
+      answer: 1,
     ),
   ],
 );
@@ -618,7 +618,7 @@ QuizModule m6De() => QuizModule(
         "Nur vom Bett aus arbeiten",
         "Im Dunkeln arbeiten",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Eine einfache Methode, langes Sitzen zu reduzieren, ist:",
@@ -628,7 +628,7 @@ QuizModule m6De() => QuizModule(
         "Den Stuhl feststellen",
         "Pausen vermeiden",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welche Option ist fuer die Laptopnutzung besser?",
@@ -638,7 +638,7 @@ QuizModule m6De() => QuizModule(
         "Ihn im Liegen auf der Seite verwenden",
         "Ihn ueber dem Kopf halten",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Warum sind haeufige Haltungswechsel bei der Arbeit im Homeoffice hilfreich?",
@@ -648,7 +648,7 @@ QuizModule m6De() => QuizModule(
         "Sie unterbrechen nur die Konzentration",
         "Sie beschaedigen den Stuhl",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welches Verhalten erhoeht die Nackenbelastung bei der Telefonnutzung?",
@@ -658,7 +658,7 @@ QuizModule m6De() => QuizModule(
         "Kurze Pausen einlegen",
         "Ein Headset verwenden",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Warum wird laengeres Arbeiten vom Sofa oder Bett aus normalerweise nicht empfohlen?",
@@ -668,7 +668,7 @@ QuizModule m6De() => QuizModule(
         "Es fuehrt oft zu einer schlechten Ruecken- und Nackenhaltung ohne ausreichende Unterstuetzung",
         "Es verhindert die Nutzung eines Laptops",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Welche Kombination ist fuer laengere Laptopnutzung zu Hause am besten?",
@@ -678,7 +678,7 @@ QuizModule m6De() => QuizModule(
         "Laptop auf Augenhoehe erhoeht plus externe Tastatur und Maus",
         "Laptop auf Bodenhoehe, darueber stehend",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Was ist eine praktische Methode, um langes Sitzen bei der Arbeit im Homeoffice zu reduzieren?",
@@ -688,7 +688,7 @@ QuizModule m6De() => QuizModule(
         "Nur vom Bett aus arbeiten",
         "Den Stuhl feststellen und sich nie bewegen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welches Verhalten erhoeht das Risiko eines \"Handynackens\"?",
@@ -698,7 +698,7 @@ QuizModule m6De() => QuizModule(
         "Laengere Zeit mit gebeugtem Nacken auf das Telefon schauen",
         "Kurze Pausen vom Telefon einlegen",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Warum gelten die gleichen ergonomischen Prinzipien zu Hause und im Buero?",
@@ -708,7 +708,7 @@ QuizModule m6De() => QuizModule(
         "Weil Laptops nur zu Hause funktionieren",
         "Weil die Haltung nur im Buero wichtig ist",
       ],
-      answer: 1,
+      answer: 0,
     ),
   ],
 );
@@ -736,7 +736,7 @@ QuizModule m7De() => QuizModule(
         "Sie machen die Anpassung des Arbeitsplatzes ueberfluessig",
         "Sie ersetzen den Schlaf",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Eine typische Haltezeit fuer eine sanfte Dehnung betraegt:",
@@ -746,7 +746,7 @@ QuizModule m7De() => QuizModule(
         "Etwa 5 Minuten",
         "Etwa 30 Minuten",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welche davon ist eine einfache Schulteraktivierungsuebung?",
@@ -756,7 +756,7 @@ QuizModule m7De() => QuizModule(
         "Schwere Taschen tragen",
         "Unter schwerer Last die Schultern hochziehen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wann sollte ein Benutzer eine Uebung abbrechen?",
@@ -766,7 +766,7 @@ QuizModule m7De() => QuizModule(
         "Niemals",
         "Erst nach 3 Stunden",
       ],
-      answer: 1,
+      answer: 0,
     ),
     QuizItemModel(
       question: "Eine realistische Haeufigkeit fuer Mikropausen waehrend der Bildschirmarbeit ist:",
@@ -776,7 +776,7 @@ QuizModule m7De() => QuizModule(
         "Einmal im Jahr",
         "Nur im Urlaub",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Was ist das Hauptziel der taeglichen Praeventionsroutine in Modul 7?",
@@ -786,7 +786,7 @@ QuizModule m7De() => QuizModule(
         "Fuer Leistungssport trainieren",
         "Die Anpassung des Arbeitsplatzes vermeiden",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wie sollten sich Dehnungsuebungen im Allgemeinen anfuehlen?",
@@ -796,7 +796,7 @@ QuizModule m7De() => QuizModule(
         "Voellig muehelos ohne jegliches Empfinden",
         "So intensiv, dass man die Luft anhalten muss",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wie oft koennen kurze Uebungs- oder Dehnungspausen realistisch in die Bildschirmarbeit integriert werden?",
@@ -806,7 +806,7 @@ QuizModule m7De() => QuizModule(
         "Einige Sekunden oder Minuten alle 20-30 Minuten",
         "Nur einmal im Jahr",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Was sollten Sie tun, wenn der Schmerz waehrend einer Uebung stark zunimmt?",
@@ -816,7 +816,7 @@ QuizModule m7De() => QuizModule(
         "Die Uebung sofort abbrechen und in eine bequeme Position zurueckkehren",
         "Die Intensitaet erhoehen",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Warum ist es hilfreich, Uebungen mit bestimmten Beschwerden zu verknuepfen (z. B. Nacken- oder Schulterverspannungen)?",
@@ -826,7 +826,7 @@ QuizModule m7De() => QuizModule(
         "Es erhoeht nur die Komplexitaet ohne Nutzen",
         "Es ersetzt die Anpassung des Arbeitsplatzes vollstaendig",
       ],
-      answer: 1,
+      answer: 0,
     ),
   ],
 );

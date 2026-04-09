@@ -88,8 +88,6 @@ class OnboardingService {
           return ApiResponse.error('Server returned empty response');
         }
 
-        printLine(connection.data);
-
         try {
           final data = AnalysisDataModel.fromJson(connection.data);
           printLine('Successfully parsed AnalysisDataModel from my-reports');
