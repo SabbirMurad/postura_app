@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
@@ -9,6 +10,8 @@ import 'package:posture_detector_app/common/widgets/e_learning_card.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/provider/e_learning.dart';
 import 'package:posture_detector_app/routes.dart';
+import 'package:posture_detector_app/services/network/custom_http.dart';
+import 'package:posture_detector_app/view/e_learning/certificate_details.dart';
 import 'package:posture_detector_app/view/e_learning/quiz_screen.dart';
 
 class ELearningScreen extends ConsumerStatefulWidget {
@@ -195,17 +198,11 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
             children: [
               Text(
                 'Certificate',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
               ),
               SizedBox(width: 8.w),
               Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 8.w,
-                  vertical: 2.h,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
                 decoration: BoxDecoration(
                   color: const Color(0xFF22C55E),
                   borderRadius: BorderRadius.circular(20.r),
@@ -231,6 +228,31 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
               color: const Color(0xFF16A34A),
             ),
             textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 12.h),
+          GestureDetector(
+            onTap: () => {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => CertificateDetailsScreen(),
+                ),
+              ),
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.w),
+              decoration: BoxDecoration(
+                color: const Color(0xFF22C55E),
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              child: Text(
+                'View Certificate',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -264,17 +286,11 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
             children: [
               Text(
                 'Certificate',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
               ),
               SizedBox(width: 8.w),
               Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 8.w,
-                  vertical: 2.h,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
                 decoration: BoxDecoration(
                   color: const Color(0xFFEA580C),
                   borderRadius: BorderRadius.circular(20.r),
@@ -320,8 +336,18 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
 
   String _formatDate(DateTime date) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }

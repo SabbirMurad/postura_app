@@ -747,11 +747,11 @@ abstract class AppLocalizations {
   /// **'Retake'**
   String get retake;
 
-  /// No description provided for @isoErgonomicAnalysis.
+  /// No description provided for @rosaErgonomicAnalysis.
   ///
   /// In en, this message translates to:
-  /// **'ISO Ergonomic Analysis'**
-  String get isoErgonomicAnalysis;
+  /// **'ROSA Ergonomic Analysis'**
+  String get rosaErgonomicAnalysis;
 
   /// No description provided for @basedOnIso9241.
   ///
@@ -1563,11 +1563,11 @@ abstract class AppLocalizations {
   /// **'Loading analysis data...'**
   String get loadingAnalysisData;
 
-  /// No description provided for @exportIsoReportPdf.
+  /// No description provided for @exportRosaReportPdf.
   ///
   /// In en, this message translates to:
-  /// **'Export ISO Report (PDF)'**
-  String get exportIsoReportPdf;
+  /// **'Export ROSA Report (PDF)'**
+  String get exportRosaReportPdf;
 
   /// No description provided for @userFallbackName.
   ///
@@ -2096,6 +2096,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'If you have questions about this privacy policy or wish to exercise your data rights, please contact your company administrator or reach out to our support team through the app.'**
   String get ppContactContent;
+
+  /// No description provided for @workstation.
+  ///
+  /// In en, this message translates to:
+  /// **'Workstation'**
+  String get workstation;
 
   /// No description provided for @yourWorkstation.
   ///

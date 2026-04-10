@@ -197,7 +197,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                       ref.read(reportNotifierProvider.notifier).exportReportPDF();
                     },
                     // EN: "Export ISO Report PDF"
-                    text: AppLocalizations.of(context)!.exportIsoReportPdf,
+                    text: AppLocalizations.of(context)!.exportRosaReportPdf,
                     backgroundColor: AppColors.primaryColor,
                     textStyle: TextStyle(
                       color: Colors.white,

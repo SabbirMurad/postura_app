@@ -125,7 +125,7 @@
   "iso9241": "ISO 9241.5:2024 nalevingscontrole",
   "retake": "Opnieuw",
 
-  "isoErgonomicAnalysis": "ISO Ergonomische Analyse",
+  "rosaErgonomicAnalysis": "ROSA Ergonomische Analyse",
   "basedOnIso9241": "Gebaseerd op ISO 9241.5:2024",
   "compliance": "Naleving",
   "yourOverallScore": "Uw totaalscore:",
@@ -269,7 +269,7 @@
   "noAnalysisDataAvailable": "Geen analysegegevens beschikbaar",
   "noPostureDataAvailable": "Geen houdingsgegevens beschikbaar",
   "loadingAnalysisData": "Analysegegevens laden...",
-  "exportIsoReportPdf": "ISO-rapport exporteren (PDF)",
+  "exportRosaReportPdf": "ROSA-rapport exporteren (PDF)",
   "userFallbackName": "Gebruiker",
   "noExercisesYet": "Nog geen oefeningen",
   "pleaseCompleteAssessmentFirst": "Voltooi eerst uw beoordeling",
@@ -368,6 +368,7 @@
   "ppContactTitle": "6. Neem contact op",
   "ppContactContent": "Als u vragen heeft over dit privacybeleid of uw gegevensrechten wilt uitoefenen, neem dan contact op met uw bedrijfsbeheerder of ons ondersteuningsteam via de app.",
 
+  "workstation": "Werkplek",
   "yourWorkstation": "Uw werkplek",
   "workstationSubtitle": "Een paar korte vragen voordat we de foto nemen",
   "canAdjustChairHeight": "Kunt u de hoogte van uw stoel aanpassen?",

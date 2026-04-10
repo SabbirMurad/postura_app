@@ -59,6 +59,7 @@ class Assessment {
   final List<PainIntensity> painIntensities;
   final String painDuration;
   final WorkPattern? workPattern;
+  final Workstation? workstation;
   final List<String> symptoms;
 
   Assessment({
@@ -71,6 +72,7 @@ class Assessment {
     required this.painIntensities,
     required this.painDuration,
     this.workPattern,
+    this.workstation,
     required this.symptoms,
   });
 
@@ -88,6 +90,9 @@ class Assessment {
     workPattern: json['work_pattern'] != null
         ? WorkPattern.fromJson(json['work_pattern'])
         : null,
+    workstation: json['workstation'] != null
+        ? Workstation.fromJson(json['workstation'])
+        : null,
     symptoms: List<String>.from(json['symptoms'] ?? []),
   );
 
@@ -101,6 +106,7 @@ class Assessment {
     'pain_intensities': painIntensities.map((e) => e.toJson()).toList(),
     'pain_duration': painDuration,
     'work_pattern': workPattern?.toJson(),
+    'workstation': workstation?.toJson(),
     'symptoms': symptoms,
   };
 }
@@ -128,23 +134,27 @@ class WorkPattern {
   final String hoursAtDesk;
   final String breakHabit;
   final String deviceUsage;
+  final String mouseType;
 
   WorkPattern({
     required this.hoursAtDesk,
     required this.breakHabit,
     required this.deviceUsage,
+    required this.mouseType,
   });
 
   factory WorkPattern.fromJson(Map<String, dynamic> json) => WorkPattern(
     hoursAtDesk: json['hours_at_desk'] ?? '',
     breakHabit: json['break_habit'] ?? '',
     deviceUsage: json['device_usage'] ?? '',
+    mouseType: json['mouse_type'] ?? '',
   );
 
   Map<String, dynamic> toJson() => {
     'hours_at_desk': hoursAtDesk,
     'break_habit': breakHabit,
     'device_usage': deviceUsage,
+    'mouse_type': mouseType,
   };
 }
 
@@ -619,9 +629,41 @@ class Equipment {
 
 // ===================== WORKSTATION =====================
 class Workstation {
-  Workstation();
+  final bool? canAdjustChairHeight;
+  final bool? enoughLegRoom;
+  final bool? chairHasLumbarSupport;
+  final String monitorDistance;
+  final bool? feetRestingFlat;
+  final bool? monitorDirectlyInFront;
+  final bool? chairHasArmrests;
 
-  factory Workstation.fromJson(Map<String, dynamic> json) => Workstation();
+  Workstation({
+    this.canAdjustChairHeight,
+    this.enoughLegRoom,
+    this.chairHasLumbarSupport,
+    this.monitorDistance = '',
+    this.feetRestingFlat,
+    this.monitorDirectlyInFront,
+    this.chairHasArmrests,
+  });
 
-  Map<String, dynamic> toJson() => {};
+  factory Workstation.fromJson(Map<String, dynamic> json) => Workstation(
+    canAdjustChairHeight: json['can_adjust_chair_height'] as bool?,
+    enoughLegRoom: json['enough_leg_room'] as bool?,
+    chairHasLumbarSupport: json['chair_has_lumbar_support'] as bool?,
+    monitorDistance: json['monitor_distance'] ?? '',
+    feetRestingFlat: json['feet_resting_flat'] as bool?,
+    monitorDirectlyInFront: json['monitor_directly_in_front'] as bool?,
+    chairHasArmrests: json['chair_has_armrests'] as bool?,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'can_adjust_chair_height': canAdjustChairHeight,
+    'enough_leg_room': enoughLegRoom,
+    'chair_has_lumbar_support': chairHasLumbarSupport,
+    'monitor_distance': monitorDistance,
+    'feet_resting_flat': feetRestingFlat,
+    'monitor_directly_in_front': monitorDirectlyInFront,
+    'chair_has_armrests': chairHasArmrests,
+  };
 }

@@ -125,7 +125,7 @@
   "iso9241": "ISO 9241.5:2024 compliance check",
   "retake": "Retake",
 
-  "isoErgonomicAnalysis": "ISO Ergonomic Analysis",
+  "rosaErgonomicAnalysis": "ROSA Ergonomic Analysis",
   "basedOnIso9241": "Based on ISO 9241.5:2024",
   "compliance": "Compliance",
   "yourOverallScore": "Your overall score:",
@@ -270,7 +270,7 @@
   "noAnalysisDataAvailable": "No analysis data available",
   "noPostureDataAvailable": "No posture data available",
   "loadingAnalysisData": "Loading analysis data...",
-  "exportIsoReportPdf": "Export ISO Report (PDF)",
+  "exportRosaReportPdf": "Export ROSA Report (PDF)",
   "userFallbackName": "User",
   "noExercisesYet": "No Exercises Yet",
   "pleaseCompleteAssessmentFirst": "Please complete your assessment first",
@@ -369,6 +369,7 @@
   "ppContactTitle": "6. Contact Us",
   "ppContactContent": "If you have questions about this privacy policy or wish to exercise your data rights, please contact your company administrator or reach out to our support team through the app.",
 
+  "workstation": "Workstation",
   "yourWorkstation": "Your Workstation",
   "workstationSubtitle": "A few quick questions before we take the photo",
   "canAdjustChairHeight": "Can you adjust your chair height?",

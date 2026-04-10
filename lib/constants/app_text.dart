@@ -145,7 +145,7 @@ class AppText {
   static const retake = 'Retake';
 
   /// -------------------------------------------------- output ---------------------------------------------- ///
-  static const isoErgonomicAnalysis = 'ISO Ergonomic Analysis';
+  static const rosaErgonomicAnalysis = 'ROSA Ergonomic Analysis';
   static const basedOnIso9241 = 'Based on ISO 9241.5:2024';
   static const compliance = 'Compliance';
   static const yourOverallScore = 'Your overall score: ';

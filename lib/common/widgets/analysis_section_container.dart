@@ -19,6 +19,8 @@ class AnalysisSectionContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Material(
       elevation: 1,
       borderRadius: BorderRadius.circular(12.r),
@@ -36,7 +38,7 @@ class AnalysisSectionContainer extends StatelessWidget {
           children: [
             // EN: "ISO Ergonomic Analysis"
             Text(
-              AppLocalizations.of(context)!.isoErgonomicAnalysis,
+              loc.rosaErgonomicAnalysis,
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.sp),
             ),
             SizedBox(height: 20.h),

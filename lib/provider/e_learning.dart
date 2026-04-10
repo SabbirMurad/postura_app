@@ -189,7 +189,7 @@ class ELearningNotifier extends Notifier<ELearningState> {
 
     final statusStr = cert['certificate_status'] as String?;
 
-    if (statusStr == 'valid') {
+    if (statusStr == 'VALID') {
       DateTime? expiry;
       final rawExpiry = cert['valid_until'];
       if (rawExpiry != null) expiry = DateTime.tryParse(rawExpiry.toString());
@@ -199,7 +199,7 @@ class ELearningNotifier extends Notifier<ELearningState> {
       );
     }
 
-    if (statusStr == 'expired') {
+    if (statusStr == 'EXPIRED') {
       return const CertificateStatus(type: CertificateStatusType.expired);
     }
 

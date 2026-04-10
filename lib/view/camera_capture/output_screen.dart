@@ -83,7 +83,7 @@ class OutputScreenBusiness extends ConsumerWidget {
                   Center(
                     // EN: "ISO Ergonomic Analysis"
                     child: Text(
-                      loc.isoErgonomicAnalysis,
+                      loc.rosaErgonomicAnalysis,
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w600,

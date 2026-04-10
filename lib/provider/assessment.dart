@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/models/analysis/analysis_data_model.dart';
@@ -201,9 +202,11 @@ class AssessmentNotifier extends _$AssessmentNotifier {
         (k, v) => MapEntry(k, v.toInt()),
       );
 
+      File imageFile = File(capturedImage.path);
+
       var multipartFile = await http.MultipartFile.fromPath(
         'captured_image',
-        capturedImage.path,
+        imageFile.path,
       );
 
       final response = await CustomHttp.multipart(
@@ -237,6 +240,8 @@ class AssessmentNotifier extends _$AssessmentNotifier {
         files: [multipartFile],
       );
 
+      print(response.status_code);
+      
       if (response.ok) {
         printLine('Successfully processed analysis');
         final model = AnalysisDataModel.fromJson(response.data);

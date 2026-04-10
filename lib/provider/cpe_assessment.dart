@@ -6,6 +6,8 @@ import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/provider/cpe_home.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/main.dart';
+import 'package:posture_detector_app/models/analysis/analysis_data_model.dart';
+import 'package:posture_detector_app/utils/print_helper.dart';
 
 // ─────────────────────────────────────────
 // Models
@@ -89,7 +91,8 @@ class CpeAssessmentState {
   final int compliance;
   final String riskLevel;
   final String deskLocation;
-  final String deskRole;
+  final WorkPattern? workPattern;
+  final Workstation? workstation;
   final List<PainSymptom> painSymptoms;
   final List<PhotoItem> photoItems;
   final List<ApprovalItem> approvalItems;
@@ -109,7 +112,8 @@ class CpeAssessmentState {
     this.compliance = 0,
     this.riskLevel = '',
     this.deskLocation = '',
-    this.deskRole = '',
+    this.workPattern,
+    this.workstation,
     this.painSymptoms = const [],
     this.photoItems = const [],
     this.approvalItems = const [],
@@ -161,7 +165,8 @@ class CpeAssessmentState {
     int? compliance,
     String? riskLevel,
     String? deskLocation,
-    String? deskRole,
+    WorkPattern? workPattern,
+    Workstation? workstation,
     List<PainSymptom>? painSymptoms,
     List<PhotoItem>? photoItems,
     List<ApprovalItem>? approvalItems,
@@ -179,7 +184,8 @@ class CpeAssessmentState {
     compliance: compliance ?? this.compliance,
     riskLevel: riskLevel ?? this.riskLevel,
     deskLocation: deskLocation ?? this.deskLocation,
-    deskRole: deskRole ?? this.deskRole,
+    workPattern: workPattern ?? this.workPattern,
+    workstation: workstation ?? this.workstation,
     painSymptoms: painSymptoms ?? this.painSymptoms,
     photoItems: photoItems ?? this.photoItems,
     approvalItems: approvalItems ?? this.approvalItems,
@@ -272,6 +278,7 @@ class CpeAssessmentNotifier
       ];
 
       final wp = d['work_pattern'] as Map<String, dynamic>?;
+      final ws = d['workstation'] as Map<String, dynamic>?;
       final reviewType = d['review_type'] as String?;
 
       state = CpeAssessmentState(
@@ -281,7 +288,8 @@ class CpeAssessmentNotifier
         compliance: rawRisk.toInt(),
         riskLevel: d['risk_level'] ?? '',
         deskLocation: d['desk_location'] ?? '',
-        deskRole: wp?['device_usage'] ?? '',
+        workPattern: wp != null ? WorkPattern.fromJson(wp) : null,
+        workstation: ws != null ? Workstation.fromJson(ws) : null,
         painSymptoms: painSymptoms,
         photoItems: photoItems,
         approvalItems: approvalItems,

@@ -333,7 +333,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get retake => 'Opnieuw';
 
   @override
-  String get isoErgonomicAnalysis => 'ISO Ergonomische Analyse';
+  String get rosaErgonomicAnalysis => 'ROSA Ergonomische Analyse';
 
   @override
   String get basedOnIso9241 => 'Gebaseerd op ISO 9241.5:2024';
@@ -741,7 +741,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get loadingAnalysisData => 'Analysegegevens laden...';
 
   @override
-  String get exportIsoReportPdf => 'ISO-rapport exporteren (PDF)';
+  String get exportRosaReportPdf => 'ROSA-rapport exporteren (PDF)';
 
   @override
   String get userFallbackName => 'Gebruiker';
@@ -1008,6 +1008,9 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get ppContactContent => 'Als u vragen heeft over dit privacybeleid of uw gegevensrechten wilt uitoefenen, neem dan contact op met uw bedrijfsbeheerder of ons ondersteuningsteam via de app.';
+
+  @override
+  String get workstation => 'Werkplek';
 
   @override
   String get yourWorkstation => 'Uw werkplek';
