@@ -1,4 +1,5 @@
 import 'package:posture_detector_app/models/scan_type.dart';
+import 'package:posture_detector_app/view/assessment/your_workstation.dart';
 import 'package:posture_detector_app/view/auth/forgot_password/confirm_code_forgot_screen.dart';
 import 'package:posture_detector_app/view/auth/forgot_password/forgot_password_screen.dart';
 import 'package:posture_detector_app/view/auth/forgot_password/verify_email_screen.dart';
@@ -9,11 +10,11 @@ import 'package:posture_detector_app/view/camera_capture/image_capture_screen.da
 import 'package:posture_detector_app/view/camera_capture/image_preview_screen.dart';
 import 'package:posture_detector_app/view/camera_capture/output_screen.dart';
 import 'package:posture_detector_app/view/auth/signup/company_credential_screen.dart';
-import 'package:posture_detector_app/view/assessment/work_pattern/business_work_pattern_screen.dart';
-import 'package:posture_detector_app/view/assessment/symptom/optional_symptom_screen.dart';
-import 'package:posture_detector_app/view/assessment/pain/pain_duration_screen.dart';
-import 'package:posture_detector_app/view/assessment/pain/pain_intensity_screen.dart';
-import 'package:posture_detector_app/view/assessment/body_region/select_body_region_screen.dart';
+import 'package:posture_detector_app/view/assessment/work_pattern_screen.dart';
+import 'package:posture_detector_app/view/assessment/optional_symptom_screen.dart';
+import 'package:posture_detector_app/view/assessment/pain_duration_screen.dart';
+import 'package:posture_detector_app/view/assessment/pain_intensity_screen.dart';
+import 'package:posture_detector_app/view/assessment/select_body_region_screen.dart';
 import 'package:posture_detector_app/view/auth/signup/employee_credential_screen.dart';
 import 'package:posture_detector_app/view/business/equipment/equipment_screen_business.dart';
 import 'package:posture_detector_app/view/auth/signup/exercise_screen_business.dart';
@@ -62,6 +63,7 @@ class AppRoute {
 
   // ── Assessment Flow ──
   static const employeeSelectBodyRegion = '/select-body-region';
+  static const yourWorkstation = '/your-workstation';
   static const employeePainIntensityScreen = '/pain-intensity';
   static const employeePainDurationScreen = '/pain-duration';
   static const employeeWorkPatternScreen = '/work-pattern';
@@ -167,6 +169,10 @@ class AppRoute {
       GoRoute(
         path: AppRoute.employeeWorkPatternScreen,
         builder: (context, state) => WorkPatternScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.yourWorkstation,
+        builder: (context, state) => YourWorkstationScreen(),
       ),
       GoRoute(
         path: AppRoute.employeeOptionalSymptom,

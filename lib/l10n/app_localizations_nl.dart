@@ -231,6 +231,18 @@ class AppLocalizationsNl extends AppLocalizations {
   String get dualScreen => 'Dubbel scherm';
 
   @override
+  String get mouseType => 'Muistype';
+
+  @override
+  String get standardMouse => 'Standaardmuis';
+
+  @override
+  String get smallOrNotebookMouse => 'Kleine of notebookmuis';
+
+  @override
+  String get trackpadOrNoMouse => 'Trackpad of geen muis';
+
+  @override
   String get optionalSymptom => 'Optionele symptomen';
 
   @override
@@ -996,4 +1008,43 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get ppContactContent => 'Als u vragen heeft over dit privacybeleid of uw gegevensrechten wilt uitoefenen, neem dan contact op met uw bedrijfsbeheerder of ons ondersteuningsteam via de app.';
+
+  @override
+  String get yourWorkstation => 'Uw werkplek';
+
+  @override
+  String get workstationSubtitle => 'Een paar korte vragen voordat we de foto nemen';
+
+  @override
+  String get canAdjustChairHeight => 'Kunt u de hoogte van uw stoel aanpassen?';
+
+  @override
+  String get enoughLegRoom => 'Is er voldoende beenruimte onder uw bureau?';
+
+  @override
+  String get chairHasLumbarSupport => 'Heeft uw stoel lendensteun?';
+
+  @override
+  String get monitorDistanceFromEyes => 'Afstand van de monitor tot de ogen?';
+
+  @override
+  String get monitorDistance => 'Monitorafstand';
+
+  @override
+  String get monitorDistanceLessThan40cm => 'Minder dan 40 cm';
+
+  @override
+  String get monitorDistance40To70cm => '40–70 cm';
+
+  @override
+  String get monitorDistanceMoreThan70cm => 'Meer dan 70 cm';
+
+  @override
+  String get feetRestingFlat => 'Rusten uw voeten plat op de vloer?';
+
+  @override
+  String get monitorDirectlyInFront => 'Staat uw monitor direct voor u (niet opzij)?';
+
+  @override
+  String get chairHasArmrests => 'Heeft uw stoel armleuningen?';
 }

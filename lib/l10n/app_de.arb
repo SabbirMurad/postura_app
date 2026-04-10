@@ -87,6 +87,10 @@
   "laptop": "Laptop",
   "singleScreen": "Einzelbildschirm",
   "dualScreen": "Doppelt Bildschirm",
+  "mouseType": "Maustyp",
+  "standardMouse": "Standardmaus",
+  "smallOrNotebookMouse": "Kleine oder Notebook-Maus",
+  "trackpadOrNoMouse": "Trackpad oder keine Maus",
 
   "optionalSymptom": "Optionale Symptome",
   "optionalSymptomSubtitle": "Wähle optionale Symptome",
@@ -362,5 +366,19 @@
   "ppDataSharingTitle": "5. Datenweitergabe",
   "ppDataSharingContent": "Für Geschäftsnutzer können anonymisierte Haltungsbewertungsergebnisse und Konformitätswerte an die HR-Abteilung Ihres Arbeitgebers weitergegeben werden. Wir verkaufen Ihre persönlichen Daten nicht an Dritte. Daten können an zertifizierte ergonomische Fachkräfte (CPEs) weitergegeben werden, die mit der Überprüfung Ihrer Bewertung beauftragt sind.",
   "ppContactTitle": "6. Kontakt",
-  "ppContactContent": "Wenn Sie Fragen zu dieser Datenschutzrichtlinie haben oder Ihre Datenrechte ausüben möchten, wenden Sie sich bitte an Ihren Unternehmensadministrator oder unser Support-Team über die App."
+  "ppContactContent": "Wenn Sie Fragen zu dieser Datenschutzrichtlinie haben oder Ihre Datenrechte ausüben möchten, wenden Sie sich bitte an Ihren Unternehmensadministrator oder unser Support-Team über die App.",
+
+  "yourWorkstation": "Ihr Arbeitsplatz",
+  "workstationSubtitle": "Ein paar kurze Fragen, bevor wir das Foto aufnehmen",
+  "canAdjustChairHeight": "Können Sie Ihre Stuhlhöhe einstellen?",
+  "enoughLegRoom": "Haben Sie genug Beinfreiheit unter Ihrem Schreibtisch?",
+  "chairHasLumbarSupport": "Hat Ihr Stuhl eine Lendenwirbelstütze?",
+  "monitorDistanceFromEyes": "Abstand des Monitors zu den Augen?",
+  "monitorDistance": "Monitorabstand",
+  "monitorDistanceLessThan40cm": "Weniger als 40 cm",
+  "monitorDistance40To70cm": "40–70 cm",
+  "monitorDistanceMoreThan70cm": "Mehr als 70 cm",
+  "feetRestingFlat": "Stehen Ihre Füße flach auf dem Boden?",
+  "monitorDirectlyInFront": "Ist Ihr Monitor direkt vor Ihnen positioniert (nicht seitlich)?",
+  "chairHasArmrests": "Hat Ihr Stuhl Armlehnen?"
 }

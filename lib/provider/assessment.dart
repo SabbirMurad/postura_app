@@ -1,13 +1,15 @@
-import 'dart:io';
-
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
+import 'package:posture_detector_app/models/analysis/analysis_data_model.dart';
 import 'package:posture_detector_app/provider/image_capture.dart';
 import 'package:posture_detector_app/constants/app_text.dart';
 import 'package:posture_detector_app/provider/report.dart';
 import 'package:posture_detector_app/models/scan_type.dart';
-import 'package:posture_detector_app/services/api/onboarding_service.dart';
+import 'package:posture_detector_app/services/network/custom_http.dart';
+import 'package:posture_detector_app/utils/print_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:http/http.dart' as http;
 
 part 'assessment.g.dart';
 
@@ -20,6 +22,14 @@ class AssessmentState {
   final String breakHabit;
   final String workPatternRole;
   final bool isSubmitting;
+  final String mouseType;
+  final String monitorDistance;
+  final bool? canAdjustChairHeight;
+  final bool? enoughLegRoom;
+  final bool? chairHasLumbarSupport;
+  final bool? feetRestingFlat;
+  final bool? monitorDirectlyInFront;
+  final bool? chairHasArmrests;
 
   const AssessmentState({
     this.selectedRegions = const [],
@@ -29,7 +39,15 @@ class AssessmentState {
     this.hourDeskPerDay = '',
     this.breakHabit = '',
     this.workPatternRole = '',
+    this.mouseType = '',
+    this.monitorDistance = '',
     this.isSubmitting = false,
+    this.canAdjustChairHeight,
+    this.enoughLegRoom,
+    this.chairHasLumbarSupport,
+    this.feetRestingFlat,
+    this.monitorDirectlyInFront,
+    this.chairHasArmrests,
   });
 
   static const List<String> bodyRegions = [
@@ -67,7 +85,15 @@ class AssessmentState {
     String? hourDeskPerDay,
     String? breakHabit,
     String? workPatternRole,
+    String? mouseType,
+    String? monitorDistance,
     bool? isSubmitting,
+    bool? canAdjustChairHeight,
+    bool? enoughLegRoom,
+    bool? chairHasLumbarSupport,
+    bool? feetRestingFlat,
+    bool? monitorDirectlyInFront,
+    bool? chairHasArmrests,
   }) => AssessmentState(
     selectedRegions: selectedRegions ?? this.selectedRegions,
     painIntensity: painIntensity ?? this.painIntensity,
@@ -77,6 +103,15 @@ class AssessmentState {
     breakHabit: breakHabit ?? this.breakHabit,
     workPatternRole: workPatternRole ?? this.workPatternRole,
     isSubmitting: isSubmitting ?? this.isSubmitting,
+    mouseType: mouseType ?? this.mouseType,
+    monitorDistance: monitorDistance ?? this.monitorDistance,
+    canAdjustChairHeight: canAdjustChairHeight ?? this.canAdjustChairHeight,
+    enoughLegRoom: enoughLegRoom ?? this.enoughLegRoom,
+    chairHasLumbarSupport: chairHasLumbarSupport ?? this.chairHasLumbarSupport,
+    feetRestingFlat: feetRestingFlat ?? this.feetRestingFlat,
+    monitorDirectlyInFront:
+        monitorDirectlyInFront ?? this.monitorDirectlyInFront,
+    chairHasArmrests: chairHasArmrests ?? this.chairHasArmrests,
   );
 }
 
@@ -98,8 +133,7 @@ class AssessmentNotifier extends _$AssessmentNotifier {
     state = state.copyWith(selectedRegions: regions, painIntensity: pain);
   }
 
-  double getPainForRegion(String region) =>
-      state.painIntensity[region] ?? 1.0;
+  double getPainForRegion(String region) => state.painIntensity[region] ?? 1.0;
 
   void setPainForRegion(String region, double value) {
     final pain = Map<String, double>.from(state.painIntensity);
@@ -123,11 +157,33 @@ class AssessmentNotifier extends _$AssessmentNotifier {
   void setHourDeskPerDay(String value) =>
       state = state.copyWith(hourDeskPerDay: value);
 
-  void setBreakHabit(String value) =>
-      state = state.copyWith(breakHabit: value);
+  void setBreakHabit(String value) => state = state.copyWith(breakHabit: value);
 
   void setWorkPatternRole(String value) =>
       state = state.copyWith(workPatternRole: value);
+
+  void setMouseType(String value) => state = state.copyWith(mouseType: value);
+
+  void setMonitorDistance(String value) =>
+      state = state.copyWith(monitorDistance: value);
+
+  void setCanAdjustChairHeight(bool value) =>
+      state = state.copyWith(canAdjustChairHeight: value);
+
+  void setEnoughLegRoom(bool value) =>
+      state = state.copyWith(enoughLegRoom: value);
+
+  void setChairHasLumbarSupport(bool value) =>
+      state = state.copyWith(chairHasLumbarSupport: value);
+
+  void setFeetRestingFlat(bool value) =>
+      state = state.copyWith(feetRestingFlat: value);
+
+  void setMonitorDirectlyInFront(bool value) =>
+      state = state.copyWith(monitorDirectlyInFront: value);
+
+  void setChairHasArmrests(bool value) =>
+      state = state.copyWith(chairHasArmrests: value);
 
   /// Submits the assessment with the currently captured image.
   /// Returns true on success, false on failure.
@@ -145,24 +201,47 @@ class AssessmentNotifier extends _$AssessmentNotifier {
         (k, v) => MapEntry(k, v.toInt()),
       );
 
-      final response = await OnboardingService().onboardingFlow(
-        scan_type: type == ScanType.primaryScan || type == ScanType.captureImage
-            ? 'primary'
-            : 'instant',
-        image: File(capturedImage.path),
-        bodyRegions: state.selectedRegions,
-        painIntensity: painIntensityMap,
-        durationPattern: state.selectedPainDuration,
-        workHabits: {
-          'hours_at_desk': state.hourDeskPerDay,
-          'break_habit': state.breakHabit,
-          'device_usage': state.workPatternRole,
-        },
-        symptoms: state.selectedSymptoms,
+      var multipartFile = await http.MultipartFile.fromPath(
+        'captured_image',
+        capturedImage.path,
       );
 
-      if (response.data != null) {
-        ref.read(reportNotifierProvider.notifier).setData(response.data!);
+      final response = await CustomHttp.multipart(
+        endpoint: 'assessments/scan-analyse',
+        method: CommonCustomMethods.POST,
+        fields: {
+          'scan_type':
+              type == ScanType.primaryScan || type == ScanType.captureImage
+              ? 'primary'
+              : 'instant',
+          'body_regions': jsonEncode(state.selectedRegions),
+          'pain_intensity': jsonEncode(painIntensityMap),
+          'duration_pattern': state.selectedPainDuration,
+          'work_pattern': jsonEncode({
+            'hours_at_desk': state.hourDeskPerDay,
+            'break_habit': state.breakHabit,
+            'device_usage': state.workPatternRole,
+            'mouse_type': state.mouseType,
+          }),
+          'symptoms': jsonEncode(state.selectedSymptoms),
+          'workstation': jsonEncode({
+            'monitor_distance': state.monitorDistance,
+            'can_adjust_chair_height': state.canAdjustChairHeight,
+            'enough_leg_room': state.enoughLegRoom,
+            'chair_has_lumbar_support': state.chairHasLumbarSupport,
+            'feet_resting_flat': state.feetRestingFlat,
+            'monitor_directly_in_front': state.monitorDirectlyInFront,
+            'chair_has_armrests': state.chairHasArmrests,
+          }),
+        },
+        files: [multipartFile],
+      );
+
+      if (response.ok) {
+        printLine('Successfully processed analysis');
+        final model = AnalysisDataModel.fromJson(response.data);
+
+        ref.read(reportNotifierProvider.notifier).setData(model);
 
         state = state.copyWith(isSubmitting: false);
         return true;

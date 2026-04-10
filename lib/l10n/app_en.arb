@@ -86,6 +86,10 @@
   "laptop": "Laptop",
   "singleScreen": "Single Screen",
   "dualScreen": "Dual Screen",
+  "mouseType": "Mouse type",
+  "standardMouse": "Standard mouse",
+  "smallOrNotebookMouse": "Small or notebook mouse",
+  "trackpadOrNoMouse": "Trackpad or no mouse",
 
   "optionalSymptom": "Optional Symptoms",
   "optionalSymptomSubtitle": "Select optional symptoms",
@@ -363,5 +367,19 @@
   "ppDataSharingTitle": "5. Data Sharing",
   "ppDataSharingContent": "For business users, anonymized posture assessment results and compliance scores may be shared with your employer's HR department. We do not sell your personal data to third parties. Data may be shared with certified ergonomic professionals (CPEs) assigned to review your assessment.",
   "ppContactTitle": "6. Contact Us",
-  "ppContactContent": "If you have questions about this privacy policy or wish to exercise your data rights, please contact your company administrator or reach out to our support team through the app."
+  "ppContactContent": "If you have questions about this privacy policy or wish to exercise your data rights, please contact your company administrator or reach out to our support team through the app.",
+
+  "yourWorkstation": "Your Workstation",
+  "workstationSubtitle": "A few quick questions before we take the photo",
+  "canAdjustChairHeight": "Can you adjust your chair height?",
+  "enoughLegRoom": "Is there enough leg room under your desk?",
+  "chairHasLumbarSupport": "Does your chair have lumbar support?",
+  "monitorDistanceFromEyes": "Monitor distance from eyes?",
+  "monitorDistance": "Monitor distance",
+  "monitorDistanceLessThan40cm": "Less than 40 cm",
+  "monitorDistance40To70cm": "40–70 cm",
+  "monitorDistanceMoreThan70cm": "More than 70 cm",
+  "feetRestingFlat": "Are your feet resting flat on the floor?",
+  "monitorDirectlyInFront": "Is your monitor positioned directly in front of you (not to the side)?",
+  "chairHasArmrests": "Does your chair have armrests?"
 }

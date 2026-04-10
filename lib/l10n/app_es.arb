@@ -87,6 +87,10 @@
   "laptop": "Portátil",
   "singleScreen": "Pantalla única",
   "dualScreen": "Doble pantalla",
+  "mouseType": "Tipo de ratón",
+  "standardMouse": "Ratón estándar",
+  "smallOrNotebookMouse": "Ratón pequeño o de portátil",
+  "trackpadOrNoMouse": "Trackpad o sin ratón",
 
   "optionalSymptom": "Síntomas opcionales",
   "optionalSymptomSubtitle": "Selecciona síntomas opcionales",
@@ -362,5 +366,19 @@
   "ppDataSharingTitle": "5. Compartición de datos",
   "ppDataSharingContent": "Para usuarios empresariales, los resultados anónimos de evaluación postural y las puntuaciones de cumplimiento pueden compartirse con el departamento de RRHH de tu empleador. No vendemos tus datos personales a terceros. Los datos pueden compartirse con profesionales ergonómicos certificados (CPEs) asignados para revisar tu evaluación.",
   "ppContactTitle": "6. Contáctanos",
-  "ppContactContent": "Si tienes preguntas sobre esta política de privacidad o deseas ejercer tus derechos de datos, contacta al administrador de tu empresa o comunícate con nuestro equipo de soporte a través de la aplicación."
+  "ppContactContent": "Si tienes preguntas sobre esta política de privacidad o deseas ejercer tus derechos de datos, contacta al administrador de tu empresa o comunícate con nuestro equipo de soporte a través de la aplicación.",
+
+  "yourWorkstation": "Tu puesto de trabajo",
+  "workstationSubtitle": "Unas preguntas rápidas antes de tomar la foto",
+  "canAdjustChairHeight": "¿Puedes ajustar la altura de tu silla?",
+  "enoughLegRoom": "¿Hay suficiente espacio para las piernas bajo tu escritorio?",
+  "chairHasLumbarSupport": "¿Tu silla tiene soporte lumbar?",
+  "monitorDistanceFromEyes": "¿Distancia del monitor a los ojos?",
+  "monitorDistance": "Distancia del monitor",
+  "monitorDistanceLessThan40cm": "Menos de 40 cm",
+  "monitorDistance40To70cm": "40–70 cm",
+  "monitorDistanceMoreThan70cm": "Más de 70 cm",
+  "feetRestingFlat": "¿Tus pies descansan planos sobre el suelo?",
+  "monitorDirectlyInFront": "¿Tu monitor está posicionado directamente frente a ti (no de lado)?",
+  "chairHasArmrests": "¿Tu silla tiene reposabrazos?"
 }

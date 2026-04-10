@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,7 +12,6 @@ import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/main.dart';
 import 'package:posture_detector_app/models/analysis/analysis_data_model.dart';
-import 'package:posture_detector_app/services/api/onboarding_service.dart';
 
 part 'report.g.dart';
 
@@ -40,9 +40,8 @@ class ReportState {
 
 @Riverpod(keepAlive: true)
 class ReportNotifier extends _$ReportNotifier {
-  final OnboardingService _onboardingService = OnboardingService();
-
-  AppLocalizations get _loc => AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;
+  AppLocalizations get _loc =>
+      AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;
 
   @override
   ReportState build() {
@@ -86,11 +85,12 @@ class ReportNotifier extends _$ReportNotifier {
     try {
       state = state.copyWith(isLoading: true);
 
-      final response = await _onboardingService.fetchMyReports();
+      final response = await CustomHttp.get(endpoint: 'assessments/my-reports');
 
-      if (response.data != null) {
-        state = state.copyWith(analysisData: response.data, isLoading: false);
-        saveData(response.data!);
+      if (response.ok) {
+        final model = AnalysisDataModel.fromJson(response.data);
+        state = state.copyWith(analysisData: model, isLoading: false);
+        saveData(model);
         return;
       }
 

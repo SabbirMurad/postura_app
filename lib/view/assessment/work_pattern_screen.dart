@@ -20,6 +20,41 @@ class WorkPatternScreen extends ConsumerWidget {
     final assessment = ref.watch(assessmentNotifierProvider);
     final notifier = ref.read(assessmentNotifierProvider.notifier);
 
+    Widget dropdown({
+      required String title,
+      required String? value,
+      required void Function(String?) onChanged,
+      required List<DropdownMenuItem<String>> items,
+    }) {
+      return DropdownButtonFormField<String>(
+        initialValue: value,
+        decoration: InputDecoration(
+          hintText: title,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 12.w,
+            vertical: 14.h,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(color: AppColors.blackDeemed, width: 1.5),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(color: AppColors.blackDeemed, width: 1.5),
+          ),
+        ),
+        style: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w500,
+          color: AppColors.text,
+        ),
+        borderRadius: BorderRadius.circular(10.r),
+        dropdownColor: AppColors.surface,
+        items: items,
+        onChanged: onChanged,
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
@@ -39,38 +74,13 @@ class WorkPatternScreen extends ConsumerWidget {
                 loc.hoursAtDeskPerDay,
                 style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
               ),
-              DropdownButtonFormField<String>(
+              SizedBox(height: 6.h),
+              dropdown(
+                title: loc.hoursAtDeskPerDay,
                 value: assessment.hourDeskPerDay.isEmpty
                     ? null
                     : assessment.hourDeskPerDay,
-                decoration: InputDecoration(
-                  hintText: loc.hoursAtDeskPerDay,
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 14.h,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(
-                      color: AppColors.blackDeemed,
-                      width: 1.5,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(
-                      color: AppColors.blackDeemed,
-                      width: 1.5,
-                    ),
-                  ),
-                ),
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.text,
-                ),
-                borderRadius: BorderRadius.circular(10.r),
-                dropdownColor: AppColors.surface,
+                onChanged: (value) => notifier.setHourDeskPerDay(value ?? ''),
                 items: [
                   DropdownMenuItem(
                     value: '0-4',
@@ -89,47 +99,20 @@ class WorkPatternScreen extends ConsumerWidget {
                     child: Text(loc.eightPlusHours),
                   ),
                 ],
-                onChanged: (value) => notifier.setHourDeskPerDay(value ?? ''),
               ),
-
               SizedBox(height: 28.h),
               Text(
                 // EN: "Break habits"
                 loc.breakHabits,
                 style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
               ),
-              DropdownButtonFormField<String>(
+              SizedBox(height: 6.h),
+              dropdown(
+                title: loc.breakHabits,
                 value: assessment.breakHabit.isEmpty
                     ? null
                     : assessment.breakHabit,
-                decoration: InputDecoration(
-                  hintText: loc.breakHabits,
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 14.h,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(
-                      color: AppColors.blackDeemed,
-                      width: 1.5,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(
-                      color: AppColors.blackDeemed,
-                      width: 1.5,
-                    ),
-                  ),
-                ),
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.text,
-                ),
-                borderRadius: BorderRadius.circular(10.r),
-                dropdownColor: AppColors.surface,
+                onChanged: (value) => notifier.setBreakHabit(value ?? ''),
                 items: [
                   DropdownMenuItem(value: '1H', child: Text(loc.everyOneHour)),
                   DropdownMenuItem(value: '2H', child: Text(loc.everyTwoHours)),
@@ -139,7 +122,6 @@ class WorkPatternScreen extends ConsumerWidget {
                   ),
                   DropdownMenuItem(value: 'RARE', child: Text(loc.rarely)),
                 ],
-                onChanged: (value) => notifier.setBreakHabit(value ?? ''),
               ),
 
               SizedBox(height: 28.h),
@@ -148,38 +130,12 @@ class WorkPatternScreen extends ConsumerWidget {
                 style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
               ),
               SizedBox(height: 6.h),
-              DropdownButtonFormField<String>(
+              dropdown(
+                title: loc.selectDeviceUsage,
                 value: assessment.workPatternRole.isEmpty
                     ? null
                     : assessment.workPatternRole,
-                decoration: InputDecoration(
-                  hintText: loc.selectDeviceUsage,
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 14.h,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(
-                      color: AppColors.blackDeemed,
-                      width: 1.5,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(
-                      color: AppColors.blackDeemed,
-                      width: 1.5,
-                    ),
-                  ),
-                ),
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.text,
-                ),
-                borderRadius: BorderRadius.circular(10.r),
-                dropdownColor: AppColors.surface,
+                onChanged: (value) => notifier.setWorkPatternRole(value ?? ''),
                 items: [
                   DropdownMenuItem(value: 'LAPTOP', child: Text(loc.laptop)),
                   DropdownMenuItem(
@@ -188,7 +144,34 @@ class WorkPatternScreen extends ConsumerWidget {
                   ),
                   DropdownMenuItem(value: 'DUAL', child: Text(loc.dualScreen)),
                 ],
-                onChanged: (value) => notifier.setWorkPatternRole(value ?? ''),
+              ),
+              SizedBox(height: 28.h),
+              Text(
+                // EN: "Mouse type"
+                loc.mouseType,
+                style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+              ),
+              SizedBox(height: 6.h),
+              dropdown(
+                title: loc.mouseType,
+                value: assessment.mouseType.isEmpty
+                    ? null
+                    : assessment.mouseType,
+                onChanged: (value) => notifier.setMouseType(value ?? ''),
+                items: [
+                  DropdownMenuItem(
+                    value: 'standard',
+                    child: Text(loc.standardMouse),
+                  ),
+                  DropdownMenuItem(
+                    value: 'small',
+                    child: Text(loc.smallOrNotebookMouse),
+                  ),
+                  DropdownMenuItem(
+                    value: 'trackpad',
+                    child: Text(loc.trackpadOrNoMouse),
+                  ),
+                ],
               ),
             ],
           ),
@@ -201,11 +184,12 @@ class WorkPatternScreen extends ConsumerWidget {
             onTap: () {
               if (assessment.hourDeskPerDay.isEmpty ||
                   assessment.breakHabit.isEmpty ||
-                  assessment.workPatternRole.isEmpty) {
+                  assessment.workPatternRole.isEmpty ||
+                  assessment.mouseType.isEmpty) {
                 // EN: "Please fill all the fields"
                 showCustomToast(text: loc.pleaseFillAllFields);
               } else {
-                context.push(AppRoute.employeeOptionalSymptom);
+                context.push(AppRoute.yourWorkstation);
               }
             },
             text: AppText.continueButton,

@@ -86,6 +86,10 @@
   "laptop": "Laptop",
   "singleScreen": "Enkel scherm",
   "dualScreen": "Dubbel scherm",
+  "mouseType": "Muistype",
+  "standardMouse": "Standaardmuis",
+  "smallOrNotebookMouse": "Kleine of notebookmuis",
+  "trackpadOrNoMouse": "Trackpad of geen muis",
 
   "optionalSymptom": "Optionele symptomen",
   "optionalSymptomSubtitle": "Selecteer optionele symptomen",
@@ -362,5 +366,19 @@
   "ppDataSharingTitle": "5. Gegevens delen",
   "ppDataSharingContent": "Voor zakelijke gebruikers kunnen geanonimiseerde houdingsbeoordelingsresultaten en nalevingsscores worden gedeeld met de HR-afdeling van uw werkgever. Wij verkopen uw persoonlijke gegevens niet aan derden. Gegevens kunnen worden gedeeld met gecertificeerde ergonomische professionals (CPE's) die zijn aangewezen om uw beoordeling te bekijken.",
   "ppContactTitle": "6. Neem contact op",
-  "ppContactContent": "Als u vragen heeft over dit privacybeleid of uw gegevensrechten wilt uitoefenen, neem dan contact op met uw bedrijfsbeheerder of ons ondersteuningsteam via de app."
+  "ppContactContent": "Als u vragen heeft over dit privacybeleid of uw gegevensrechten wilt uitoefenen, neem dan contact op met uw bedrijfsbeheerder of ons ondersteuningsteam via de app.",
+
+  "yourWorkstation": "Uw werkplek",
+  "workstationSubtitle": "Een paar korte vragen voordat we de foto nemen",
+  "canAdjustChairHeight": "Kunt u de hoogte van uw stoel aanpassen?",
+  "enoughLegRoom": "Is er voldoende beenruimte onder uw bureau?",
+  "chairHasLumbarSupport": "Heeft uw stoel lendensteun?",
+  "monitorDistanceFromEyes": "Afstand van de monitor tot de ogen?",
+  "monitorDistance": "Monitorafstand",
+  "monitorDistanceLessThan40cm": "Minder dan 40 cm",
+  "monitorDistance40To70cm": "40–70 cm",
+  "monitorDistanceMoreThan70cm": "Meer dan 70 cm",
+  "feetRestingFlat": "Rusten uw voeten plat op de vloer?",
+  "monitorDirectlyInFront": "Staat uw monitor direct voor u (niet opzij)?",
+  "chairHasArmrests": "Heeft uw stoel armleuningen?"
 }
