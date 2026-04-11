@@ -17,4 +17,11 @@ class ELearningModuleData {
         return [en.m1En(), en.m2En(), en.m3En(), en.m4En(), en.m5En(), en.m6En(), en.m7En()];
     }
   }
+
+  /// Returns the localized module title for the given module [id].
+  /// Falls back to null if the id is not found.
+  static String? getModuleNameById(String locale, int id) {
+    final module = getModules(locale).where((m) => m.id == id).firstOrNull;
+    return module?.title;
+  }
 }

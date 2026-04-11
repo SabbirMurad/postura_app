@@ -28,6 +28,7 @@ dependencies:
   image_picker: ^1.1.1
   http: ^1.6.0
   sqflite: ^2.4.2
+  url_launcher: ^6.3.0
   cached_network_image: ^3.3.1
   path: ^1.8.3
   flutter_localizations:
@@ -89,6 +90,8 @@ flutter:
     - assets/icons/nav/
     - assets/icons/auth/
     - assets/icons/status/
+    - assets/icons/rosa/
+    - assets/icons/region/
     - assets/icons/workplace/
     - assets/icons/general/
     # Images
