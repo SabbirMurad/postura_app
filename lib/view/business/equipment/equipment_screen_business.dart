@@ -23,6 +23,7 @@ import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/models/user_type.dart';
 import 'package:posture_detector_app/main.dart';
 import 'package:posture_detector_app/provider/report.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EquipmentScreenBusiness extends ConsumerStatefulWidget {
   final bool canSendListToCompany;
@@ -82,35 +83,22 @@ class _EquipmentScreenBusinessState
     }
   }
 
-  /// Download & share PDF
-  ///
+  /// Download & share PDF  ///
   Future<void> _exportReportPDF() async {
     final loc = AppLocalizations.of(context)!;
-    try {
-      final pdfUrl = ref
-          .read(reportNotifierProvider)
-          .analysisData
-          ?.aiResult
-          .equipmentExcelUrl;
-      if (pdfUrl == null || pdfUrl.isEmpty) {
-        // EN: "No PDF available"
-        showCustomToast(text: loc.noPdfAvailable);
-        return;
-      }
-
-      final tempDir = await getTemporaryDirectory();
-      final fileName = pdfUrl.split('/').last.split('?').first;
-      final filePath = '${tempDir.path}/$fileName';
-
-      await Dio().download(pdfUrl, filePath);
-
-      // EN: "Your report PDF"
-      await Share.shareXFiles([XFile(filePath)], text: loc.yourReportPdf);
-    } catch (e) {
-      debugPrint('$e');
-      // EN: "Something went wrong"
-      showCustomToast(text: loc.somethingWentWrong);
+    final pdfUrl = ref
+        .read(reportNotifierProvider)
+        .analysisData
+        ?.aiResult
+        .equipmentExcelUrl;
+        
+    if (pdfUrl == null || pdfUrl.isEmpty) {
+      // EN: "No PDF available"
+      showCustomToast(text: loc.noPdfAvailable);
+      return;
     }
+
+    launchUrl(mode: LaunchMode.externalApplication, Uri.parse(pdfUrl));
   }
 
   @override

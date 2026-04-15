@@ -117,10 +117,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get employIdHint => 'Tu ID de empleado';
 
   @override
-  String get userDeskWorkZone => 'Zona de trabajo o escritorio';
+  String get workstationSetup => 'Zona de trabajo o escritorio';
 
   @override
-  String get userDeskWorkZoneSubtitle => 'Vincula tu evaluación a tu escritorio y departamento';
+  String get workstationSetupSubtitle => 'Vincula tu evaluación a tu escritorio y departamento';
+
+  @override
+  String get workstationType => 'Tipo de estación de trabajo';
 
   @override
   String get deskId => 'ID del escritorio o ubicación (recomendado)';
@@ -217,6 +220,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get breakHabitsHint => 'Cada 3 horas';
+
+  @override
+  String get deviceSetup => 'Configuración del dispositivo';
 
   @override
   String get selectDeviceUsage => 'Selecciona uso de dispositivos';

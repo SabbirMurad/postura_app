@@ -315,17 +315,23 @@ abstract class AppLocalizations {
   /// **'Your employee ID'**
   String get employIdHint;
 
-  /// No description provided for @userDeskWorkZone.
+  /// No description provided for @workstationSetup.
   ///
   /// In en, this message translates to:
-  /// **'User Desk or Work Zone'**
-  String get userDeskWorkZone;
+  /// **'Workstation Setup'**
+  String get workstationSetup;
 
-  /// No description provided for @userDeskWorkZoneSubtitle.
+  /// No description provided for @workstationSetupSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Link your assessment to your desk and department'**
-  String get userDeskWorkZoneSubtitle;
+  /// **'Link your assessment to your workstation and department'**
+  String get workstationSetupSubtitle;
+
+  /// No description provided for @workstationType.
+  ///
+  /// In en, this message translates to:
+  /// **'Workstation type'**
+  String get workstationType;
 
   /// No description provided for @deskId.
   ///
@@ -492,7 +498,7 @@ abstract class AppLocalizations {
   /// No description provided for @workPatternSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Select your work pattern from here'**
+  /// **'Select your work pattern'**
   String get workPatternSubtitle;
 
   /// No description provided for @hoursAtDeskPerDay.
@@ -519,10 +525,16 @@ abstract class AppLocalizations {
   /// **'Every 3 Hours'**
   String get breakHabitsHint;
 
+  /// No description provided for @deviceSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Device setup'**
+  String get deviceSetup;
+
   /// No description provided for @selectDeviceUsage.
   ///
   /// In en, this message translates to:
-  /// **'Select device usage'**
+  /// **'Select device setup'**
   String get selectDeviceUsage;
 
   /// No description provided for @laptop.

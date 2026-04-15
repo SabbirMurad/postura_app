@@ -126,7 +126,7 @@ class WorkPatternScreen extends ConsumerWidget {
 
               SizedBox(height: 28.h),
               Text(
-                AppText.workPatternRole,
+                loc.deviceSetup,
                 style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
               ),
               SizedBox(height: 6.h),
@@ -192,7 +192,7 @@ class WorkPatternScreen extends ConsumerWidget {
                 context.push(AppRoute.yourWorkstation);
               }
             },
-            text: AppText.continueButton,
+            text: loc.continueButton,
             backgroundColor: AppColors.primaryColor,
             textStyle: TextStyle(
               color: AppColors.surface,

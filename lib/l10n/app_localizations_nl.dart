@@ -117,10 +117,13 @@ class AppLocalizationsNl extends AppLocalizations {
   String get employIdHint => 'Je medewerker ID';
 
   @override
-  String get userDeskWorkZone => 'Bureau of werkzone';
+  String get workstationSetup => 'Bureau of werkzone';
 
   @override
-  String get userDeskWorkZoneSubtitle => 'Koppel je beoordeling aan je bureau en afdeling';
+  String get workstationSetupSubtitle => 'Koppel je beoordeling aan je bureau en afdeling';
+
+  @override
+  String get workstationType => 'Type werkstation';
 
   @override
   String get deskId => 'Bureau-ID of locatie (aanbevolen)';
@@ -217,6 +220,9 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get breakHabitsHint => 'Elke 3 uur';
+
+  @override
+  String get deviceSetup => 'Apparaatinstelling';
 
   @override
   String get selectDeviceUsage => 'Selecteer apparaatgebruik';

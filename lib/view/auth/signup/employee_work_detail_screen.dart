@@ -93,8 +93,8 @@ class _EmployeeWorkDetailScreenState
               children: [
                 SizedBox(height: 20.h),
                 AppTopSection(
-                  title: loc.userDeskWorkZone,
-                  subtitle: loc.userDeskWorkZoneSubtitle,
+                  title: loc.workstationSetup,
+                  subtitle: loc.workstationSetupSubtitle,
                 ),
                 SizedBox(height: 28.h),
                 Text(
@@ -142,8 +142,8 @@ class _EmployeeWorkDetailScreenState
                 ),
                 SizedBox(height: 28.h),
                 Text(
-                  // EN: "Role"
-                  loc.role,
+                  // EN: "Workstation Type"
+                  loc.workstationType,
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,

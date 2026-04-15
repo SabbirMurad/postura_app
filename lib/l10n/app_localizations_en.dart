@@ -117,10 +117,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get employIdHint => 'Your employee ID';
 
   @override
-  String get userDeskWorkZone => 'User Desk or Work Zone';
+  String get workstationSetup => 'Workstation Setup';
 
   @override
-  String get userDeskWorkZoneSubtitle => 'Link your assessment to your desk and department';
+  String get workstationSetupSubtitle => 'Link your assessment to your workstation and department';
+
+  @override
+  String get workstationType => 'Workstation type';
 
   @override
   String get deskId => 'Desk ID or Location (Recommended)';
@@ -204,7 +207,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workPattern => 'Work Pattern';
 
   @override
-  String get workPatternSubtitle => 'Select your work pattern from here';
+  String get workPatternSubtitle => 'Select your work pattern';
 
   @override
   String get hoursAtDeskPerDay => 'Hours at desk per day';
@@ -219,7 +222,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get breakHabitsHint => 'Every 3 Hours';
 
   @override
-  String get selectDeviceUsage => 'Select device usage';
+  String get deviceSetup => 'Device setup';
+
+  @override
+  String get selectDeviceUsage => 'Select device setup';
 
   @override
   String get laptop => 'Laptop';

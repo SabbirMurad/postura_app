@@ -16,10 +16,12 @@ class CompanyCredentialScreen extends ConsumerStatefulWidget {
   const CompanyCredentialScreen({super.key});
 
   @override
-  ConsumerState<CompanyCredentialScreen> createState() => _CompanyCredentialScreenState();
+  ConsumerState<CompanyCredentialScreen> createState() =>
+      _CompanyCredentialScreenState();
 }
 
-class _CompanyCredentialScreenState extends ConsumerState<CompanyCredentialScreen> {
+class _CompanyCredentialScreenState
+    extends ConsumerState<CompanyCredentialScreen> {
   final _companyCodeController = TextEditingController();
 
   @override
@@ -28,6 +30,8 @@ class _CompanyCredentialScreenState extends ConsumerState<CompanyCredentialScree
     super.dispose();
   }
 
+  bool _loading = false;
+
   Future<void> _checkCompanyCode(AppLocalizations loc) async {
     final code = _companyCodeController.text.trim();
     if (code.isEmpty) {
@@ -35,6 +39,10 @@ class _CompanyCredentialScreenState extends ConsumerState<CompanyCredentialScree
       showCustomToast(text: loc.pleaseEnterCompanyCode);
       return;
     }
+
+    setState(() {
+      _loading = true;
+    });
 
     final response = await CustomHttp.post(
       endpoint: 'auth/validate-company-code',
@@ -46,6 +54,10 @@ class _CompanyCredentialScreenState extends ConsumerState<CompanyCredentialScree
       ref.read(signupNotifierProvider.notifier).setCompanyCode(code);
       context.push(AppRoute.employeeCredential);
     }
+
+    setState(() {
+      _loading = false;
+    });
   }
 
   @override
@@ -103,6 +115,7 @@ class _CompanyCredentialScreenState extends ConsumerState<CompanyCredentialScree
                   onTap: () => _checkCompanyCode(loc),
                   // EN: "Continue"
                   text: loc.continueButton,
+                  loading: _loading,
                   backgroundColor: AppColors.primaryColor,
                   textStyle: TextStyle(
                     color: AppColors.surface,

@@ -52,9 +52,10 @@ class AppText {
   static const employIdHint = 'Your employee ID';
 
   /// ----------------------------- work Details ------------------------------------------- ///
-  static const userDeskWorkZone = 'User Desk or Work Zone';
-  static const userDeskWorkZoneSubtitle =
-      'Link your assessment to your desk and department';
+  static const workstationSetup = 'Workstation Setup';
+  static const workstationSetupSubtitle =
+      'Link your assessment to your workstation and department';
+  static const workstationType = 'Workstation type';
   static const deskId = 'Desk ID or Location (Recommended)';
   static const deskIdHint = 'e.g. Floor 3, Desk 42';
   static const department = 'Department';
@@ -93,13 +94,14 @@ class AppText {
 
   /// ------------------------------------ work pattern -------------------------------------- ///
   static const workPattern = 'Work Pattern';
-  static const workPatternSubtitle = 'Select your work pattern from here';
+  static const workPatternSubtitle = 'Select your work pattern';
   static const hoursAtDeskPerDay = 'Hours at desk per day';
   static const hoursPerDayHint = 'O-4 Hours';
   static const breakHabits = 'Break habits';
   static const breakHabitsHint = 'Every 3 Hours';
   static const workPatternRole = 'Role';
-  static const selectDeviceUsage = 'Select device usage';
+  static const deviceSetup = 'Device setup';
+  static const selectDeviceUsage = 'Select device setup';
   static const laptop = 'Laptop';
   static const singleScreen = 'Single Screen';
   static const dualScreen = 'Dual Screen';

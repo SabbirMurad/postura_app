@@ -232,7 +232,6 @@ class CPEAssessmentScreen extends ConsumerWidget {
                     SizedBox(height: 16.h),
                     AppBackButton(),
                     SizedBox(height: 12.h),
-
                     Text(
                       loc.cpeAssessmentReview,
                       style: TextStyle(
@@ -254,10 +253,6 @@ class CPEAssessmentScreen extends ConsumerWidget {
                     SizedBox(height: 20.h),
                     _deskInfo(deskLocation: state.deskLocation, loc: loc),
                     SizedBox(height: 20.h),
-                    PainSymptomsSectionCPE(state: state),
-                    SizedBox(height: 20.h),
-                    PhotoSectionCPE(state: state),
-                    SizedBox(height: 20.h),
                     if (state.workPattern != null)
                       _wordPatternSection(
                         workPattern: state.workPattern!,
@@ -266,6 +261,10 @@ class CPEAssessmentScreen extends ConsumerWidget {
                     if (state.workPattern != null) SizedBox(height: 20.h),
                     if (state.workstation != null)
                       _workstation(workstation: state.workstation!, loc: loc),
+                    SizedBox(height: 20.h),
+                    PainSymptomsSectionCPE(state: state),
+                    SizedBox(height: 20.h),
+                    PhotoSectionCPE(state: state),
                     SizedBox(height: 20.h),
                     ApprovalsSectionCPE(state: state, notifier: notifier),
                     SizedBox(height: 20.h),

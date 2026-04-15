@@ -117,10 +117,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get employIdHint => 'Deine Mitarbeiter-ID';
 
   @override
-  String get userDeskWorkZone => 'Arbeitsplatz / Schreibtischzone';
+  String get workstationSetup => 'Arbeitsplatz / Schreibtischzone';
 
   @override
-  String get userDeskWorkZoneSubtitle => 'Verknüpfe deine Bewertung mit deinem Schreibtisch und deiner Abteilung';
+  String get workstationSetupSubtitle => 'Verknüpfe deine Bewertung mit deinem Schreibtisch und deiner Abteilung';
+
+  @override
+  String get workstationType => 'Arbeitsplatztyp';
 
   @override
   String get deskId => 'Schreibtisch-ID oder Standort (empfohlen)';
@@ -217,6 +220,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get breakHabitsHint => 'Alle 3 Stunden';
+
+  @override
+  String get deviceSetup => 'Geräteeinrichtung';
 
   @override
   String get selectDeviceUsage => 'Gerätenutzung auswählen';
