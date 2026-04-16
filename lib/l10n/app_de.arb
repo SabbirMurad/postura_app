@@ -385,5 +385,18 @@
   "monitorDirectlyInFront": "Ist Ihr Monitor direkt vor Ihnen positioniert (nicht seitlich)?",
   "chairHasArmrests": "Hat Ihr Stuhl Armlehnen?",
 
-  "basedOnPostureAnalysisIso": "Basierend auf Ihrer Haltungsanalyse und den ISO 9241-5:2024-Prinzipien..."
+  "basedOnPostureAnalysisIso": "Basierend auf Ihrer Haltungsanalyse und den ISO 9241-5:2024-Prinzipien...",
+
+  "canAdjustChairHeightYes": "Stuhlhöhe kann eingestellt werden",
+  "cannotAdjustChairHeight": "Stuhlhöhe kann nicht eingestellt werden",
+  "enoughLegRoomYes": "Ausreichend Beinfreiheit unter dem Schreibtisch",
+  "notEnoughLegRoom": "Nicht genug Platz unter dem Schreibtisch",
+  "chairHasLumbarSupportYes": "Stuhl hat Lendenwirbelstütze",
+  "chairHasLumbarSupportNo": "Stuhl hat keine Lendenwirbelstütze",
+  "feetFlatYes": "Füße ruhen flach auf dem Boden",
+  "feetFlatNo": "Füße ruhen nicht flach auf dem Boden",
+  "monitorInFrontYes": "Monitor direkt vor dem Benutzer positioniert",
+  "monitorInFrontNo": "Monitor ist nicht direkt vor dem Benutzer positioniert",
+  "chairHasArmrestsYes": "Stuhl hat Armlehnen",
+  "chairHasArmrestsNo": "Stuhl hat keine Armlehnen"
 }

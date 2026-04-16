@@ -1,5 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:posture_detector_app/constants/app_colors.dart';
+import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 
 class CpeHomeHeader extends StatelessWidget {
@@ -39,7 +43,7 @@ class CpeHomeHeader extends StatelessWidget {
             SizedBox(height: 2.h),
             Text(
               // EN: "Stand Tall, Feel Great"
-              loc.welcomeTitle,
+              loc.welcomeToPostura,
               style: TextStyle(
                 fontSize: 13.sp,
                 color: const Color(0xFF8A8FA3),
@@ -48,16 +52,30 @@ class CpeHomeHeader extends StatelessWidget {
             ),
           ],
         ),
-        avatarUrl.isNotEmpty
-            ? CircleAvatar(
-                radius: 22.r,
-                backgroundImage: NetworkImage(avatarUrl),
-              )
-            : CircleAvatar(
-                radius: 22.r,
-                backgroundColor: const Color(0xFF2563EB),
-                child: Icon(Icons.person, color: Colors.white, size: 22.sp),
-              ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24.r),
+            color: Colors.grey[200],
+            image: avatarUrl.isNotEmpty
+                ? DecorationImage(image: CachedNetworkImageProvider(avatarUrl))
+                : null,
+            border: Border.all(
+              color: AppColors.secondaryText.withValues(alpha: 0.15),
+            ),
+          ),
+          width: 48.w,
+          height: 48.w,
+          child: avatarUrl.isEmpty
+              ? Center(
+                  child: SvgPicture.asset(
+                    Assets.icons.auth.user.path,
+                    width: 24.w,
+                    height: 24.w,
+                    color: AppColors.primaryColor,
+                  ),
+                )
+              : null,
+        ),
       ],
     );
   }

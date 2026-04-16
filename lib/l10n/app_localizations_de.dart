@@ -1059,4 +1059,29 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get basedOnPostureAnalysisIso => 'Basierend auf Ihrer Haltungsanalyse und den ISO 9241-5:2024-Prinzipien...';
+
+  @override
+  String get canAdjustChairHeightYes => 'Stuhlhöhe kann eingestellt werden';
+  @override
+  String get cannotAdjustChairHeight => 'Stuhlhöhe kann nicht eingestellt werden';
+  @override
+  String get enoughLegRoomYes => 'Ausreichend Beinfreiheit unter dem Schreibtisch';
+  @override
+  String get notEnoughLegRoom => 'Nicht genug Platz unter dem Schreibtisch';
+  @override
+  String get chairHasLumbarSupportYes => 'Stuhl hat Lendenwirbelstütze';
+  @override
+  String get chairHasLumbarSupportNo => 'Stuhl hat keine Lendenwirbelstütze';
+  @override
+  String get feetFlatYes => 'Füße ruhen flach auf dem Boden';
+  @override
+  String get feetFlatNo => 'Füße ruhen nicht flach auf dem Boden';
+  @override
+  String get monitorInFrontYes => 'Monitor direkt vor dem Benutzer positioniert';
+  @override
+  String get monitorInFrontNo => 'Monitor ist nicht direkt vor dem Benutzer positioniert';
+  @override
+  String get chairHasArmrestsYes => 'Stuhl hat Armlehnen';
+  @override
+  String get chairHasArmrestsNo => 'Stuhl hat keine Armlehnen';
 }

@@ -385,5 +385,18 @@
   "monitorDirectlyInFront": "Staat uw monitor direct voor u (niet opzij)?",
   "chairHasArmrests": "Heeft uw stoel armleuningen?",
 
-  "basedOnPostureAnalysisIso": "Op basis van uw houdingsanalyse en ISO 9241-5:2024-principes..."
+  "basedOnPostureAnalysisIso": "Op basis van uw houdingsanalyse en ISO 9241-5:2024-principes...",
+
+  "canAdjustChairHeightYes": "Stoelhoogte kan worden aangepast",
+  "cannotAdjustChairHeight": "Stoelhoogte kan niet worden aangepast",
+  "enoughLegRoomYes": "Genoeg beenruimte onder het bureau",
+  "notEnoughLegRoom": "Niet genoeg ruimte onder het bureau",
+  "chairHasLumbarSupportYes": "Stoel heeft lendensteuning",
+  "chairHasLumbarSupportNo": "Stoel heeft geen lendensteuning",
+  "feetFlatYes": "Voeten rusten plat op de vloer",
+  "feetFlatNo": "Voeten rusten niet plat op de vloer",
+  "monitorInFrontYes": "Monitor staat direct voor de gebruiker",
+  "monitorInFrontNo": "Monitor staat niet direct voor de gebruiker",
+  "chairHasArmrestsYes": "Stoel heeft armleuningen",
+  "chairHasArmrestsNo": "Stoel heeft geen armleuningen"
 }

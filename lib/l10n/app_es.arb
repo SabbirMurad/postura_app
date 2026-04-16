@@ -385,5 +385,18 @@
   "monitorDirectlyInFront": "¿Tu monitor está posicionado directamente frente a ti (no de lado)?",
   "chairHasArmrests": "¿Tu silla tiene reposabrazos?",
 
-  "basedOnPostureAnalysisIso": "Basado en su análisis de postura y los principios ISO 9241-5:2024..."
+  "basedOnPostureAnalysisIso": "Basado en su análisis de postura y los principios ISO 9241-5:2024...",
+
+  "canAdjustChairHeightYes": "Puede ajustar la altura de la silla",
+  "cannotAdjustChairHeight": "No puede ajustar la altura de la silla",
+  "enoughLegRoomYes": "Suficiente espacio para las piernas bajo el escritorio",
+  "notEnoughLegRoom": "No hay suficiente espacio bajo el escritorio",
+  "chairHasLumbarSupportYes": "La silla tiene soporte lumbar",
+  "chairHasLumbarSupportNo": "La silla no tiene soporte lumbar",
+  "feetFlatYes": "Los pies descansan planos en el suelo",
+  "feetFlatNo": "Los pies no descansan planos en el suelo",
+  "monitorInFrontYes": "Monitor posicionado directamente en frente",
+  "monitorInFrontNo": "El monitor no está posicionado directamente en frente",
+  "chairHasArmrestsYes": "La silla tiene reposabrazos",
+  "chairHasArmrestsNo": "La silla no tiene reposabrazos"
 }

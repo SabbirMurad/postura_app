@@ -1059,4 +1059,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get basedOnPostureAnalysisIso => 'Based on your posture analysis and ISO 9241-5:2024 principles...';
+
+  @override
+  String get canAdjustChairHeightYes => 'Can adjust chair height';
+  @override
+  String get cannotAdjustChairHeight => 'Cannot adjust chair height';
+  @override
+  String get enoughLegRoomYes => 'Enough leg room under desk';
+  @override
+  String get notEnoughLegRoom => 'Not enough room under desk';
+  @override
+  String get chairHasLumbarSupportYes => 'Chair has lumbar support';
+  @override
+  String get chairHasLumbarSupportNo => 'Chair does not have lumbar support';
+  @override
+  String get feetFlatYes => 'Feet resting flat on the floor';
+  @override
+  String get feetFlatNo => 'Feet not resting flat on the floor';
+  @override
+  String get monitorInFrontYes => 'Monitor positioned directly in front';
+  @override
+  String get monitorInFrontNo => 'Monitor is not positioned directly in front';
+  @override
+  String get chairHasArmrestsYes => 'Chair has armrests';
+  @override
+  String get chairHasArmrestsNo => 'Chair does not have armrests';
 }

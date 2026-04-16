@@ -2198,6 +2198,19 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Based on your posture analysis and ISO 9241-5:2024 principles...'**
   String get basedOnPostureAnalysisIso;
+
+  String get canAdjustChairHeightYes;
+  String get cannotAdjustChairHeight;
+  String get enoughLegRoomYes;
+  String get notEnoughLegRoom;
+  String get chairHasLumbarSupportYes;
+  String get chairHasLumbarSupportNo;
+  String get feetFlatYes;
+  String get feetFlatNo;
+  String get monitorInFrontYes;
+  String get monitorInFrontNo;
+  String get chairHasArmrestsYes;
+  String get chairHasArmrestsNo;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

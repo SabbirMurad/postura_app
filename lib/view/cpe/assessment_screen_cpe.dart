@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:posture_detector_app/common/widgets/rosa_sub_score.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
 import 'package:posture_detector_app/models/analysis/analysis_data_model.dart';
 import 'package:posture_detector_app/provider/cpe_assessment.dart';
+import 'package:posture_detector_app/view/business/home/home_screen.dart';
 import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
 import 'package:posture_detector_app/view/cpe/widgets/compliance_card_cpe.dart';
 import 'package:posture_detector_app/view/cpe/widgets/patient_info_card_cpe.dart';
@@ -75,51 +77,6 @@ class CPEAssessmentScreen extends ConsumerWidget {
     ];
   }
 
-  Widget _yesNoRow(String label, bool? value, AppLocalizations loc) {
-    final isYes = value == true;
-    final isAnswered = value != null;
-    return Padding(
-      padding: EdgeInsets.only(bottom: 10.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(fontSize: 13.sp, color: AppColors.text),
-          ),
-          SizedBox(height: 6.h),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 3.h),
-            decoration: BoxDecoration(
-              color: !isAnswered
-                  ? const Color(0xFFEDEDED)
-                  : isYes
-                  ? const Color(0xFFF6FFF0)
-                  : const Color(0xFFFFF0F0),
-              borderRadius: BorderRadius.circular(6.r),
-            ),
-            child: Text(
-              !isAnswered
-                  ? '-'
-                  : isYes
-                  ? loc.yes
-                  : 'No',
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
-                color: !isAnswered
-                    ? const Color(0xFF9E9E9E)
-                    : isYes
-                    ? const Color(0xFF2E7D32)
-                    : const Color(0xFFC62828),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _wordPatternSection({
     required WorkPattern workPattern,
     required AppLocalizations loc,
@@ -150,6 +107,46 @@ class CPEAssessmentScreen extends ConsumerWidget {
     );
   }
 
+  Widget _workstationItem({required String text, required bool value}) {
+    final workstationItemColor = !value
+        ? const Color(0xFFE53935)
+        : const Color(0xFF43A047);
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+      width: (1.sw - 40.w - 12.w) / 2,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(
+          color: AppColors.secondaryText.withValues(alpha: 0.15),
+        ),
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            value
+                ? Icons.check_circle_outline_rounded
+                : Icons.error_outline_outlined,
+            color: workstationItemColor,
+            size: 36.w,
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.text,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _workstation({
     required Workstation workstation,
     required AppLocalizations loc,
@@ -159,48 +156,223 @@ class CPEAssessmentScreen extends ConsumerWidget {
       children: [
         SectionTitle(loc.workstation),
         SizedBox(height: 8.h),
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
-          decoration: cardDecoration(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _yesNoRow(
-                loc.canAdjustChairHeight,
-                workstation.canAdjustChairHeight,
-                loc,
-              ),
-              _yesNoRow(loc.enoughLegRoom, workstation.enoughLegRoom, loc),
-              _yesNoRow(
-                loc.chairHasLumbarSupport,
-                workstation.chairHasLumbarSupport,
-                loc,
-              ),
-              SizedBox(height: 10.h),
-              ..._infoRow(
-                loc.monitorDistance,
-                workstation.monitorDistance.isEmpty
-                    ? '-'
-                    : workstation.monitorDistance,
-              ),
-              SizedBox(height: 10.h),
-              _yesNoRow(loc.feetRestingFlat, workstation.feetRestingFlat, loc),
-              _yesNoRow(
-                loc.monitorDirectlyInFront,
-                workstation.monitorDirectlyInFront,
-                loc,
-              ),
-              _yesNoRow(
-                loc.chairHasArmrests,
-                workstation.chairHasArmrests,
-                loc,
-              ),
-            ],
-          ),
+        Wrap(
+          spacing: 12.w,
+          runSpacing: 12.w,
+          children: [
+            _workstationItem(
+              text: workstation.canAdjustChairHeight!
+                  ? loc.canAdjustChairHeightYes
+                  : loc.cannotAdjustChairHeight,
+              value: workstation.canAdjustChairHeight!,
+            ),
+            _workstationItem(
+              text: workstation.enoughLegRoom!
+                  ? loc.enoughLegRoomYes
+                  : loc.notEnoughLegRoom,
+              value: workstation.enoughLegRoom!,
+            ),
+            _workstationItem(
+              text: workstation.chairHasLumbarSupport!
+                  ? loc.chairHasLumbarSupportYes
+                  : loc.chairHasLumbarSupportNo,
+              value: workstation.chairHasLumbarSupport!,
+            ),
+            _workstationItem(
+              text: '${loc.monitorDistance}: ${workstation.monitorDistance}',
+              value: workstation.chairHasLumbarSupport!,
+            ),
+            _workstationItem(
+              text: workstation.feetRestingFlat!
+                  ? loc.feetFlatYes
+                  : loc.feetFlatNo,
+              value: workstation.feetRestingFlat!,
+            ),
+            _workstationItem(
+              text: workstation.monitorDirectlyInFront!
+                  ? loc.monitorInFrontYes
+                  : loc.monitorInFrontNo,
+              value: workstation.monitorDirectlyInFront!,
+            ),
+            _workstationItem(
+              text: workstation.chairHasArmrests!
+                  ? loc.chairHasArmrestsYes
+                  : loc.chairHasArmrestsNo,
+              value: workstation.chairHasArmrests!,
+            ),
+          ],
         ),
       ],
     );
+  }
+
+  // ── Score → RosaRisk ─────────────────────────────────────────────────────
+
+  RosaRisk _subScoreRisk(int score) {
+    if (score >= 3) return RosaRisk.red;
+    if (score >= 2) return RosaRisk.orange;
+    return RosaRisk.green;
+  }
+
+  RosaRisk _finalScoreRisk(int score) {
+    if (score >= 7) return RosaRisk.red;
+    if (score >= 4) return RosaRisk.orange;
+    return RosaRisk.green;
+  }
+
+  // ── Score → label ─────────────────────────────────────────────────────────
+
+  String _subScoreLabel(int score) {
+    if (score == 0) return 'Not assessed';
+    if (score >= 3) return 'High risk';
+    if (score >= 2) return 'Review needed';
+    return 'Optimal';
+  }
+
+  String _finalLabel(int score) {
+    if (score >= 7) return 'High risk — immediate action required';
+    if (score >= 4) return 'Moderate risk — further investigation';
+    return 'Low risk — no immediate action needed';
+  }
+
+  String _actionLevel(int score) {
+    if (score >= 7) return 'Level 3 — Action required as soon as possible';
+    if (score >= 4) return 'Level 2 — Further investigation needed';
+    return 'Level 1 — No immediate action needed';
+  }
+
+  Color _riskColor(RosaRisk risk) {
+    switch (risk) {
+      case RosaRisk.red:
+        return const Color(0xFFE53935);
+      case RosaRisk.orange:
+        return const Color(0xFFFB8C00);
+      case RosaRisk.green:
+        return const Color(0xFF43A047);
+    }
+  }
+
+  // ── Sub-score items ───────────────────────────────────────────────────────
+
+  List<RosaItem> _buildRosaItems(CpeAssessmentState state) => [
+    RosaItem(
+      category: 'Chair',
+      score: '${state.rosaChair}',
+      status: RosaStatus(
+        _subScoreLabel(state.rosaChair),
+        _subScoreRisk(state.rosaChair),
+      ),
+    ),
+    RosaItem(
+      category: 'Monitor',
+      score: '${state.rosaMonitor}',
+      status: RosaStatus(
+        _subScoreLabel(state.rosaMonitor),
+        _subScoreRisk(state.rosaMonitor),
+      ),
+    ),
+    RosaItem(
+      category: 'Keyboard',
+      score: '${state.rosaKeyboard}',
+      status: RosaStatus(
+        _subScoreLabel(state.rosaKeyboard),
+        _subScoreRisk(state.rosaKeyboard),
+      ),
+    ),
+    RosaItem(
+      category: 'Mouse',
+      score: '${state.rosaMouse}',
+      status: RosaStatus(
+        _subScoreLabel(state.rosaMouse),
+        _subScoreRisk(state.rosaMouse),
+      ),
+    ),
+    RosaItem(
+      category: 'Final ROSA',
+      score: '${state.rosaFinal} / 10',
+      status: RosaStatus(
+        _finalLabel(state.rosaFinal),
+        _finalScoreRisk(state.rosaFinal),
+      ),
+    ),
+  ];
+
+  Widget _rosaAssessmentSection(CpeAssessmentState state) {
+    final rosaItems = _buildRosaItems(state);
+
+    return Wrap(
+      spacing: 12.w,
+      runSpacing: 12.h,
+      children: rosaItems.map((item) {
+        return RosaSubScoreItem(item: item);
+      }).toList(),
+    );
+  }
+
+  List<Widget> _mainRosaScores({
+    required CpeAssessmentState state,
+    required AppLocalizations loc,
+  }) {
+    final finalRisk = _finalScoreRisk(state.rosaFinal);
+    final scoreColor = _riskColor(finalRisk);
+
+    return [
+      Text(
+        loc.rosaErgonomicAnalysis,
+        style: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w600,
+          color: const Color(0xFF202020),
+        ),
+      ),
+      SizedBox(height: 12.h),
+      Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+        decoration: BoxDecoration(
+          color: scoreColor.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(14.r),
+          border: Border.all(color: scoreColor.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              '${state.rosaFinal} / 10',
+              style: TextStyle(
+                fontSize: 28.sp,
+                fontWeight: FontWeight.w700,
+                color: scoreColor,
+              ),
+            ),
+            SizedBox(width: 16.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _finalLabel(state.rosaFinal),
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w600,
+                      color: scoreColor,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    _actionLevel(state.rosaFinal),
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      color: AppColors.secondaryText,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ];
   }
 
   @override
@@ -225,7 +397,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
           children: [
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -245,11 +417,12 @@ class CPEAssessmentScreen extends ConsumerWidget {
                       loc.cpeAssessmentSubtitle,
                       style: TextStyle(fontSize: 13.sp, color: AppColors.text),
                     ),
-
                     SizedBox(height: 16.h),
                     PatientInfoCardCPE(state: state),
                     SizedBox(height: 20.h),
-                    ComplianceCardCPE(state: state),
+                    ..._mainRosaScores(state: state, loc: loc),
+                    SizedBox(height: 20.h),
+                    _rosaAssessmentSection(state),
                     SizedBox(height: 20.h),
                     _deskInfo(deskLocation: state.deskLocation, loc: loc),
                     SizedBox(height: 20.h),

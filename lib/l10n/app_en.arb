@@ -386,5 +386,18 @@
   "monitorDirectlyInFront": "Is your monitor positioned directly in front of you (not to the side)?",
   "chairHasArmrests": "Does your chair have armrests?",
 
-  "basedOnPostureAnalysisIso": "Based on your posture analysis and ISO 9241-5:2024 principles..."
+  "basedOnPostureAnalysisIso": "Based on your posture analysis and ISO 9241-5:2024 principles...",
+
+  "canAdjustChairHeightYes": "Can adjust chair height",
+  "cannotAdjustChairHeight": "Cannot adjust chair height",
+  "enoughLegRoomYes": "Enough leg room under desk",
+  "notEnoughLegRoom": "Not enough room under desk",
+  "chairHasLumbarSupportYes": "Chair has lumbar support",
+  "chairHasLumbarSupportNo": "Chair does not have lumbar support",
+  "feetFlatYes": "Feet resting flat on the floor",
+  "feetFlatNo": "Feet not resting flat on the floor",
+  "monitorInFrontYes": "Monitor positioned directly in front",
+  "monitorInFrontNo": "Monitor is not positioned directly in front",
+  "chairHasArmrestsYes": "Chair has armrests",
+  "chairHasArmrestsNo": "Chair does not have armrests"
 }

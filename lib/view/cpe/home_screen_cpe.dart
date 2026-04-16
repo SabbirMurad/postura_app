@@ -46,7 +46,12 @@ class HomeScreenCPE extends ConsumerWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context, WidgetRef ref, CpeHomeState state, AppLocalizations loc) {
+  Widget _buildBody(
+    BuildContext context,
+    WidgetRef ref,
+    CpeHomeState state,
+    AppLocalizations loc,
+  ) {
     if (state.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -62,7 +67,9 @@ class HomeScreenCPE extends ConsumerWidget {
             ),
             SizedBox(height: 12.h),
             ElevatedButton(
-              onPressed: () => ref.read(cpeHomeNotifierProvider.notifier).fetchAssessmentList(),
+              onPressed: () => ref
+                  .read(cpeHomeNotifierProvider.notifier)
+                  .fetchAssessmentList(),
               child: Text(loc.retry),
             ),
           ],
@@ -80,7 +87,8 @@ class HomeScreenCPE extends ConsumerWidget {
     }
 
     return RefreshIndicator(
-      onRefresh: () => ref.read(cpeHomeNotifierProvider.notifier).fetchAssessmentList(),
+      onRefresh: () =>
+          ref.read(cpeHomeNotifierProvider.notifier).fetchAssessmentList(),
       child: ListView.separated(
         physics: const AlwaysScrollableScrollPhysics(),
         itemCount: state.scanList.length,
