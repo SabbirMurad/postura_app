@@ -123,8 +123,12 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
               PrimaryButton(
                 onTap: () {
                   AppHelper.instance.setLanguage(_selectedLanguage);
-                  ref.read(localeProvider.notifier).state = Locale(_selectedLanguage);
-                  ref.read(eLearningNotifierProvider.notifier).loadModulesForLocale(_selectedLanguage);
+                  ref.read(localeProvider.notifier).state = Locale(
+                    _selectedLanguage,
+                  );
+                  ref
+                      .read(eLearningNotifierProvider.notifier)
+                      .loadModulesForLocale(_selectedLanguage);
                 },
                 // EN: "Continue"
                 text: loc.continueButton,
@@ -163,10 +167,13 @@ class LanguageSelectCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 65.h,
-      width: 335.w,
+      width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.onBoardingSurface,
-        borderRadius: BorderRadius.circular(16.r),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(
+          color: AppColors.secondaryText.withValues(alpha: 0.15),
+        ),
       ),
       child: Center(
         child: ListTile(

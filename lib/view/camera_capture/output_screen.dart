@@ -3,47 +3,57 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
-import 'package:posture_detector_app/constants/app_text.dart';
 import 'package:posture_detector_app/models/analysis/body_region_risk_model.dart';
 import 'package:posture_detector_app/provider/report.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
-import 'package:posture_detector_app/common/widgets/details_analysis_container.dart';
 import 'package:posture_detector_app/common/widgets/risky_body_region_menu.dart';
-import 'package:posture_detector_app/gen/assets.gen.dart';
 
 class OutputScreenBusiness extends ConsumerWidget {
   const OutputScreenBusiness({super.key});
 
-  /// ✅ Helper method to get color based on severity
-  Color _getColorBySeverity(String severity) {
-    switch (severity.toLowerCase()) {
-      case 'red':
-        return AppColors.red;
+  Color _tierColor(String tier) {
+    switch (tier.toLowerCase()) {
       case 'green':
-        return Colors.green;
+        return const Color(0xFF437A22);
+      case 'orange':
+        return const Color(0xFFDA7101);
+      case 'red':
+        return const Color(0xFFA13544);
       case 'yellow':
-        return AppColors.warning;
+        return const Color(0xFFDAA101);
       default:
         return AppColors.secondaryText;
     }
   }
 
-  /// ✅ Helper method to get icon based on severity
-  String _getIconBySeverity(String severity) {
-    switch (severity.toLowerCase()) {
-      case 'red':
-        return Assets.icons.status.wrongAlert.path;
+  String _tierMessage(String tier) {
+    switch (tier.toLowerCase()) {
       case 'green':
-        return Assets.icons.status.rightGuard.path;
+        return 'Your workspace posture is within safe ergonomic limits.';
+      case 'orange':
+        return 'Some ergonomic adjustments are recommended.';
+      case 'red':
+        return 'Immediate ergonomic corrections are needed.';
       case 'yellow':
-        return Assets.icons.status.alertLine.path;
+        return 'Mild ergonomic risk detected — monitor and adjust.';
       default:
-        return Assets.icons.status.alertLine.path;
+        return 'Complete your assessment to see your risk tier.';
     }
+  }
+
+  String _actionLevel(int score) {
+    if (score >= 7) return 'Action Level 3 — Investigate and change soon';
+    if (score >= 4) return 'Action Level 2 — Further investigation needed';
+    return 'Action Level 1 — No immediate action needed';
+  }
+
+  Color _subScoreColor(int score) {
+    if (score >= 5) return const Color(0xFFA13544);
+    if (score >= 3) return const Color(0xFFDA7101);
+    return const Color(0xFF437A22);
   }
 
   @override
@@ -61,18 +71,18 @@ class OutputScreenBusiness extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(),
+                  const CircularProgressIndicator(),
                   SizedBox(height: 16.h),
-                  // EN: "Loading analysis data..."
                   Text(loc.loadingAnalysisData),
                 ],
               ),
             );
           }
 
-          final complianceScore = analysisData.aiResult.complianceScore;
-          final detailedAnalysis = analysisData.aiResult.detailedAnalysis;
-          final posture = detailedAnalysis.posture;
+          final aiResult = analysisData.aiResult;
+          final tier = aiResult.overallRisk;
+          final tierColor = _tierColor(tier);
+          final rosaFinal = aiResult.rosaFinal ?? 0;
 
           return SingleChildScrollView(
             child: Padding(
@@ -80,8 +90,9 @@ class OutputScreenBusiness extends ConsumerWidget {
               child: Column(
                 children: [
                   SizedBox(height: 60.h),
+
+                  /// Screen title
                   Center(
-                    // EN: "ISO Ergonomic Analysis"
                     child: Text(
                       loc.rosaErgonomicAnalysis,
                       style: TextStyle(
@@ -91,7 +102,6 @@ class OutputScreenBusiness extends ConsumerWidget {
                     ),
                   ),
                   Center(
-                    // EN: "Based on ISO 9241"
                     child: Text(
                       loc.basedOnIso9241,
                       style: TextStyle(
@@ -101,119 +111,109 @@ class OutputScreenBusiness extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 70.h),
+                  SizedBox(height: 32.h),
 
-                  /// Pie chart
-                  CircularPercentIndicator(
-                    circularStrokeCap: CircularStrokeCap.round,
-                    animationDuration: 1500,
-                    animation: true,
-                    radius: 86.w,
-                    lineWidth: 14.w,
-                    progressColor: AppColors.text,
-                    backgroundColor: AppColors.text.withValues(alpha: 0.1),
-                    percent: complianceScore / 100,
-                    center: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '${complianceScore.toStringAsFixed(1)}%',
-                          style: TextStyle(
-                            fontSize: 36.sp,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  /// Risk Tier Badge
+                  if (tier.isNotEmpty) ...[
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: tierColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(24.r),
+                        border: Border.all(
+                          color: tierColor.withValues(alpha: 0.5),
+                          width: 1.5,
                         ),
-                        Text(
-                          'Compliance',
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.w600,
+                      ),
+                      child: Text(
+                        tier.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w800,
+                          color: tierColor,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      _tierMessage(tier),
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.secondaryText,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 20.h),
+
+                    /// ROSA Final Score
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'ROSA Score: ',
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.text,
+                                ),
+                              ),
+                              TextSpan(
+                                text: '$rosaFinal',
+                                style: TextStyle(
+                                  fontSize: 22.sp,
+                                  fontWeight: FontWeight.w800,
+                                  color: tierColor,
+                                ),
+                              ),
+                              TextSpan(
+                                text: ' / 10',
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.secondaryText,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ),
-
-                  SizedBox(height: 50.h),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        AppText.yourOverallScore,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18.sp,
-                        ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      _actionLevel(rosaFinal),
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppColors.secondaryText,
                       ),
-                      Container(
-                        width: 12.w,
-                        height: 12.h,
-                        decoration: BoxDecoration(
-                          color: AppColors.red,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 9.h),
-
-                  /// Overall score bar
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        width: 165.w,
-                        height: 6.h,
-                        decoration: BoxDecoration(
-                          gradient: AppColors.redGradient,
-                          borderRadius: BorderRadius.circular(48.r),
-                        ),
-                      ),
-                      Positioned(
-                        left: 120,
-                        bottom: -2.5,
-                        child: Container(
-                          width: 12.w,
-                          height: 12.h,
-                          decoration: BoxDecoration(
-                            color: AppColors.red,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 6.h),
-                  // EN: "Immediate correction required"
-                  Text(
-                    loc.immediateCorrection,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16.sp,
-                      color: AppColors.secondaryText,
                     ),
-                  ),
+                    SizedBox(height: 32.h),
+                  ],
 
-                  SizedBox(height: 30.h),
-                  if (analysisData.aiResult.annotatedImageUrl.isNotEmpty)
+                  /// Annotated image
+                  if (aiResult.annotatedImageUrl.isNotEmpty)
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12.r),
                       child: CachedNetworkImage(
-                        imageUrl: analysisData.aiResult.annotatedImageUrl,
-                        // height: 400.h,
+                        imageUrl: aiResult.annotatedImageUrl,
                         width: double.infinity,
                         fit: BoxFit.cover,
                       ),
                     ),
                   SizedBox(height: 30.h),
 
+                  /// ROSA Sub-score Analysis
                   Align(
                     alignment: Alignment.centerLeft,
-                    // EN: "Detailed Analysis"
                     child: Text(
-                      loc.detailsAnalysis,
+                      'ROSA Sub-scores',
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
@@ -222,125 +222,67 @@ class OutputScreenBusiness extends ConsumerWidget {
                   ),
                   SizedBox(height: 12.h),
 
-                  /// ✅ Neck Flexion
-                  DetailsAnalysisContainer(
-                    path: _getIconBySeverity(posture.neckFlexion.severity),
-                    iconBgColor: _getColorBySeverity(
-                      posture.neckFlexion.severity,
-                    ),
-                    // EN: "Neck Flexion"
-                    title: AppLocalizations.of(context)!.neckFlexion,
-                    subTitle: posture.neckFlexion.iso,
-                    comment:
-                        '${posture.neckFlexion.deviation.toStringAsFixed(1)}° deviation',
-                    commentColor: posture.neckFlexion.severity,
+                  _buildRosaRow(
+                    context,
+                    label: 'Chair',
+                    score: aiResult.rosaChair ?? 0,
+                    icon: Icons.chair_rounded,
                   ),
-
-                  SizedBox(height: 12.h),
-
-                  /// ✅ Shoulder Elevation
-                  DetailsAnalysisContainer(
-                    path: _getIconBySeverity(
-                      posture.shoulderElevation.severity,
-                    ),
-                    iconBgColor: _getColorBySeverity(
-                      posture.shoulderElevation.severity,
-                    ),
-                    // EN: "Shoulder Elevation"
-                    title: AppLocalizations.of(context)!.shoulderElevation,
-                    subTitle: posture.shoulderElevation.iso,
-                    comment:
-                        '${posture.shoulderElevation.angle.toStringAsFixed(1)}°',
-                    commentColor: posture.shoulderElevation.severity,
+                  SizedBox(height: 10.h),
+                  _buildRosaRow(
+                    context,
+                    label: 'Monitor / Screen',
+                    score: aiResult.rosaMonitor ?? 0,
+                    icon: Icons.monitor_rounded,
                   ),
-
-                  SizedBox(height: 12.h),
-
-                  /// ✅ Elbow Angle
-                  DetailsAnalysisContainer(
-                    path: _getIconBySeverity(posture.elbowAngle.severity),
-                    iconBgColor: _getColorBySeverity(
-                      posture.elbowAngle.severity,
-                    ),
-                    // EN: "Elbow Angle"
-                    title: AppLocalizations.of(context)!.elbowAngle,
-                    subTitle: posture.elbowAngle.iso,
-                    comment:
-                        '${posture.elbowAngle.deviation.toStringAsFixed(1)}° deviation',
-                    commentColor: posture.elbowAngle.severity,
+                  SizedBox(height: 10.h),
+                  _buildRosaRow(
+                    context,
+                    label: 'Keyboard',
+                    score: aiResult.rosaKeyboard ?? 0,
+                    icon: Icons.keyboard_rounded,
                   ),
-
-                  SizedBox(height: 12.h),
-
-                  /// ✅ Wrist Deviation
-                  DetailsAnalysisContainer(
-                    path: _getIconBySeverity(posture.wristDeviation.severity),
-                    iconBgColor: _getColorBySeverity(
-                      posture.wristDeviation.severity,
-                    ),
-                    // EN: "Wrist Deviation"
-                    title: AppLocalizations.of(context)!.wristDeviation,
-                    subTitle: posture.wristDeviation.iso,
-                    comment:
-                        '${posture.wristDeviation.deviation.toStringAsFixed(1)}° deviation',
-                    commentColor: posture.wristDeviation.severity,
+                  SizedBox(height: 10.h),
+                  _buildRosaRow(
+                    context,
+                    label: 'Mouse / Peripherals',
+                    score: aiResult.rosaMouse ?? 0,
+                    icon: Icons.mouse_rounded,
                   ),
-
-                  SizedBox(height: 12.h),
-
-                  /// ✅ Pelvic Tilt
-                  DetailsAnalysisContainer(
-                    path: _getIconBySeverity(posture.pelvicTilt.severity),
-                    iconBgColor: _getColorBySeverity(
-                      posture.pelvicTilt.severity,
-                    ),
-                    // EN: "Pelvic Tilt"
-                    title: AppLocalizations.of(context)!.pelvicTilt,
-                    subTitle: posture.pelvicTilt.iso,
-                    comment:
-                        '${posture.pelvicTilt.deviation.toStringAsFixed(1)}° deviation',
-                    commentColor: posture.pelvicTilt.severity,
+                  SizedBox(height: 10.h),
+                  _buildRosaRow(
+                    context,
+                    label: 'Final ROSA Score',
+                    score: rosaFinal,
+                    icon: Icons.assessment_rounded,
+                    isFinal: true,
                   ),
 
                   SizedBox(height: 30.h),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      AppText.riskByBodyRegion,
+                      'Risk by Body Region',
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-
                   SizedBox(height: 12.h),
+
                   Builder(
                     builder: (context) {
-                      final risks = analysisData?.aiResult.bodyRegionRisks;
-                      final menuItems = risks == null
-                          ? <BodyRegionRiskModel>[]
-                          : [
-                              BodyRegionRiskModel(
-                                region: 'Elbows',
-                                risk: risks.elbows,
-                              ),
-                              BodyRegionRiskModel(
-                                region: 'Shoulder',
-                                risk: risks.shoulder,
-                              ),
-                              BodyRegionRiskModel(
-                                region: 'Wrist',
-                                risk: risks.wrist,
-                              ),
-                              BodyRegionRiskModel(
-                                region: 'Lower Back',
-                                risk: risks.lowerBack,
-                              ),
-                            ];
+                      final risks = aiResult.bodyRegionRisks;
+                      final menuItems = [
+                        BodyRegionRiskModel(region: 'Elbows', risk: risks.elbows),
+                        BodyRegionRiskModel(region: 'Shoulder', risk: risks.shoulder),
+                        BodyRegionRiskModel(region: 'Wrist', risk: risks.wrist),
+                        BodyRegionRiskModel(region: 'Lower Back', risk: risks.lowerBack),
+                      ];
                       return GridView.builder(
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: menuItems.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
@@ -358,7 +300,7 @@ class OutputScreenBusiness extends ConsumerWidget {
                       );
                     },
                   ),
-                  SizedBox(height: 120.h), // Add padding for bottom sheet
+                  SizedBox(height: 120.h),
                 ],
               ),
             ),
@@ -373,11 +315,8 @@ class OutputScreenBusiness extends ConsumerWidget {
           children: [
             Expanded(
               child: PrimaryButton(
-                // EN: "Back"
                 text: loc.backButton,
-                onTap: () {
-                  context.go(AppRoute.bottomNavBusiness);
-                },
+                onTap: () => context.go(AppRoute.bottomNavBusiness),
                 backgroundColor: AppColors.greyDeemed,
                 textColor: AppColors.text,
               ),
@@ -385,10 +324,7 @@ class OutputScreenBusiness extends ConsumerWidget {
             SizedBox(width: 12.w),
             Expanded(
               child: PrimaryButton(
-                onTap: () {
-                  context.push(AppRoute.correctionReportScreenBusiness);
-                },
-                // EN: "View Correction"
+                onTap: () => context.push(AppRoute.correctionReportScreenBusiness),
                 text: loc.viewCorrection,
                 backgroundColor: AppColors.primaryColor,
                 textColor: AppColors.onBoardingSurface,
@@ -396,6 +332,67 @@ class OutputScreenBusiness extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildRosaRow(
+    BuildContext context, {
+    required String label,
+    required int score,
+    required IconData icon,
+    bool isFinal = false,
+  }) {
+    final color = _subScoreColor(score);
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(
+          color: isFinal
+              ? color.withValues(alpha: 0.4)
+              : AppColors.secondaryText.withValues(alpha: 0.15),
+          width: isFinal ? 1.5 : 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 36.w,
+            height: 36.w,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Icon(icon, size: 20.sp, color: color),
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: isFinal ? FontWeight.w700 : FontWeight.w500,
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Text(
+              '$score',
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w700,
+                color: color,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

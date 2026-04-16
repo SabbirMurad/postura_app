@@ -102,6 +102,12 @@ class CpeAssessmentState {
   final int maxCommentLength;
   final String signaturePath;
   final String signatureRemoteUrl;
+  // ROSA sub-scores
+  final int rosaChair;
+  final int rosaMonitor;
+  final int rosaKeyboard;
+  final int rosaMouse;
+  final int rosaFinal;
 
   const CpeAssessmentState({
     this.isLoading = true,
@@ -123,6 +129,11 @@ class CpeAssessmentState {
     this.maxCommentLength = 500,
     this.signaturePath = '',
     this.signatureRemoteUrl = '',
+    this.rosaChair = 0,
+    this.rosaMonitor = 0,
+    this.rosaKeyboard = 0,
+    this.rosaMouse = 0,
+    this.rosaFinal = 0,
   });
 
   double get compliancePercent => (compliance / 100.0).clamp(0.0, 1.0);
@@ -175,6 +186,11 @@ class CpeAssessmentState {
     String? comment,
     String? signaturePath,
     String? signatureRemoteUrl,
+    int? rosaChair,
+    int? rosaMonitor,
+    int? rosaKeyboard,
+    int? rosaMouse,
+    int? rosaFinal,
   }) => CpeAssessmentState(
     isLoading: isLoading ?? this.isLoading,
     isSubmitting: isSubmitting ?? this.isSubmitting,
@@ -195,6 +211,11 @@ class CpeAssessmentState {
     maxCommentLength: maxCommentLength,
     signaturePath: signaturePath ?? this.signaturePath,
     signatureRemoteUrl: signatureRemoteUrl ?? this.signatureRemoteUrl,
+    rosaChair: rosaChair ?? this.rosaChair,
+    rosaMonitor: rosaMonitor ?? this.rosaMonitor,
+    rosaKeyboard: rosaKeyboard ?? this.rosaKeyboard,
+    rosaMouse: rosaMouse ?? this.rosaMouse,
+    rosaFinal: rosaFinal ?? this.rosaFinal,
   );
 }
 
@@ -298,6 +319,11 @@ class CpeAssessmentNotifier
         comment: d['review_comment'] ?? '',
         reviewMode: reviewType == 'LIVE' ? ReviewMode.live : ReviewMode.remote,
         signatureRemoteUrl: d['review_signature_url'] as String? ?? '',
+        rosaChair: (d['rosa_chair'] ?? 0) as int,
+        rosaMonitor: (d['rosa_monitor'] ?? 0) as int,
+        rosaKeyboard: (d['rosa_keyboard'] ?? 0) as int,
+        rosaMouse: (d['rosa_mouse'] ?? 0) as int,
+        rosaFinal: (d['rosa_final'] ?? rawRisk.toInt()) as int,
       );
     } catch (e) {
       final loc = AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;

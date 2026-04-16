@@ -204,6 +204,12 @@ class AIResult {
   final String pdfReportUrl;
   final String equipmentPdfUrl;
   final String equipmentExcelUrl;
+  // ROSA sub-scores (added by backend when available)
+  final int? rosaChair;
+  final int? rosaMonitor;
+  final int? rosaKeyboard;
+  final int? rosaMouse;
+  final int? rosaFinal;
 
   AIResult({
     required this.complianceScore,
@@ -217,7 +223,15 @@ class AIResult {
     required this.pdfReportUrl,
     required this.equipmentPdfUrl,
     required this.equipmentExcelUrl,
+    this.rosaChair,
+    this.rosaMonitor,
+    this.rosaKeyboard,
+    this.rosaMouse,
+    this.rosaFinal,
   });
+
+  /// Tier string derived from overallRisk field
+  String get tier => overallRisk.toUpperCase();
 
   factory AIResult.fromJson(Map<String, dynamic> json) {
     return AIResult(
@@ -248,6 +262,11 @@ class AIResult {
       pdfReportUrl: json['pdf_report_url'] ?? '',
       equipmentPdfUrl: json['equipment_pdf_url'] ?? '',
       equipmentExcelUrl: json['equipment_excel_url'] ?? '',
+      rosaChair: json['rosa_chair'] as int?,
+      rosaMonitor: json['rosa_monitor'] as int?,
+      rosaKeyboard: json['rosa_keyboard'] as int?,
+      rosaMouse: json['rosa_mouse'] as int?,
+      rosaFinal: json['rosa_final'] as int?,
     );
   }
 
@@ -263,6 +282,11 @@ class AIResult {
     'pdf_report_url': pdfReportUrl,
     'equipment_pdf_url': equipmentPdfUrl,
     'equipment_excel_url': equipmentExcelUrl,
+    'rosa_chair': rosaChair,
+    'rosa_monitor': rosaMonitor,
+    'rosa_keyboard': rosaKeyboard,
+    'rosa_mouse': rosaMouse,
+    'rosa_final': rosaFinal,
   };
 }
 

@@ -18,48 +18,38 @@ class ProfileInfoContainer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentImage =
-        ref.watch(authorNotifierProvider).value?.data.avatar;
+    final currentImage = ref.watch(authorNotifierProvider).value?.data.avatar;
 
-    return Material(
-      elevation: 1,
-      borderRadius: BorderRadius.circular(18.r),
-      child: Container(
-        width: 335.w,
-        height: 210.h,
-        padding: EdgeInsets.symmetric(vertical: 16.h),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18.r),
-          color: AppColors.onBoardingSurface,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ImageUploaderVOne(
-              currentImage: currentImage,
-              defaultImage: currentImage ?? Assets.icons.auth.user.path,
-              onImageSelected: (file) {
-                ref.read(authorNotifierProvider.notifier).updateImage(file);
-              },
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ImageUploaderVOne(
+            currentImage: currentImage,
+            defaultImage: currentImage ?? Assets.icons.auth.user.path,
+            onImageSelected: (file) {
+              ref.read(authorNotifierProvider.notifier).updateImage(file);
+            },
+            height: 136.w,
+          ),
+          SizedBox(height: 12.h),
+          Text(
+            userName,
+            style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w600),
+          ),
+          SizedBox(height: 6.h),
+          Text(
+            role,
+            style: TextStyle(
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w400,
+              color: AppColors.secondaryText,
             ),
-
-            SizedBox(height: 12.h),
-            Text(
-              userName,
-              style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(height: 6.h),
-            Text(
-              role,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w400,
-                color: AppColors.secondaryText,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

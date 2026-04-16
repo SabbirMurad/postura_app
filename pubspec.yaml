@@ -86,6 +86,7 @@ flutter:
 
   assets:
     # Icons
+    - assets/icons/
     - assets/icons/flags/
     - assets/icons/nav/
     - assets/icons/auth/

@@ -28,20 +28,10 @@ class ProfileScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  // EN: "Settings"
-                  loc.settings,
-                  style: TextStyle(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: 15.h),
                 ProfileInfoContainer(
                   userName: profile?.data.fullName ?? 'username',
                   role: profile?.data.role ?? 'role',
                 ),
-
                 SizedBox(height: 12.h),
                 SettingsContainer(
                   iconData: Assets.icons.auth.person.path,

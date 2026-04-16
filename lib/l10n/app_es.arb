@@ -150,7 +150,7 @@
   "openDashboard": "Abrir panel",
 
   "hi": "Hola",
-  "welcomeHome": "Bienvenido a PostureCare",
+  "welcomeToPostura": "Bienvenido a Postura",
   "immediateCorrectionRequired": "Se requiere corrección inmediata!",
   "scanYourPosture": "¡Escanea tu postura!",
   "scanYourPostureSubtitle": "Escanea y recibe postura personalizada",
@@ -383,5 +383,7 @@
   "monitorDistanceMoreThan70cm": "Más de 70 cm",
   "feetRestingFlat": "¿Tus pies descansan planos sobre el suelo?",
   "monitorDirectlyInFront": "¿Tu monitor está posicionado directamente frente a ti (no de lado)?",
-  "chairHasArmrests": "¿Tu silla tiene reposabrazos?"
+  "chairHasArmrests": "¿Tu silla tiene reposabrazos?",
+
+  "basedOnPostureAnalysisIso": "Basado en su análisis de postura y los principios ISO 9241-5:2024..."
 }

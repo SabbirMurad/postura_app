@@ -87,6 +87,7 @@ class _LogoutModalState extends State<LogoutModal> {
                   // EN: "Cancel"
                   text: loc.cancel,
                   backgroundColor: AppColors.greyDeemed,
+                  borderRadius: BorderRadius.circular(8.r),
                 ),
               ),
               SizedBox(width: 12.w),
@@ -94,6 +95,7 @@ class _LogoutModalState extends State<LogoutModal> {
                 child: PrimaryButton(
                   height: 46.h,
                   loading: _loading,
+                  borderRadius: BorderRadius.circular(8.r),
                   onTap: () async {
                     setState(() => _loading = true);
                     await _removeFcmToken();

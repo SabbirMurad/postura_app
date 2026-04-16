@@ -71,14 +71,14 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
                 Row(
                   children: [
                     AppBackButton(),
-                    Spacer(),
+                    Spacer(flex: 3),
                     Text(
                       loc.elearning,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Spacer(),
+                    Spacer(flex: 5),
                   ],
                 ),
                 SizedBox(height: 20.h),
@@ -323,15 +323,9 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
   }
 
   BoxDecoration _cardDecoration(Color color) => BoxDecoration(
-    borderRadius: BorderRadius.circular(18.r),
+    borderRadius: BorderRadius.circular(12.r),
+    border: Border.all(color: AppColors.secondaryText.withValues(alpha: 0.15)),
     color: color,
-    boxShadow: [
-      BoxShadow(
-        color: const Color(0xFF242424).withValues(alpha: 0.05),
-        blurRadius: 12.w,
-        offset: Offset(0, 4.h),
-      ),
-    ],
   );
 
   String _formatDate(DateTime date) {

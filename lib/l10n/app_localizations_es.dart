@@ -402,7 +402,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get hi => 'Hola';
 
   @override
-  String get welcomeHome => 'Bienvenido a PostureCare';
+  String get welcomeToPostura => 'Bienvenido a Postura';
 
   @override
   String get immediateCorrectionRequired => 'Se requiere corrección inmediata!';
@@ -1056,4 +1056,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get chairHasArmrests => '¿Tu silla tiene reposabrazos?';
+
+  @override
+  String get basedOnPostureAnalysisIso => 'Basado en su análisis de postura y los principios ISO 9241-5:2024...';
 }

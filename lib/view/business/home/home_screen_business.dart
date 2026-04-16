@@ -174,8 +174,6 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                 Builder(
                   builder: (context) {
                     final analysisData = reportState.analysisData;
-                    final posture =
-                        analysisData?.aiResult.detailedAnalysis.posture;
 
                     if (analysisData == null && reportState.isLoading) {
                       return Center(
@@ -256,14 +254,19 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                               : null,
                         ),
 
-                        SizedBox(height: 15.h),
+                        SizedBox(height: 24.h),
                         // EN: "ISO Ergonomic Analysis"
-                        Text(
-                          loc.rosaErgonomicAnalysis,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16.sp,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              loc.rosaErgonomicAnalysis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16.sp,
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 12.h),
                         _rosaScoreCard(),

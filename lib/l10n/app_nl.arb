@@ -149,7 +149,7 @@
   "openDashboard": "Open dashboard",
 
   "hi": "Hoi",
-  "welcomeHome": "Welkom bij PostureCare",
+  "welcomeToPostura": "Welkom bij Postura",
   "immediateCorrectionRequired": "Onmiddellijke correctie vereist!",
   "scanYourPosture": "Scan je houding!",
   "scanYourPostureSubtitle": "Scan en ontvang gepersonaliseerde houding",
@@ -383,5 +383,7 @@
   "monitorDistanceMoreThan70cm": "Meer dan 70 cm",
   "feetRestingFlat": "Rusten uw voeten plat op de vloer?",
   "monitorDirectlyInFront": "Staat uw monitor direct voor u (niet opzij)?",
-  "chairHasArmrests": "Heeft uw stoel armleuningen?"
+  "chairHasArmrests": "Heeft uw stoel armleuningen?",
+
+  "basedOnPostureAnalysisIso": "Op basis van uw houdingsanalyse en ISO 9241-5:2024-principes..."
 }

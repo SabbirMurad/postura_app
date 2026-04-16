@@ -885,11 +885,11 @@ abstract class AppLocalizations {
   /// **'Hi'**
   String get hi;
 
-  /// No description provided for @welcomeHome.
+  /// No description provided for @welcomeToPostura.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Posture Care'**
-  String get welcomeHome;
+  /// **'Welcome to Postura'**
+  String get welcomeToPostura;
 
   /// No description provided for @immediateCorrectionRequired.
   ///
@@ -2192,6 +2192,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Does your chair have armrests?'**
   String get chairHasArmrests;
+
+  /// No description provided for @basedOnPostureAnalysisIso.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on your posture analysis and ISO 9241-5:2024 principles...'**
+  String get basedOnPostureAnalysisIso;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

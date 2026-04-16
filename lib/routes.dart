@@ -16,7 +16,7 @@ import 'package:posture_detector_app/view/assessment/pain_duration_screen.dart';
 import 'package:posture_detector_app/view/assessment/pain_intensity_screen.dart';
 import 'package:posture_detector_app/view/assessment/select_body_region_screen.dart';
 import 'package:posture_detector_app/view/auth/signup/employee_credential_screen.dart';
-import 'package:posture_detector_app/view/business/equipment/equipment_screen_business.dart';
+import 'package:posture_detector_app/view/business/equipment/equipment_screen.dart';
 import 'package:posture_detector_app/view/auth/signup/exercise_screen_business.dart';
 import 'package:posture_detector_app/view/auth/signup/select_language_screen.dart';
 import 'package:posture_detector_app/view/onboarding/welcoming_screen.dart';

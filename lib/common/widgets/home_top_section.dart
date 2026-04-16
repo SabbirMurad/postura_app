@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:posture_detector_app/gen/assets.gen.dart';
 
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
@@ -27,23 +29,33 @@ class HomeTopSection extends StatelessWidget {
             ),
             // EN: "Welcome Home"
             Text(
-              loc.welcomeHome,
+              loc.welcomeToPostura,
               style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400),
             ),
           ],
         ),
-        if (image != null)
-          CircleAvatar(radius: 22.r, backgroundImage: image)
-        else
-          CircleAvatar(
-            radius: 22.r,
-            backgroundColor: AppColors.primaryColor.withValues(alpha: 0.1),
-            child: Icon(
-              Icons.person_rounded,
-              size: 24.sp,
-              color: AppColors.primaryColor,
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24.r),
+            color: Colors.grey[200],
+            image: image != null ? DecorationImage(image: image!) : null,
+            border: Border.all(
+              color: AppColors.secondaryText.withValues(alpha: 0.15),
             ),
           ),
+          width: 48.w,
+          height: 48.w,
+          child: image == null
+              ? Center(
+                  child: SvgPicture.asset(
+                    Assets.icons.auth.user.path,
+                    width: 24.w,
+                    height: 24.w,
+                    color: AppColors.primaryColor,
+                  ),
+                )
+              : null,
+        ),
       ],
     );
   }

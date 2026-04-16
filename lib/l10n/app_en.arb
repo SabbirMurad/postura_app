@@ -149,7 +149,7 @@
   "openDashboard": "Open Dashboard",
 
   "hi": "Hi",
-  "welcomeHome": "Welcome to Posture Care",
+  "welcomeToPostura": "Welcome to Postura",
   "immediateCorrectionRequired": "Immediate correction required!",
   "scanYourPosture": "Scan your posture!",
   "scanYourPostureSubtitle": "Scan and get personalized posture",
@@ -384,5 +384,7 @@
   "monitorDistanceMoreThan70cm": "More than 70 cm",
   "feetRestingFlat": "Are your feet resting flat on the floor?",
   "monitorDirectlyInFront": "Is your monitor positioned directly in front of you (not to the side)?",
-  "chairHasArmrests": "Does your chair have armrests?"
+  "chairHasArmrests": "Does your chair have armrests?",
+
+  "basedOnPostureAnalysisIso": "Based on your posture analysis and ISO 9241-5:2024 principles..."
 }

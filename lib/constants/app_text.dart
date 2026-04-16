@@ -171,7 +171,7 @@ class AppText {
 
   /// ------------------------------------- business homescreen ------------------------------------------- ///
   static const hi = ' Hi';
-  static const welcomeHome = 'Welcome to Posture Care';
+  static const welcomeToPostura = 'Welcome to Postura';
   static const immediateCorrectionRequired = 'Immediate correction required!';
   static const scanYourPosture = 'Scan your posture!';
   static const scanYourPostureSubtitle = 'Scan and get personalized posture';

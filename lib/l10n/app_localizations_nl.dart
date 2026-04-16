@@ -402,7 +402,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get hi => 'Hoi';
 
   @override
-  String get welcomeHome => 'Welkom bij PostureCare';
+  String get welcomeToPostura => 'Welkom bij Postura';
 
   @override
   String get immediateCorrectionRequired => 'Onmiddellijke correctie vereist!';
@@ -1056,4 +1056,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get chairHasArmrests => 'Heeft uw stoel armleuningen?';
+
+  @override
+  String get basedOnPostureAnalysisIso => 'Op basis van uw houdingsanalyse en ISO 9241-5:2024-principes...';
 }

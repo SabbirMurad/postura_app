@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/dialogs/primary_scan_alert_dialog.dart';
-import 'package:posture_detector_app/common/widgets/scan_container.dart';
+import 'package:posture_detector_app/view/business/scan/widgets/scan_container.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
@@ -55,17 +56,19 @@ class _ScanBusinessScreenState extends State<ScanBusinessScreen> {
                 ),
 
                 SizedBox(height: 36.h),
-
                 /// Scan Image
-                Center(
-                  child: Assets.images.general.scan.image(
-                    height: 231.h,
-                    width: 233.w,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icons/scan_center_icon.svg',
+                      width: 184.w,
+                      height: 184.w,
+                      color: AppColors.primaryColor,
+                    ),
+                  ],
                 ),
-
                 SizedBox(height: 36.h),
-
                 /// Instant Scan Button
                 ScanContainer(
                   // EN: instantScan = "Instant Scan", instantScanInfo = "If you perform an instant scan, you will get a new set of suggestions and score and your previous scores and suggestions will be replaced by the new."

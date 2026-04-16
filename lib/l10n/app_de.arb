@@ -150,7 +150,7 @@
   "openDashboard": "Dashboard öffnen",
 
   "hi": "Hi",
-  "welcomeHome": "Willkommen bei PostureCare",
+  "welcomeToPostura": "Willkommen bei Postura",
   "immediateCorrectionRequired": "Sofortige Korrektur erforderlich!",
   "scanYourPosture": "Scannen Sie Ihre Haltung!",
   "scanYourPostureSubtitle": "Scanne und erhalte personalisierte Haltung",
@@ -383,5 +383,7 @@
   "monitorDistanceMoreThan70cm": "Mehr als 70 cm",
   "feetRestingFlat": "Stehen Ihre Füße flach auf dem Boden?",
   "monitorDirectlyInFront": "Ist Ihr Monitor direkt vor Ihnen positioniert (nicht seitlich)?",
-  "chairHasArmrests": "Hat Ihr Stuhl Armlehnen?"
+  "chairHasArmrests": "Hat Ihr Stuhl Armlehnen?",
+
+  "basedOnPostureAnalysisIso": "Basierend auf Ihrer Haltungsanalyse und den ISO 9241-5:2024-Prinzipien..."
 }

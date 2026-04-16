@@ -46,7 +46,7 @@ class AppTopSection extends StatelessWidget {
               ),
           ],
         ),
-        SizedBox(height: 17.h),
+        SizedBox(height: 12.h),
         Align(
           alignment: Alignment.center,
           child: Text(
@@ -57,7 +57,7 @@ class AppTopSection extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 6.h),
         Text(
           subtitle,
           style: TextStyle(

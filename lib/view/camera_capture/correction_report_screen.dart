@@ -32,10 +32,9 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
             child: Column(
               children: [
                 SizedBox(height: 20.h),
-                // EN: miniIsoCorrection = "Mini ISO Correction", miniIsoCorrectionSubtitle = "Here are some corrections based on ISO 9241 standards"
                 AppTopSection(
-                  title: loc.miniIsoCorrection,
-                  subtitle: loc.miniIsoCorrectionSubtitle,
+                  title: 'ROSA Posture Guidance',
+                  subtitle: 'Directional adjustments to improve your ergonomic setup',
                 ),
 
                 SizedBox(height: 14.h),

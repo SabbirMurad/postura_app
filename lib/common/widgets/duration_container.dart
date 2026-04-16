@@ -20,7 +20,7 @@ class DurationContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(6.h),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.w),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.r),
         color: bgColor ?? AppColors.greyDeemed,
