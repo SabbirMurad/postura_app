@@ -4,7 +4,7 @@ import 'package:posture_detector_app/view/auth/forgot_password/confirm_code_forg
 import 'package:posture_detector_app/view/auth/forgot_password/forgot_password_screen.dart';
 import 'package:posture_detector_app/view/auth/forgot_password/verify_email_screen.dart';
 import 'package:posture_detector_app/view/auth/login/login_screen.dart';
-import 'package:posture_detector_app/view/camera_capture/camera_guide_screen.dart';
+import 'package:posture_detector_app/view/assessment/camera_guide_screen.dart';
 import 'package:posture_detector_app/view/camera_capture/correction_report_screen.dart';
 import 'package:posture_detector_app/view/camera_capture/image_capture_screen.dart';
 import 'package:posture_detector_app/view/camera_capture/image_preview_screen.dart';

@@ -19,6 +19,12 @@ class PainIntensityScreen extends ConsumerWidget {
     final assessment = ref.watch(assessmentNotifierProvider);
     final notifier = ref.read(assessmentNotifierProvider.notifier);
 
+    Color _intensityColor(int value) {
+      if (value <= 3) return Colors.green;
+      if (value <= 6) return Colors.amber;
+      return Colors.red;
+    }
+
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
@@ -28,14 +34,12 @@ class PainIntensityScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20.h),
+                SizedBox(height: 12.h),
                 // EN: painIntensity = "Pain Intensity", painIntensitySubtitle = "Rate the pain intensity for each region"
                 AppTopSection(
                   title: loc.painIntensity,
                   subtitle: loc.painIntensitySubtitle,
                 ),
-                SizedBox(height: 51.h),
-
                 ListView.separated(
                   physics: const NeverScrollableScrollPhysics(),
                   padding: EdgeInsets.symmetric(vertical: 30.h),
@@ -44,10 +48,45 @@ class PainIntensityScreen extends ConsumerWidget {
                   itemCount: assessment.selectedRegions.length,
                   itemBuilder: (context, index) {
                     final region = assessment.selectedRegions[index];
-                    return AppSliderWidget(
-                      title: region,
-                      value: assessment.painIntensity[region] ?? 1.0,
-                      onChanged: (value) => notifier.setPainForRegion(region, value),
+                    final value = assessment.painIntensity[region] ?? 1;
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              region,
+                              style: TextStyle(
+                                color: AppColors.text,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              '$value / 10',
+                              style: TextStyle(
+                                color: _intensityColor(value.toInt()),
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Slider(
+                          value: (assessment.painIntensity[region] ?? 1)
+                              .toDouble(),
+                          min: 1,
+                          max: 10,
+                          divisions: 9,
+                          activeColor: _intensityColor(value.toInt()),
+                          inactiveColor: AppColors.border,
+                          onChanged: (value) {
+                            notifier.setPainForRegion(region, value.round());
+                          },
+                        ),
+                      ],
                     );
                   },
                 ),

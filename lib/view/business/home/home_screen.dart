@@ -84,6 +84,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
   Widget _rosaAssessmentSection() {
     return Wrap(
       spacing: 12.w,
+      runSpacing: 12.w,
       children: _rosaItems.map((item) {
         return RosaSubScoreItem(item: item);
       }).toList(),
@@ -328,7 +329,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                           backgroundColor: AppColors.primaryColor,
                           textStyle: TextStyle(
                             color: Colors.white,
-                            fontSize: 16.sp,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w700,
                           ),
                           borderRadius: BorderRadius.circular(14.r),

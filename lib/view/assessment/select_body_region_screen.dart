@@ -7,7 +7,6 @@ import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/constants/app_text.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
-import 'package:posture_detector_app/common/widgets/selectional_container.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/routes.dart';
@@ -23,61 +22,95 @@ class SelectBodyRegionScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 20.h),
-                // EN: "Body Region"
-                AppTopSection(
-                  title: loc.bodyRegionTitle,
-                  subtitle: AppText.bodyRegionSubtitle,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20.h),
+              // EN: "Body Region"
+              AppTopSection(
+                title: loc.bodyRegionTitle,
+                subtitle: AppText.bodyRegionSubtitle,
+              ),
+              SizedBox(height: 52.h),
+              Wrap(
+                spacing: 10.w,
+                runSpacing: 10.w,
+                children: AssessmentState.bodyRegions.map((region) {
+                  final isSelected = assessment.selectedRegions.contains(
+                    region,
+                  );
+                  return GestureDetector(
+                    onTap: () => ref
+                        .read(assessmentNotifierProvider.notifier)
+                        .toggleRegion(region),
+                    child: BodyRegionContainer(
+                      title: region,
+                      selected: isSelected,
+                    ),
+                  );
+                }).toList(),
+              ),
+              Spacer(),
+              SafeArea(
+                top: false,
+                child: PrimaryButton(
+                  margin: EdgeInsets.only(bottom: 20.h),
+                  onTap: () {
+                    if (assessment.selectedRegions.isEmpty) {
+                      // EN: "Please select a body region"
+                      showCustomToast(text: loc.pleaseSelectBodyRegion);
+                    } else {
+                      context.push(AppRoute.employeePainIntensityScreen);
+                    }
+                  },
+                  // EN: "Continue"
+                  text: loc.continueButton,
+                  backgroundColor: AppColors.primaryColor,
+                  textStyle: TextStyle(
+                    color: AppColors.surface,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  borderRadius: BorderRadius.circular(14.r),
                 ),
-                SizedBox(height: 52.h),
-                Wrap(
-                  children: AssessmentState.bodyRegions.map((region) {
-                    final isSelected = assessment.selectedRegions.contains(region);
-                    return GestureDetector(
-                      onTap: () => ref
-                          .read(assessmentNotifierProvider.notifier)
-                          .toggleRegion(region),
-                      child: SelectionalContainer(
-                        title: region,
-                        selected: isSelected,
-                      ),
-                    );
-                  }).toList(),
-                ),
-                SizedBox(height: 100.h),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
-      bottomSheet: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 25.h, horizontal: 20.h),
-          child: PrimaryButton(
-            onTap: () {
-              if (assessment.selectedRegions.isEmpty) {
-                // EN: "Please select a body region"
-                showCustomToast(text: loc.pleaseSelectBodyRegion);
-              } else {
-                context.push(AppRoute.employeePainIntensityScreen);
-              }
-            },
-            // EN: "Continue"
-            text: loc.continueButton,
-            backgroundColor: AppColors.primaryColor,
-            textStyle: TextStyle(
-              color: AppColors.surface,
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w500,
-            ),
-            borderRadius: BorderRadius.circular(14.r),
-          ),
+    );
+  }
+}
+
+class BodyRegionContainer extends StatelessWidget {
+  final String title;
+  final bool selected;
+
+  const BodyRegionContainer({
+    super.key,
+    required this.title,
+    required this.selected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.w),
+      decoration: BoxDecoration(
+        color: AppColors.onBoardingSurface,
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: selected ? AppColors.primaryColor : AppColors.blackDeemed,
+          width: 2,
+        ),
+      ),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 13.sp,
+          color: selected ? AppColors.primaryColor : AppColors.text,
         ),
       ),
     );

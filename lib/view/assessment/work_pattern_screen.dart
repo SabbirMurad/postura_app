@@ -30,6 +30,8 @@ class WorkPatternScreen extends ConsumerWidget {
         initialValue: value,
         decoration: InputDecoration(
           hintText: title,
+          fillColor: AppColors.surface,
+          filled: true,
           contentPadding: EdgeInsets.symmetric(
             horizontal: 12.w,
             vertical: 14.h,
@@ -45,7 +47,6 @@ class WorkPatternScreen extends ConsumerWidget {
         ),
         style: TextStyle(
           fontSize: 14.sp,
-          fontWeight: FontWeight.w500,
           color: AppColors.text,
         ),
         borderRadius: BorderRadius.circular(10.r),

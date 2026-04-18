@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 class AppColors {
   AppColors._();
 
-  static const Color primaryColor = Color(0xFF005BBB);
+  static const Color primaryColor = Color.fromARGB(255, 33, 128, 230);
   static const Color secondaryColor = Color(0xFF0078B5);
   static const Color onBoardingSurface = Color(0xFFFFFFFF);
   static const Color surface = Color(0xFFF7F8FA);

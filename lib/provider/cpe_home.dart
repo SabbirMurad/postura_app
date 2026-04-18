@@ -40,6 +40,7 @@ class ScanItem {
   final String? reviewedBy;
   final String? reviewedAt;
   final String createdAt;
+  final int rosaFinal;
 
   const ScanItem({
     required this.scanId,
@@ -57,9 +58,11 @@ class ScanItem {
     this.reviewedBy,
     this.reviewedAt,
     required this.createdAt,
+    this.rosaFinal = 0,
   });
 
   factory ScanItem.fromJson(Map<String, dynamic> json) {
+    final riskScore = (json['risk_score'] ?? 0).toDouble();
     return ScanItem(
       scanId: json['scan_id'] ?? 0,
       assessmentId: json['assessment_id'] ?? 0,
@@ -67,7 +70,7 @@ class ScanItem {
       employeeName: json['employee_name'] ?? '',
       employeeEmail: json['employee_email'] ?? '',
       deskLocation: json['desk_location'] ?? '',
-      riskScore: (json['risk_score'] ?? 0).toDouble(),
+      riskScore: riskScore,
       riskLevel: json['risk_level'] ?? 'green',
       vasScore: (json['vas_score'] ?? 0).toDouble(),
       reviewStatus: json['review_status'] ?? 'PENDING',
@@ -76,6 +79,9 @@ class ScanItem {
       reviewedBy: json['reviewed_by'],
       reviewedAt: json['reviewed_at'],
       createdAt: json['created_at'] ?? '',
+      rosaFinal: json['rosa_final'] != null
+          ? (json['rosa_final'] as num).toInt()
+          : (riskScore / 10).round(),
     );
   }
 

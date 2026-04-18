@@ -16,7 +16,7 @@ part 'assessment.g.dart';
 
 class AssessmentState {
   final List<String> selectedRegions;
-  final Map<String, double> painIntensity;
+  final Map<String, int> painIntensity;
   final String selectedPainDuration;
   final List<String> selectedSymptoms;
   final String hourDeskPerDay;
@@ -80,7 +80,7 @@ class AssessmentState {
 
   AssessmentState copyWith({
     List<String>? selectedRegions,
-    Map<String, double>? painIntensity,
+    Map<String, int>? painIntensity,
     String? selectedPainDuration,
     List<String>? selectedSymptoms,
     String? hourDeskPerDay,
@@ -123,21 +123,21 @@ class AssessmentNotifier extends _$AssessmentNotifier {
 
   void toggleRegion(String region) {
     final regions = List<String>.from(state.selectedRegions);
-    final pain = Map<String, double>.from(state.painIntensity);
+    final pain = Map<String, int>.from(state.painIntensity);
     if (regions.contains(region)) {
       regions.remove(region);
       pain.remove(region);
     } else {
       regions.add(region);
-      pain[region] = 1.0;
+      pain[region] = 1;
     }
     state = state.copyWith(selectedRegions: regions, painIntensity: pain);
   }
 
-  double getPainForRegion(String region) => state.painIntensity[region] ?? 1.0;
+  int getPainForRegion(String region) => state.painIntensity[region] ?? 1;
 
-  void setPainForRegion(String region, double value) {
-    final pain = Map<String, double>.from(state.painIntensity);
+  void setPainForRegion(String region, int value) {
+    final pain = Map<String, int>.from(state.painIntensity);
     pain[region] = value;
     state = state.copyWith(painIntensity: pain);
   }

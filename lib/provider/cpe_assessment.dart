@@ -323,7 +323,10 @@ class CpeAssessmentNotifier
         rosaMonitor: (d['rosa_monitor'] ?? 0) as int,
         rosaKeyboard: (d['rosa_keyboard'] ?? 0) as int,
         rosaMouse: (d['rosa_mouse'] ?? 0) as int,
-        rosaFinal: (d['rosa_final'] ?? rawRisk.toInt()) as int,
+        // rosa_final is 0-10; fallback scales the 0-100 compliance score if not yet provided by backend
+        rosaFinal: d['rosa_final'] != null
+            ? (d['rosa_final'] as num).toInt()
+            : (rawRisk / 10).round(),
       );
     } catch (e) {
       final loc = AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;

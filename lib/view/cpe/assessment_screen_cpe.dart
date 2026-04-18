@@ -11,7 +11,6 @@ import 'package:posture_detector_app/models/analysis/analysis_data_model.dart';
 import 'package:posture_detector_app/provider/cpe_assessment.dart';
 import 'package:posture_detector_app/view/business/home/home_screen.dart';
 import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
-import 'package:posture_detector_app/view/cpe/widgets/compliance_card_cpe.dart';
 import 'package:posture_detector_app/view/cpe/widgets/patient_info_card_cpe.dart';
 import 'package:posture_detector_app/view/cpe/widgets/photo_section_cpe.dart';
 import 'package:posture_detector_app/view/cpe/widgets/approvals_section_cpe.dart';
