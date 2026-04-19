@@ -8,8 +8,6 @@ import 'package:posture_detector_app/view/business/scan/widgets/scan_container.d
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/routes.dart';
-import 'package:posture_detector_app/models/scan_type.dart';
-import 'package:posture_detector_app/view/camera_capture/image_capture_screen.dart';
 
 class ScanBusinessScreen extends StatefulWidget {
   const ScanBusinessScreen({super.key});
@@ -76,13 +74,13 @@ class _ScanBusinessScreenState extends State<ScanBusinessScreen> {
                   subtitle: loc.instantScanInfo,
                   iconPath: Assets.icons.general.instantScan.path,
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const ImageCaptureScreen(
-                          type: ScanType.instantScan,
-                        ),
-                      ),
-                    );
+                    // Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder: (_) => const ImageCaptureScreen(
+                    //       type: ScanType.instantScan,
+                    //     ),
+                    //   ),
+                    // );
                   },
                 ),
 

@@ -19,6 +19,8 @@ class SelectBodyRegionScreen extends ConsumerWidget {
     final loc = AppLocalizations.of(context)!;
     final assessment = ref.watch(assessmentNotifierProvider);
 
+    final allBodyRegions = AssessmentState.allPainRegions;
+
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
@@ -35,10 +37,10 @@ class SelectBodyRegionScreen extends ConsumerWidget {
               ),
               SizedBox(height: 52.h),
               Wrap(
-                spacing: 10.w,
-                runSpacing: 10.w,
-                children: AssessmentState.bodyRegions.map((region) {
-                  final isSelected = assessment.selectedRegions.contains(
+                spacing: 8.w,
+                runSpacing: 8.w,
+                children: allBodyRegions.toList().map((region) {
+                  final isSelected = assessment.selectedBodyRegions.contains(
                     region,
                   );
                   return GestureDetector(
@@ -46,7 +48,7 @@ class SelectBodyRegionScreen extends ConsumerWidget {
                         .read(assessmentNotifierProvider.notifier)
                         .toggleRegion(region),
                     child: BodyRegionContainer(
-                      title: region,
+                      title: region.label,
                       selected: isSelected,
                     ),
                   );
@@ -58,7 +60,7 @@ class SelectBodyRegionScreen extends ConsumerWidget {
                 child: PrimaryButton(
                   margin: EdgeInsets.only(bottom: 20.h),
                   onTap: () {
-                    if (assessment.selectedRegions.isEmpty) {
+                    if (assessment.selectedBodyRegions.isEmpty) {
                       // EN: "Please select a body region"
                       showCustomToast(text: loc.pleaseSelectBodyRegion);
                     } else {

@@ -1,6 +1,4 @@
 // ===================== ROOT =====================
-import 'package:posture_detector_app/utils/print_helper.dart';
-
 class AnalysisDataModel {
   final String message;
   final int assessmentId;

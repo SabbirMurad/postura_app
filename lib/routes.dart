@@ -1,4 +1,3 @@
-import 'package:posture_detector_app/models/scan_type.dart';
 import 'package:posture_detector_app/view/assessment/your_workstation.dart';
 import 'package:posture_detector_app/view/auth/forgot_password/confirm_code_forgot_screen.dart';
 import 'package:posture_detector_app/view/auth/forgot_password/forgot_password_screen.dart';
@@ -6,8 +5,6 @@ import 'package:posture_detector_app/view/auth/forgot_password/verify_email_scre
 import 'package:posture_detector_app/view/auth/login/login_screen.dart';
 import 'package:posture_detector_app/view/assessment/camera_guide_screen.dart';
 import 'package:posture_detector_app/view/camera_capture/correction_report_screen.dart';
-import 'package:posture_detector_app/view/camera_capture/image_capture_screen.dart';
-import 'package:posture_detector_app/view/camera_capture/image_preview_screen.dart';
 import 'package:posture_detector_app/view/camera_capture/output_screen.dart';
 import 'package:posture_detector_app/view/auth/signup/company_credential_screen.dart';
 import 'package:posture_detector_app/view/assessment/work_pattern_screen.dart';
@@ -71,8 +68,8 @@ class AppRoute {
 
   // ── Camera Capture Flow ──
   static const cameraGuideScreen = '/camera-guide';
-  static const imageCaptureView = '/image-capture';
-  static const imagePreview = '/image-preview';
+  // static const imageCaptureView = '/image-capture';
+  // static const imagePreview = '/image-preview';
   static const outputScreenBusiness = '/output';
   static const correctionReportScreenBusiness = '/correction-report';
 
@@ -182,23 +179,23 @@ class AppRoute {
         path: AppRoute.cameraGuideScreen,
         builder: (context, state) => CameraGuideScreen(),
       ),
-      GoRoute(
-        path: AppRoute.imageCaptureView,
-        builder: (context, state) {
-          final query = state.uri.queryParameters;
-          final type = query['type']!;
+      // GoRoute(
+      //   path: AppRoute.imageCaptureView,
+      //   builder: (context, state) {
+      //     final query = state.uri.queryParameters;
+      //     final type = query['type']!;
 
-          return ImageCaptureScreen(
-            type: type == 'primary'
-                ? ScanType.primaryScan
-                : ScanType.captureImage,
-          );
-        },
-      ),
-      GoRoute(
-        path: AppRoute.imagePreview,
-        builder: (context, state) => ImagePreviewScreen(),
-      ),
+      //     return ImageCaptureScreen(
+      //       type: type == 'primary'
+      //           ? ScanType.primaryScan
+      //           : ScanType.captureImage,
+      //     );
+      //   },
+      // ),
+      // GoRoute(
+      //   path: AppRoute.imagePreview,
+      //   builder: (context, state) => ImagePreviewScreen(),
+      // ),
       GoRoute(
         path: AppRoute.outputScreenBusiness,
         builder: (context, state) => OutputScreenBusiness(),

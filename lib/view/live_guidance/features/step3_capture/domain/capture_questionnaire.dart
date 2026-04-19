@@ -115,9 +115,9 @@ enum BodyRegion {
 enum PainDuration {
   none('No pain'),
   lessThan1Week('Less than 1 week'),
-  oneToFourWeeks('1–4 weeks'),
-  oneToThreeMonths('1–3 months'),
-  threeToSixMonths('3–6 months'),
+  oneToFourWeeks('1-4 weeks'),
+  oneToThreeMonths('1-3 months'),
+  threeToSixMonths('3-6 months'),
   moreThanSixMonths('More than 6 months');
 
   const PainDuration(this.label);

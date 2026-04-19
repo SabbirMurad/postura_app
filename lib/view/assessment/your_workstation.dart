@@ -83,7 +83,7 @@ class _YourWorkstationScreenState extends ConsumerState<YourWorkstationScreen> {
                 SizedBox(height: 12.h),
                 YesAndNoSelect(
                   onChange: (value) => notifier.setCanAdjustChairHeight(value),
-                  value: assessment.canAdjustChairHeight,
+                  value: assessment.workstation.canAdjustChairHeight,
                 ),
                 SizedBox(height: 28.h),
                 Text(
@@ -96,7 +96,7 @@ class _YourWorkstationScreenState extends ConsumerState<YourWorkstationScreen> {
                 SizedBox(height: 12.h),
                 YesAndNoSelect(
                   onChange: (value) => notifier.setEnoughLegRoom(value),
-                  value: assessment.enoughLegRoom,
+                  value: assessment.workstation.enoughLegRoom,
                 ),
                 SizedBox(height: 28.h),
                 Text(
@@ -109,7 +109,7 @@ class _YourWorkstationScreenState extends ConsumerState<YourWorkstationScreen> {
                 SizedBox(height: 12.h),
                 YesAndNoSelect(
                   onChange: (value) => notifier.setChairHasLumbarSupport(value),
-                  value: assessment.chairHasLumbarSupport,
+                  value: assessment.workstation.chairHasLumbarSupport,
                 ),
                 SizedBox(height: 28.h),
                 Text(
@@ -122,9 +122,9 @@ class _YourWorkstationScreenState extends ConsumerState<YourWorkstationScreen> {
                 SizedBox(height: 12.h),
                 dropdown(
                   title: loc.monitorDistance,
-                  value: assessment.monitorDistance.isEmpty
+                  value: assessment.workstation.monitorDistance.isEmpty
                       ? null
-                      : assessment.monitorDistance,
+                      : assessment.workstation.monitorDistance,
                   onChanged: (value) =>
                       notifier.setMonitorDistance(value ?? ''),
                   items: [
@@ -153,7 +153,7 @@ class _YourWorkstationScreenState extends ConsumerState<YourWorkstationScreen> {
                 SizedBox(height: 12.h),
                 YesAndNoSelect(
                   onChange: (value) => notifier.setFeetRestingFlat(value),
-                  value: assessment.feetRestingFlat,
+                  value: assessment.workstation.feetRestingFlat,
                 ),
                 SizedBox(height: 28.h),
                 Text(
@@ -167,7 +167,7 @@ class _YourWorkstationScreenState extends ConsumerState<YourWorkstationScreen> {
                 YesAndNoSelect(
                   onChange: (value) =>
                       notifier.setMonitorDirectlyInFront(value),
-                  value: assessment.monitorDirectlyInFront,
+                  value: assessment.workstation.monitorDirectlyInFront,
                 ),
                 SizedBox(height: 28.h),
                 Text(
@@ -180,18 +180,18 @@ class _YourWorkstationScreenState extends ConsumerState<YourWorkstationScreen> {
                 SizedBox(height: 12.h),
                 YesAndNoSelect(
                   onChange: (value) => notifier.setChairHasArmrests(value),
-                  value: assessment.chairHasArmrests,
+                  value: assessment.workstation.chairHasArmrests,
                 ),
                 SizedBox(height: 36.h),
                 PrimaryButton(
                   onTap: () {
-                    if (assessment.canAdjustChairHeight == null ||
-                        assessment.enoughLegRoom == null ||
-                        assessment.chairHasLumbarSupport == null ||
-                        assessment.monitorDistance.isEmpty ||
-                        assessment.feetRestingFlat == null ||
-                        assessment.monitorDirectlyInFront == null ||
-                        assessment.chairHasArmrests == null) {
+                    if (assessment.workstation.canAdjustChairHeight == null ||
+                        assessment.workstation.enoughLegRoom == null ||
+                        assessment.workstation.chairHasLumbarSupport == null ||
+                        assessment.workstation.monitorDistance.isEmpty ||
+                        assessment.workstation.feetRestingFlat == null ||
+                        assessment.workstation.monitorDirectlyInFront == null ||
+                        assessment.workstation.chairHasArmrests == null) {
                       // EN: "Please fill all the fields"
                       showCustomToast(text: loc.pleaseFillAllFields);
                     } else {

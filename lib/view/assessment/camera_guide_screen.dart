@@ -1,18 +1,65 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
-import 'package:posture_detector_app/models/scan_type.dart';
-
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
-import 'package:posture_detector_app/view/camera_capture/image_capture_screen.dart';
-import 'package:posture_detector_app/view/live_guidence/app.dart';
+import 'package:posture_detector_app/provider/assessment.dart';
+import 'package:posture_detector_app/utils/print_helper.dart';
+import 'package:posture_detector_app/view/live_guidance/app.dart';
+import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/capture_questionnaire.dart';
 
-class CameraGuideScreen extends StatelessWidget {
+class CameraGuideScreen extends ConsumerStatefulWidget {
   const CameraGuideScreen({super.key});
+
+  @override
+  ConsumerState<CameraGuideScreen> createState() => _CameraGuideScreenState();
+}
+
+class _CameraGuideScreenState extends ConsumerState<CameraGuideScreen> {
+  void _handleCaptureCallBack(BuildContext context) {
+    final assessment = ref.watch(assessmentNotifierProvider);
+
+    final questionnaire = CaptureQuestionnaire(
+      // hoursAtDesk: assessment.workPattern.hoursAtDeskPerDay,
+      // breakIntervalHrs: assessment.workPattern.breakHabit,
+      // deviceUsage: assessment.workPattern.deviceUsage,
+      painRegions: assessment.selectedBodyRegions,
+      painIntensity: assessment.painIntensity,
+      painDuration: assessment.selectedPainDuration!,
+      optionalSymptoms: assessment.selectedOptionalSymptoms,
+    );
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) {
+          return LiveGuidance(
+            questionnaire: questionnaire,
+            onComplete:
+                ({
+                  required imagePath,
+                  required poseResult,
+                  required rosaScore,
+                }) {
+                  ref
+                      .read(assessmentNotifierProvider.notifier)
+                      .setRosaScore(rosaScore);
+
+                  ref
+                      .read(assessmentNotifierProvider.notifier)
+                      .setCapturedImage(File(imagePath));
+
+                  printLine('Rosa Score: ${rosaScore.finalScore}');
+                },
+          );
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,15 +180,7 @@ class CameraGuideScreen extends StatelessWidget {
           padding: EdgeInsets.only(bottom: 20.h, left: 20.w, right: 20.w),
           child: SizedBox(
             child: PrimaryButton(
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) {
-                      return const LiveGuidance();
-                    },
-                  ),
-                );
-              },
+              onTap: () => _handleCaptureCallBack(context),
               // EN: "Continue"
               text: loc.continueButton,
               backgroundColor: AppColors.primaryColor,

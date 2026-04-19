@@ -45,9 +45,10 @@ class PainIntensityScreen extends ConsumerWidget {
                   padding: EdgeInsets.symmetric(vertical: 30.h),
                   shrinkWrap: true,
                   separatorBuilder: (_, __) => SizedBox(height: 22.h),
-                  itemCount: assessment.selectedRegions.length,
+                  itemCount: assessment.selectedBodyRegions.length,
                   itemBuilder: (context, index) {
-                    final region = assessment.selectedRegions[index];
+                    final region = assessment.selectedBodyRegions
+                        .toList()[index];
                     final value = assessment.painIntensity[region] ?? 1;
 
                     return Column(
@@ -57,7 +58,7 @@ class PainIntensityScreen extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              region,
+                              region.label,
                               style: TextStyle(
                                 color: AppColors.text,
                                 fontSize: 14.sp,

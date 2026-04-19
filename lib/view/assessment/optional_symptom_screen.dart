@@ -34,16 +34,19 @@ class OptionalSymptomScreen extends ConsumerWidget {
               ),
               SizedBox(height: 51.h),
               Wrap(
-                children: AssessmentState.symptoms.map((symptom) {
-                  final isSelected = assessment.selectedSymptoms.contains(
-                    symptom,
-                  );
+                children: AssessmentState.allOptionalSymptoms.toList().map((
+                  symptom,
+                ) {
+                  final isSelected = assessment.selectedOptionalSymptoms
+                      .toList()
+                      .contains(symptom);
+                      
                   return GestureDetector(
                     onTap: () => ref
                         .read(assessmentNotifierProvider.notifier)
                         .toggleSymptom(symptom),
                     child: SelectionalContainer(
-                      title: symptom,
+                      title: symptom.label,
                       selected: isSelected,
                     ),
                   );

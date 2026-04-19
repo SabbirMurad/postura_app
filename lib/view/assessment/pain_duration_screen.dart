@@ -34,7 +34,9 @@ class PainDurationScreen extends ConsumerWidget {
               ),
               SizedBox(height: 51.h),
               Wrap(
-                children: AssessmentState.painDurations.map((duration) {
+                children: AssessmentState.allPainDurations.toList().map((
+                  duration,
+                ) {
                   final isSelected =
                       assessment.selectedPainDuration == duration;
                   return GestureDetector(
@@ -42,7 +44,7 @@ class PainDurationScreen extends ConsumerWidget {
                         .read(assessmentNotifierProvider.notifier)
                         .setPainDuration(duration),
                     child: SelectionalContainer(
-                      title: duration,
+                      title: duration.label,
                       selected: isSelected,
                     ),
                   );
@@ -57,7 +59,7 @@ class PainDurationScreen extends ConsumerWidget {
           padding: EdgeInsets.symmetric(vertical: 25.h, horizontal: 20.w),
           child: PrimaryButton(
             onTap: () {
-              if (assessment.selectedPainDuration.isEmpty) {
+              if (assessment.selectedPainDuration == null) {
                 // EN: "Please fill all the fields"
                 showCustomToast(text: loc.pleaseFillAllFields);
                 return;

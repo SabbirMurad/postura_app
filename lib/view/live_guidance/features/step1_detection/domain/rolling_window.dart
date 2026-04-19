@@ -1,4 +1,4 @@
-import '../.././../core/constants/detection_constants.dart';
+import '../../../core/constants/detection_constants.dart';
 
 /// Sliding window that tracks the last [DetectionConstants.windowSize]
 /// frame results and checks whether the confirmation threshold is met.

@@ -45,10 +45,7 @@ class WorkPatternScreen extends ConsumerWidget {
             borderSide: BorderSide(color: AppColors.blackDeemed, width: 1.5),
           ),
         ),
-        style: TextStyle(
-          fontSize: 14.sp,
-          color: AppColors.text,
-        ),
+        style: TextStyle(fontSize: 14.sp, color: AppColors.text),
         borderRadius: BorderRadius.circular(10.r),
         dropdownColor: AppColors.surface,
         items: items,
@@ -78,9 +75,9 @@ class WorkPatternScreen extends ConsumerWidget {
               SizedBox(height: 6.h),
               dropdown(
                 title: loc.hoursAtDeskPerDay,
-                value: assessment.hourDeskPerDay.isEmpty
+                value: assessment.workPattern.hoursAtDeskPerDay.isEmpty
                     ? null
-                    : assessment.hourDeskPerDay,
+                    : assessment.workPattern.hoursAtDeskPerDay,
                 onChanged: (value) => notifier.setHourDeskPerDay(value ?? ''),
                 items: [
                   DropdownMenuItem(
@@ -110,9 +107,9 @@ class WorkPatternScreen extends ConsumerWidget {
               SizedBox(height: 6.h),
               dropdown(
                 title: loc.breakHabits,
-                value: assessment.breakHabit.isEmpty
+                value: assessment.workPattern.breakHabit.isEmpty
                     ? null
-                    : assessment.breakHabit,
+                    : assessment.workPattern.breakHabit,
                 onChanged: (value) => notifier.setBreakHabit(value ?? ''),
                 items: [
                   DropdownMenuItem(value: '1H', child: Text(loc.everyOneHour)),
@@ -133,10 +130,10 @@ class WorkPatternScreen extends ConsumerWidget {
               SizedBox(height: 6.h),
               dropdown(
                 title: loc.selectDeviceUsage,
-                value: assessment.workPatternRole.isEmpty
+                value: assessment.workPattern.deviceUsage.isEmpty
                     ? null
-                    : assessment.workPatternRole,
-                onChanged: (value) => notifier.setWorkPatternRole(value ?? ''),
+                    : assessment.workPattern.deviceUsage,
+                onChanged: (value) => notifier.setDeviceUsage(value ?? ''),
                 items: [
                   DropdownMenuItem(value: 'LAPTOP', child: Text(loc.laptop)),
                   DropdownMenuItem(
@@ -155,9 +152,9 @@ class WorkPatternScreen extends ConsumerWidget {
               SizedBox(height: 6.h),
               dropdown(
                 title: loc.mouseType,
-                value: assessment.mouseType.isEmpty
+                value: assessment.workPattern.mouseType.isEmpty
                     ? null
-                    : assessment.mouseType,
+                    : assessment.workPattern.mouseType,
                 onChanged: (value) => notifier.setMouseType(value ?? ''),
                 items: [
                   DropdownMenuItem(
@@ -183,10 +180,10 @@ class WorkPatternScreen extends ConsumerWidget {
           padding: EdgeInsets.symmetric(vertical: 25.h, horizontal: 20.w),
           child: PrimaryButton(
             onTap: () {
-              if (assessment.hourDeskPerDay.isEmpty ||
-                  assessment.breakHabit.isEmpty ||
-                  assessment.workPatternRole.isEmpty ||
-                  assessment.mouseType.isEmpty) {
+              if (assessment.workPattern.hoursAtDeskPerDay.isEmpty ||
+                  assessment.workPattern.breakHabit.isEmpty ||
+                  assessment.workPattern.deviceUsage.isEmpty ||
+                  assessment.workPattern.mouseType.isEmpty) {
                 // EN: "Please fill all the fields"
                 showCustomToast(text: loc.pleaseFillAllFields);
               } else {
