@@ -1,13 +1,8 @@
 import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/main.dart';
@@ -18,23 +13,19 @@ part 'report.g.dart';
 class ReportState {
   final AnalysisDataModel? analysisData;
   final bool isLoading;
-  final bool isExportingPDF;
 
   const ReportState({
     this.analysisData,
     this.isLoading = false,
-    this.isExportingPDF = false,
   });
 
   ReportState copyWith({
     AnalysisDataModel? analysisData,
     bool clearData = false,
     bool? isLoading,
-    bool? isExportingPDF,
   }) => ReportState(
     analysisData: clearData ? null : (analysisData ?? this.analysisData),
     isLoading: isLoading ?? this.isLoading,
-    isExportingPDF: isExportingPDF ?? this.isExportingPDF,
   );
 }
 
@@ -42,6 +33,8 @@ class ReportState {
 class ReportNotifier extends _$ReportNotifier {
   AppLocalizations get _loc =>
       AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;
+
+  bool isLoading = true;
 
   @override
   ReportState build() {
@@ -102,34 +95,6 @@ class ReportNotifier extends _$ReportNotifier {
       debugPrint('Fetch reports error: $e');
       // EN: "Failed to fetch reports"
       showCustomToast(text: _loc.failedToFetchReports);
-    }
-  }
-
-  Future<void> exportReportPDF() async {
-    try {
-      state = state.copyWith(isExportingPDF: true);
-      final pdfUrl = state.analysisData?.aiResult.pdfReportUrl;
-      if (pdfUrl == null || pdfUrl.isEmpty) {
-        state = state.copyWith(isExportingPDF: false);
-        // EN: "No PDF available"
-        showCustomToast(text: _loc.noPdfAvailable);
-        return;
-      }
-
-      final tempDir = await getTemporaryDirectory();
-      final fileName = pdfUrl.split('/').last.split('?').first;
-      final filePath = '${tempDir.path}/$fileName';
-
-      await Dio().download(pdfUrl, filePath);
-      state = state.copyWith(isExportingPDF: false);
-
-      // EN: "Your report PDF"
-      await Share.shareXFiles([XFile(filePath)], text: _loc.yourReportPdf);
-    } catch (e) {
-      state = state.copyWith(isExportingPDF: false);
-      debugPrint('Export PDF error: $e');
-      // EN: "Something went wrong"
-      showCustomToast(text: _loc.somethingWentWrong);
     }
   }
 }

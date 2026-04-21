@@ -398,5 +398,7 @@
   "monitorInFrontYes": "Monitor staat direct voor de gebruiker",
   "monitorInFrontNo": "Monitor staat niet direct voor de gebruiker",
   "chairHasArmrestsYes": "Stoel heeft armleuningen",
-  "chairHasArmrestsNo": "Stoel heeft geen armleuningen"
+  "chairHasArmrestsNo": "Stoel heeft geen armleuningen",
+  "rosaSubScores": "ROSA Deelscores",
+  "photo": "Foto"
 }

@@ -398,5 +398,7 @@
   "monitorInFrontYes": "Monitor posicionado directamente en frente",
   "monitorInFrontNo": "El monitor no está posicionado directamente en frente",
   "chairHasArmrestsYes": "La silla tiene reposabrazos",
-  "chairHasArmrestsNo": "La silla no tiene reposabrazos"
+  "chairHasArmrestsNo": "La silla no tiene reposabrazos",
+  "rosaSubScores": "Subpuntuaciones ROSA",
+  "photo": "Foto"
 }

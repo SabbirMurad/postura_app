@@ -398,5 +398,7 @@
   "monitorInFrontYes": "Monitor direkt vor dem Benutzer positioniert",
   "monitorInFrontNo": "Monitor ist nicht direkt vor dem Benutzer positioniert",
   "chairHasArmrestsYes": "Stuhl hat Armlehnen",
-  "chairHasArmrestsNo": "Stuhl hat keine Armlehnen"
+  "chairHasArmrestsNo": "Stuhl hat keine Armlehnen",
+  "rosaSubScores": "ROSA-Teilbewertungen",
+  "photo": "Foto"
 }

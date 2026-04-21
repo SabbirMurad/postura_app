@@ -308,22 +308,27 @@ class AssessmentNotifier extends _$AssessmentNotifier {
             'chair_has_armrests': state.workstation.chairHasArmrests,
           }),
           'rosa_score': jsonEncode({
-            'armrest_score': rosaScore.armrestScore,
-            'backrest_score': rosaScore.backrestScore,
-            'chair_score': rosaScore.chairScore,
-            'forward_score': rosaScore.forwardHead,
-            'keyboard_score': rosaScore.keyboardScore,
-            'knee_angle': rosaScore.kneeAngle,
-            'monitor_score': rosaScore.monitorScore,
-            'mouse_score': rosaScore.mouseScore,
-            'neck_flexion': rosaScore.neckFlexion,
             'final_score': rosaScore.finalScore,
+            'chair_score': rosaScore.chairScore,
+            'monitor_score': rosaScore.monitorScore,
+            'keyboard_score': rosaScore.keyboardScore,
+            'mouse_score': rosaScore.mouseScore,
+            'peripheral_score': rosaScore.peripheralScore,
+            'seat_height_score': rosaScore.seatHeightScore,
+            'armrest_score': rosaScore.armrestScore,
+            'knee_angle': rosaScore.kneeAngle,
+            'trunk_angle': rosaScore.trunkAngle,
+            'backrest_score': rosaScore.backrestScore,
+            'forward_head': rosaScore.forwardHead,
+            'neck_flexion': rosaScore.neckFlexion,
+            'wrist_extension': rosaScore.wristExtension,
           }),
         },
         files: [multipartFile],
       );
 
       printLine(response.status_code);
+      printLine(response.error);
 
       if (response.ok) {
         printLine('Successfully processed analysis');

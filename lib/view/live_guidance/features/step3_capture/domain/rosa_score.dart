@@ -1,3 +1,5 @@
+import 'package:posture_detector_app/utils/print_helper.dart';
+
 /// Result of ROSA scoring with final score and breakdown.
 class RosaScore {
   const RosaScore({
@@ -57,4 +59,24 @@ class RosaScore {
 
   /// Whether action is needed.
   bool get needsAction => finalScore >= 5;
+
+  static RosaScore fromJson(json) {
+    printLine('RosaScore ${json}');
+    return RosaScore(
+      finalScore: json['final_score'],
+      chairScore: json['chair_score'],
+      monitorScore: json['monitor_score'],
+      keyboardScore: json['keyboard_score'],
+      mouseScore: json['mouse_score'],
+      peripheralScore: json['peripheral_score'],
+      seatHeightScore: json['seat_height_score'],
+      backrestScore: json['backrest_score'],
+      armrestScore: json['armrest_score'],
+      kneeAngle: json['knee_angle'],
+      trunkAngle: json['trunk_angle'],
+      neckFlexion: json['neck_flexion'],
+      forwardHead: json['forward_head'],
+      wristExtension: json['wrist_extension'],
+    );
+  }
 }

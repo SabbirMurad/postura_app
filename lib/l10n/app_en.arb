@@ -399,5 +399,7 @@
   "monitorInFrontYes": "Monitor positioned directly in front",
   "monitorInFrontNo": "Monitor is not positioned directly in front",
   "chairHasArmrestsYes": "Chair has armrests",
-  "chairHasArmrestsNo": "Chair does not have armrests"
+  "chairHasArmrestsNo": "Chair does not have armrests",
+  "rosaSubScores": "ROSA Sub Scores",
+  "photo": "Photo"
 }

@@ -2,19 +2,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/common/widgets/rosa_sub_score.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/provider/report.dart';
-import 'package:posture_detector_app/common/widgets/analysis_section_container.dart';
-import 'package:posture_detector_app/common/widgets/details_analysis_list.dart';
 import 'package:posture_detector_app/common/widgets/home_top_section.dart';
 import 'package:posture_detector_app/common/widgets/risky_body_region_menu.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/models/analysis/body_region_risk_model.dart';
 import 'package:posture_detector_app/provider/author.dart';
+import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/rosa_score.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreenBusiness extends ConsumerStatefulWidget {
@@ -53,49 +51,77 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
     });
   }
 
-  static const _rosaItems = [
-    RosaItem(
-      category: 'Chair',
-      score: '3 / 3',
-      status: RosaStatus('Too high', RosaRisk.red),
-    ),
-    RosaItem(
-      category: 'Monitor',
-      score: '2 / 3',
-      status: RosaStatus('Looking up', RosaRisk.red),
-    ),
-    RosaItem(
-      category: 'Keyboard',
-      score: '1 / 3',
-      status: RosaStatus('Wrists extended', RosaRisk.orange),
-    ),
-    RosaItem(
-      category: 'Mouse',
-      score: '2 / 3',
-      status: RosaStatus('Optimal', RosaRisk.green),
-    ),
-    RosaItem(
-      category: 'Final ROSA',
-      score: '7 / 10',
-      status: RosaStatus('High risk', RosaRisk.red),
-    ),
+  // ── Risk helpers ────────────────────────────────────────────────────────
+
+  RosaRisk _subScoreRisk(int score) {
+    if (score >= 3) return RosaRisk.red;
+    if (score >= 2) return RosaRisk.orange;
+    return RosaRisk.green;
+  }
+
+  RosaRisk _finalScoreRisk(int score) {
+    if (score >= 7) return RosaRisk.red;
+    if (score >= 4) return RosaRisk.orange;
+    return RosaRisk.green;
+  }
+
+  String _subScoreLabel(int score) {
+    if (score == 0) return 'Not assessed';
+    if (score >= 3) return 'High risk';
+    if (score >= 2) return 'Review needed';
+    return 'Optimal';
+  }
+
+  String _finalLabel(int score) {
+    if (score >= 7) return 'High risk — immediate action required';
+    if (score >= 4) return 'Moderate risk — further investigation';
+    return 'Low risk — no immediate action needed';
+  }
+
+  String _actionLevel(int score) {
+    if (score >= 7) return 'Level 3 — Action required as soon as possible';
+    if (score >= 4) return 'Level 2 — Further investigation needed';
+    return 'Level 1 — No immediate action needed';
+  }
+
+  Color _riskColor(RosaRisk risk) {
+    switch (risk) {
+      case RosaRisk.red:    return const Color(0xFFE53935);
+      case RosaRisk.orange: return const Color(0xFFFB8C00);
+      case RosaRisk.green:  return const Color(0xFF43A047);
+    }
+  }
+
+  List<RosaItem> _buildRosaItems(RosaScore score) => [
+    RosaItem(category: 'Seat Height', score: '${score.seatHeightScore}',
+      status: RosaStatus(_subScoreLabel(score.seatHeightScore), _subScoreRisk(score.seatHeightScore))),
+    RosaItem(category: 'Backrest', score: '${score.backrestScore}',
+      status: RosaStatus(_subScoreLabel(score.backrestScore), _subScoreRisk(score.backrestScore))),
+    RosaItem(category: 'Armrest', score: '${score.armrestScore}',
+      status: RosaStatus(_subScoreLabel(score.armrestScore), _subScoreRisk(score.armrestScore))),
+    RosaItem(category: 'Chair', score: '${score.chairScore}',
+      status: RosaStatus(_subScoreLabel(score.chairScore), _subScoreRisk(score.chairScore))),
+    RosaItem(category: 'Monitor', score: '${score.monitorScore}',
+      status: RosaStatus(_subScoreLabel(score.monitorScore), _subScoreRisk(score.monitorScore))),
+    RosaItem(category: 'Keyboard', score: '${score.keyboardScore}',
+      status: RosaStatus(_subScoreLabel(score.keyboardScore), _subScoreRisk(score.keyboardScore))),
+    RosaItem(category: 'Mouse', score: '${score.mouseScore}',
+      status: RosaStatus(_subScoreLabel(score.mouseScore), _subScoreRisk(score.mouseScore))),
+    RosaItem(category: 'Peripheral', score: '${score.peripheralScore}',
+      status: RosaStatus(_subScoreLabel(score.peripheralScore), _subScoreRisk(score.peripheralScore))),
   ];
 
-  Widget _rosaAssessmentSection() {
+  Widget _rosaAssessmentSection(RosaScore score) {
     return Wrap(
       spacing: 12.w,
       runSpacing: 12.w,
-      children: _rosaItems.map((item) {
-        return RosaSubScoreItem(item: item);
-      }).toList(),
+      children: _buildRosaItems(score).map((item) => RosaSubScoreItem(item: item)).toList(),
     );
   }
 
-  Widget _rosaScoreCard() {
-    const score = '7 / 10';
-    const label = 'High risk - immediate action required';
-    const actionLevel = 'Level 3 - Action required as soon as possible';
-    const scoreColor = Color(0xFFE53935);
+  Widget _rosaScoreCard(RosaScore score) {
+    final risk = _finalScoreRisk(score.finalScore);
+    final scoreColor = _riskColor(risk);
 
     return Container(
       width: double.infinity,
@@ -109,7 +135,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            score,
+            '${score.finalScore} / 10',
             style: TextStyle(
               fontSize: 28.sp,
               fontWeight: FontWeight.w700,
@@ -122,7 +148,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  label,
+                  _finalLabel(score.finalScore),
                   style: TextStyle(
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w600,
@@ -131,7 +157,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  actionLevel,
+                  _actionLevel(score.finalScore),
                   style: TextStyle(
                     fontSize: 11.sp,
                     color: AppColors.secondaryText,
@@ -270,7 +296,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                           ],
                         ),
                         SizedBox(height: 12.h),
-                        _rosaScoreCard(),
+                        _rosaScoreCard(analysisData.rosaScore),
                         SizedBox(height: 18.h),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -286,7 +312,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                           ],
                         ),
                         SizedBox(height: 12.h),
-                        _rosaAssessmentSection(),
+                        _rosaAssessmentSection(analysisData.rosaScore),
 
                         // if (posture != null)
                         //   DetailsAnalysisList(posture: posture)
@@ -306,7 +332,6 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                         _bodyRegionRiskSection(bodyRegionRiskItems),
                         SizedBox(height: 24.h),
                         PrimaryButton(
-                          loading: reportState.isExportingPDF,
                           onTap: () {
                             final pdfUrl =
                                 reportState.analysisData?.aiResult.pdfReportUrl;

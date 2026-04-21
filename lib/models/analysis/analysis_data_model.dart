@@ -1,48 +1,30 @@
 // ===================== ROOT =====================
+import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/rosa_score.dart';
+
 class AnalysisDataModel {
-  final String message;
-  final int assessmentId;
-  final String? scanType;
-  final bool aiSuccess;
-  final String? aiErrorMessage;
   final AIResult aiResult;
   final Assessment? assessment;
-  final User? user;
+  final RosaScore rosaScore;
 
   AnalysisDataModel({
-    required this.message,
-    required this.assessmentId,
-    this.scanType,
-    this.aiSuccess = true,
-    this.aiErrorMessage,
     required this.aiResult,
     this.assessment,
-    this.user,
+    required this.rosaScore,
   });
 
-  factory AnalysisDataModel.fromJson(Map<String, dynamic> json) =>
-      AnalysisDataModel(
-        message: json['message'] ?? '',
-        assessmentId: json['assessment_id'] ?? 0,
-        scanType: json['scan_type'],
-        aiSuccess: json['ai_success'] ?? true,
-        aiErrorMessage: json['ai_error_message'],
-        aiResult: AIResult.fromJson(json['ai_result'] ?? {}),
-        assessment: json['assessment'] != null
-            ? Assessment.fromJson(json['assessment'])
-            : null,
-        user: json['user'] != null ? User.fromJson(json['user']) : null,
-      );
+  factory AnalysisDataModel.fromJson(Map<String, dynamic> json) {
+    return AnalysisDataModel(
+      aiResult: AIResult.fromJson(json['ai_result'] ?? {}),
+      assessment: json['assessment'] != null
+          ? Assessment.fromJson(json['assessment'])
+          : null,
+      rosaScore: RosaScore.fromJson(json['assessment']['rosa_score']),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-    'message': message,
-    'assessment_id': assessmentId,
-    'scan_type': scanType,
-    'ai_success': aiSuccess,
-    'ai_error_message': aiErrorMessage,
     'ai_result': aiResult.toJson(),
     'assessment': assessment?.toJson(),
-    'user': user?.toJson(),
   };
 }
 
@@ -156,45 +138,11 @@ class WorkPattern {
   };
 }
 
-// ===================== USER =====================
-class User {
-  final int id;
-  final String name;
-  final String email;
-  final String? avatar;
-  final String? fullName;
-
-  User({
-    required this.id,
-    required this.name,
-    required this.email,
-    this.avatar,
-    this.fullName,
-  });
-
-  factory User.fromJson(Map<String, dynamic> json) => User(
-    id: json['id'] ?? 0,
-    name: json['name'] ?? '',
-    email: json['email'] ?? '',
-    avatar: json['avatar'],
-    fullName: json['full_name'],
-  );
-
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-    'email': email,
-    'avatar': avatar,
-    'full_name': fullName,
-  };
-}
-
 // ===================== AI RESULT =====================
 class AIResult {
   final double complianceScore;
   final String overallRisk;
   final String annotatedImageUrl;
-  final DetailedAnalysis detailedAnalysis;
   final BodyRegionRisks bodyRegionRisks;
   final List<Correction> corrections;
   final Exercises exercises;
@@ -213,7 +161,6 @@ class AIResult {
     required this.complianceScore,
     required this.overallRisk,
     required this.annotatedImageUrl,
-    required this.detailedAnalysis,
     required this.bodyRegionRisks,
     required this.corrections,
     required this.exercises,
@@ -236,9 +183,6 @@ class AIResult {
       complianceScore: (json['compliance_score'] ?? 0).toDouble(),
       overallRisk: json['overall_risk'] ?? '',
       annotatedImageUrl: json['annotated_image_url'] ?? '',
-      detailedAnalysis: DetailedAnalysis.fromJson(
-        json['detailed_analysis'] ?? {},
-      ),
       bodyRegionRisks: BodyRegionRisks.fromJson(
         json['body_region_risks'] ?? {},
       ),
@@ -272,7 +216,6 @@ class AIResult {
     'compliance_score': complianceScore,
     'overall_risk': overallRisk,
     'annotated_image_url': annotatedImageUrl,
-    'detailed_analysis': detailedAnalysis.toJson(),
     'body_region_risks': bodyRegionRisks.toJson(),
     'corrections': corrections.map((e) => e.toJson()).toList(),
     'exercises': exercises.toJson(),
@@ -331,115 +274,6 @@ class BodyRegionRisks {
     'upper_back': upperBack,
     'hips': hips,
     'knees': knees,
-  };
-}
-
-// ===================== DETAILED ANALYSIS =====================
-class DetailedAnalysis {
-  final Posture posture;
-  final Workstation workstation;
-
-  DetailedAnalysis({required this.posture, required this.workstation});
-
-  factory DetailedAnalysis.fromJson(Map<String, dynamic> json) =>
-      DetailedAnalysis(
-        posture: Posture.fromJson(json['posture'] ?? {}),
-        workstation: Workstation.fromJson(json['workstation'] ?? {}),
-      );
-
-  Map<String, dynamic> toJson() => {
-    'posture': posture.toJson(),
-    'workstation': workstation.toJson(),
-  };
-}
-
-// ===================== POSTURE =====================
-class Posture {
-  final AngleData neckFlexion;
-  final ShoulderElevation shoulderElevation;
-  final AngleData elbowAngle;
-  final AngleData wristDeviation;
-  final AngleData pelvicTilt;
-
-  Posture({
-    required this.neckFlexion,
-    required this.shoulderElevation,
-    required this.elbowAngle,
-    required this.wristDeviation,
-    required this.pelvicTilt,
-  });
-
-  factory Posture.fromJson(Map<String, dynamic> json) => Posture(
-    neckFlexion: AngleData.fromJson(json['neck_flexion'] ?? {}),
-    shoulderElevation: ShoulderElevation.fromJson(
-      json['shoulder_elevation'] ?? {},
-    ),
-    elbowAngle: AngleData.fromJson(json['elbow_angle'] ?? {}),
-    wristDeviation: AngleData.fromJson(json['wrist_deviation'] ?? {}),
-    pelvicTilt: AngleData.fromJson(json['pelvic_tilt'] ?? {}),
-  );
-
-  Map<String, dynamic> toJson() => {
-    'neck_flexion': neckFlexion.toJson(),
-    'shoulder_elevation': shoulderElevation.toJson(),
-    'elbow_angle': elbowAngle.toJson(),
-    'wrist_deviation': wristDeviation.toJson(),
-    'pelvic_tilt': pelvicTilt.toJson(),
-  };
-}
-
-// ===================== ANGLE DATA =====================
-class AngleData {
-  final double angle;
-  final String severity;
-  final String iso;
-  final double deviation;
-
-  AngleData({
-    required this.angle,
-    required this.severity,
-    required this.iso,
-    required this.deviation,
-  });
-
-  factory AngleData.fromJson(Map<String, dynamic> json) => AngleData(
-    angle: (json['angle'] ?? 0).toDouble(),
-    severity: json['severity'] ?? '',
-    iso: json['iso'] ?? '',
-    deviation: (json['deviation'] ?? 0).toDouble(),
-  );
-
-  Map<String, dynamic> toJson() => {
-    'angle': angle,
-    'severity': severity,
-    'iso': iso,
-    'deviation': deviation,
-  };
-}
-
-// ===================== SHOULDER ELEVATION =====================
-class ShoulderElevation {
-  final double angle;
-  final String severity;
-  final String iso;
-
-  ShoulderElevation({
-    required this.angle,
-    required this.severity,
-    required this.iso,
-  });
-
-  factory ShoulderElevation.fromJson(Map<String, dynamic> json) =>
-      ShoulderElevation(
-        angle: (json['angle'] ?? 0).toDouble(),
-        severity: json['severity'] ?? '',
-        iso: json['iso'] ?? '',
-      );
-
-  Map<String, dynamic> toJson() => {
-    'angle': angle,
-    'severity': severity,
-    'iso': iso,
   };
 }
 

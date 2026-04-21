@@ -6,6 +6,7 @@ import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/models/profile/author_model.dart';
 import 'package:posture_detector_app/models/user_type.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
+import 'package:posture_detector_app/utils/print_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'author.g.dart';
@@ -26,11 +27,10 @@ class AuthorNotifier extends _$AuthorNotifier {
       showFloatingError: false,
     );
     if (!response.ok) return null;
-    try {
-      return AuthorModel.fromJson(response.data);
-    } catch (_) {
-      return null;
-    }
+
+    printLine(response.data);
+
+    return AuthorModel.fromJson(response.data);
   }
 
   Future<void> refreshProfile() async {
@@ -45,10 +45,12 @@ class AuthorNotifier extends _$AuthorNotifier {
       showFloatingError: false,
       body: {'full_name': name},
     );
+
     if (!response.ok) {
       showCustomToast(text: response.error ?? 'Something went wrong');
       return false;
     }
+
     await refreshProfile();
     return true;
   }

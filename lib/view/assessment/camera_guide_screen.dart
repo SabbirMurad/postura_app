@@ -10,6 +10,7 @@ import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/utils/print_helper.dart';
+import 'package:posture_detector_app/view/assessment/analysis_result_screen.dart';
 import 'package:posture_detector_app/view/live_guidance/app.dart';
 import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/capture_questionnaire.dart';
 
@@ -53,7 +54,14 @@ class _CameraGuideScreenState extends ConsumerState<CameraGuideScreen> {
                       .read(assessmentNotifierProvider.notifier)
                       .setCapturedImage(File(imagePath));
 
-                  printLine('Rosa Score: ${rosaScore.finalScore}');
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) {
+                        return const AnalysisResultScreen();
+                      },
+                    ),
+                  );
                 },
           );
         },

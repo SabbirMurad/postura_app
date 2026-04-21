@@ -2211,6 +2211,8 @@ abstract class AppLocalizations {
   String get monitorInFrontNo;
   String get chairHasArmrestsYes;
   String get chairHasArmrestsNo;
+  String get rosaSubScores;
+  String get photo;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

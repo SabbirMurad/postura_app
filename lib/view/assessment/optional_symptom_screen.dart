@@ -32,20 +32,22 @@ class OptionalSymptomScreen extends ConsumerWidget {
                 subtitle: loc.optionalSymptomSubtitle,
                 isSkip: true,
               ),
-              SizedBox(height: 51.h),
+              SizedBox(height: 24.h),
               Wrap(
+                spacing: 8.w,
+                runSpacing: 8.w,
                 children: AssessmentState.allOptionalSymptoms.toList().map((
                   symptom,
                 ) {
                   final isSelected = assessment.selectedOptionalSymptoms
                       .toList()
                       .contains(symptom);
-                      
+
                   return GestureDetector(
                     onTap: () => ref
                         .read(assessmentNotifierProvider.notifier)
                         .toggleSymptom(symptom),
-                    child: SelectionalContainer(
+                    child: OptionalSymptomContainer(
                       title: symptom.label,
                       selected: isSelected,
                     ),
@@ -71,6 +73,39 @@ class OptionalSymptomScreen extends ConsumerWidget {
             ),
             borderRadius: BorderRadius.circular(14.r),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class OptionalSymptomContainer extends StatelessWidget {
+  final String title;
+  final bool selected;
+
+  const OptionalSymptomContainer({
+    super.key,
+    required this.title,
+    required this.selected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.w),
+      decoration: BoxDecoration(
+        color: AppColors.onBoardingSurface,
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: selected ? AppColors.primaryColor : AppColors.blackDeemed,
+          width: 2,
+        ),
+      ),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 13.sp,
+          color: selected ? AppColors.primaryColor : AppColors.text,
         ),
       ),
     );

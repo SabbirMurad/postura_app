@@ -1084,4 +1084,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chairHasArmrestsYes => 'Chair has armrests';
   @override
   String get chairHasArmrestsNo => 'Chair does not have armrests';
+  @override
+  String get rosaSubScores => 'ROSA Sub Scores';
+  @override
+  String get photo => 'Photo';
 }
