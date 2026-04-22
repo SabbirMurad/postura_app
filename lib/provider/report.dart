@@ -1,30 +1,30 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/main.dart';
-import 'package:posture_detector_app/models/analysis/analysis_data_model.dart';
 
 part 'report.g.dart';
 
 class ReportState {
-  final AnalysisDataModel? analysisData;
+  final AnalysisReport? analysisReport;
   final bool isLoading;
 
   const ReportState({
-    this.analysisData,
+    this.analysisReport,
     this.isLoading = false,
   });
 
   ReportState copyWith({
-    AnalysisDataModel? analysisData,
+    AnalysisReport? analysisReport,
     bool clearData = false,
     bool? isLoading,
   }) => ReportState(
-    analysisData: clearData ? null : (analysisData ?? this.analysisData),
+    analysisReport: clearData ? null : (analysisReport ?? this.analysisReport),
     isLoading: isLoading ?? this.isLoading,
   );
 }
@@ -47,26 +47,26 @@ class ReportNotifier extends _$ReportNotifier {
       final prefs = await SharedPreferences.getInstance();
       final jsonString = prefs.getString('cached_analysis_data');
       if (jsonString != null) {
-        final data = await compute(_parseAnalysisData, jsonString);
-        state = state.copyWith(analysisData: data);
+        final data = await compute(_parseAnalysisReport, jsonString);
+        state = state.copyWith(analysisReport: data);
       }
     } catch (e) {
       debugPrint('Error loading cached analysis data: $e');
     }
   }
 
-  Future<void> saveData(AnalysisDataModel data) async {
+  Future<void> saveData(AnalysisReport data) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final jsonString = await compute(_encodeAnalysisData, data);
+      final jsonString = await compute(_encodeAnalysisReport, data);
       await prefs.setString('cached_analysis_data', jsonString);
     } catch (e) {
       debugPrint('Error caching analysis data: $e');
     }
   }
 
-  void setData(AnalysisDataModel data) {
-    state = state.copyWith(analysisData: data);
+  void setData(AnalysisReport data) {
+    state = state.copyWith(analysisReport: data);
     saveData(data);
   }
 
@@ -81,8 +81,8 @@ class ReportNotifier extends _$ReportNotifier {
       final response = await CustomHttp.get(endpoint: 'assessments/my-reports');
 
       if (response.ok) {
-        final model = AnalysisDataModel.fromJson(response.data);
-        state = state.copyWith(analysisData: model, isLoading: false);
+        final model = AnalysisReport.fromJson(response.data);
+        state = state.copyWith(analysisReport: model, isLoading: false);
         saveData(model);
         return;
       }
@@ -99,11 +99,11 @@ class ReportNotifier extends _$ReportNotifier {
   }
 }
 
-String _encodeAnalysisData(AnalysisDataModel data) {
+String _encodeAnalysisReport(AnalysisReport data) {
   return jsonEncode(data.toJson());
 }
 
-AnalysisDataModel _parseAnalysisData(String jsonString) {
+AnalysisReport _parseAnalysisReport(String jsonString) {
   final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-  return AnalysisDataModel.fromJson(jsonMap);
+  return AnalysisReport.fromJson(jsonMap);
 }

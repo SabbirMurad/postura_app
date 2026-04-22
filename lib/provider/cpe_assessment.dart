@@ -2,12 +2,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
+import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/provider/cpe_home.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/main.dart';
-import 'package:posture_detector_app/models/analysis/analysis_data_model.dart';
-import 'package:posture_detector_app/utils/print_helper.dart';
+import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/rosa_score.dart';
 
 // ─────────────────────────────────────────
 // Models
@@ -91,8 +91,8 @@ class CpeAssessmentState {
   final int compliance;
   final String riskLevel;
   final String deskLocation;
-  final WorkPattern? workPattern;
-  final Workstation? workstation;
+  final WorkPattern workPattern;
+  final Workstation workstation;
   final List<PainSymptom> painSymptoms;
   final List<PhotoItem> photoItems;
   final List<ApprovalItem> approvalItems;
@@ -102,12 +102,9 @@ class CpeAssessmentState {
   final int maxCommentLength;
   final String signaturePath;
   final String signatureRemoteUrl;
-  // ROSA sub-scores
-  final int rosaChair;
-  final int rosaMonitor;
-  final int rosaKeyboard;
-  final int rosaMouse;
-  final int rosaFinal;
+
+  // ROSA scores
+  final RosaScore rosaScore;
 
   const CpeAssessmentState({
     this.isLoading = true,
@@ -118,8 +115,8 @@ class CpeAssessmentState {
     this.compliance = 0,
     this.riskLevel = '',
     this.deskLocation = '',
-    this.workPattern,
-    this.workstation,
+    required this.workPattern,
+    required this.workstation,
     this.painSymptoms = const [],
     this.photoItems = const [],
     this.approvalItems = const [],
@@ -129,11 +126,7 @@ class CpeAssessmentState {
     this.maxCommentLength = 500,
     this.signaturePath = '',
     this.signatureRemoteUrl = '',
-    this.rosaChair = 0,
-    this.rosaMonitor = 0,
-    this.rosaKeyboard = 0,
-    this.rosaMouse = 0,
-    this.rosaFinal = 0,
+    required this.rosaScore,
   });
 
   double get compliancePercent => (compliance / 100.0).clamp(0.0, 1.0);
@@ -186,11 +179,7 @@ class CpeAssessmentState {
     String? comment,
     String? signaturePath,
     String? signatureRemoteUrl,
-    int? rosaChair,
-    int? rosaMonitor,
-    int? rosaKeyboard,
-    int? rosaMouse,
-    int? rosaFinal,
+    RosaScore? rosaScore,
   }) => CpeAssessmentState(
     isLoading: isLoading ?? this.isLoading,
     isSubmitting: isSubmitting ?? this.isSubmitting,
@@ -211,11 +200,7 @@ class CpeAssessmentState {
     maxCommentLength: maxCommentLength,
     signaturePath: signaturePath ?? this.signaturePath,
     signatureRemoteUrl: signatureRemoteUrl ?? this.signatureRemoteUrl,
-    rosaChair: rosaChair ?? this.rosaChair,
-    rosaMonitor: rosaMonitor ?? this.rosaMonitor,
-    rosaKeyboard: rosaKeyboard ?? this.rosaKeyboard,
-    rosaMouse: rosaMouse ?? this.rosaMouse,
-    rosaFinal: rosaFinal ?? this.rosaFinal,
+    rosaScore: rosaScore ?? this.rosaScore,
   );
 }
 
@@ -223,13 +208,13 @@ class CpeAssessmentState {
 // Notifier
 // ─────────────────────────────────────────
 class CpeAssessmentNotifier
-    extends AutoDisposeFamilyNotifier<CpeAssessmentState, int> {
+    extends AutoDisposeFamilyNotifier<CpeAssessmentState?, int> {
   final _picker = ImagePicker();
 
   @override
-  CpeAssessmentState build(int scanId) {
+  CpeAssessmentState? build(int scanId) {
     _loadData(scanId);
-    return const CpeAssessmentState();
+    return null;
   }
 
   // ─────────────────────────────────────
@@ -242,15 +227,9 @@ class CpeAssessmentNotifier
       showFloatingError: true,
     );
 
-    if (result.error != null) {
-      state = state.copyWith(isLoading: false);
-      return;
-    }
+    if (result.error != null) return;
     final data = result.data;
-    if (data == null) {
-      state = state.copyWith(isLoading: false);
-      return;
-    }
+    if (data == null) return;
 
     try {
       final d = Map<String, dynamic>.from(data['scan_detail'] ?? data);
@@ -298,8 +277,8 @@ class CpeAssessmentNotifier
         ),
       ];
 
-      final wp = d['work_pattern'] as Map<String, dynamic>?;
-      final ws = d['workstation'] as Map<String, dynamic>?;
+      final wp = d['work_pattern'] as Map<String, dynamic>;
+      final ws = d['workstation'] as Map<String, dynamic>;
       final reviewType = d['review_type'] as String?;
 
       state = CpeAssessmentState(
@@ -309,8 +288,8 @@ class CpeAssessmentNotifier
         compliance: rawRisk.toInt(),
         riskLevel: d['risk_level'] ?? '',
         deskLocation: d['desk_location'] ?? '',
-        workPattern: wp != null ? WorkPattern.fromJson(wp) : null,
-        workstation: ws != null ? Workstation.fromJson(ws) : null,
+        workPattern: WorkPattern.fromJson(wp),
+        workstation: Workstation.fromJson(ws),
         painSymptoms: painSymptoms,
         photoItems: photoItems,
         approvalItems: approvalItems,
@@ -319,19 +298,11 @@ class CpeAssessmentNotifier
         comment: d['review_comment'] ?? '',
         reviewMode: reviewType == 'LIVE' ? ReviewMode.live : ReviewMode.remote,
         signatureRemoteUrl: d['review_signature_url'] as String? ?? '',
-        rosaChair: (d['rosa_chair'] ?? 0) as int,
-        rosaMonitor: (d['rosa_monitor'] ?? 0) as int,
-        rosaKeyboard: (d['rosa_keyboard'] ?? 0) as int,
-        rosaMouse: (d['rosa_mouse'] ?? 0) as int,
-        // rosa_final is 0-10; fallback scales the 0-100 compliance score if not yet provided by backend
-        rosaFinal: d['rosa_final'] != null
-            ? (d['rosa_final'] as num).toInt()
-            : (rawRisk / 10).round(),
+        rosaScore: RosaScore.fromJson(d['rosa_score'] as Map<String, dynamic>),
       );
     } catch (e) {
       final loc = AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;
       showCustomToast(text: '${loc.error}: ${loc.failedToParseResponse}: $e');
-      state = state.copyWith(isLoading: false);
     }
   }
 
@@ -339,10 +310,11 @@ class CpeAssessmentNotifier
   // Approvals
   // ─────────────────────────────────────
   void toggleApproval(int index) {
-    if (index < 0 || index >= state.approvalItems.length) return;
-    final items = List<ApprovalItem>.from(state.approvalItems);
+    final s = state;
+    if (s == null || index < 0 || index >= s.approvalItems.length) return;
+    final items = List<ApprovalItem>.from(s.approvalItems);
     items[index] = items[index].copyWith(isChecked: !items[index].isChecked);
-    state = state.copyWith(approvalItems: items);
+    state = s.copyWith(approvalItems: items);
   }
 
   // ─────────────────────────────────────
@@ -354,7 +326,7 @@ class CpeAssessmentNotifier
       imageQuality: 90,
     );
     if (picked != null) {
-      state = state.copyWith(
+      state = state?.copyWith(
         signaturePath: picked.path,
         signatureRemoteUrl: '',
       );
@@ -362,19 +334,20 @@ class CpeAssessmentNotifier
   }
 
   void removeSignature() {
-    state = state.copyWith(signaturePath: '', signatureRemoteUrl: '');
+    state = state?.copyWith(signaturePath: '', signatureRemoteUrl: '');
   }
 
   // ─────────────────────────────────────
   // Setters
   // ─────────────────────────────────────
   void setReviewMode(ReviewMode mode) =>
-      state = state.copyWith(reviewMode: mode);
-  void setDecision(ReviewDecision d) => state = state.copyWith(decision: d);
+      state = state?.copyWith(reviewMode: mode);
+  void setDecision(ReviewDecision d) => state = state?.copyWith(decision: d);
 
   void setComment(String value) {
-    if (value.length <= state.maxCommentLength) {
-      state = state.copyWith(comment: value);
+    final s = state;
+    if (s != null && value.length <= s.maxCommentLength) {
+      state = s.copyWith(comment: value);
     }
   }
 
@@ -383,22 +356,24 @@ class CpeAssessmentNotifier
   // POST cpe/ergonomist/assessment/submit-review/{scan_id}/
   // ─────────────────────────────────────
   Future<bool> submitReview() async {
-    state = state.copyWith(isSubmitting: true);
+    final s = state;
+    if (s == null) return false;
+    state = s.copyWith(isSubmitting: true);
     try {
       final fields = <String, String>{
-        for (final item in state.approvalItems)
+        for (final item in s.approvalItems)
           item.apiKey: item.isChecked ? 'True' : 'False',
-        'review_type': state.reviewMode.apiValue,
-        'review_status': state.decision.apiValue,
-        'review_comment': state.comment,
+        'review_type': s.reviewMode.apiValue,
+        'review_status': s.decision.apiValue,
+        'review_comment': s.comment,
       };
 
       final files = <http.MultipartFile>[];
-      if (state.signaturePath.isNotEmpty) {
+      if (s.signaturePath.isNotEmpty) {
         files.add(
           await http.MultipartFile.fromPath(
             'review_signature',
-            state.signaturePath,
+            s.signaturePath,
           ),
         );
       }
@@ -426,13 +401,13 @@ class CpeAssessmentNotifier
       final loc = AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;
       showCustomToast(text: '${loc.error}: ${loc.failedToSubmit}: $e');
     } finally {
-      state = state.copyWith(isSubmitting: false);
+      state = state?.copyWith(isSubmitting: false);
     }
     return false;
   }
 }
 
 final cpeAssessmentNotifierProvider = NotifierProvider.autoDispose
-    .family<CpeAssessmentNotifier, CpeAssessmentState, int>(
+    .family<CpeAssessmentNotifier, CpeAssessmentState?, int>(
       CpeAssessmentNotifier.new,
     );

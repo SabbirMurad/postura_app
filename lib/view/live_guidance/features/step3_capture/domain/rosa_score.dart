@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:posture_detector_app/utils/print_helper.dart';
 
 /// Result of ROSA scoring with final score and breakdown.
@@ -78,5 +80,24 @@ class RosaScore {
       forwardHead: json['forward_head'],
       wristExtension: json['wrist_extension'],
     );
+  }
+
+  String toJson() {
+    return jsonEncode({
+      'final_score': finalScore,
+      'chair_score': chairScore,
+      'monitor_score': monitorScore,
+      'keyboard_score': keyboardScore,
+      'mouse_score': mouseScore,
+      'peripheral_score': peripheralScore,
+      'seat_height_score': seatHeightScore,
+      'backrest_score': backrestScore,
+      'armrest_score': armrestScore,
+      'knee_angle': kneeAngle,
+      'trunk_angle': trunkAngle,
+      'neck_flexion': neckFlexion,
+      'forward_head': forwardHead,
+      'wrist_extension': wristExtension,
+    });
   }
 }

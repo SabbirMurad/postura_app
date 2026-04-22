@@ -88,10 +88,10 @@ class ExerciseBusinessScreen extends ConsumerWidget {
             Expanded(
               child: Builder(
                 builder: (context) {
-                  final exercisesData = reportState.analysisData?.aiResult.exercises;
+                  final exercisesData = reportState.analysisReport?.exercises;
                   final exercises = exercisesData?.recommendedSession;
                   final vas = exercisesData?.averagePainVas ?? 0;
-                  final symptoms = reportState.analysisData?.assessment?.symptoms ?? [];
+                  final symptoms = reportState.analysisReport?.symptoms ?? [];
 
                   // Filter out exercises that duplicate clinical projection
                   final filteredExercises = exercises?.where((e) {

@@ -34,7 +34,8 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
                 SizedBox(height: 20.h),
                 AppTopSection(
                   title: 'ROSA Posture Guidance',
-                  subtitle: 'Directional adjustments to improve your ergonomic setup',
+                  subtitle:
+                      'Directional adjustments to improve your ergonomic setup',
                 ),
 
                 SizedBox(height: 14.h),
@@ -42,23 +43,24 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
                 // ✅ ListView কে removed করা হয়েছে, শুধু Column রাখা
                 Builder(
                   builder: (context) {
-                  final corrections = reportState.analysisData
-                      ?.aiResult
-                      .corrections;
+                    final corrections = reportState.analysisReport?.corrections;
 
-                  return Column(
-                    children: List.generate(corrections?.length ?? 0, (index) {
-                      final correctReport = corrections?[index];
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: 12.h),
-                        child: ExpansionContainer(
-                          title: correctReport?.title ?? 'title',
-                          leading: '',
-                          content: correctReport?.description ?? 'description',
-                        ),
-                      );
-                    }),
-                  );
+                    return Column(
+                      children: List.generate(corrections?.length ?? 0, (
+                        index,
+                      ) {
+                        final correctReport = corrections?[index];
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 12.h),
+                          child: ExpansionContainer(
+                            title: correctReport?.title ?? 'title',
+                            leading: '',
+                            content:
+                                correctReport?.description ?? 'description',
+                          ),
+                        );
+                      }),
+                    );
                   },
                 ),
 

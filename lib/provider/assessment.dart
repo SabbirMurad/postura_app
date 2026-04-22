@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
-import 'package:posture_detector_app/models/analysis/analysis_data_model.dart';
+import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/provider/report.dart';
 import 'package:posture_detector_app/models/scan_type.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
@@ -327,12 +327,9 @@ class AssessmentNotifier extends _$AssessmentNotifier {
         files: [multipartFile],
       );
 
-      printLine(response.status_code);
-      printLine(response.error);
-
       if (response.ok) {
         printLine('Successfully processed analysis');
-        final model = AnalysisDataModel.fromJson(response.data);
+        final model = AnalysisReport.fromJson(response.data);
 
         ref.read(reportNotifierProvider.notifier).setData(model);
 

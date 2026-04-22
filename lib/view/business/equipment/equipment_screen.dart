@@ -38,17 +38,11 @@ class _EquipmentScreenBusinessState
   }
 
   /// Build engine input from report state, returns null if required data missing
-  EquipmentOutput? _buildEngineOutput(dynamic reportState) {
-    final data = reportState.analysisData;
+  EquipmentOutput? _buildEngineOutput(ReportState reportState) {
+    final data = reportState.analysisReport;
     if (data == null) return null;
 
-    final ai = data.aiResult;
-    final assessment = data.assessment;
-
-    // Only run engine if we have ROSA scores from backend
-    if (ai.rosaFinal == null || ai.rosaFinal == 0) return null;
-
-    final painIntensities = assessment?.painIntensities ?? [];
+    final painIntensities = data.painIntensities;
 
     double? vasFor(List<String> regions) {
       for (final pi in painIntensities) {
@@ -61,22 +55,16 @@ class _EquipmentScreenBusinessState
       return null;
     }
 
-    final symptoms = assessment?.symptoms ?? [];
+    final symptoms = data.symptoms;
 
     final input = EquipmentEngineInput(
-      rosaChair: ai.rosaChair ?? 0,
-      rosaMonitor: ai.rosaMonitor ?? 0,
-      rosaKeyboard: ai.rosaKeyboard ?? 0,
-      rosaMouse: ai.rosaMouse ?? 0,
-      tier: ai.tier.isEmpty ? 'GREEN' : ai.tier,
+      rosaScore: data.rosaScore,
       workZoneType: 'desk',
-      hoursAtDesk: assessment?.workPattern?.hoursAtDesk ?? 'h6_8',
-      breakHabit: assessment?.workPattern?.breakHabit ?? 'every2h',
-      deviceSetup: assessment?.workPattern?.deviceUsage ?? 'singleScreen',
-      mouseType: assessment?.workPattern?.mouseType ?? 'standard',
-      painDuration: assessment?.painDuration.isEmpty == true
-          ? null
-          : assessment?.painDuration,
+      hoursAtDesk: data.workPattern.hoursAtDesk,
+      breakHabit: data.workPattern.breakHabit,
+      deviceSetup: data.workPattern.deviceUsage,
+      mouseType: data.workPattern.mouseType,
+      painDuration: data.painDuration,
       vasNeck: vasFor(['neck']),
       vasUpperBack: vasFor(['upper back', 'upper_back']),
       vasLowerBack: vasFor(['lower back', 'lower_back']),
@@ -116,7 +104,7 @@ class _EquipmentScreenBusinessState
     final loc = AppLocalizations.of(context)!;
     final reportState = ref.watch(reportNotifierProvider);
     final engineOutput = _buildEngineOutput(reportState);
-    final fallbackList = reportState.analysisData?.aiResult.equipment ?? [];
+    final fallbackList = reportState.analysisReport?.equipment ?? [];
 
     return Scaffold(
       backgroundColor: AppColors.surface,

@@ -73,15 +73,7 @@ class _ScanBusinessScreenState extends State<ScanBusinessScreen> {
                   title: loc.instantScan,
                   subtitle: loc.instantScanInfo,
                   iconPath: Assets.icons.general.instantScan.path,
-                  onTap: () {
-                    // Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder: (_) => const ImageCaptureScreen(
-                    //       type: ScanType.instantScan,
-                    //     ),
-                    //   ),
-                    // );
-                  },
+                  onTap: () {},
                 ),
 
                 SizedBox(height: 12.h),

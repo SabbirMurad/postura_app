@@ -1,93 +1,90 @@
-// ===================== ROOT =====================
 import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/rosa_score.dart';
 
-class AnalysisDataModel {
-  final AIResult aiResult;
-  final Assessment? assessment;
+class AnalysisReport {
+  final String annotatedImageUrl;
+  final BodyRegionRisks bodyRegionRisks;
+  final List<Correction> corrections;
+  final Exercises exercises;
+  final List<Equipment> equipment;
+  final String pdfReportUrl;
+  final String equipmentPdfUrl;
+  final String equipmentExcelUrl;
+
+  final WorkPattern workPattern;
+
+  final List<PainIntensity> painIntensities;
+  final String painDuration;
+
   final RosaScore rosaScore;
 
-  AnalysisDataModel({
-    required this.aiResult,
-    this.assessment,
+  final List<String> symptoms;
+
+  AnalysisReport({
+    required this.workPattern,
+    required this.annotatedImageUrl,
+    required this.bodyRegionRisks,
+    required this.corrections,
+    required this.exercises,
+    required this.equipment,
+    required this.pdfReportUrl,
+    required this.equipmentPdfUrl,
+    required this.equipmentExcelUrl,
     required this.rosaScore,
+    required this.symptoms,
+    required this.painIntensities,
+    required this.painDuration,
   });
 
-  factory AnalysisDataModel.fromJson(Map<String, dynamic> json) {
-    return AnalysisDataModel(
-      aiResult: AIResult.fromJson(json['ai_result'] ?? {}),
-      assessment: json['assessment'] != null
-          ? Assessment.fromJson(json['assessment'])
-          : null,
-      rosaScore: RosaScore.fromJson(json['assessment']['rosa_score']),
+  factory AnalysisReport.fromJson(Map<String, dynamic> json) {
+    return AnalysisReport(
+      workPattern: WorkPattern.fromJson(json['work_pattern']),
+      painIntensities: (json['pain_intensities'] as List<dynamic>)
+          .map((e) => PainIntensity.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      painDuration: json['pain_duration'],
+      annotatedImageUrl: json['annotated_image_url'] ?? '',
+      bodyRegionRisks: BodyRegionRisks.fromJson(
+        json['body_region_risks'] ?? {},
+      ),
+      corrections: (json['corrections'] as List<dynamic>? ?? [])
+          .map((e) => Correction.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      exercises: json['exercises'] is Map
+          ? Exercises.fromJson(json['exercises'] as Map<String, dynamic>)
+          : Exercises(
+              conditionType: '',
+              focusRegions: [],
+              mainPainRegion: null,
+              averagePainVas: 0,
+              recommendedSession: [],
+            ),
+      equipment: (json['equipment'] as List<dynamic>? ?? [])
+          .map((e) => Equipment.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      pdfReportUrl: json['pdf_report_url'] ?? '',
+      equipmentPdfUrl: json['equipment_pdf_url'] ?? '',
+      equipmentExcelUrl: json['equipment_excel_url'] ?? '',
+
+      rosaScore: RosaScore.fromJson(json['rosa_score']),
+
+      symptoms: List<String>.from(json['symptoms']),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'ai_result': aiResult.toJson(),
-    'assessment': assessment?.toJson(),
-  };
-}
-
-// ===================== ASSESSMENT =====================
-class Assessment {
-  final int id;
-  final String? company;
-  final String capturedImage;
-  final DateTime lastScanAt;
-  final DateTime createdAt;
-  final List<String> bodyRegions;
-  final List<PainIntensity> painIntensities;
-  final String painDuration;
-  final WorkPattern? workPattern;
-  final Workstation? workstation;
-  final List<String> symptoms;
-
-  Assessment({
-    required this.id,
-    this.company,
-    required this.capturedImage,
-    required this.lastScanAt,
-    required this.createdAt,
-    required this.bodyRegions,
-    required this.painIntensities,
-    required this.painDuration,
-    this.workPattern,
-    this.workstation,
-    required this.symptoms,
-  });
-
-  factory Assessment.fromJson(Map<String, dynamic> json) => Assessment(
-    id: json['id'] ?? 0,
-    company: json['company'],
-    capturedImage: json['captured_image'] ?? '',
-    lastScanAt: DateTime.tryParse(json['last_scan_at'] ?? '') ?? DateTime.now(),
-    createdAt: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
-    bodyRegions: List<String>.from(json['body_regions'] ?? []),
-    painIntensities: (json['pain_intensities'] as List<dynamic>? ?? [])
-        .map((e) => PainIntensity.fromJson(e as Map<String, dynamic>))
-        .toList(),
-    painDuration: json['pain_duration'] ?? '',
-    workPattern: json['work_pattern'] != null
-        ? WorkPattern.fromJson(json['work_pattern'])
-        : null,
-    workstation: json['workstation'] != null
-        ? Workstation.fromJson(json['workstation'])
-        : null,
-    symptoms: List<String>.from(json['symptoms'] ?? []),
-  );
-
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'company': company,
-    'captured_image': capturedImage,
-    'last_scan_at': lastScanAt.toIso8601String(),
-    'created_at': createdAt.toIso8601String(),
-    'body_regions': bodyRegions,
+    'annotated_image_url': annotatedImageUrl,
+    'body_region_risks': bodyRegionRisks.toJson(),
+    'corrections': corrections.map((e) => e.toJson()).toList(),
+    'exercises': exercises.toJson(),
+    'equipment': equipment.map((e) => e.toJson()).toList(),
+    'pdf_report_url': pdfReportUrl,
+    'equipment_pdf_url': equipmentPdfUrl,
+    'equipment_excel_url': equipmentExcelUrl,
+    'rosa_score': rosaScore.toJson(),
+    'symptoms': symptoms,
+    'work_pattern': workPattern.toJson(),
     'pain_intensities': painIntensities.map((e) => e.toJson()).toList(),
     'pain_duration': painDuration,
-    'work_pattern': workPattern?.toJson(),
-    'workstation': workstation?.toJson(),
-    'symptoms': symptoms,
   };
 }
 
@@ -106,6 +103,47 @@ class PainIntensity {
   Map<String, dynamic> toJson() => {
     'body_region': bodyRegion,
     'intensity': intensity,
+  };
+}
+
+// ===================== WORKSTATION =====================
+class Workstation {
+  final bool? canAdjustChairHeight;
+  final bool? enoughLegRoom;
+  final bool? chairHasLumbarSupport;
+  final String monitorDistance;
+  final bool? feetRestingFlat;
+  final bool? monitorDirectlyInFront;
+  final bool? chairHasArmrests;
+
+  Workstation({
+    this.canAdjustChairHeight,
+    this.enoughLegRoom,
+    this.chairHasLumbarSupport,
+    this.monitorDistance = '',
+    this.feetRestingFlat,
+    this.monitorDirectlyInFront,
+    this.chairHasArmrests,
+  });
+
+  factory Workstation.fromJson(Map<String, dynamic> json) => Workstation(
+    canAdjustChairHeight: json['can_adjust_chair_height'] as bool?,
+    enoughLegRoom: json['enough_leg_room'] as bool?,
+    chairHasLumbarSupport: json['chair_has_lumbar_support'] as bool?,
+    monitorDistance: json['monitor_distance'] ?? '',
+    feetRestingFlat: json['feet_resting_flat'] as bool?,
+    monitorDirectlyInFront: json['monitor_directly_in_front'] as bool?,
+    chairHasArmrests: json['chair_has_armrests'] as bool?,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'can_adjust_chair_height': canAdjustChairHeight,
+    'enough_leg_room': enoughLegRoom,
+    'chair_has_lumbar_support': chairHasLumbarSupport,
+    'monitor_distance': monitorDistance,
+    'feet_resting_flat': feetRestingFlat,
+    'monitor_directly_in_front': monitorDirectlyInFront,
+    'chair_has_armrests': chairHasArmrests,
   };
 }
 
@@ -135,99 +173,6 @@ class WorkPattern {
     'break_habit': breakHabit,
     'device_usage': deviceUsage,
     'mouse_type': mouseType,
-  };
-}
-
-// ===================== AI RESULT =====================
-class AIResult {
-  final double complianceScore;
-  final String overallRisk;
-  final String annotatedImageUrl;
-  final BodyRegionRisks bodyRegionRisks;
-  final List<Correction> corrections;
-  final Exercises exercises;
-  final List<Equipment> equipment;
-  final String pdfReportUrl;
-  final String equipmentPdfUrl;
-  final String equipmentExcelUrl;
-  // ROSA sub-scores (added by backend when available)
-  final int? rosaChair;
-  final int? rosaMonitor;
-  final int? rosaKeyboard;
-  final int? rosaMouse;
-  final int? rosaFinal;
-
-  AIResult({
-    required this.complianceScore,
-    required this.overallRisk,
-    required this.annotatedImageUrl,
-    required this.bodyRegionRisks,
-    required this.corrections,
-    required this.exercises,
-    required this.equipment,
-    required this.pdfReportUrl,
-    required this.equipmentPdfUrl,
-    required this.equipmentExcelUrl,
-    this.rosaChair,
-    this.rosaMonitor,
-    this.rosaKeyboard,
-    this.rosaMouse,
-    this.rosaFinal,
-  });
-
-  /// Tier string derived from overallRisk field
-  String get tier => overallRisk.toUpperCase();
-
-  factory AIResult.fromJson(Map<String, dynamic> json) {
-    return AIResult(
-      complianceScore: (json['compliance_score'] ?? 0).toDouble(),
-      overallRisk: json['overall_risk'] ?? '',
-      annotatedImageUrl: json['annotated_image_url'] ?? '',
-      bodyRegionRisks: BodyRegionRisks.fromJson(
-        json['body_region_risks'] ?? {},
-      ),
-      corrections: (json['corrections'] as List<dynamic>? ?? [])
-          .map((e) => Correction.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      exercises: json['exercises'] is Map
-          ? Exercises.fromJson(json['exercises'] as Map<String, dynamic>)
-          : Exercises(
-              conditionType: '',
-              focusRegions: [],
-              mainPainRegion: null,
-              averagePainVas: 0,
-              recommendedSession: [],
-            ),
-      equipment: (json['equipment'] as List<dynamic>? ?? [])
-          .map((e) => Equipment.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      pdfReportUrl: json['pdf_report_url'] ?? '',
-      equipmentPdfUrl: json['equipment_pdf_url'] ?? '',
-      equipmentExcelUrl: json['equipment_excel_url'] ?? '',
-      rosaChair: json['rosa_chair'] as int?,
-      rosaMonitor: json['rosa_monitor'] as int?,
-      rosaKeyboard: json['rosa_keyboard'] as int?,
-      rosaMouse: json['rosa_mouse'] as int?,
-      rosaFinal: json['rosa_final'] as int?,
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-    'compliance_score': complianceScore,
-    'overall_risk': overallRisk,
-    'annotated_image_url': annotatedImageUrl,
-    'body_region_risks': bodyRegionRisks.toJson(),
-    'corrections': corrections.map((e) => e.toJson()).toList(),
-    'exercises': exercises.toJson(),
-    'equipment': equipment.map((e) => e.toJson()).toList(),
-    'pdf_report_url': pdfReportUrl,
-    'equipment_pdf_url': equipmentPdfUrl,
-    'equipment_excel_url': equipmentExcelUrl,
-    'rosa_chair': rosaChair,
-    'rosa_monitor': rosaMonitor,
-    'rosa_keyboard': rosaKeyboard,
-    'rosa_mouse': rosaMouse,
-    'rosa_final': rosaFinal,
   };
 }
 
@@ -480,46 +425,5 @@ class Equipment {
     'priority': priority,
     'improvement_percentage': improvementPercentage,
     'source': source,
-  };
-}
-
-// ===================== WORKSTATION =====================
-class Workstation {
-  final bool? canAdjustChairHeight;
-  final bool? enoughLegRoom;
-  final bool? chairHasLumbarSupport;
-  final String monitorDistance;
-  final bool? feetRestingFlat;
-  final bool? monitorDirectlyInFront;
-  final bool? chairHasArmrests;
-
-  Workstation({
-    this.canAdjustChairHeight,
-    this.enoughLegRoom,
-    this.chairHasLumbarSupport,
-    this.monitorDistance = '',
-    this.feetRestingFlat,
-    this.monitorDirectlyInFront,
-    this.chairHasArmrests,
-  });
-
-  factory Workstation.fromJson(Map<String, dynamic> json) => Workstation(
-    canAdjustChairHeight: json['can_adjust_chair_height'] as bool?,
-    enoughLegRoom: json['enough_leg_room'] as bool?,
-    chairHasLumbarSupport: json['chair_has_lumbar_support'] as bool?,
-    monitorDistance: json['monitor_distance'] ?? '',
-    feetRestingFlat: json['feet_resting_flat'] as bool?,
-    monitorDirectlyInFront: json['monitor_directly_in_front'] as bool?,
-    chairHasArmrests: json['chair_has_armrests'] as bool?,
-  );
-
-  Map<String, dynamic> toJson() => {
-    'can_adjust_chair_height': canAdjustChairHeight,
-    'enough_leg_room': enoughLegRoom,
-    'chair_has_lumbar_support': chairHasLumbarSupport,
-    'monitor_distance': monitorDistance,
-    'feet_resting_flat': feetRestingFlat,
-    'monitor_directly_in_front': monitorDirectlyInFront,
-    'chair_has_armrests': chairHasArmrests,
   };
 }

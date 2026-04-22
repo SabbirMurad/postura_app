@@ -63,29 +63,25 @@ class ExerciseScreenBusiness extends ConsumerWidget {
             Expanded(
               child: Builder(
                 builder: (context) {
-                  final exercises = reportState
-                      .analysisData
-                      ?.aiResult
-                      .exercises
-                      .recommendedSession;
+                  final exercises =
+                      reportState.analysisReport?.exercises.recommendedSession;
 
-                  final clinicalProjection = reportState
-                      .analysisData
-                      ?.aiResult
-                      .exercises
-                      .clinicalProjection;
+                  final clinicalProjection =
+                      reportState.analysisReport?.exercises.clinicalProjection;
 
                   // Filter out exercises that duplicate clinical projection
                   final filteredExercises = exercises?.where((e) {
                     if (clinicalProjection?.text != null &&
-                        clinicalProjection!.text!.isNotEmpty) {
+                        clinicalProjection!.text.isNotEmpty) {
                       if (e.bodyRegion.toLowerCase().contains(
                         'clinical projection',
-                      ))
+                      )) {
                         return false;
+                      }
                       if (e.description.trim() ==
-                          clinicalProjection.text!.trim())
+                          clinicalProjection.text.trim()) {
                         return false;
+                      }
                     }
                     return true;
                   }).toList();
@@ -132,7 +128,7 @@ class ExerciseScreenBusiness extends ConsumerWidget {
                   /// ✅ Check if clinical projection exists
                   final hasClinicalProjection =
                       clinicalProjection?.text != null &&
-                      clinicalProjection!.text!.isNotEmpty;
+                      clinicalProjection!.text.isNotEmpty;
 
                   // Calculate dynamic footer height based on content
                   final clinicalFooterHeight = hasClinicalProjection
@@ -354,7 +350,7 @@ class ExerciseScreenBusiness extends ConsumerWidget {
                                             /// Message text
                                             Expanded(
                                               child: Text(
-                                                clinicalProjection!.text!,
+                                                clinicalProjection.text,
                                                 style: TextStyle(
                                                   fontSize: 12.sp,
                                                   fontWeight: FontWeight.w500,
@@ -371,10 +367,9 @@ class ExerciseScreenBusiness extends ConsumerWidget {
                                       ),
 
                                       /// Source Citation (if exists)
-                                      if (clinicalProjection.source != null &&
-                                          clinicalProjection
-                                              .source!
-                                              .isNotEmpty) ...[
+                                      if (clinicalProjection
+                                          .source
+                                          .isNotEmpty) ...[
                                         SizedBox(height: 10.h),
                                         Container(
                                           padding: EdgeInsets.symmetric(
@@ -398,7 +393,7 @@ class ExerciseScreenBusiness extends ConsumerWidget {
                                               SizedBox(width: 6.w),
                                               Expanded(
                                                 child: Text(
-                                                  clinicalProjection.source!,
+                                                  clinicalProjection.source,
                                                   style: TextStyle(
                                                     fontSize: 10.sp,
                                                     fontWeight: FontWeight.w500,

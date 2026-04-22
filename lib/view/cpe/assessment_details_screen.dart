@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/rosa_sub_score.dart';
 import 'package:posture_detector_app/constants/app_colors.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
-import 'package:posture_detector_app/models/analysis/analysis_data_model.dart';
+import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/provider/cpe_assessment.dart';
 import 'package:posture_detector_app/view/business/home/home_screen.dart';
+import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/rosa_score.dart';
 import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
 import 'package:posture_detector_app/view/cpe/widgets/patient_info_card_cpe.dart';
 import 'package:posture_detector_app/view/cpe/widgets/photo_section_cpe.dart';
@@ -179,7 +181,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
             ),
             _workstationItem(
               text: '${loc.monitorDistance}: ${workstation.monitorDistance}',
-              value: workstation.chairHasLumbarSupport!,
+              value: workstation.monitorDistance == '40-75cm',
             ),
             _workstationItem(
               text: workstation.feetRestingFlat!
@@ -253,58 +255,80 @@ class CPEAssessmentScreen extends ConsumerWidget {
 
   // ── Sub-score items ───────────────────────────────────────────────────────
 
-  List<RosaItem> _buildRosaItems(CpeAssessmentState state) => [
+  List<RosaItem> _buildRosaItems(RosaScore score) => [
+    RosaItem(
+      category: 'Seat Height',
+      score: '${score.seatHeightScore}',
+      status: RosaStatus(
+        _subScoreLabel(score.seatHeightScore),
+        _subScoreRisk(score.seatHeightScore),
+      ),
+    ),
+    RosaItem(
+      category: 'Backrest',
+      score: '${score.backrestScore}',
+      status: RosaStatus(
+        _subScoreLabel(score.backrestScore),
+        _subScoreRisk(score.backrestScore),
+      ),
+    ),
+    RosaItem(
+      category: 'Armrest',
+      score: '${score.armrestScore}',
+      status: RosaStatus(
+        _subScoreLabel(score.armrestScore),
+        _subScoreRisk(score.armrestScore),
+      ),
+    ),
     RosaItem(
       category: 'Chair',
-      score: '${state.rosaChair}',
+      score: '${score.chairScore}',
       status: RosaStatus(
-        _subScoreLabel(state.rosaChair),
-        _subScoreRisk(state.rosaChair),
+        _subScoreLabel(score.chairScore),
+        _subScoreRisk(score.chairScore),
       ),
     ),
     RosaItem(
       category: 'Monitor',
-      score: '${state.rosaMonitor}',
+      score: '${score.monitorScore}',
       status: RosaStatus(
-        _subScoreLabel(state.rosaMonitor),
-        _subScoreRisk(state.rosaMonitor),
+        _subScoreLabel(score.monitorScore),
+        _subScoreRisk(score.monitorScore),
       ),
     ),
     RosaItem(
       category: 'Keyboard',
-      score: '${state.rosaKeyboard}',
+      score: '${score.keyboardScore}',
       status: RosaStatus(
-        _subScoreLabel(state.rosaKeyboard),
-        _subScoreRisk(state.rosaKeyboard),
+        _subScoreLabel(score.keyboardScore),
+        _subScoreRisk(score.keyboardScore),
       ),
     ),
     RosaItem(
       category: 'Mouse',
-      score: '${state.rosaMouse}',
+      score: '${score.mouseScore}',
       status: RosaStatus(
-        _subScoreLabel(state.rosaMouse),
-        _subScoreRisk(state.rosaMouse),
+        _subScoreLabel(score.mouseScore),
+        _subScoreRisk(score.mouseScore),
       ),
     ),
     RosaItem(
-      category: 'Final ROSA',
-      score: '${state.rosaFinal} / 10',
+      category: 'Peripheral',
+      score: '${score.peripheralScore}',
       status: RosaStatus(
-        _finalLabel(state.rosaFinal),
-        _finalScoreRisk(state.rosaFinal),
+        _subScoreLabel(score.peripheralScore),
+        _subScoreRisk(score.peripheralScore),
       ),
     ),
   ];
 
-  Widget _rosaAssessmentSection(CpeAssessmentState state) {
-    final rosaItems = _buildRosaItems(state);
-
+  Widget _rosaAssessmentSection(RosaScore score) {
     return Wrap(
       spacing: 12.w,
-      runSpacing: 12.h,
-      children: rosaItems.map((item) {
-        return RosaSubScoreItem(item: item);
-      }).toList(),
+      runSpacing: 12.w,
+      children: _buildRosaItems(
+        score,
+      ).map((item) => RosaSubScoreItem(item: item)).toList(),
     );
   }
 
@@ -312,7 +336,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
     required CpeAssessmentState state,
     required AppLocalizations loc,
   }) {
-    final finalRisk = _finalScoreRisk(state.rosaFinal);
+    final finalRisk = _finalScoreRisk(state.rosaScore.finalScore);
     final scoreColor = _riskColor(finalRisk);
 
     return [
@@ -336,13 +360,24 @@ class CPEAssessmentScreen extends ConsumerWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              '${state.rosaFinal} / 10',
-              style: TextStyle(
-                fontSize: 28.sp,
-                fontWeight: FontWeight.w700,
-                color: scoreColor,
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  'assets/icons/rosa/final_rosa.svg',
+                  width: 40.w,
+                  height: 40.w,
+                ),
+                SizedBox(height: 6.w),
+                Text(
+                  '${state.rosaScore.finalScore} / 10',
+                  style: TextStyle(
+                    fontSize: 28.sp,
+                    fontWeight: FontWeight.w700,
+                    color: scoreColor,
+                  ),
+                ),
+              ],
             ),
             SizedBox(width: 16.w),
             Expanded(
@@ -350,7 +385,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _finalLabel(state.rosaFinal),
+                    _finalLabel(state.rosaScore.finalScore),
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w600,
@@ -359,7 +394,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    _actionLevel(state.rosaFinal),
+                    _actionLevel(state.rosaScore.finalScore),
                     style: TextStyle(
                       fontSize: 11.sp,
                       color: AppColors.secondaryText,
@@ -382,7 +417,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
     final notifier = ref.read(cpeAssessmentNotifierProvider(scanId).notifier);
     final loc = AppLocalizations.of(context)!;
 
-    if (state.isLoading) {
+    if (state == null || state.isLoading) {
       return const Scaffold(
         backgroundColor: Color(0xFFF2F4F7),
         body: SafeArea(child: Center(child: CircularProgressIndicator())),
@@ -421,18 +456,16 @@ class CPEAssessmentScreen extends ConsumerWidget {
                     SizedBox(height: 20.h),
                     ..._mainRosaScores(state: state, loc: loc),
                     SizedBox(height: 20.h),
-                    _rosaAssessmentSection(state),
+                    _rosaAssessmentSection(state.rosaScore),
                     SizedBox(height: 20.h),
                     _deskInfo(deskLocation: state.deskLocation, loc: loc),
                     SizedBox(height: 20.h),
-                    if (state.workPattern != null)
-                      _wordPatternSection(
-                        workPattern: state.workPattern!,
-                        loc: loc,
-                      ),
-                    if (state.workPattern != null) SizedBox(height: 20.h),
-                    if (state.workstation != null)
-                      _workstation(workstation: state.workstation!, loc: loc),
+                    _wordPatternSection(
+                      workPattern: state.workPattern,
+                      loc: loc,
+                    ),
+                    SizedBox(height: 20.h),
+                    _workstation(workstation: state.workstation, loc: loc),
                     SizedBox(height: 20.h),
                     PainSymptomsSectionCPE(state: state),
                     SizedBox(height: 20.h),

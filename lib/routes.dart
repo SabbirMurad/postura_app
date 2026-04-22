@@ -5,7 +5,6 @@ import 'package:posture_detector_app/view/auth/forgot_password/verify_email_scre
 import 'package:posture_detector_app/view/auth/login/login_screen.dart';
 import 'package:posture_detector_app/view/assessment/camera_guide_screen.dart';
 import 'package:posture_detector_app/view/camera_capture/correction_report_screen.dart';
-import 'package:posture_detector_app/view/camera_capture/output_screen.dart';
 import 'package:posture_detector_app/view/auth/signup/company_credential_screen.dart';
 import 'package:posture_detector_app/view/assessment/work_pattern_screen.dart';
 import 'package:posture_detector_app/view/assessment/optional_symptom_screen.dart';
@@ -20,7 +19,7 @@ import 'package:posture_detector_app/view/onboarding/welcoming_screen.dart';
 import 'package:posture_detector_app/view/business/navigation/bottom_nav.dart';
 import 'package:posture_detector_app/view/business/profile/account_settings_screen.dart';
 import 'package:posture_detector_app/view/business/profile/language_screen.dart';
-import 'package:posture_detector_app/view/cpe/assessment_screen_cpe.dart';
+import 'package:posture_detector_app/view/cpe/assessment_details_screen.dart';
 import 'package:posture_detector_app/view/cpe/navigation/bottom_nav_cpe.dart';
 import 'package:posture_detector_app/view/e_learning/elearning_screen.dart';
 import 'package:posture_detector_app/view/onboarding/onboarding_screen.dart';
@@ -196,10 +195,6 @@ class AppRoute {
       //   path: AppRoute.imagePreview,
       //   builder: (context, state) => ImagePreviewScreen(),
       // ),
-      GoRoute(
-        path: AppRoute.outputScreenBusiness,
-        builder: (context, state) => OutputScreenBusiness(),
-      ),
       GoRoute(
         path: AppRoute.correctionReportScreenBusiness,
         builder: (context, state) => CorrectionReportScreenBusiness(),

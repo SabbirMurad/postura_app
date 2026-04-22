@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/common/widgets/rosa_sub_score.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
@@ -86,36 +87,89 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
 
   Color _riskColor(RosaRisk risk) {
     switch (risk) {
-      case RosaRisk.red:    return const Color(0xFFE53935);
-      case RosaRisk.orange: return const Color(0xFFFB8C00);
-      case RosaRisk.green:  return const Color(0xFF43A047);
+      case RosaRisk.red:
+        return const Color(0xFFE53935);
+      case RosaRisk.orange:
+        return const Color(0xFFFB8C00);
+      case RosaRisk.green:
+        return const Color(0xFF43A047);
     }
   }
 
   List<RosaItem> _buildRosaItems(RosaScore score) => [
-    RosaItem(category: 'Seat Height', score: '${score.seatHeightScore}',
-      status: RosaStatus(_subScoreLabel(score.seatHeightScore), _subScoreRisk(score.seatHeightScore))),
-    RosaItem(category: 'Backrest', score: '${score.backrestScore}',
-      status: RosaStatus(_subScoreLabel(score.backrestScore), _subScoreRisk(score.backrestScore))),
-    RosaItem(category: 'Armrest', score: '${score.armrestScore}',
-      status: RosaStatus(_subScoreLabel(score.armrestScore), _subScoreRisk(score.armrestScore))),
-    RosaItem(category: 'Chair', score: '${score.chairScore}',
-      status: RosaStatus(_subScoreLabel(score.chairScore), _subScoreRisk(score.chairScore))),
-    RosaItem(category: 'Monitor', score: '${score.monitorScore}',
-      status: RosaStatus(_subScoreLabel(score.monitorScore), _subScoreRisk(score.monitorScore))),
-    RosaItem(category: 'Keyboard', score: '${score.keyboardScore}',
-      status: RosaStatus(_subScoreLabel(score.keyboardScore), _subScoreRisk(score.keyboardScore))),
-    RosaItem(category: 'Mouse', score: '${score.mouseScore}',
-      status: RosaStatus(_subScoreLabel(score.mouseScore), _subScoreRisk(score.mouseScore))),
-    RosaItem(category: 'Peripheral', score: '${score.peripheralScore}',
-      status: RosaStatus(_subScoreLabel(score.peripheralScore), _subScoreRisk(score.peripheralScore))),
+    RosaItem(
+      category: 'Seat Height',
+      score: '${score.seatHeightScore}',
+      status: RosaStatus(
+        _subScoreLabel(score.seatHeightScore),
+        _subScoreRisk(score.seatHeightScore),
+      ),
+    ),
+    RosaItem(
+      category: 'Backrest',
+      score: '${score.backrestScore}',
+      status: RosaStatus(
+        _subScoreLabel(score.backrestScore),
+        _subScoreRisk(score.backrestScore),
+      ),
+    ),
+    RosaItem(
+      category: 'Armrest',
+      score: '${score.armrestScore}',
+      status: RosaStatus(
+        _subScoreLabel(score.armrestScore),
+        _subScoreRisk(score.armrestScore),
+      ),
+    ),
+    RosaItem(
+      category: 'Chair',
+      score: '${score.chairScore}',
+      status: RosaStatus(
+        _subScoreLabel(score.chairScore),
+        _subScoreRisk(score.chairScore),
+      ),
+    ),
+    RosaItem(
+      category: 'Monitor',
+      score: '${score.monitorScore}',
+      status: RosaStatus(
+        _subScoreLabel(score.monitorScore),
+        _subScoreRisk(score.monitorScore),
+      ),
+    ),
+    RosaItem(
+      category: 'Keyboard',
+      score: '${score.keyboardScore}',
+      status: RosaStatus(
+        _subScoreLabel(score.keyboardScore),
+        _subScoreRisk(score.keyboardScore),
+      ),
+    ),
+    RosaItem(
+      category: 'Mouse',
+      score: '${score.mouseScore}',
+      status: RosaStatus(
+        _subScoreLabel(score.mouseScore),
+        _subScoreRisk(score.mouseScore),
+      ),
+    ),
+    RosaItem(
+      category: 'Peripheral',
+      score: '${score.peripheralScore}',
+      status: RosaStatus(
+        _subScoreLabel(score.peripheralScore),
+        _subScoreRisk(score.peripheralScore),
+      ),
+    ),
   ];
 
   Widget _rosaAssessmentSection(RosaScore score) {
     return Wrap(
       spacing: 12.w,
       runSpacing: 12.w,
-      children: _buildRosaItems(score).map((item) => RosaSubScoreItem(item: item)).toList(),
+      children: _buildRosaItems(
+        score,
+      ).map((item) => RosaSubScoreItem(item: item)).toList(),
     );
   }
 
@@ -134,13 +188,24 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            '${score.finalScore} / 10',
-            style: TextStyle(
-              fontSize: 28.sp,
-              fontWeight: FontWeight.w700,
-              color: scoreColor,
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                'assets/icons/rosa/final_rosa.svg',
+                width: 40.w,
+                height: 40.w,
+              ),
+              SizedBox(height: 6.w),
+              Text(
+                '${score.finalScore} / 10',
+                style: TextStyle(
+                  fontSize: 28.sp,
+                  fontWeight: FontWeight.w700,
+                  color: scoreColor,
+                ),
+              ),
+            ],
           ),
           SizedBox(width: 16.w),
           Expanded(
@@ -200,7 +265,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
 
                 Builder(
                   builder: (context) {
-                    final analysisData = reportState.analysisData;
+                    final analysisData = reportState.analysisReport;
 
                     if (analysisData == null && reportState.isLoading) {
                       return Center(
@@ -254,8 +319,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                       );
                     }
 
-                    final risks =
-                        reportState.analysisData!.aiResult.bodyRegionRisks;
+                    final risks = reportState.analysisReport!.bodyRegionRisks;
                     final bodyRegionRiskItems = [
                       BodyRegionRiskModel(region: 'Elbows', risk: risks.elbows),
                       BodyRegionRiskModel(
@@ -313,9 +377,6 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                         ),
                         SizedBox(height: 12.h),
                         _rosaAssessmentSection(analysisData.rosaScore),
-
-                        // if (posture != null)
-                        //   DetailsAnalysisList(posture: posture)
                         SizedBox(height: 24.h),
                         Align(
                           alignment: Alignment.centerLeft,
@@ -334,7 +395,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                         PrimaryButton(
                           onTap: () {
                             final pdfUrl =
-                                reportState.analysisData?.aiResult.pdfReportUrl;
+                                reportState.analysisReport?.pdfReportUrl;
 
                             if (pdfUrl == null || pdfUrl.isEmpty) {
                               // EN: "No PDF available"

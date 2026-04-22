@@ -1,14 +1,11 @@
 import 'package:posture_detector_app/models/equipment/equipment_output.dart';
+import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/rosa_score.dart';
 
 // ── Input contract (§2.1) ─────────────────────────────────────────────────────
 
 class EquipmentEngineInput {
-  // ROSA sub-scores (1–3; rosaChairArmrest nullable if not assessed)
-  final int rosaChair;
-  final int rosaMonitor;
-  final int rosaKeyboard;
-  final int rosaMouse;
-  final int? rosaChairArmrest;
+  // Full ROSA score object — sub-scores and final score are derived from it
+  final RosaScore rosaScore;
 
   // VAS scores 0–10; null if region was not selected on intake screen
   final double? vasNeck;
@@ -20,9 +17,6 @@ class EquipmentEngineInput {
   final double? vasKnee;
   final double? vasFeet;
   final double? vasHip;
-
-  // Tier derived from ROSA total score
-  final String tier; // 'GREEN' | 'ORANGE' | 'RED' | 'YELLOW'
 
   // Intake screen inputs
   final String workZoneType; // 'desk' | 'standingDesk' | 'hybrid' | 'other'
@@ -40,11 +34,7 @@ class EquipmentEngineInput {
   final bool symMorningPain;
 
   const EquipmentEngineInput({
-    required this.rosaChair,
-    required this.rosaMonitor,
-    required this.rosaKeyboard,
-    required this.rosaMouse,
-    this.rosaChairArmrest,
+    required this.rosaScore,
     this.vasNeck,
     this.vasUpperBack,
     this.vasLowerBack,
@@ -54,7 +44,6 @@ class EquipmentEngineInput {
     this.vasKnee,
     this.vasFeet,
     this.vasHip,
-    required this.tier,
     required this.workZoneType,
     required this.hoursAtDesk,
     required this.breakHabit,
@@ -361,7 +350,7 @@ class EquipmentEngine {
 
     // ── Step 5 — Device setup modifiers (§2.8) ───────────────────────────
     if (input.deviceSetup == 'laptop') {
-      if (input.rosaMonitor < 3) {
+      if (input.rosaScore.monitorScore < 3) {
         _find(cards, 'equip_01')?.suppressed = true;
       } else {
         _find(cards, 'equip_01')?.cardNote =
@@ -383,12 +372,13 @@ class EquipmentEngine {
     // ── Step 6 — Mouse type modifiers (§2.9) ─────────────────────────────
     if (input.mouseType == 'trackpadOrNone') {
       _find(cards, 'equip_06')?.suppressed = true;
-      if (input.rosaMouse >= 2) {
+      if (input.rosaScore.mouseScore >= 2) {
         _find(cards, 'equip_04')?.appendNote(
           'Consider adding an external mouse to reduce wrist load.',
         );
       }
-    } else if (input.mouseType == 'smallNotebook' && input.rosaMouse >= 2) {
+    } else if (input.mouseType == 'smallNotebook' &&
+        input.rosaScore.mouseScore >= 2) {
       _find(cards, 'equip_06')?.urgencyLevel = 3;
     }
     // standard mouse → no modifier
@@ -470,9 +460,16 @@ class EquipmentEngine {
       });
 
     // ── Step 12 — Return output (§2.15) ──────────────────────────────────
+    final finalScore = input.rosaScore.finalScore;
+    final tier = finalScore >= 7
+        ? 'RED'
+        : finalScore >= 4
+        ? 'ORANGE'
+        : 'GREEN';
+
     return EquipmentOutput(
-      tier: input.tier,
-      tierMessage: _tierMessageMap[input.tier] ?? '',
+      tier: tier,
+      tierMessage: _tierMessageMap[tier] ?? '',
       equipmentCards: activeCards.map((c) => c.toCard()).toList(),
       morningPainFlag: morningPainFlag,
     );
@@ -500,11 +497,11 @@ class EquipmentEngine {
   };
 
   static Map<String, int?> _buildRosaMap(EquipmentEngineInput i) => {
-    'rosaMonitor': i.rosaMonitor,
-    'rosaChair': i.rosaChair,
-    'rosaKeyboard': i.rosaKeyboard,
-    'rosaMouse': i.rosaMouse,
-    'rosaChairArmrest': i.rosaChairArmrest,
+    'rosaMonitor': i.rosaScore.monitorScore,
+    'rosaChair': i.rosaScore.chairScore,
+    'rosaKeyboard': i.rosaScore.keyboardScore,
+    'rosaMouse': i.rosaScore.mouseScore,
+    'rosaChairArmrest': i.rosaScore.armrestScore,
   };
 }
 
