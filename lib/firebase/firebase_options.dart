@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '387593990043',
     projectId: 'postura-5a9b0',
     storageBucket: 'postura-5a9b0.firebasestorage.app',
-    iosBundleId: 'com.example.postureDetectorApp',
+    iosBundleId: 'com.sabbir.postura',
   );
 }

@@ -5,6 +5,7 @@ import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/models/profile/author_model.dart';
 import 'package:posture_detector_app/models/user_type.dart';
+import 'package:posture_detector_app/services/auth/auth_o_service.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/utils/print_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -216,6 +217,43 @@ class AuthorNotifier extends _$AuthorNotifier {
     );
 
     return response.ok;
+  }
+
+  /// Signs in via Auth0 browser flow, then exchanges the token with the backend.
+  /// Backend must implement POST /api/auth/oauth-sign-in accepting
+  /// { mode, access_token, id_token } and returning the same shape as sign-in.
+  Future<bool?> signInWithAuth0({required UserType userType}) async {
+    final credentials = await Auth0Service.login();
+    if (credentials == null) return null;
+
+    final response = await CustomHttp.post(
+      endpoint: 'auth/oauth-sign-in',
+      body: {
+        'mode': userType.name,
+        'access_token': credentials.accessToken,
+        'id_token': credentials.idToken,
+      },
+      needAuth: false,
+    );
+
+    if (!response.ok) return null;
+
+    AppHelper.instance.setAccessToken(response.data['access_token']);
+    AppHelper.instance.setRefToken(response.data['refresh_token']);
+    AppHelper.instance.setTokenValidity(response.data['expires_at']);
+    AppHelper.instance.setUserId(response.data['user']['id']);
+    AppHelper.instance.setAuthRole(response.data['user']['role']);
+
+    if (userType == UserType.EMPLOYEE) {
+      AppHelper.instance.setIsonBoarding(
+        response.data['user']['has_onboarded'],
+      );
+      final isOnboarded = await AppHelper.instance.getIsonBoarding();
+      return isOnboarded == true;
+    }
+
+    await refreshProfile();
+    return true;
   }
 
   Future<void> resendOtp() async {

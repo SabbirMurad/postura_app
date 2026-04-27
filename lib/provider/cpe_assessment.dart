@@ -94,7 +94,7 @@ class CpeAssessmentState {
   final WorkPattern workPattern;
   final Workstation workstation;
   final List<PainSymptom> painSymptoms;
-  final List<PhotoItem> photoItems;
+  final String image;
   final List<ApprovalItem> approvalItems;
   final ReviewMode reviewMode;
   final ReviewDecision decision;
@@ -118,7 +118,7 @@ class CpeAssessmentState {
     required this.workPattern,
     required this.workstation,
     this.painSymptoms = const [],
-    this.photoItems = const [],
+    required this.image,
     this.approvalItems = const [],
     this.reviewMode = ReviewMode.remote,
     this.decision = ReviewDecision.pending,
@@ -158,7 +158,6 @@ class CpeAssessmentState {
   }
 
   String get decisionLabel => decision.label;
-  bool get canAddMorePhotos => photoItems.length < 4;
 
   CpeAssessmentState copyWith({
     bool? isLoading,
@@ -192,7 +191,7 @@ class CpeAssessmentState {
     workPattern: workPattern ?? this.workPattern,
     workstation: workstation ?? this.workstation,
     painSymptoms: painSymptoms ?? this.painSymptoms,
-    photoItems: photoItems ?? this.photoItems,
+    image: image,
     approvalItems: approvalItems ?? this.approvalItems,
     reviewMode: reviewMode ?? this.reviewMode,
     decision: decision ?? this.decision,
@@ -291,7 +290,7 @@ class CpeAssessmentNotifier
         workPattern: WorkPattern.fromJson(wp),
         workstation: Workstation.fromJson(ws),
         painSymptoms: painSymptoms,
-        photoItems: photoItems,
+        image: d['captured_image'],
         approvalItems: approvalItems,
         decision: ReviewDecision.fromApi(d['review_status']),
         initialReviewStatus: d['review_status'] ?? '',

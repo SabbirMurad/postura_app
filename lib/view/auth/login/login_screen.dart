@@ -29,6 +29,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   UserType _userType = UserType.EMPLOYEE;
   final _formKey = GlobalKey<FormState>();
   bool _loading = false;
+  bool _loadingAuth0 = false;
   bool _isPasswordObscured = true;
 
   final _emailController = TextEditingController();
@@ -59,6 +60,37 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     } catch (e) {
       printLine('_saveFcmToken error: $e');
+    }
+  }
+
+  Future<void> _submitWithAuth0() async {
+    setState(() => _loadingAuth0 = true);
+
+    final res = await ref
+        .read(authorNotifierProvider.notifier)
+        .signInWithAuth0(userType: _userType);
+
+    await _saveFcmToken();
+
+    setState(() => _loadingAuth0 = false);
+
+    if (_userType == UserType.EMPLOYEE) {
+      if (res == true) {
+        setState(() => _loadingAuth0 = true);
+        await Future.wait([
+          ref.read(reportNotifierProvider.notifier).fetchMyReports(),
+          ref.read(authorNotifierProvider.notifier).refreshProfile(),
+        ]);
+        setState(() => _loadingAuth0 = false);
+        if (mounted) context.go(AppRoute.bottomNavBusiness);
+      } else if (res == false) {
+        if (mounted) context.go(AppRoute.employeeSelectBodyRegion);
+      }
+    } else {
+      if (res == true) {
+        ref.read(authorNotifierProvider.notifier).refreshProfile();
+        if (mounted) context.go(AppRoute.bottomNavCpe);
+      }
     }
   }
 
@@ -222,7 +254,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 224.h),
+                  SizedBox(height: 140.h),
                   PrimaryButton(
                     loading: _loading,
                     onTap: _submit,
@@ -234,6 +266,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w500,
                     ),
+                  ),
+                  SizedBox(height: 16.h),
+                  _OrDivider(),
+                  SizedBox(height: 16.h),
+                  _Auth0Button(
+                    loading: _loadingAuth0,
+                    onTap: _submitWithAuth0,
                   ),
 
                   if (_userType == UserType.EMPLOYEE)
@@ -502,4 +541,83 @@ class _UserOption {
     required this.label,
     required this.icon,
   });
+}
+
+class _OrDivider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(child: Divider(color: AppColors.border, thickness: 1)),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          child: Text(
+            'or',
+            style: TextStyle(
+              fontSize: 13.sp,
+              color: AppColors.text.withValues(alpha: 0.4),
+            ),
+          ),
+        ),
+        Expanded(child: Divider(color: AppColors.border, thickness: 1)),
+      ],
+    );
+  }
+}
+
+class _Auth0Button extends StatelessWidget {
+  final bool loading;
+  final VoidCallback onTap;
+
+  const _Auth0Button({required this.loading, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: loading ? null : onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 14.h),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(10.r),
+          border: Border.all(
+            color: AppColors.primaryColor.withValues(alpha: 0.4),
+            width: 1.5,
+          ),
+        ),
+        child: loading
+            ? Center(
+                child: SizedBox(
+                  width: 20.w,
+                  height: 20.w,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.primaryColor,
+                  ),
+                ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.lock_outline_rounded,
+                    size: 18.sp,
+                    color: AppColors.primaryColor,
+                  ),
+                  SizedBox(width: 8.w),
+                  Text(
+                    'Continue with SSO',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
 }

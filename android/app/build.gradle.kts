@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.posture_detector_app"
+    namespace = "com.sabbir.postura"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -25,13 +25,15 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.posture_detector_app"
+        applicationId = "com.sabbir.postura"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["auth0Domain"] = "dev-85vm0cufjcab0y6r.us.auth0.com"
+        manifestPlaceholders["auth0Scheme"] = "com.sabbir.postura"
     }
 
     buildTypes {

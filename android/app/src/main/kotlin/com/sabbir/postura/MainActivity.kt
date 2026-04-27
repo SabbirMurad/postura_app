@@ -1,4 +1,4 @@
-package com.example.posture_detector_app
+package com.sabbir.postura
 
 import io.flutter.embedding.android.FlutterActivity
 

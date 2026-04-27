@@ -51,6 +51,7 @@ dependencies:
   google_mlkit_pose_detection: ^0.14.1  # MediaPipe Accurate pose landmark extraction
   sensors_plus: ^7.0.0                  # Accelerometer for roll/pitch detection
   fluttertoast: ^8.2.8                  # Native toast messages
+  auth0_flutter: ^2.0.1
 
 dev_dependencies:
   flutter_test:

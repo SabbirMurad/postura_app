@@ -263,84 +263,78 @@ class AssessmentNotifier extends _$AssessmentNotifier {
       return false;
     }
 
-    try {
-      final painIntensityMap = state.painIntensity.map(
-        (k, v) => MapEntry(k.label, v.toInt()),
-      );
+    final painIntensityMap = state.painIntensity.map(
+      (k, v) => MapEntry(k.label, v.toInt()),
+    );
 
-      var multipartFile = await http.MultipartFile.fromPath(
-        'captured_image',
-        state.capturedImage!.path,
-      );
+    var multipartFile = await http.MultipartFile.fromPath(
+      'captured_image',
+      state.capturedImage!.path,
+    );
 
-      final rosaScore = state.rosaScore!;
+    final rosaScore = state.rosaScore!;
 
-      final response = await CustomHttp.multipart(
-        endpoint: 'assessments/scan-analyse',
-        method: CommonCustomMethods.POST,
-        fields: {
-          'scan_type':
-              type == ScanType.primaryScan || type == ScanType.captureImage
-              ? 'primary'
-              : 'instant',
-          'body_regions': jsonEncode(
-            state.selectedBodyRegions.map((r) => r.label).toList(),
-          ),
-          'pain_intensity': jsonEncode(painIntensityMap),
-          'duration_pattern': state.selectedPainDuration?.label ?? '',
-          'work_pattern': jsonEncode({
-            'hours_at_desk': state.workPattern.hoursAtDeskPerDay,
-            'break_habit': state.workPattern.breakHabit,
-            'device_usage': state.workPattern.deviceUsage,
-            'mouse_type': state.workPattern.mouseType,
-          }),
-          'symptoms': jsonEncode(
-            state.selectedOptionalSymptoms.map((s) => s.label).toList(),
-          ),
-          'workstation': jsonEncode({
-            'monitor_distance': state.workstation.monitorDistance,
-            'can_adjust_chair_height': state.workstation.canAdjustChairHeight,
-            'enough_leg_room': state.workstation.enoughLegRoom,
-            'chair_has_lumbar_support': state.workstation.chairHasLumbarSupport,
-            'feet_resting_flat': state.workstation.feetRestingFlat,
-            'monitor_directly_in_front':
-                state.workstation.monitorDirectlyInFront,
-            'chair_has_armrests': state.workstation.chairHasArmrests,
-          }),
-          'rosa_score': jsonEncode({
-            'final_score': rosaScore.finalScore,
-            'chair_score': rosaScore.chairScore,
-            'monitor_score': rosaScore.monitorScore,
-            'keyboard_score': rosaScore.keyboardScore,
-            'mouse_score': rosaScore.mouseScore,
-            'peripheral_score': rosaScore.peripheralScore,
-            'seat_height_score': rosaScore.seatHeightScore,
-            'armrest_score': rosaScore.armrestScore,
-            'knee_angle': rosaScore.kneeAngle,
-            'trunk_angle': rosaScore.trunkAngle,
-            'backrest_score': rosaScore.backrestScore,
-            'forward_head': rosaScore.forwardHead,
-            'neck_flexion': rosaScore.neckFlexion,
-            'wrist_extension': rosaScore.wristExtension,
-          }),
-        },
-        files: [multipartFile],
-      );
+    final response = await CustomHttp.multipart(
+      endpoint: 'assessments/scan-analyse',
+      method: CommonCustomMethods.POST,
+      fields: {
+        'scan_type':
+            type == ScanType.primaryScan || type == ScanType.captureImage
+            ? 'primary'
+            : 'instant',
+        'body_regions': jsonEncode(
+          state.selectedBodyRegions.map((r) => r.label).toList(),
+        ),
+        'pain_intensity': jsonEncode(painIntensityMap),
+        'duration_pattern': state.selectedPainDuration?.label ?? '',
+        'work_pattern': jsonEncode({
+          'hours_at_desk': state.workPattern.hoursAtDeskPerDay,
+          'break_habit': state.workPattern.breakHabit,
+          'device_usage': state.workPattern.deviceUsage,
+          'mouse_type': state.workPattern.mouseType,
+        }),
+        'symptoms': jsonEncode(
+          state.selectedOptionalSymptoms.map((s) => s.label).toList(),
+        ),
+        'workstation': jsonEncode({
+          'monitor_distance': state.workstation.monitorDistance,
+          'can_adjust_chair_height': state.workstation.canAdjustChairHeight,
+          'enough_leg_room': state.workstation.enoughLegRoom,
+          'chair_has_lumbar_support': state.workstation.chairHasLumbarSupport,
+          'feet_resting_flat': state.workstation.feetRestingFlat,
+          'monitor_directly_in_front': state.workstation.monitorDirectlyInFront,
+          'chair_has_armrests': state.workstation.chairHasArmrests,
+        }),
+        'rosa_score': jsonEncode({
+          'final_score': rosaScore.finalScore,
+          'chair_score': rosaScore.chairScore,
+          'monitor_score': rosaScore.monitorScore,
+          'keyboard_score': rosaScore.keyboardScore,
+          'mouse_score': rosaScore.mouseScore,
+          'peripheral_score': rosaScore.peripheralScore,
+          'seat_height_score': rosaScore.seatHeightScore,
+          'armrest_score': rosaScore.armrestScore,
+          'knee_angle': rosaScore.kneeAngle,
+          'trunk_angle': rosaScore.trunkAngle,
+          'backrest_score': rosaScore.backrestScore,
+          'forward_head': rosaScore.forwardHead,
+          'neck_flexion': rosaScore.neckFlexion,
+          'wrist_extension': rosaScore.wristExtension,
+        }),
+      },
+      files: [multipartFile],
+    );
 
-      if (response.ok) {
-        printLine('Successfully processed analysis');
-        final model = AnalysisReport.fromJson(response.data);
+    if (response.ok) {
+      printLine('Successfully processed analysis');
+      final model = AnalysisReport.fromJson(response.data);
 
-        ref.read(reportNotifierProvider.notifier).setData(model);
+      ref.read(reportNotifierProvider.notifier).setData(model);
 
-        return true;
-      }
-
-      showCustomToast(text: response.error ?? 'Failed to process analysis');
-    } catch (e) {
-      debugPrint('Assessment submitAnalysis error: $e');
-      showCustomToast(text: 'An unexpected error occurred');
+      return true;
     }
+
+    showCustomToast(text: response.error ?? 'Failed to process analysis');
 
     return false;
   }
