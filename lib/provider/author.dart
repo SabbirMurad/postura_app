@@ -225,6 +225,7 @@ class AuthorNotifier extends _$AuthorNotifier {
   Future<bool?> signInWithAuth0({required UserType userType}) async {
     final credentials = await Auth0Service.login();
     if (credentials == null) return null;
+    printLine(credentials.user);
 
     final response = await CustomHttp.post(
       endpoint: 'auth/oauth-sign-in',
