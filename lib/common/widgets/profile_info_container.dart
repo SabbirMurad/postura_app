@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
-import 'package:posture_detector_app/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/provider/author.dart';
 import 'image_uploader.dart';
 

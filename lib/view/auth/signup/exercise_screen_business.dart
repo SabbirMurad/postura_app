@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/bottom_button.dart';
-import 'package:posture_detector_app/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/provider/report.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';

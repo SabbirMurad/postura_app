@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
-import 'package:posture_detector_app/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/utils/date_helper.dart';
 import 'package:posture_detector_app/view/e_learning/data/e_learning_module_data.dart';

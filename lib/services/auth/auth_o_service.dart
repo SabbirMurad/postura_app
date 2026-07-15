@@ -1,5 +1,5 @@
 import 'package:auth0_flutter/auth0_flutter.dart';
-import 'package:posture_detector_app/constants/app_credential.dart';
+import 'package:posture_detector_app/constants/credential.dart';
 import 'package:posture_detector_app/utils/print_helper.dart';
 
 class Auth0Service {

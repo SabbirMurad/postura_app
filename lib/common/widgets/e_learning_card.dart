@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/models/quiz/quiz_module.dart';
-import 'package:posture_detector_app/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 
 class ELearningCard extends StatelessWidget {
   final QuizModule quizModule;

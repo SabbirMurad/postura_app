@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/constants/app_text.dart';
 
-import 'package:posture_detector_app/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 import 'back_button.dart';
 
 class AppTopSection extends StatelessWidget {

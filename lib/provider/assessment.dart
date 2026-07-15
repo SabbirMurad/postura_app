@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/provider/report.dart';
@@ -10,7 +8,8 @@ import 'package:posture_detector_app/utils/print_helper.dart';
 import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/capture_questionnaire.dart';
 import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/rosa_score.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:http/http.dart' as http;
+import 'package:posture_detector_app/models/prepared_image.dart';
+import 'package:posture_detector_app/utils/media.dart' as media;
 
 part 'assessment.g.dart';
 
@@ -32,12 +31,14 @@ class WorkPattern {
     String? breakHabit,
     String? deviceUsage,
     String? mouseType,
-  }) => WorkPattern(
-    hoursAtDeskPerDay: hoursAtDeskPerDay ?? this.hoursAtDeskPerDay,
-    breakHabit: breakHabit ?? this.breakHabit,
-    deviceUsage: deviceUsage ?? this.deviceUsage,
-    mouseType: mouseType ?? this.mouseType,
-  );
+  }) {
+    return WorkPattern(
+      hoursAtDeskPerDay: hoursAtDeskPerDay ?? this.hoursAtDeskPerDay,
+      breakHabit: breakHabit ?? this.breakHabit,
+      deviceUsage: deviceUsage ?? this.deviceUsage,
+      mouseType: mouseType ?? this.mouseType,
+    );
+  }
 }
 
 class WorkStation {
@@ -67,16 +68,19 @@ class WorkStation {
     bool? feetRestingFlat,
     bool? monitorDirectlyInFront,
     bool? chairHasArmrests,
-  }) => WorkStation(
-    monitorDistance: monitorDistance ?? this.monitorDistance,
-    canAdjustChairHeight: canAdjustChairHeight ?? this.canAdjustChairHeight,
-    enoughLegRoom: enoughLegRoom ?? this.enoughLegRoom,
-    chairHasLumbarSupport: chairHasLumbarSupport ?? this.chairHasLumbarSupport,
-    feetRestingFlat: feetRestingFlat ?? this.feetRestingFlat,
-    monitorDirectlyInFront:
-        monitorDirectlyInFront ?? this.monitorDirectlyInFront,
-    chairHasArmrests: chairHasArmrests ?? this.chairHasArmrests,
-  );
+  }) {
+    return WorkStation(
+      monitorDistance: monitorDistance ?? this.monitorDistance,
+      canAdjustChairHeight: canAdjustChairHeight ?? this.canAdjustChairHeight,
+      enoughLegRoom: enoughLegRoom ?? this.enoughLegRoom,
+      chairHasLumbarSupport:
+          chairHasLumbarSupport ?? this.chairHasLumbarSupport,
+      feetRestingFlat: feetRestingFlat ?? this.feetRestingFlat,
+      monitorDirectlyInFront:
+          monitorDirectlyInFront ?? this.monitorDirectlyInFront,
+      chairHasArmrests: chairHasArmrests ?? this.chairHasArmrests,
+    );
+  }
 }
 
 class AssessmentState {
@@ -151,17 +155,19 @@ class AssessmentState {
     WorkStation? workstation,
     RosaScore? rosaScore,
     File? capturedImage,
-  }) => AssessmentState(
-    selectedBodyRegions: selectedBodyRegions ?? this.selectedBodyRegions,
-    painIntensity: painIntensity ?? this.painIntensity,
-    selectedPainDuration: selectedPainDuration ?? this.selectedPainDuration,
-    selectedOptionalSymptoms:
-        selectedOptionalSymptoms ?? this.selectedOptionalSymptoms,
-    workPattern: workPattern ?? this.workPattern,
-    workstation: workstation ?? this.workstation,
-    rosaScore: rosaScore ?? this.rosaScore,
-    capturedImage: capturedImage ?? this.capturedImage,
-  );
+  }) {
+    return AssessmentState(
+      selectedBodyRegions: selectedBodyRegions ?? this.selectedBodyRegions,
+      painIntensity: painIntensity ?? this.painIntensity,
+      selectedPainDuration: selectedPainDuration ?? this.selectedPainDuration,
+      selectedOptionalSymptoms:
+          selectedOptionalSymptoms ?? this.selectedOptionalSymptoms,
+      workPattern: workPattern ?? this.workPattern,
+      workstation: workstation ?? this.workstation,
+      rosaScore: rosaScore ?? this.rosaScore,
+      capturedImage: capturedImage ?? this.capturedImage,
+    );
+  }
 }
 
 @Riverpod(keepAlive: true)
@@ -263,40 +269,47 @@ class AssessmentNotifier extends _$AssessmentNotifier {
       return false;
     }
 
-    final painIntensityMap = state.painIntensity.map(
-      (k, v) => MapEntry(k.label, v.toInt()),
-    );
+    // Upload the captured image first; the API takes its id, not the file.
+    final prepared = PreparedImage.fromFile(state.capturedImage!);
+    prepared.meta = await prepared.get_prepare_meta();
+    prepared.prepared = true;
 
-    var multipartFile = await http.MultipartFile.fromPath(
-      'captured_image',
-      state.capturedImage!.path,
+    final imageIds = await media.upload_images(
+      images: [prepared],
+      used_at: media.AssetUsedAt.Post,
+      temporary: true,
     );
+    if (imageIds == null || imageIds.isEmpty) {
+      showCustomToast(text: 'Failed to upload image');
+      return false;
+    }
 
     final rosaScore = state.rosaScore!;
 
-    final response = await CustomHttp.multipart(
+    final response = await CustomHttp.post(
       endpoint: 'assessments/scan-analyse',
-      method: CommonCustomMethods.POST,
-      fields: {
-        'scan_type':
-            type == ScanType.primaryScan || type == ScanType.captureImage
-            ? 'primary'
-            : 'instant',
-        'body_regions': jsonEncode(
-          state.selectedBodyRegions.map((r) => r.label).toList(),
-        ),
-        'pain_intensity': jsonEncode(painIntensityMap),
-        'duration_pattern': state.selectedPainDuration?.label ?? '',
-        'work_pattern': jsonEncode({
+      body: {
+        'captured_image': imageIds.first,
+        'symptoms': state.selectedOptionalSymptoms.map((s) => s.label).toList(),
+        // One pain unit per selected region: { body_region, intensity, duration }.
+        // The UI collects a single duration for the scan, so every unit currently
+        // shares it — per-region durations would need a UI change.
+        'pain_units': state.selectedBodyRegions
+            .map(
+              (r) => {
+                'body_region': r.label,
+                'intensity': (state.painIntensity[r] ?? 0).toInt(),
+                'duration': state.selectedPainDuration?.label ?? '',
+              },
+            )
+            .toList(),
+        'work_pattern': {
           'hours_at_desk': state.workPattern.hoursAtDeskPerDay,
           'break_habit': state.workPattern.breakHabit,
           'device_usage': state.workPattern.deviceUsage,
           'mouse_type': state.workPattern.mouseType,
-        }),
-        'symptoms': jsonEncode(
-          state.selectedOptionalSymptoms.map((s) => s.label).toList(),
-        ),
-        'workstation': jsonEncode({
+        },
+        'workstation': {
           'monitor_distance': state.workstation.monitorDistance,
           'can_adjust_chair_height': state.workstation.canAdjustChairHeight,
           'enough_leg_room': state.workstation.enoughLegRoom,
@@ -304,8 +317,8 @@ class AssessmentNotifier extends _$AssessmentNotifier {
           'feet_resting_flat': state.workstation.feetRestingFlat,
           'monitor_directly_in_front': state.workstation.monitorDirectlyInFront,
           'chair_has_armrests': state.workstation.chairHasArmrests,
-        }),
-        'rosa_score': jsonEncode({
+        },
+        'rosa_score': {
           'final_score': rosaScore.finalScore,
           'chair_score': rosaScore.chairScore,
           'monitor_score': rosaScore.monitorScore,
@@ -320,9 +333,8 @@ class AssessmentNotifier extends _$AssessmentNotifier {
           'forward_head': rosaScore.forwardHead,
           'neck_flexion': rosaScore.neckFlexion,
           'wrist_extension': rosaScore.wristExtension,
-        }),
+        },
       },
-      files: [multipartFile],
     );
 
     if (response.ok) {

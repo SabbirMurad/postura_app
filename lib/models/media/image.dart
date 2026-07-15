@@ -1,0 +1,56 @@
+import 'dart:typed_data';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:posture_detector_app/constants/credential.dart';
+import 'package:flutter/material.dart';
+
+class ImageModel {
+  final String uuid;
+  final String webp_url;
+  final String original_url;
+  final String blur_hash;
+  final double width;
+  final double height;
+  final ImageProvider provider;
+  final bool local;
+  final Uint8List? local_bytes;
+
+  const ImageModel({
+    required this.uuid,
+    required this.webp_url,
+    required this.original_url,
+    required this.blur_hash,
+    required this.width,
+    required this.height,
+    required this.provider,
+    this.local = false,
+    this.local_bytes,
+  });
+
+  factory ImageModel.fromJson(Map<String, dynamic> json) {
+    return ImageModel(
+      uuid: json['uuid'],
+      blur_hash: json['blur_hash'],
+      webp_url: '${AppCredentials.domain}/image/webp/${json['uuid']}',
+      original_url: '${AppCredentials.domain}/image/original/${json['uuid']}',
+      width: json['width'].toDouble(),
+      height: json['height'].toDouble(),
+      provider: CachedNetworkImageProvider(
+        '${AppCredentials.domain}/image/webp/${json['uuid']}',
+      ),
+    );
+  }
+
+  static List<ImageModel> fromJsonList(List<dynamic> json) {
+    return json.map((item) => ImageModel.fromJson(item)).toList();
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'uuid': this.uuid,
+      'blur_hash': this.blur_hash,
+      'width': this.width,
+      'height': this.height,
+    };
+  }
+}

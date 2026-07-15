@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 
 import 'package:posture_detector_app/l10n/app_localizations.dart';
-import 'package:posture_detector_app/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 
 class HomeTopSection extends StatelessWidget {
   final String name;

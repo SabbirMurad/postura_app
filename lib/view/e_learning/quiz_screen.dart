@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/models/quiz/quiz_module.dart';
 import 'package:posture_detector_app/provider/e_learning.dart';
-import 'package:posture_detector_app/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 
 class QuizScreen extends ConsumerStatefulWidget {

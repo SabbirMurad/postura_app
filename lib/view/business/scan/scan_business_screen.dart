@@ -6,7 +6,7 @@ import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/dialogs/primary_scan_alert_dialog.dart';
 import 'package:posture_detector_app/view/business/scan/widgets/scan_container.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
-import 'package:posture_detector_app/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/routes.dart';
 
 class ScanBusinessScreen extends StatefulWidget {
