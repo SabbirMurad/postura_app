@@ -42,13 +42,7 @@ dependencies:
   firebase_messaging: ^16.1.3
   firebase_core: ^4.6.0
   flutter_local_notifications: ^18.0.1
-  flutter_bloc: ^9.0.0   # BLoC state management for detection pipeline
-  camera: ^0.11.0        # Camera preview and image streaming at 2fps
-  equatable: ^2.0.7      # Value equality for BLoC states (prevents extra rebuilds)
-  tflite_flutter: ^0.11.0 # TFLite runtime for EfficientDet-Lite0 object detection
-  image: ^4.8.0           # Image processing for ML frame preprocessing
-  google_mlkit_pose_detection: ^0.14.1  # MediaPipe Accurate pose landmark extraction
-  sensors_plus: ^7.0.0                  # Accelerometer for roll/pitch detection
+  image: ^4.8.0           # Image processing
   fluttertoast: ^8.2.8                  # Native toast messages
   auth0_flutter: ^2.0.1
   image_picker: ^1.1.2

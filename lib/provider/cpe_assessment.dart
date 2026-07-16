@@ -3,11 +3,12 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/models/analysis/analysis_report.dart';
+import 'package:posture_detector_app/models/analysis/body_angles.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/provider/cpe_home.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/main.dart';
-import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/rosa_score.dart';
+import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 
 // ─────────────────────────────────────────
 // Models
@@ -55,6 +56,40 @@ class PhotoItem {
       isRemote = true;
 }
 
+/// One side-view capture as shown in review: the image URL plus its measured
+/// angles (reuses [BodyAngles] for the geometry).
+class SideCaptureView {
+  final String image;
+  final BodyAngles angles;
+
+  const SideCaptureView({required this.image, required this.angles});
+
+  factory SideCaptureView.fromJson(Map<String, dynamic> m) => SideCaptureView(
+    image: m['image'] as String? ?? '',
+    angles: BodyAngles.fromJson(m),
+  );
+}
+
+/// The front-view capture as shown in review: the image URL plus the two raw
+/// front-view angles.
+class FrontCaptureView {
+  final String image;
+  final double abductionAngle;
+  final double wristDeviationAngle;
+
+  const FrontCaptureView({
+    required this.image,
+    required this.abductionAngle,
+    required this.wristDeviationAngle,
+  });
+
+  factory FrontCaptureView.fromJson(Map<String, dynamic> m) => FrontCaptureView(
+    image: m['image'] as String? ?? '',
+    abductionAngle: (m['abduction_angle'] as num?)?.toDouble() ?? 0,
+    wristDeviationAngle: (m['wrist_deviation_angle'] as num?)?.toDouble() ?? 0,
+  );
+}
+
 enum ReviewMode { remote, live }
 
 extension ReviewModeApi on ReviewMode {
@@ -94,7 +129,8 @@ class CpeAssessmentState {
   final WorkPattern workPattern;
   final Workstation workstation;
   final List<PainSymptom> painSymptoms;
-  final String image;
+  final List<SideCaptureView> sideCaptures;
+  final FrontCaptureView? frontCapture;
   final List<ApprovalItem> approvalItems;
   final ReviewMode reviewMode;
   final ReviewDecision decision;
@@ -118,7 +154,8 @@ class CpeAssessmentState {
     required this.workPattern,
     required this.workstation,
     this.painSymptoms = const [],
-    required this.image,
+    this.sideCaptures = const [],
+    this.frontCapture,
     this.approvalItems = const [],
     this.reviewMode = ReviewMode.remote,
     this.decision = ReviewDecision.pending,
@@ -191,7 +228,8 @@ class CpeAssessmentState {
     workPattern: workPattern ?? this.workPattern,
     workstation: workstation ?? this.workstation,
     painSymptoms: painSymptoms ?? this.painSymptoms,
-    image: image,
+    sideCaptures: sideCaptures,
+    frontCapture: frontCapture,
     approvalItems: approvalItems ?? this.approvalItems,
     reviewMode: reviewMode ?? this.reviewMode,
     decision: decision ?? this.decision,
@@ -290,7 +328,14 @@ class CpeAssessmentNotifier
         workPattern: WorkPattern.fromJson(wp),
         workstation: Workstation.fromJson(ws),
         painSymptoms: painSymptoms,
-        image: d['captured_image'],
+        sideCaptures: (d['side_captures'] as List? ?? const [])
+            .map((e) => SideCaptureView.fromJson(Map<String, dynamic>.from(e as Map)))
+            .toList(),
+        frontCapture: d['front_capture'] == null
+            ? null
+            : FrontCaptureView.fromJson(
+                Map<String, dynamic>.from(d['front_capture'] as Map),
+              ),
         approvalItems: approvalItems,
         decision: ReviewDecision.fromApi(d['review_status']),
         initialReviewStatus: d['review_status'] ?? '',

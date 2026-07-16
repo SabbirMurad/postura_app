@@ -1,18 +1,17 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
+import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
+import 'package:posture_detector_app/models/analysis/capture.dart';
 import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/utils/print_helper.dart';
 import 'package:posture_detector_app/view/assessment/analysis_result_screen.dart';
-import 'package:posture_detector_app/view/live_guidance/app.dart';
-import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/capture_questionnaire.dart';
 
 class CameraGuideScreen extends ConsumerStatefulWidget {
   const CameraGuideScreen({super.key});
@@ -22,51 +21,54 @@ class CameraGuideScreen extends ConsumerStatefulWidget {
 }
 
 class _CameraGuideScreenState extends ConsumerState<CameraGuideScreen> {
-  void _handleCaptureCallBack(BuildContext context) {
-    final assessment = ref.watch(assessmentNotifierProvider);
+  /// Bridge to the native PostureEngine (Android PoseDetectionActivity /
+  /// iOS PoseDetectionViewController).
+  static const _channel = MethodChannel('posture_detection');
+  bool _detecting = false;
 
-    final questionnaire = CaptureQuestionnaire(
-      // hoursAtDesk: assessment.workPattern.hoursAtDeskPerDay,
-      // breakIntervalHrs: assessment.workPattern.breakHabit,
-      // deviceUsage: assessment.workPattern.deviceUsage,
-      painRegions: assessment.selectedBodyRegions,
-      painIntensity: assessment.painIntensity,
-      painDuration: assessment.selectedPainDuration!,
-      optionalSymptoms: assessment.selectedOptionalSymptoms,
-    );
+  Future<void> _handleCaptureCallBack(BuildContext context) async {
+    if (_detecting) return;
+    final assessment = ref.read(assessmentNotifierProvider);
+    final notifier = ref.read(assessmentNotifierProvider.notifier);
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) {
-          return LiveGuidance(
-            questionnaire: questionnaire,
-            onComplete:
-                ({
-                  required imagePath,
-                  required poseResult,
-                  required rosaScore,
-                }) {
-                  ref
-                      .read(assessmentNotifierProvider.notifier)
-                      .setRosaScore(rosaScore);
+    setState(() => _detecting = true);
+    try {
+      // Launches the native camera pipeline; blocks until it captures the
+      // photos (or the user backs out, which returns null).
+      final result = await _channel.invokeMethod<Map>(
+        'startDetection',
+        assessment.workstationAnswers.toMap(),
+      );
+      if (!mounted) return;
+      if (result == null) return; // user cancelled
 
-                  ref
-                      .read(assessmentNotifierProvider.notifier)
-                      .setCapturedImage(File(imagePath));
+      final sideCaptures = (result['side_captures'] as List? ?? const [])
+          .map(
+            (e) => SideViewCapture.fromChannel(Map<String, dynamic>.from(e as Map)),
+          )
+          .toList();
+      final frontMap = result['front_capture'] as Map?;
+      final frontCapture = frontMap == null
+          ? null
+          : FrontViewCapture.fromChannel(Map<String, dynamic>.from(frontMap));
 
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) {
-                        return const AnalysisResultScreen();
-                      },
-                    ),
-                  );
-                },
-          );
-        },
-      ),
-    );
+      if (sideCaptures.isEmpty) {
+        showCustomToast(text: 'Capture did not complete. Please try again.');
+        return;
+      }
+
+      notifier.setCaptures(sideCaptures, frontCapture);
+
+      if (!mounted) return;
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const AnalysisResultScreen()),
+      );
+    } on PlatformException catch (e) {
+      printLine('Detection error: ${e.message}');
+      if (mounted) showCustomToast(text: 'Posture detection failed.');
+    } finally {
+      if (mounted) setState(() => _detecting = false);
+    }
   }
 
   @override

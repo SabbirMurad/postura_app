@@ -12,7 +12,7 @@ import 'package:posture_detector_app/models/scan_type.dart';
 import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/view/business/home/home_screen.dart';
-import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/rosa_score.dart';
+import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 
 class AnalysisResultScreen extends ConsumerStatefulWidget {
   const AnalysisResultScreen({super.key});

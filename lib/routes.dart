@@ -1,4 +1,4 @@
-import 'package:posture_detector_app/view/assessment/your_workstation.dart';
+import 'package:posture_detector_app/view/assessment/workstation_questionnaire_screen.dart';
 import 'package:posture_detector_app/view/auth/forgot_password/confirm_code_forgot_screen.dart';
 import 'package:posture_detector_app/view/auth/forgot_password/forgot_password_screen.dart';
 import 'package:posture_detector_app/view/auth/forgot_password/verify_email_screen.dart';
@@ -6,7 +6,6 @@ import 'package:posture_detector_app/view/auth/login/login_screen.dart';
 import 'package:posture_detector_app/view/assessment/camera_guide_screen.dart';
 import 'package:posture_detector_app/view/camera_capture/correction_report_screen.dart';
 import 'package:posture_detector_app/view/auth/signup/company_credential_screen.dart';
-import 'package:posture_detector_app/view/assessment/work_pattern_screen.dart';
 import 'package:posture_detector_app/view/assessment/optional_symptom_screen.dart';
 import 'package:posture_detector_app/view/assessment/pain_duration_screen.dart';
 import 'package:posture_detector_app/view/assessment/pain_intensity_screen.dart';
@@ -59,10 +58,9 @@ class AppRoute {
 
   // ── Assessment Flow ──
   static const employeeSelectBodyRegion = '/select-body-region';
-  static const yourWorkstation = '/your-workstation';
   static const employeePainIntensityScreen = '/pain-intensity';
   static const employeePainDurationScreen = '/pain-duration';
-  static const employeeWorkPatternScreen = '/work-pattern';
+  static const workstationQuestionnaire = '/workstation-questionnaire';
   static const employeeOptionalSymptom = '/optional-symptom';
 
   // ── Camera Capture Flow ──
@@ -163,12 +161,8 @@ class AppRoute {
         builder: (context, state) => PainDurationScreen(),
       ),
       GoRoute(
-        path: AppRoute.employeeWorkPatternScreen,
-        builder: (context, state) => WorkPatternScreen(),
-      ),
-      GoRoute(
-        path: AppRoute.yourWorkstation,
-        builder: (context, state) => YourWorkstationScreen(),
+        path: AppRoute.workstationQuestionnaire,
+        builder: (context, state) => WorkstationQuestionnaireScreen(),
       ),
       GoRoute(
         path: AppRoute.employeeOptionalSymptom,

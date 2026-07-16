@@ -8,6 +8,7 @@ import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/constants/app_text.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
+import 'package:posture_detector_app/common/widgets/selection_chip.dart';
 import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/routes.dart';
 
@@ -47,7 +48,7 @@ class SelectBodyRegionScreen extends ConsumerWidget {
                     onTap: () => ref
                         .read(assessmentNotifierProvider.notifier)
                         .toggleRegion(region),
-                    child: BodyRegionContainer(
+                    child: SelectionChip(
                       title: region.label,
                       selected: isSelected,
                     ),
@@ -80,39 +81,6 @@ class SelectBodyRegionScreen extends ConsumerWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class BodyRegionContainer extends StatelessWidget {
-  final String title;
-  final bool selected;
-
-  const BodyRegionContainer({
-    super.key,
-    required this.title,
-    required this.selected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.w),
-      decoration: BoxDecoration(
-        color: AppColors.onBoardingSurface,
-        borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(
-          color: selected ? AppColors.primaryColor : AppColors.blackDeemed,
-          width: 2,
-        ),
-      ),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 13.sp,
-          color: selected ? AppColors.primaryColor : AppColors.text,
         ),
       ),
     );

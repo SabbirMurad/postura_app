@@ -1,4 +1,4 @@
-import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/rosa_score.dart';
+import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 
 class AnalysisReport {
   final String annotatedImageUrl;

@@ -1,116 +1,63 @@
 import 'dart:io';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/models/analysis/analysis_report.dart';
+import 'package:posture_detector_app/models/analysis/capture.dart';
+import 'package:posture_detector_app/models/analysis/rosa_score.dart';
+import 'package:posture_detector_app/models/assessment/pain.dart';
+import 'package:posture_detector_app/models/assessment/workstation_answers.dart';
 import 'package:posture_detector_app/provider/report.dart';
 import 'package:posture_detector_app/models/scan_type.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/utils/print_helper.dart';
-import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/capture_questionnaire.dart';
-import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/rosa_score.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:posture_detector_app/models/prepared_image.dart';
 import 'package:posture_detector_app/utils/media.dart' as media;
 
+// Re-exported so the many screens that import this provider keep naming the
+// pain enums (and the ROSA models) without a separate import.
+export 'package:posture_detector_app/models/assessment/pain.dart';
+export 'package:posture_detector_app/models/analysis/rosa_score.dart';
+export 'package:posture_detector_app/models/analysis/body_angles.dart';
+export 'package:posture_detector_app/models/analysis/capture.dart';
+
 part 'assessment.g.dart';
-
-class WorkPattern {
-  final String hoursAtDeskPerDay;
-  final String breakHabit;
-  final String deviceUsage;
-  final String mouseType;
-
-  const WorkPattern({
-    this.hoursAtDeskPerDay = '',
-    this.breakHabit = '',
-    this.deviceUsage = '',
-    this.mouseType = '',
-  });
-
-  WorkPattern copyWith({
-    String? hoursAtDeskPerDay,
-    String? breakHabit,
-    String? deviceUsage,
-    String? mouseType,
-  }) {
-    return WorkPattern(
-      hoursAtDeskPerDay: hoursAtDeskPerDay ?? this.hoursAtDeskPerDay,
-      breakHabit: breakHabit ?? this.breakHabit,
-      deviceUsage: deviceUsage ?? this.deviceUsage,
-      mouseType: mouseType ?? this.mouseType,
-    );
-  }
-}
-
-class WorkStation {
-  final String monitorDistance;
-  final bool? canAdjustChairHeight;
-  final bool? enoughLegRoom;
-  final bool? chairHasLumbarSupport;
-  final bool? feetRestingFlat;
-  final bool? monitorDirectlyInFront;
-  final bool? chairHasArmrests;
-
-  const WorkStation({
-    this.monitorDistance = '',
-    this.canAdjustChairHeight,
-    this.enoughLegRoom,
-    this.chairHasLumbarSupport,
-    this.feetRestingFlat,
-    this.monitorDirectlyInFront,
-    this.chairHasArmrests,
-  });
-
-  WorkStation copyWith({
-    String? monitorDistance,
-    bool? canAdjustChairHeight,
-    bool? enoughLegRoom,
-    bool? chairHasLumbarSupport,
-    bool? feetRestingFlat,
-    bool? monitorDirectlyInFront,
-    bool? chairHasArmrests,
-  }) {
-    return WorkStation(
-      monitorDistance: monitorDistance ?? this.monitorDistance,
-      canAdjustChairHeight: canAdjustChairHeight ?? this.canAdjustChairHeight,
-      enoughLegRoom: enoughLegRoom ?? this.enoughLegRoom,
-      chairHasLumbarSupport:
-          chairHasLumbarSupport ?? this.chairHasLumbarSupport,
-      feetRestingFlat: feetRestingFlat ?? this.feetRestingFlat,
-      monitorDirectlyInFront:
-          monitorDirectlyInFront ?? this.monitorDirectlyInFront,
-      chairHasArmrests: chairHasArmrests ?? this.chairHasArmrests,
-    );
-  }
-}
 
 class AssessmentState {
   final Set<BodyRegion> selectedBodyRegions;
   final Map<BodyRegion, int> painIntensity;
-  final PainDuration? selectedPainDuration;
+
+  /// Pain duration per selected region — each region is reported independently.
+  final Map<BodyRegion, PainDuration> painDuration;
   final Set<OptionalSymptom> selectedOptionalSymptoms;
 
-  final WorkPattern workPattern;
+  /// Manual ROSA checklist answers, fed to the native PostureEngine.
+  final WorkstationAnswers workstationAnswers;
 
-  final WorkStation workstation;
+  /// The side-view shots from the capture session (image + score + angles each).
+  final List<SideViewCapture> sideCaptures;
 
-  final RosaScore? rosaScore;
-
-  final File? capturedImage;
+  /// The single front-view shot (image + abduction/wrist-deviation angles).
+  final FrontViewCapture? frontCapture;
 
   const AssessmentState({
     this.selectedBodyRegions = const {},
     this.painIntensity = const {},
-    this.selectedPainDuration,
+    this.painDuration = const {},
     this.selectedOptionalSymptoms = const {},
-
-    this.workPattern = const WorkPattern(),
-
-    this.workstation = const WorkStation(),
-
-    this.rosaScore,
-
-    this.capturedImage,
+    this.workstationAnswers = const WorkstationAnswers(),
+    this.sideCaptures = const [],
+    this.frontCapture,
   });
+
+  /// Session ROSA score — the side shots' scores averaged into one. Null until a
+  /// capture completes. (Kept as a getter so screens read one score as before.)
+  RosaScore? get rosaScore => sideCaptures.isEmpty
+      ? null
+      : RosaScore.average(sideCaptures.map((c) => c.rosaScore).toList());
+
+  /// Representative image for the assessment — the first side shot.
+  File? get capturedImage =>
+      sideCaptures.isEmpty ? null : sideCaptures.first.image;
 
   static const Set<BodyRegion> allPainRegions = {
     BodyRegion.neck,
@@ -149,23 +96,21 @@ class AssessmentState {
   AssessmentState copyWith({
     Set<BodyRegion>? selectedBodyRegions,
     Map<BodyRegion, int>? painIntensity,
-    PainDuration? selectedPainDuration,
+    Map<BodyRegion, PainDuration>? painDuration,
     Set<OptionalSymptom>? selectedOptionalSymptoms,
-    WorkPattern? workPattern,
-    WorkStation? workstation,
-    RosaScore? rosaScore,
-    File? capturedImage,
+    WorkstationAnswers? workstationAnswers,
+    List<SideViewCapture>? sideCaptures,
+    FrontViewCapture? frontCapture,
   }) {
     return AssessmentState(
       selectedBodyRegions: selectedBodyRegions ?? this.selectedBodyRegions,
       painIntensity: painIntensity ?? this.painIntensity,
-      selectedPainDuration: selectedPainDuration ?? this.selectedPainDuration,
+      painDuration: painDuration ?? this.painDuration,
       selectedOptionalSymptoms:
           selectedOptionalSymptoms ?? this.selectedOptionalSymptoms,
-      workPattern: workPattern ?? this.workPattern,
-      workstation: workstation ?? this.workstation,
-      rosaScore: rosaScore ?? this.rosaScore,
-      capturedImage: capturedImage ?? this.capturedImage,
+      workstationAnswers: workstationAnswers ?? this.workstationAnswers,
+      sideCaptures: sideCaptures ?? this.sideCaptures,
+      frontCapture: frontCapture ?? this.frontCapture,
     );
   }
 }
@@ -178,16 +123,22 @@ class AssessmentNotifier extends _$AssessmentNotifier {
   void toggleRegion(BodyRegion region) {
     final regions = Set<BodyRegion>.from(state.selectedBodyRegions);
     final pain = Map<BodyRegion, int>.from(state.painIntensity);
+    final duration = Map<BodyRegion, PainDuration>.from(state.painDuration);
 
     if (regions.contains(region)) {
       regions.remove(region);
       pain.remove(region);
+      duration.remove(region);
     } else {
       regions.add(region);
       pain[region] = 1;
     }
 
-    state = state.copyWith(selectedBodyRegions: regions, painIntensity: pain);
+    state = state.copyWith(
+      selectedBodyRegions: regions,
+      painIntensity: pain,
+      painDuration: duration,
+    );
   }
 
   int getPainForRegion(BodyRegion region) => state.painIntensity[region] ?? 1;
@@ -198,8 +149,18 @@ class AssessmentNotifier extends _$AssessmentNotifier {
     state = state.copyWith(painIntensity: pain);
   }
 
-  void setPainDuration(PainDuration duration) =>
-      state = state.copyWith(selectedPainDuration: duration);
+  PainDuration? getPainDurationForRegion(BodyRegion region) =>
+      state.painDuration[region];
+
+  void setPainDurationForRegion(BodyRegion region, PainDuration duration) {
+    final durations = Map<BodyRegion, PainDuration>.from(state.painDuration);
+    durations[region] = duration;
+    state = state.copyWith(painDuration: durations);
+  }
+
+  /// True once every selected region has a duration — gates the Continue button.
+  bool get allRegionsHaveDuration =>
+      state.selectedBodyRegions.every(state.painDuration.containsKey);
 
   void toggleSymptom(OptionalSymptom symptom) {
     final symptoms = Set<OptionalSymptom>.from(state.selectedOptionalSymptoms);
@@ -211,129 +172,76 @@ class AssessmentNotifier extends _$AssessmentNotifier {
     state = state.copyWith(selectedOptionalSymptoms: symptoms);
   }
 
-  void setHourDeskPerDay(String value) => state = state.copyWith(
-    workPattern: state.workPattern.copyWith(hoursAtDeskPerDay: value),
-  );
+  void setWorkstationAnswers(WorkstationAnswers answers) =>
+      state = state.copyWith(workstationAnswers: answers);
 
-  void setBreakHabit(String value) => state = state.copyWith(
-    workPattern: state.workPattern.copyWith(breakHabit: value),
-  );
+  /// Store the captures returned by the native PostureEngine.
+  void setCaptures(List<SideViewCapture> side, FrontViewCapture? front) =>
+      state = state.copyWith(sideCaptures: side, frontCapture: front);
 
-  void setDeviceUsage(String value) => state = state.copyWith(
-    workPattern: state.workPattern.copyWith(deviceUsage: value),
-  );
-
-  void setMouseType(String value) => state = state.copyWith(
-    workPattern: state.workPattern.copyWith(mouseType: value),
-  );
-
-  void setMonitorDistance(String value) => state = state.copyWith(
-    workstation: state.workstation.copyWith(monitorDistance: value),
-  );
-
-  void setCanAdjustChairHeight(bool value) => state = state.copyWith(
-    workstation: state.workstation.copyWith(canAdjustChairHeight: value),
-  );
-
-  void setEnoughLegRoom(bool value) => state = state.copyWith(
-    workstation: state.workstation.copyWith(enoughLegRoom: value),
-  );
-
-  void setChairHasLumbarSupport(bool value) => state = state.copyWith(
-    workstation: state.workstation.copyWith(chairHasLumbarSupport: value),
-  );
-
-  void setFeetRestingFlat(bool value) => state = state.copyWith(
-    workstation: state.workstation.copyWith(feetRestingFlat: value),
-  );
-
-  void setMonitorDirectlyInFront(bool value) => state = state.copyWith(
-    workstation: state.workstation.copyWith(monitorDirectlyInFront: value),
-  );
-
-  void setChairHasArmrests(bool value) => state = state.copyWith(
-    workstation: state.workstation.copyWith(chairHasArmrests: value),
-  );
-
-  void setRosaScore(RosaScore rosaScore) =>
-      state = state.copyWith(rosaScore: rosaScore);
-
-  void setCapturedImage(File image) =>
-      state = state.copyWith(capturedImage: image);
-
-  /// Submits the assessment with the currently captured image.
+  /// Submits the assessment. Uploads every capture image (side shots + the front
+  /// shot), then posts the grouped structure.
   /// Returns true on success, false on failure.
   Future<bool> submitAnalysis(ScanType type) async {
-    if (state.capturedImage == null) {
-      showCustomToast(text: 'No image selected');
+    if (state.sideCaptures.isEmpty) {
+      showCustomToast(text: 'No capture to submit');
       return false;
     }
 
-    // Upload the captured image first; the API takes its id, not the file.
-    final prepared = PreparedImage.fromFile(state.capturedImage!);
-    prepared.meta = await prepared.get_prepare_meta();
-    prepared.prepared = true;
+    // Upload every image in one request. The /image endpoint returns ids in the
+    // same order it received the parts, and Dart's MultipartRequest preserves file
+    // order, so the response maps back to captures by position. Order is
+    // [side_1, …, side_N, front?].
+    final front = state.frontCapture;
+    final files = <File>[
+      ...state.sideCaptures.map((c) => c.image),
+      if (front != null) front.image,
+    ];
+    final prepared = <PreparedImage>[];
+    for (final f in files) {
+      final p = PreparedImage.fromFile(f);
+      p.meta = await p.get_prepare_meta();
+      p.prepared = true;
+      prepared.add(p);
+    }
 
     final imageIds = await media.upload_images(
-      images: [prepared],
+      images: prepared,
       used_at: media.AssetUsedAt.Post,
       temporary: true,
     );
-    if (imageIds == null || imageIds.isEmpty) {
-      showCustomToast(text: 'Failed to upload image');
+    if (imageIds == null || imageIds.length != prepared.length) {
+      showCustomToast(text: 'Failed to upload images');
       return false;
     }
 
-    final rosaScore = state.rosaScore!;
+    final sideIds = imageIds.take(state.sideCaptures.length).toList();
+    final frontId = front != null ? imageIds.last : null;
 
     final response = await CustomHttp.post(
       endpoint: 'assessments/scan-analyse',
       body: {
-        'captured_image': imageIds.first,
         'symptoms': state.selectedOptionalSymptoms.map((s) => s.label).toList(),
         // One pain unit per selected region: { body_region, intensity, duration }.
-        // The UI collects a single duration for the scan, so every unit currently
-        // shares it — per-region durations would need a UI change.
         'pain_units': state.selectedBodyRegions
             .map(
               (r) => {
                 'body_region': r.label,
                 'intensity': (state.painIntensity[r] ?? 0).toInt(),
-                'duration': state.selectedPainDuration?.label ?? '',
+                'duration': state.painDuration[r]?.label ?? '',
               },
             )
             .toList(),
-        'work_pattern': {
-          'hours_at_desk': state.workPattern.hoursAtDeskPerDay,
-          'break_habit': state.workPattern.breakHabit,
-          'device_usage': state.workPattern.deviceUsage,
-          'mouse_type': state.workPattern.mouseType,
-        },
-        'workstation': {
-          'monitor_distance': state.workstation.monitorDistance,
-          'can_adjust_chair_height': state.workstation.canAdjustChairHeight,
-          'enough_leg_room': state.workstation.enoughLegRoom,
-          'chair_has_lumbar_support': state.workstation.chairHasLumbarSupport,
-          'feet_resting_flat': state.workstation.feetRestingFlat,
-          'monitor_directly_in_front': state.workstation.monitorDirectlyInFront,
-          'chair_has_armrests': state.workstation.chairHasArmrests,
-        },
-        'rosa_score': {
-          'final_score': rosaScore.finalScore,
-          'chair_score': rosaScore.chairScore,
-          'monitor_score': rosaScore.monitorScore,
-          'keyboard_score': rosaScore.keyboardScore,
-          'mouse_score': rosaScore.mouseScore,
-          'peripheral_score': rosaScore.peripheralScore,
-          'seat_height_score': rosaScore.seatHeightScore,
-          'armrest_score': rosaScore.armrestScore,
-          'knee_angle': rosaScore.kneeAngle,
-          'trunk_angle': rosaScore.trunkAngle,
-          'backrest_score': rosaScore.backrestScore,
-          'forward_head': rosaScore.forwardHead,
-          'neck_flexion': rosaScore.neckFlexion,
-          'wrist_extension': rosaScore.wristExtension,
-        },
+        // Manual ROSA checklist answers (native scorer input contract).
+        'workstation_answers': state.workstationAnswers.toMap(),
+        // Grouped captures: one entry per side shot (image + score + angles),
+        // plus the single front shot (image + abduction/wrist-deviation angles).
+        'side_captures': [
+          for (var i = 0; i < state.sideCaptures.length; i++)
+            state.sideCaptures[i].toJson(sideIds[i]),
+        ],
+        if (front != null && frontId != null)
+          'front_capture': front.toJson(frontId),
       },
     );
 

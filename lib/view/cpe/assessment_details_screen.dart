@@ -11,7 +11,7 @@ import 'package:posture_detector_app/common/widgets/back_button.dart';
 import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/provider/cpe_assessment.dart';
 import 'package:posture_detector_app/view/business/home/home_screen.dart';
-import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/rosa_score.dart';
+import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
 import 'package:posture_detector_app/view/cpe/widgets/patient_info_card_cpe.dart';
 import 'package:posture_detector_app/view/cpe/widgets/photo_section_cpe.dart';

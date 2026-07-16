@@ -1,5 +1,5 @@
 import 'package:posture_detector_app/models/equipment/equipment_output.dart';
-import 'package:posture_detector_app/view/live_guidance/features/step3_capture/domain/rosa_score.dart';
+import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 
 // ── Input contract (§2.1) ─────────────────────────────────────────────────────
 
