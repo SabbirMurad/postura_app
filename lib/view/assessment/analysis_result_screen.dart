@@ -11,8 +11,8 @@ import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/models/scan_type.dart';
 import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/routes.dart';
+import 'package:posture_detector_app/utils/media.dart' as media;
 import 'package:posture_detector_app/view/business/home/home_screen.dart';
-import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 
 class AnalysisResultScreen extends ConsumerStatefulWidget {
   const AnalysisResultScreen({super.key});
@@ -229,7 +229,7 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
       _submitting = true;
     });
 
-    final result = await ref
+    final ok = await ref
         .read(assessmentNotifierProvider.notifier)
         .submitAnalysis(ScanType.primaryScan);
 
@@ -237,10 +237,144 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
       _submitting = false;
     });
 
+    if (!ok) return;
     AppRoute.push(AppRoute.correctionReportScreenBusiness);
   }
 
   bool _submitting = false;
+
+  /// One card per captured shot: the photo plus its measured angles. Side shots
+  /// come first (numbered), then the single front-view shot.
+  List<Widget> _capturesSection(AssessmentState state) {
+    // Flat list of every capture image (side shots, then front) so tapping any
+    // one opens a swipeable full-screen gallery at that image.
+    final gallery = <ImageProvider>[
+      ...state.sideCaptures.map((c) => FileImage(c.image)),
+      if (state.frontCapture != null) FileImage(state.frontCapture!.image),
+    ];
+
+    final cards = <Widget>[];
+    var galleryIndex = 0;
+    for (var i = 0; i < state.sideCaptures.length; i++) {
+      final c = state.sideCaptures[i];
+      final a = c.bodyAngles;
+      cards.add(
+        _captureCard(
+          title: 'Side view ${i + 1}',
+          image: c.image,
+          gallery: gallery,
+          galleryIndex: galleryIndex++,
+          metrics: {
+            'Knee': '${a.kneeAngle.toStringAsFixed(1)}°',
+            'Trunk': '${a.trunkAngle.toStringAsFixed(1)}°',
+            'Elbow': '${a.elbowAngle.toStringAsFixed(1)}°',
+            'Neck': '${a.neckAngle.toStringAsFixed(1)}°',
+            'Neck state': a.neckStateLabel,
+            'Lower body confidence': a.lowerBodyConfidence,
+          },
+        ),
+      );
+    }
+    final front = state.frontCapture;
+    if (front != null) {
+      cards.add(
+        _captureCard(
+          title: 'Front view',
+          image: front.image,
+          gallery: gallery,
+          galleryIndex: galleryIndex++,
+          metrics: {
+            'Elbow abduction': '${front.abductionAngle.toStringAsFixed(1)}°',
+            'Wrist deviation':
+                '${front.wristDeviationAngle.toStringAsFixed(1)}°',
+          },
+        ),
+      );
+    }
+    return cards;
+  }
+
+  Widget _captureCard({
+    required String title,
+    required File image,
+    required List<ImageProvider> gallery,
+    required int galleryIndex,
+    required Map<String, String> metrics,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 20.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.text,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () => media.open_image_viewer(
+                  context: context,
+                  images: gallery,
+                  initial_index: galleryIndex,
+                  show_counter: true,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10.r),
+                  child: Image.file(
+                    image,
+                    width: 130.w,
+                    height: 170.h,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Wrap(
+                  spacing: 8.w,
+                  runSpacing: 8.h,
+                  children: metrics.entries
+                      .where((e) => e.value.isNotEmpty)
+                      .map((e) => _metricChip(e.key, e.value))
+                      .toList(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _metricChip(String label, String value) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: const Color(0xFFE4E7EC)),
+      ),
+      child: RichText(
+        text: TextSpan(
+          style: TextStyle(fontSize: 12.sp, color: const Color(0xFF475467)),
+          children: [
+            TextSpan(text: '$label: '),
+            TextSpan(
+              text: value,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -271,25 +405,7 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
               SizedBox(height: 12.h),
               _rosaAssessmentSection(rosaScore),
               SizedBox(height: 20.h),
-              Text(
-                loc.photo,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF202020),
-                ),
-              ),
-              SizedBox(height: 12.h),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(14.r),
-                child: Image.file(
-                  File(
-                    ref.watch(assessmentNotifierProvider).capturedImage!.path,
-                  ),
-                  width: double.infinity,
-                  fit: BoxFit.contain,
-                ),
-              ),
+              ..._capturesSection(ref.watch(assessmentNotifierProvider)),
               SizedBox(height: 48.h),
               Row(
                 children: [

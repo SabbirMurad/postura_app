@@ -45,8 +45,9 @@ class _EmployeeWorkDetailScreenState
     }
 
     final signup = ref.read(signupNotifierProvider);
-    final id = int.tryParse(signup.employeeId);
-    if (id == null) {
+    final id = signup.employeeId;
+
+    if (id.isEmpty) {
       showCustomToast(text: loc.pleaseFillAllRequirements);
       return;
     }

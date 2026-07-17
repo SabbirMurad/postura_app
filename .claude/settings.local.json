@@ -4,7 +4,9 @@
       "Bash(flutter analyze *)",
       "Bash(git checkout *)",
       "Bash(grep *)",
-      "Bash(cat C:\\\\\\\\Users\\\\\\\\Sabbir\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\C--sabbir-gitlab-posture-app-frontend\\\\\\\\4a3bebf5-4942-42e7-836c-b827854c7a34\\\\\\\\tasks\\\\\\\\b21k397ta.output)"
+      "Bash(cat C:\\\\\\\\Users\\\\\\\\Sabbir\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\C--sabbir-gitlab-posture-app-frontend\\\\\\\\4a3bebf5-4942-42e7-836c-b827854c7a34\\\\\\\\tasks\\\\\\\\b21k397ta.output)",
+      "PowerShell(flutter build *)",
+      "PowerShell(java *)"
     ]
   }
 }

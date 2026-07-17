@@ -383,19 +383,16 @@ class CustomHttp {
       final response = await http
           .post(
             Uri.parse('${AppCredentials.domain}/api/auth/refresh'),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $refreshToken',
-            },
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'refresh_token': refreshToken}),
           )
           .timeout(_refreshTimeout);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        await AppHelper.instance.setAccessToken(data['accessToken']);
-        await AppHelper.instance.setTokenValidity(
-          int.parse(data['decodedData']['exp'].toString()),
-        );
+        // Backend contract matches sign-in: access_token + expires_at (ms).
+        await AppHelper.instance.setAccessToken(data['access_token']);
+        await AppHelper.instance.setTokenValidity(data['expires_at']);
         return true;
       } else {
         await AppHelper.instance.clearAllPrefValue();

@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.ooplab.exercises_fitfuel.PoseOverlayView
+    <com.sabbir.postura.PoseOverlayView
         android:id="@+id/poseOverlay"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -28,7 +28,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Level / horizon indicator, centred on the camera preview -->
-    <com.ooplab.exercises_fitfuel.CameraLevelView
+    <com.sabbir.postura.CameraLevelView
         android:id="@+id/cameraLevel"
         android:layout_width="0dp"
         android:layout_height="0dp"

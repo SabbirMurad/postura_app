@@ -234,7 +234,9 @@ class AssessmentNotifier extends _$AssessmentNotifier {
             .toList(),
         // Manual ROSA checklist answers (native scorer input contract).
         'workstation_answers': state.workstationAnswers.toMap(),
-        // Grouped captures: one entry per side shot (image + score + angles),
+        // One ROSA score per scan (the side shots' scores averaged).
+        'rosa_score': state.rosaScore?.toJson() ?? {},
+        // Grouped captures: one entry per side shot (image + measured angles),
         // plus the single front shot (image + abduction/wrist-deviation angles).
         'side_captures': [
           for (var i = 0; i < state.sideCaptures.length; i++)
@@ -244,6 +246,9 @@ class AssessmentNotifier extends _$AssessmentNotifier {
           'front_capture': front.toJson(frontId),
       },
     );
+
+    printLine(response.ok);
+    printLine(response.status_code);
 
     if (response.ok) {
       printLine('Successfully processed analysis');

@@ -97,7 +97,7 @@ class AuthorNotifier extends _$AuthorNotifier {
     AppHelper.instance.setAccessToken(response.data['access_token']);
     AppHelper.instance.setRefToken(response.data['refresh_token']);
     AppHelper.instance.setTokenValidity(response.data['expires_at']);
-    AppHelper.instance.setUserId(response.data['user']['id']);
+    AppHelper.instance.setUserId(response.data['user']['uuid']);
     AppHelper.instance.setAuthRole(response.data['user']['role']);
 
     if (user_type == UserType.EMPLOYEE) {
@@ -120,7 +120,7 @@ class AuthorNotifier extends _$AuthorNotifier {
     required String email,
     required String password,
     required String companyCode,
-    required int employeeId,
+    required String employeeId,
     required String deskLocation,
     required String department,
     required String deskRole,

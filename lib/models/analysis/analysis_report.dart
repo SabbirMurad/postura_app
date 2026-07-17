@@ -1,13 +1,11 @@
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 
 class AnalysisReport {
-  final String annotatedImageUrl;
   final BodyRegionRisks bodyRegionRisks;
   final List<Correction> corrections;
   final Exercises exercises;
   final List<Equipment> equipment;
   final String pdfReportUrl;
-  final String equipmentPdfUrl;
   final String equipmentExcelUrl;
 
   final WorkPattern workPattern;
@@ -21,13 +19,11 @@ class AnalysisReport {
 
   AnalysisReport({
     required this.workPattern,
-    required this.annotatedImageUrl,
     required this.bodyRegionRisks,
     required this.corrections,
     required this.exercises,
     required this.equipment,
     required this.pdfReportUrl,
-    required this.equipmentPdfUrl,
     required this.equipmentExcelUrl,
     required this.rosaScore,
     required this.symptoms,
@@ -42,7 +38,6 @@ class AnalysisReport {
           .map((e) => PainIntensity.fromJson(e as Map<String, dynamic>))
           .toList(),
       painDuration: json['pain_duration'],
-      annotatedImageUrl: json['annotated_image_url'] ?? '',
       bodyRegionRisks: BodyRegionRisks.fromJson(
         json['body_region_risks'] ?? {},
       ),
@@ -62,7 +57,6 @@ class AnalysisReport {
           .map((e) => Equipment.fromJson(e as Map<String, dynamic>))
           .toList(),
       pdfReportUrl: json['pdf_report_url'] ?? '',
-      equipmentPdfUrl: json['equipment_pdf_url'] ?? '',
       equipmentExcelUrl: json['equipment_excel_url'] ?? '',
 
       rosaScore: RosaScore.fromJson(json['rosa_score']),
@@ -72,13 +66,11 @@ class AnalysisReport {
   }
 
   Map<String, dynamic> toJson() => {
-    'annotated_image_url': annotatedImageUrl,
     'body_region_risks': bodyRegionRisks.toJson(),
     'corrections': corrections.map((e) => e.toJson()).toList(),
     'exercises': exercises.toJson(),
     'equipment': equipment.map((e) => e.toJson()).toList(),
     'pdf_report_url': pdfReportUrl,
-    'equipment_pdf_url': equipmentPdfUrl,
     'equipment_excel_url': equipmentExcelUrl,
     'rosa_score': rosaScore.toJson(),
     'symptoms': symptoms,

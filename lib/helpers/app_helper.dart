@@ -49,14 +49,14 @@ class AppHelper {
     return pref.getString('name') ?? '';
   }
 
-  Future<bool> setUserId(int id) async {
+  Future<bool> setUserId(String id) async {
     final pref = await _pref;
-    return pref.setInt('user_id', id);
+    return pref.setString('user_id', id);
   }
 
-  Future<int?> getUserId() async {
+  Future<String?> getUserId() async {
     final pref = await _pref;
-    return pref.getInt('user_id');
+    return pref.getString('user_id');
   }
 
   Future<bool> setAccessToken(String token) async {

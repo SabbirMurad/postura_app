@@ -284,12 +284,6 @@ class CpeAssessmentNotifier
         );
       }).toList();
 
-      final photoItems = <PhotoItem>[];
-      final annotatedUrl = d['annotated_image_url'] as String?;
-      if (annotatedUrl != null && annotatedUrl.isNotEmpty) {
-        photoItems.add(PhotoItem.remote(annotatedUrl));
-      }
-
       final approvalsMap = d['approvals'] as Map<String, dynamic>? ?? {};
       final approvalItems = [
         ApprovalItem(
