@@ -16,10 +16,12 @@ class EmployeeCredentialScreen extends ConsumerStatefulWidget {
   const EmployeeCredentialScreen({super.key});
 
   @override
-  ConsumerState<EmployeeCredentialScreen> createState() => _EmployeeCredentialScreenState();
+  ConsumerState<EmployeeCredentialScreen> createState() =>
+      _EmployeeCredentialScreenState();
 }
 
-class _EmployeeCredentialScreenState extends ConsumerState<EmployeeCredentialScreen> {
+class _EmployeeCredentialScreenState
+    extends ConsumerState<EmployeeCredentialScreen> {
   final _emailController = TextEditingController();
   final _nameController = TextEditingController();
   final _employeeIdController = TextEditingController();
@@ -58,14 +60,17 @@ class _EmployeeCredentialScreenState extends ConsumerState<EmployeeCredentialScr
                 Text(
                   // EN: "Email"
                   loc.email,
-                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 SizedBox(height: 6.h),
                 CustomTextField(
                   filled: true,
                   controller: _emailController,
                   prefixIcon: Icon(
-                    Icons.person,
+                    Icons.email_outlined,
                     color: AppColors.primaryColor.withValues(alpha: 0.8),
                     size: 25.h,
                   ),
@@ -77,14 +82,17 @@ class _EmployeeCredentialScreenState extends ConsumerState<EmployeeCredentialScr
                 Text(
                   // EN: "Name"
                   loc.name,
-                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 SizedBox(height: 6.h),
                 CustomTextField(
                   filled: true,
                   controller: _nameController,
                   prefixIcon: Icon(
-                    Icons.person,
+                    Icons.person_outline,
                     color: AppColors.primaryColor.withValues(alpha: 0.8),
                     size: 25.h,
                   ),
@@ -96,7 +104,10 @@ class _EmployeeCredentialScreenState extends ConsumerState<EmployeeCredentialScr
                 Text(
                   // EN: "Employee ID"
                   loc.employId,
-                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 SizedBox(height: 6.h),
                 CustomTextField(
@@ -115,14 +126,17 @@ class _EmployeeCredentialScreenState extends ConsumerState<EmployeeCredentialScr
                 Text(
                   // EN: "Password"
                   loc.password,
-                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 SizedBox(height: 6.h),
                 CustomTextField(
                   filled: true,
                   controller: _passwordController,
                   prefixIcon: Icon(
-                    Icons.person,
+                    Icons.lock_outline,
                     color: AppColors.primaryColor.withValues(alpha: 0.8),
                     size: 25.h,
                   ),
@@ -149,12 +163,14 @@ class _EmployeeCredentialScreenState extends ConsumerState<EmployeeCredentialScr
                   // EN: "All fields must be filled"
                   showCustomToast(text: loc.allFieldsMustBeFilled);
                 } else {
-                  ref.read(signupNotifierProvider.notifier).setCredentials(
-                    email: _emailController.text.trim(),
-                    name: _nameController.text.trim(),
-                    password: _passwordController.text.trim(),
-                    employeeId: _employeeIdController.text.trim(),
-                  );
+                  ref
+                      .read(signupNotifierProvider.notifier)
+                      .setCredentials(
+                        email: _emailController.text.trim(),
+                        name: _nameController.text.trim(),
+                        password: _passwordController.text.trim(),
+                        employeeId: _employeeIdController.text.trim(),
+                      );
                   context.push(AppRoute.employeeWorkDetail);
                 }
               },

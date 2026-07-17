@@ -22,7 +22,7 @@ class ExpansionContainer extends StatelessWidget {
       shape: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
         borderSide: BorderSide(
-          color: AppColors.secondaryText.withValues(alpha: 0.15),
+          color: AppColors.secondaryText.withValues(alpha: 0.2),
         ),
       ),
       title: Text(

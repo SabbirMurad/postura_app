@@ -145,3 +145,23 @@ class _BottomNavState extends State<BottomNavBusiness> {
     );
   }
 }
+
+class NavItem extends StatelessWidget {
+  final String label;
+
+  const NavItem({super.key, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: TextStyle(color: AppColors.secondaryText, fontSize: 13.sp),
+        ),
+        SizedBox(height: 2.h,),
+        
+      ],
+    );
+  }
+}

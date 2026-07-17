@@ -40,7 +40,6 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
 
                 SizedBox(height: 14.h),
 
-                // ✅ ListView কে removed করা হয়েছে, শুধু Column রাখা
                 Builder(
                   builder: (context) {
                     final corrections = reportState.analysisReport?.corrections;
@@ -64,14 +63,12 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
                   },
                 ),
 
-                // ✅ Bottom button এর জন্য space (padding)
                 SizedBox(height: 90.h),
               ],
             ),
           ),
         ),
       ),
-      // ✅ bottomSheet: Padding এবং SafeArea দিয়ে wrap করুন
       bottomSheet: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 20.h),

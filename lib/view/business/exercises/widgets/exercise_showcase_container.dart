@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:posture_detector_app/constants/credential.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 
 import 'package:posture_detector_app/constants/colors.dart';
@@ -108,7 +107,7 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12.r),
                           child: CachedNetworkImage(
-                            imageUrl: '${AppCredentials.domain}${videoUrl!}',
+                            imageUrl: videoUrl!,
                             fit: BoxFit.contain,
                             placeholder: (context, url) => const Center(
                               child: CircularProgressIndicator(strokeWidth: 2),
@@ -301,7 +300,7 @@ class ExerciseShowCaseContainer extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8.r),
                 child: CachedNetworkImage(
-                  imageUrl: '${AppCredentials.domain}${videoUrl!}',
+                  imageUrl: videoUrl!,
                   width: 72.w,
                   height: 72.h,
                   fit: BoxFit.cover,

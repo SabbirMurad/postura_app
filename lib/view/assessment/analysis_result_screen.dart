@@ -222,7 +222,11 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
     ];
   }
 
-  void _retake() {}
+  void _retake() {
+    // The capture guide sits directly beneath this preview; returning to it lets
+    // the user run the native capture again (which overwrites the stored shots).
+    Navigator.of(context).pop();
+  }
 
   void _submitResult() async {
     setState(() {

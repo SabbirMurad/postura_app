@@ -12,6 +12,10 @@ class AppBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Nothing to pop (e.g. this screen was reached via context.go, which
+    // replaces the stack) — don't show a back button that leads nowhere.
+    if (!context.canPop()) return const SizedBox.shrink();
+
     return GestureDetector(
       onTap: () {
         context.pop();

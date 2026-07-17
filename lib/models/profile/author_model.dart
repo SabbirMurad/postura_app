@@ -8,9 +8,12 @@ class AuthorModel {
       AuthorModel(message: message ?? this.message, data: data ?? this.data);
 
   factory AuthorModel.fromJson(Map<String, dynamic> json) {
+    final data = json["data"];
     return AuthorModel(
-      message: json["message"],
-      data: AuthorData.fromJson(json["data"]),
+      message: json["message"]?.toString() ?? '',
+      data: data is Map<String, dynamic>
+          ? AuthorData.fromJson(data)
+          : AuthorData.empty(),
     );
   }
 
@@ -18,7 +21,7 @@ class AuthorModel {
 }
 
 class AuthorData {
-  int id;
+  String id;
   String fullName;
   String email;
   String? avatar;
@@ -32,8 +35,11 @@ class AuthorData {
     required this.role,
   });
 
+  factory AuthorData.empty() =>
+      AuthorData(id: '', fullName: '', email: '', avatar: null, role: '');
+
   AuthorData copyWith({
-    int? id,
+    String? id,
     String? fullName,
     String? email,
     String? avatar,
@@ -46,12 +52,13 @@ class AuthorData {
     role: role ?? this.role,
   );
 
+  // Backend sends a UUID string for id; toString keeps it robust to either type.
   factory AuthorData.fromJson(Map<String, dynamic> json) => AuthorData(
-    id: json["id"],
-    fullName: json["full_name"],
-    email: json["email"],
+    id: json["id"]?.toString() ?? '',
+    fullName: json["full_name"] ?? '',
+    email: json["email"] ?? '',
     avatar: json["avatar"],
-    role: json["role"],
+    role: json["role"] ?? '',
   );
 
   Map<String, dynamic> toJson() => {

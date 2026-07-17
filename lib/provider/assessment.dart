@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
+import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/models/analysis/capture.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
@@ -255,6 +256,10 @@ class AssessmentNotifier extends _$AssessmentNotifier {
       final model = AnalysisReport.fromJson(response.data);
 
       ref.read(reportNotifierProvider.notifier).setData(model);
+
+      // The scan marks the user onboarded server-side; persist it locally too so
+      // the splash screen routes to home (not onboarding) on the next launch.
+      await AppHelper.instance.setIsonBoarding(true);
 
       return true;
     }

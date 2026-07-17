@@ -1,3 +1,4 @@
+import 'package:posture_detector_app/constants/credential.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 
 class AnalysisReport {
@@ -33,11 +34,19 @@ class AnalysisReport {
 
   factory AnalysisReport.fromJson(Map<String, dynamic> json) {
     return AnalysisReport(
-      workPattern: WorkPattern.fromJson(json['work_pattern']),
-      painIntensities: (json['pain_intensities'] as List<dynamic>)
-          .map((e) => PainIntensity.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      painDuration: json['pain_duration'],
+      // The backend replaced work_pattern with workstation_answers; keep an
+      // empty WorkPattern so downstream readers stay null-safe.
+      workPattern: json['work_pattern'] is Map
+          ? WorkPattern.fromJson(json['work_pattern'] as Map<String, dynamic>)
+          : WorkPattern.empty(),
+      // Backend now sends pain_units ({body_region, intensity, duration}); fall
+      // back to the legacy pain_intensities key.
+      painIntensities:
+          ((json['pain_units'] ?? json['pain_intensities']) as List<dynamic>? ??
+                  const [])
+              .map((e) => PainIntensity.fromJson(e as Map<String, dynamic>))
+              .toList(),
+      painDuration: json['pain_duration'] ?? '',
       bodyRegionRisks: BodyRegionRisks.fromJson(
         json['body_region_risks'] ?? {},
       ),
@@ -59,9 +68,9 @@ class AnalysisReport {
       pdfReportUrl: json['pdf_report_url'] ?? '',
       equipmentExcelUrl: json['equipment_excel_url'] ?? '',
 
-      rosaScore: RosaScore.fromJson(json['rosa_score']),
+      rosaScore: RosaScore.fromJson(json['rosa_score'] ?? const {}),
 
-      symptoms: List<String>.from(json['symptoms']),
+      symptoms: List<String>.from(json['symptoms'] ?? const []),
     );
   }
 
@@ -152,6 +161,15 @@ class WorkPattern {
     required this.deviceUsage,
     required this.mouseType,
   });
+
+  /// The backend no longer supplies work-pattern data (replaced by
+  /// workstation_answers); used as a null-safe placeholder.
+  factory WorkPattern.empty() => WorkPattern(
+    hoursAtDesk: '',
+    breakHabit: '',
+    deviceUsage: '',
+    mouseType: '',
+  );
 
   factory WorkPattern.fromJson(Map<String, dynamic> json) => WorkPattern(
     hoursAtDesk: json['hours_at_desk'] ?? '',
@@ -351,7 +369,9 @@ class RecommendedSession {
       purpose: json['Purpose'] ?? json['purpose'],
       bodyRegion: json['body_region'] ?? '',
       musclesAddressed: json['Muscles addressed'] ?? json['muscles_addressed'],
-      video: json['video'] ?? '',
+      // Backend sends the bare asset filename under `image`; build a
+      // domain-relative path (the showcase widget prepends the host).
+      video: '${AppCredentials.domain}/assets/exercise/${json['image']}',
       description: json['description'] ?? '',
       contraindications: json['Contraindications'] ?? json['contraindications'],
       recommendedSets: json['recommended_sets'] ?? 0,
