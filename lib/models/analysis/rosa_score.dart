@@ -76,13 +76,13 @@ class RosaScore {
     mouseScore: _i(m['mouse_score']),
   );
 
+  /// The 9 sub-scores the backend's `RosaInput` consumes. The native-only
+  /// extras (`risk_level`, `monitor_area_score`, `mouse_keyboard_area_score`)
+  /// are kept on the model for the UI but not sent — the backend ignores them.
   Map<String, dynamic> toJson() => {
     'final_score': finalScore,
-    'risk_level': riskLevel,
     'chair_score': chairScore,
     'peripheral_score': peripheralScore,
-    'monitor_area_score': monitorAreaScore,
-    'mouse_keyboard_area_score': mouseKeyboardAreaScore,
     'seat_height_score': seatHeightScore,
     'backrest_score': backrestScore,
     'armrest_score': armrestScore,
