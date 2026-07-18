@@ -82,6 +82,29 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
+  /// Fetches the authoritative `has_onboarded` flag from the server and mirrors
+  /// it into local storage. Returns null when the request fails so the caller can
+  /// fall back to the last-known local flag.
+  Future<bool?> _serverOnboarded() async {
+    try {
+      final response = await CustomHttp.get(
+        endpoint: 'settings/personal-info/me',
+        needAuth: true,
+        showFloatingError: false,
+      );
+      if (!response.ok) return null;
+      final value = response.data['data']?['has_onboarded'];
+      if (value is bool) {
+        await AppHelper.instance.setIsonBoarding(value);
+        return value;
+      }
+      return null;
+    } catch (e) {
+      printLine('SplashScreen _serverOnboarded error: $e');
+      return null;
+    }
+  }
+
   void goTo() async {
     final token = await AppHelper.instance.getAccessToken();
     final userRole = await AppHelper.instance.getAuthRole();
@@ -99,7 +122,12 @@ class _SplashScreenState extends State<SplashScreen>
       if (userRole == UserType.ERGONOMIST.name) {
         if (mounted) context.go(AppRoute.bottomNavCpe);
       } else {
-        if (isonBoarding == true) {
+        // Re-sync the onboarding flag from the server before routing. A stored
+        // local flag can be stale (assessment completed on another device, or a
+        // cleared cache), so the server's `has_onboarded` is the source of truth;
+        // fall back to the local flag only when the server is unreachable.
+        final onboarded = await _serverOnboarded() ?? isonBoarding;
+        if (onboarded == true) {
           if (mounted) context.go(AppRoute.bottomNavBusiness);
         } else {
           if (mounted) context.go(AppRoute.employeeSelectBodyRegion);

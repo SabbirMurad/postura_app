@@ -100,12 +100,14 @@ class AuthorNotifier extends _$AuthorNotifier {
     AppHelper.instance.setUserId(response.data['user']['uuid']);
     AppHelper.instance.setAuthRole(response.data['user']['role']);
 
+    // Persist the server's onboarding flag locally for every app user (employee
+    // and private alike) so the splash screen routes to home — not onboarding —
+    // when they've already completed an assessment on this or another device.
+    final hasOnboarded = response.data['user']['has_onboarded'] == true;
+    await AppHelper.instance.setIsonBoarding(hasOnboarded);
+
     if (user_type == UserType.EMPLOYEE) {
-      AppHelper.instance.setIsonBoarding(
-        response.data['user']['has_onboarded'],
-      );
-      final isOnboarded = await AppHelper.instance.getIsonBoarding();
-      return isOnboarded == true;
+      return hasOnboarded;
     }
 
     await refreshProfile();
@@ -245,12 +247,12 @@ class AuthorNotifier extends _$AuthorNotifier {
     AppHelper.instance.setUserId(response.data['user']['id']);
     AppHelper.instance.setAuthRole(response.data['user']['role']);
 
+    // Persist the server's onboarding flag locally for every app user (see signIn).
+    final hasOnboarded = response.data['user']['has_onboarded'] == true;
+    await AppHelper.instance.setIsonBoarding(hasOnboarded);
+
     if (userType == UserType.EMPLOYEE) {
-      AppHelper.instance.setIsonBoarding(
-        response.data['user']['has_onboarded'],
-      );
-      final isOnboarded = await AppHelper.instance.getIsonBoarding();
-      return isOnboarded == true;
+      return hasOnboarded;
     }
 
     await refreshProfile();
