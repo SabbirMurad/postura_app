@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppHelper {
@@ -10,14 +11,34 @@ class AppHelper {
   /// Cached SharedPreferences instance to avoid repeated disk reads.
   static SharedPreferences? _prefs;
 
+  /// Encrypted store (Android Keystore / iOS Keychain) for auth secrets —
+  /// access/refresh tokens and the reset secret_key. Never SharedPreferences,
+  /// which is world-readable on rooted devices / in backups.
+  static const FlutterSecureStorage _secure = FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
+
+  /// Synchronous copy of the access token, kept in sync with secure storage.
+  /// Needed by image widgets that must build request headers synchronously
+  /// (auth-gated capture images). Warmed in [init] and updated on token writes.
+  static String? _accessTokenCache;
+
+  /// Bearer auth headers for authenticated image requests, or null when signed
+  /// out. Sending these to public images (avatars) is harmless — the server
+  /// ignores auth there and only enforces it for capture (Post) images.
+  static Map<String, String>? get authHeaders => _accessTokenCache == null
+      ? null
+      : {'Authorization': 'Bearer $_accessTokenCache'};
+
   static Future<SharedPreferences> get _pref async {
     _prefs ??= await SharedPreferences.getInstance();
     return _prefs!;
   }
 
-  /// Call once at app startup (e.g. in main()) to warm the cache.
+  /// Call once at app startup (e.g. in main()) to warm the caches.
   static Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
+    _accessTokenCache = await _secure.read(key: 'access_token');
   }
 
   Future<String?> getRole() async {
@@ -37,6 +58,9 @@ class AppHelper {
     if (savedLang != null) {
       await pref.setString('selected_language', savedLang);
     }
+    // Auth secrets live in the encrypted store, not prefs — wipe them too.
+    _accessTokenCache = null;
+    await _secure.deleteAll();
   }
 
   Future<String> getEmail() async {
@@ -60,33 +84,43 @@ class AppHelper {
   }
 
   Future<bool> setAccessToken(String token) async {
-    final pref = await _pref;
-    return pref.setString('access_token', token);
+    _accessTokenCache = token;
+    await _secure.write(key: 'access_token', value: token);
+    return true;
   }
 
   Future<String?> getAccessToken() async {
-    final pref = await _pref;
-    return pref.getString('access_token');
+    return _secure.read(key: 'access_token');
   }
 
   Future<bool> setRefToken(String refreshToken) async {
-    final pref = await _pref;
-    return pref.setString('refresh_token', refreshToken);
+    await _secure.write(key: 'refresh_token', value: refreshToken);
+    return true;
   }
 
   Future<String?> getRefToken() async {
+    return _secure.read(key: 'refresh_token');
+  }
+
+  // The email carried through the password-reset flow (not sensitive; the user
+  // typed it). Replaces passing the server's user_id back to the client.
+  Future<bool> setResetEmail(String email) async {
     final pref = await _pref;
-    return pref.getString('refresh_token');
+    return pref.setString('reset_email', email);
+  }
+
+  Future<String?> getResetEmail() async {
+    final pref = await _pref;
+    return pref.getString('reset_email');
   }
 
   Future<bool> setSecretKey(String secretKey) async {
-    final pref = await _pref;
-    return pref.setString('secret_key', secretKey);
+    await _secure.write(key: 'secret_key', value: secretKey);
+    return true;
   }
 
   Future<String?> getSecretKey() async {
-    final pref = await _pref;
-    return pref.getString('secret_key');
+    return _secure.read(key: 'secret_key');
   }
 
   Future<bool> setTokenValidity(int tokenValidity) async {
@@ -148,6 +182,8 @@ class AppHelper {
         await pref.setString('selected_language', savedLang);
       }
       await pref.reload();
+      _accessTokenCache = null;
+      await _secure.deleteAll();
       return true;
     } catch (e) {
       return false;

@@ -171,17 +171,18 @@ class AuthorNotifier extends _$AuthorNotifier {
       return false;
     }
 
-    await AppHelper.instance.setUserId(response.data['user_id']);
+    // The flow now carries the email (the server no longer returns a user_id).
+    await AppHelper.instance.setResetEmail(email);
     return true;
   }
 
   Future<bool> verifyOtp(String otp) async {
-    final userId = await AppHelper.instance.getUserId();
-    if (userId == null) return false;
+    final email = await AppHelper.instance.getResetEmail();
+    if (email == null) return false;
 
     final response = await CustomHttp.post(
       endpoint: 'auth/verify-reset-code',
-      body: {'user_id': userId, 'verification_code': otp},
+      body: {'email_address': email, 'verification_code': otp},
       needAuth: false,
     );
 
@@ -195,14 +196,14 @@ class AuthorNotifier extends _$AuthorNotifier {
   }
 
   Future<bool> resetPassword(String newPassword, String confirmPassword) async {
-    final userId = await AppHelper.instance.getUserId();
+    final email = await AppHelper.instance.getResetEmail();
     final secretKey = await AppHelper.instance.getSecretKey();
-    if (userId == null || secretKey == null) return false;
+    if (email == null || secretKey == null) return false;
 
     final response = await CustomHttp.post(
       endpoint: 'auth/reset-password',
       body: {
-        'user_id': userId,
+        'email_address': email,
         'secret_key': secretKey,
         'new_password': newPassword,
         'confirm_password': confirmPassword,

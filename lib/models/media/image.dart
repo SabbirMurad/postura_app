@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:posture_detector_app/constants/credential.dart';
+import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:flutter/material.dart';
 
 class ImageModel {
@@ -37,6 +38,7 @@ class ImageModel {
       height: json['height'].toDouble(),
       provider: CachedNetworkImageProvider(
         '${AppCredentials.domain}/image/webp/${json['uuid']}',
+        headers: AppHelper.authHeaders,
       ),
     );
   }

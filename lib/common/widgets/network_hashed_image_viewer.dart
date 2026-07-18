@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:posture_detector_app/common/widgets/image_error_widget.dart';
 import 'package:posture_detector_app/common/widgets/image_placeholder.dart';
+import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/models/media/image.dart';
 
 class NetworkHashedImageViewer extends StatelessWidget {
@@ -22,6 +23,7 @@ class NetworkHashedImageViewer extends StatelessWidget {
   Widget build(BuildContext context) {
     return CachedNetworkImage(
       imageUrl: image.webp_url,
+      httpHeaders: AppHelper.authHeaders,
       width: width,
       height: height,
       fit: fit ?? BoxFit.contain,
