@@ -308,8 +308,11 @@ class CpeAssessmentNotifier
         ),
       ];
 
-      final wp = d['work_pattern'] as Map<String, dynamic>;
-      final ws = d['workstation'] as Map<String, dynamic>;
+      // The backend replaced work_pattern / top-level workstation with
+      // workstation_answers, so these are absent now — parse null-safely into
+      // empty placeholders instead of crashing the whole screen on a cast.
+      final wp = (d['work_pattern'] as Map?)?.cast<String, dynamic>() ?? const <String, dynamic>{};
+      final ws = (d['workstation'] as Map?)?.cast<String, dynamic>() ?? const <String, dynamic>{};
       final reviewType = d['review_type'] as String?;
 
       state = CpeAssessmentState(
@@ -336,7 +339,9 @@ class CpeAssessmentNotifier
         comment: d['review_comment'] ?? '',
         reviewMode: reviewType == 'LIVE' ? ReviewMode.live : ReviewMode.remote,
         signatureRemoteUrl: d['review_signature_url'] as String? ?? '',
-        rosaScore: RosaScore.fromJson(d['rosa_score'] as Map<String, dynamic>),
+        rosaScore: RosaScore.fromJson(
+          (d['rosa_score'] as Map?)?.cast<String, dynamic>() ?? const <String, dynamic>{},
+        ),
       );
     } catch (e) {
       final loc = AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;
