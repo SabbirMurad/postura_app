@@ -5,7 +5,7 @@ import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/provider/cpe_assessment.dart';
 import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
 import 'package:posture_detector_app/common/widgets/rosa_sub_score.dart';
-import 'package:posture_detector_app/view/business/home/home_screen.dart';
+import 'package:posture_detector_app/view/home/home_screen.dart';
 
 class ComplianceCardCPE extends StatelessWidget {
   final CpeAssessmentState state;

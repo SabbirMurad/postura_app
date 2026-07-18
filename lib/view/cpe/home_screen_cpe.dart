@@ -30,8 +30,8 @@ class HomeScreenCPE extends ConsumerWidget {
 
               if (profile != null)
                 CpeHomeHeader(
-                  userName: profile.data.fullName,
-                  avatarUrl: profile.data.avatar?.toString() ?? '',
+                  userName: profile.fullName,
+                  avatarUrl: profile.avatar?.webp_url ?? '',
                 )
               else
                 SizedBox(height: 48.h),

@@ -1,12 +1,13 @@
 import 'dart:io';
 
-import 'package:http/http.dart' as http;
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
+import 'package:posture_detector_app/models/prepared_image.dart';
 import 'package:posture_detector_app/models/profile/author_model.dart';
 import 'package:posture_detector_app/models/user_type.dart';
 import 'package:posture_detector_app/services/auth/auth_o_service.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
+import 'package:posture_detector_app/utils/media.dart' as media;
 import 'package:posture_detector_app/utils/print_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -28,8 +29,6 @@ class AuthorNotifier extends _$AuthorNotifier {
       showFloatingError: false,
     );
     if (!response.ok) return null;
-
-    printLine(response.data);
 
     return AuthorModel.fromJson(response.data);
   }
@@ -57,14 +56,27 @@ class AuthorNotifier extends _$AuthorNotifier {
   }
 
   Future<bool> updateImage(File image) async {
-    final multipartFile = await http.MultipartFile.fromPath(
-      'avatar',
-      image.path,
+    // Upload the picked image first (as a temporary asset), then attach it to the
+    // profile by id — the backend promotes it to a permanent image on save.
+    final prepared = PreparedImage.fromFile(image);
+    prepared.meta = await prepared.get_prepare_meta();
+    prepared.prepared = true;
+
+    final imageIds = await media.upload_images(
+      images: [prepared],
+      used_at: media.AssetUsedAt.ProfilePic,
+      temporary: true,
     );
-    final response = await CustomHttp.multipart(
+    if (imageIds == null || imageIds.isEmpty) {
+      showCustomToast(text: 'Failed to upload image');
+      return false;
+    }
+
+    final response = await CustomHttp.put(
       endpoint: 'settings/personal-info/me',
-      method: CommonCustomMethods.PUT,
-      files: [multipartFile],
+      needAuth: true,
+      showFloatingError: false,
+      body: {'avatar': imageIds.first},
     );
     if (!response.ok) {
       showCustomToast(text: response.error ?? 'Something went wrong');

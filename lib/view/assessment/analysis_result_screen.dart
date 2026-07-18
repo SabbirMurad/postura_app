@@ -12,7 +12,7 @@ import 'package:posture_detector_app/models/scan_type.dart';
 import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/utils/media.dart' as media;
-import 'package:posture_detector_app/view/business/home/home_screen.dart';
+import 'package:posture_detector_app/view/home/home_screen.dart';
 
 class AnalysisResultScreen extends ConsumerStatefulWidget {
   const AnalysisResultScreen({super.key});

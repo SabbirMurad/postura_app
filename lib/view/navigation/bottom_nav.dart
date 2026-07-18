@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:posture_detector_app/view/business/equipment/equipment_screen.dart';
-import 'package:posture_detector_app/view/business/home/home_screen.dart';
-import 'package:posture_detector_app/view/business/profile/profile_screen.dart';
-import 'package:posture_detector_app/view/business/scan/scan_business_screen.dart';
-import 'package:posture_detector_app/view/business/exercises/exercise_screen.dart';
+import 'package:posture_detector_app/view/equipment/equipment_screen.dart';
+import 'package:posture_detector_app/view/home/home_screen.dart';
+import 'package:posture_detector_app/view/profile/profile_screen.dart';
+import 'package:posture_detector_app/view/scan/scan_business_screen.dart';
+import 'package:posture_detector_app/view/exercises/exercise_screen.dart';
 
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/constants/colors.dart';

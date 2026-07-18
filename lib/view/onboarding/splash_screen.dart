@@ -93,7 +93,7 @@ class _SplashScreenState extends State<SplashScreen>
         showFloatingError: false,
       );
       if (!response.ok) return null;
-      final value = response.data['data']?['has_onboarded'];
+      final value = response.data['has_onboarded'];
       if (value is bool) {
         await AppHelper.instance.setIsonBoarding(value);
         return value;

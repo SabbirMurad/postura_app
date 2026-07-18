@@ -10,7 +10,7 @@ import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
 import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/provider/cpe_assessment.dart';
-import 'package:posture_detector_app/view/business/home/home_screen.dart';
+import 'package:posture_detector_app/view/home/home_screen.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
 import 'package:posture_detector_app/view/cpe/widgets/patient_info_card_cpe.dart';

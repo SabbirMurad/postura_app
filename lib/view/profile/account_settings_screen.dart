@@ -9,7 +9,7 @@ import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/provider/author.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/profile_info.dart';
-import 'package:posture_detector_app/view/business/profile/change_password_screen.dart';
+import 'package:posture_detector_app/view/profile/change_password_screen.dart';
 
 class AccountSettingsScreen extends ConsumerStatefulWidget {
   const AccountSettingsScreen({super.key});
@@ -56,7 +56,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               ProfileInfo(
                 // EN: name = "Name", edit = "Edit"
                 title: loc.name,
-                value: profile?.data.fullName ?? 'username',
+                value: profile?.fullName ?? 'username',
                 tailingText: loc.edit,
                 iconData: Iconsax.edit,
                 onTap: () {
@@ -64,7 +64,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                     context,
                     nameController: _nameController,
                     isLoading: _isLoading,
-                    initialValue: profile?.data.fullName ?? '',
+                    initialValue: profile?.fullName ?? '',
                     onSave: () async {
                       _isLoading.value = true;
                       final success = await ref
@@ -85,7 +85,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               ProfileInfo(
                 // EN: "Email"
                 title: loc.email,
-                value: profile?.data.email ?? 'example@gmail.com',
+                value: profile?.email ?? 'example@gmail.com',
                 onTap: () {},
               ),
               SizedBox(height: 24.h),

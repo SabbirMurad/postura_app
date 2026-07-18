@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:posture_detector_app/common/widgets/network_hashed_image_viewer.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/models/media/image.dart';
 
 class HomeTopSection extends StatelessWidget {
   final String name;
-  final ImageProvider? image;
+  final ImageModel? image;
 
   const HomeTopSection({super.key, required this.name, this.image});
 
@@ -34,11 +36,11 @@ class HomeTopSection extends StatelessWidget {
             ),
           ],
         ),
+
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24.r),
             color: Colors.grey[200],
-            image: image != null ? DecorationImage(image: image!) : null,
             border: Border.all(
               color: AppColors.secondaryText.withValues(alpha: 0.15),
             ),
@@ -54,7 +56,12 @@ class HomeTopSection extends StatelessWidget {
                     color: AppColors.primaryColor,
                   ),
                 )
-              : null,
+              : NetworkHashedImageViewer(
+                  image: image!,
+                  width: 28.w,
+                  height: 28.w,
+                  fit: BoxFit.cover,
+                ),
         ),
       ],
     );

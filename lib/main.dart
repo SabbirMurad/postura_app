@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,7 +17,11 @@ import 'package:posture_detector_app/provider/locale_provider.dart';
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
-class MyHttpOverrides extends HttpOverrides {
+/// DEBUG-ONLY: accepts self-signed certs so the app can talk to a local dev
+/// server over TLS. This bypass MUST never run in release builds — doing so
+/// would disable certificate validation and allow trivial MITM. It is gated on
+/// `kDebugMode` below and is never installed in a release build.
+class DevHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
@@ -27,7 +32,10 @@ class MyHttpOverrides extends HttpOverrides {
 
 
 void main() async {
-  HttpOverrides.global = MyHttpOverrides();
+  // Only relax certificate validation in debug builds; release enforces TLS.
+  if (kDebugMode) {
+    HttpOverrides.global = DevHttpOverrides();
+  }
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);

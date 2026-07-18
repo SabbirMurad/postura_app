@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -249,7 +248,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final profileData = ref.watch(authorNotifierProvider).value?.data;
+    final profileData = ref.watch(authorNotifierProvider).value;
     final reportState = ref.watch(reportNotifierProvider);
 
     return Scaffold(
@@ -338,11 +337,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                       children: [
                         HomeTopSection(
                           name: profileData?.fullName ?? 'User',
-                          image:
-                              profileData?.avatar != null &&
-                                  profileData!.avatar!.isNotEmpty
-                              ? CachedNetworkImageProvider(profileData.avatar!)
-                              : null,
+                          image: profileData?.avatar,
                         ),
 
                         SizedBox(height: 24.h),

@@ -18,7 +18,8 @@ class ProfileInfoContainer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentImage = ref.watch(authorNotifierProvider).value?.data.avatar;
+    final avatar = ref.watch(authorNotifierProvider).value?.avatar;
+    final currentImage = avatar?.webp_url;
 
     return Container(
       width: double.infinity,
