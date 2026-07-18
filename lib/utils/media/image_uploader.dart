@@ -1,6 +1,6 @@
 part of '../media.dart';
 
-enum AssetUsedAt { ProfilePic, CoverPic, Post, Comment, Chat, VideoThumbnail }
+enum AssetUsedAt { ProfilePic, Capture }
 
 /// Uploads [images] to the server and returns their assigned IDs.
 ///
@@ -15,30 +15,41 @@ Future<List<String>?> upload_images({
   }
 
   final uri = Uri.parse('${AppCredentials.domain}/image');
-  final request = http.MultipartRequest('POST', uri);
 
-  for (int i = 0; i < images.length; i++) {
-    final prepared = images[i];
-    final meta = prepared.meta!;
+  // The upload endpoint requires authentication. Build a fresh request each send
+  // (multipart bodies are single-use) with the current bearer token.
+  Future<http.StreamedResponse> send(String? token) {
+    final request = http.MultipartRequest('POST', uri);
+    if (token != null) request.headers['Authorization'] = 'Bearer $token';
 
-    request.files.add(
-      http.MultipartFile.fromBytes(
-        'image_$i',
-        meta.compressed_bytes,
-        filename: 'image_$i.jpg',
-      ),
-    );
+    for (int i = 0; i < images.length; i++) {
+      final prepared = images[i];
+      final meta = prepared.meta!;
 
-    if (prepared.uuid != null) request.fields['uuid_$i'] = prepared.uuid!;
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'image_$i',
+          meta.compressed_bytes,
+          filename: 'image_$i.jpg',
+        ),
+      );
 
-    request.fields['width_$i'] = '${meta.width}';
-    request.fields['height_$i'] = '${meta.height}';
-    request.fields['blur_hash_$i'] = meta.blur_hash;
-    request.fields['used_at_$i'] = used_at.toString();
-    request.fields['temporary_$i'] = temporary.toString();
+      request.fields['width_$i'] = '${meta.width}';
+      request.fields['height_$i'] = '${meta.height}';
+      request.fields['blur_hash_$i'] = meta.blur_hash;
+      request.fields['used_at_$i'] = used_at.name;
+      request.fields['temporary_$i'] = temporary.toString();
+    }
+
+    return request.send();
   }
 
-  final response = await request.send();
+  var response = await send(await AppHelper.instance.getAccessToken());
+
+  // This request bypasses CustomHttp, so refresh + retry once on a 401.
+  if (response.statusCode == 401 && await CustomHttp.setNewAccessToken()) {
+    response = await send(await AppHelper.instance.getAccessToken());
+  }
 
   if (response.statusCode == 200) {
     final body = await response.stream.bytesToString();

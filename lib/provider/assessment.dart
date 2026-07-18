@@ -208,7 +208,7 @@ class AssessmentNotifier extends _$AssessmentNotifier {
 
     final imageIds = await media.upload_images(
       images: prepared,
-      used_at: media.AssetUsedAt.Post,
+      used_at: media.AssetUsedAt.Capture,
       temporary: true,
     );
     if (imageIds == null || imageIds.length != prepared.length) {
