@@ -393,6 +393,11 @@ class CustomHttp {
         // Backend contract matches sign-in: access_token + expires_at (ms).
         await AppHelper.instance.setAccessToken(data['access_token']);
         await AppHelper.instance.setTokenValidity(data['expires_at']);
+        // The backend rotates the refresh token on every refresh — persist the
+        // new one, or the next refresh would present the now-invalidated token.
+        if (data['refresh_token'] != null) {
+          await AppHelper.instance.setRefToken(data['refresh_token']);
+        }
         return true;
       } else {
         await AppHelper.instance.clearAllPrefValue();
