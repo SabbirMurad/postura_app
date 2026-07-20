@@ -41,8 +41,9 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        manifestPlaceholders["auth0Domain"] = "dev-85vm0cufjcab0y6r.us.auth0.com"
-        manifestPlaceholders["auth0Scheme"] = "com.sabbir.postura"
+        // flutter_appauth captures the OIDC redirect on this scheme (must match
+        // AppCredentials.oktaRedirectScheme and the redirect URI registered in Okta).
+        manifestPlaceholders["appAuthRedirectScheme"] = "com.sabbir.postura"
     }
 
     buildTypes {

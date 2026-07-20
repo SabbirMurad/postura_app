@@ -5,10 +5,9 @@ import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/models/prepared_image.dart';
 import 'package:posture_detector_app/models/profile/author_model.dart';
 import 'package:posture_detector_app/models/user_type.dart';
-import 'package:posture_detector_app/services/auth/auth_o_service.dart';
+import 'package:posture_detector_app/services/auth/okta_oidc_service.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/utils/media.dart' as media;
-import 'package:posture_detector_app/utils/print_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'author.g.dart';
@@ -234,42 +233,51 @@ class AuthorNotifier extends _$AuthorNotifier {
     return response.ok;
   }
 
-  /// Signs in via Auth0 browser flow, then exchanges the token with the backend.
-  /// Backend must implement POST /api/auth/oauth-sign-in accepting
-  /// { mode, access_token, id_token } and returning the same shape as sign-in.
-  Future<bool?> signInWithAuth0({required UserType userType}) async {
-    final credentials = await Auth0Service.login();
-    if (credentials == null) return null;
-    printLine(credentials.user);
-
-    final response = await CustomHttp.post(
-      endpoint: 'auth/oauth-sign-in',
-      body: {
-        'mode': userType.name,
-        'access_token': credentials.accessToken,
-        'id_token': credentials.idToken,
-      },
+  /// Enterprise SSO sign-in via Okta (OIDC). Discovers the company's Okta config
+  /// by [companyCode], runs the OIDC flow, then exchanges the ID token with the
+  /// backend. Returns true (onboarded), false (not onboarded), or null (error).
+  Future<bool?> signInWithOkta({required String companyCode}) async {
+    // 1. Discover the company's Okta org.
+    final cfg = await CustomHttp.post(
+      endpoint: 'auth/okta-config',
+      body: {'company_code': companyCode},
       needAuth: false,
     );
+    if (!cfg.ok || cfg.data['sso_enabled'] != true) {
+      showCustomToast(text: 'SSO is not enabled for this company.');
+      return null;
+    }
+    final issuer = cfg.data['okta_issuer'] as String?;
+    final clientId = cfg.data['okta_client_id'] as String?;
+    if (issuer == null || clientId == null) {
+      showCustomToast(text: 'SSO is not configured for this company.');
+      return null;
+    }
 
-    if (!response.ok) return null;
+    // 2. Run the OIDC flow to get an ID token.
+    final idToken = await OktaOidcService.login(issuer: issuer, clientId: clientId);
+    if (idToken == null) return null;
+
+    // 3. Exchange it for app tokens.
+    final response = await CustomHttp.post(
+      endpoint: 'auth/oauth-sign-in',
+      body: {'company_code': companyCode, 'id_token': idToken},
+      needAuth: false,
+    );
+    if (!response.ok) {
+      showCustomToast(text: response.error ?? 'SSO sign-in failed.');
+      return null;
+    }
 
     AppHelper.instance.setAccessToken(response.data['access_token']);
     AppHelper.instance.setRefToken(response.data['refresh_token']);
     AppHelper.instance.setTokenValidity(response.data['expires_at']);
-    AppHelper.instance.setUserId(response.data['user']['id']);
+    AppHelper.instance.setUserId(response.data['user']['uuid']);
     AppHelper.instance.setAuthRole(response.data['user']['role']);
 
-    // Persist the server's onboarding flag locally for every app user (see signIn).
     final hasOnboarded = response.data['user']['has_onboarded'] == true;
     await AppHelper.instance.setIsonBoarding(hasOnboarded);
-
-    if (userType == UserType.EMPLOYEE) {
-      return hasOnboarded;
-    }
-
-    await refreshProfile();
-    return true;
+    return hasOnboarded;
   }
 
   Future<void> resendOtp() async {

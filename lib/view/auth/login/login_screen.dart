@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
 import 'package:posture_detector_app/common/widgets/custom_text_field.dart';
+import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
@@ -63,35 +64,64 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  Future<void> _submitWithAuth0() async {
+  Future<void> _submitWithOkta() async {
+    // SSO provisions company employees only.
+    if (_userType != UserType.EMPLOYEE) {
+      showCustomToast(text: 'SSO sign-in is for company employees.');
+      return;
+    }
+
+    final companyCode = await _promptCompanyCode();
+    if (companyCode == null || companyCode.trim().isEmpty) return;
+
     setState(() => _loadingAuth0 = true);
 
     final res = await ref
         .read(authorNotifierProvider.notifier)
-        .signInWithAuth0(userType: _userType);
+        .signInWithOkta(companyCode: companyCode.trim());
 
     await _saveFcmToken();
 
     setState(() => _loadingAuth0 = false);
 
-    if (_userType == UserType.EMPLOYEE) {
-      if (res == true) {
-        setState(() => _loadingAuth0 = true);
-        await Future.wait([
-          ref.read(reportNotifierProvider.notifier).fetchMyReports(),
-          ref.read(authorNotifierProvider.notifier).refreshProfile(),
-        ]);
-        setState(() => _loadingAuth0 = false);
-        if (mounted) context.go(AppRoute.bottomNavBusiness);
-      } else if (res == false) {
-        if (mounted) context.go(AppRoute.employeeSelectBodyRegion);
-      }
-    } else {
-      if (res == true) {
-        ref.read(authorNotifierProvider.notifier).refreshProfile();
-        if (mounted) context.go(AppRoute.bottomNavCpe);
-      }
+    if (res == true) {
+      setState(() => _loadingAuth0 = true);
+      await Future.wait([
+        ref.read(reportNotifierProvider.notifier).fetchMyReports(),
+        ref.read(authorNotifierProvider.notifier).refreshProfile(),
+      ]);
+      setState(() => _loadingAuth0 = false);
+      if (mounted) context.go(AppRoute.bottomNavBusiness);
+    } else if (res == false) {
+      if (mounted) context.go(AppRoute.employeeSelectBodyRegion);
     }
+  }
+
+  /// Ask the employee for their company code so we can find the right Okta org.
+  Future<String?> _promptCompanyCode() async {
+    final controller = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Company code'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          textCapitalization: TextCapitalization.characters,
+          decoration: const InputDecoration(hintText: 'Enter your company code'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, controller.text),
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _submit() async {
@@ -272,7 +302,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   SizedBox(height: 16.h),
                   _Auth0Button(
                     loading: _loadingAuth0,
-                    onTap: _submitWithAuth0,
+                    onTap: _submitWithOkta,
                   ),
 
                   if (_userType == UserType.EMPLOYEE)

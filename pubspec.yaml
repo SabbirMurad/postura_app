@@ -45,7 +45,7 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   image: ^4.8.0           # Image processing
   fluttertoast: ^8.2.8                  # Native toast messages
-  auth0_flutter: ^2.0.1
+  flutter_appauth: ^6.0.2   # OIDC (Okta) enterprise SSO
   image_picker: ^1.1.2
   photo_view: ^0.15.0
   wechat_assets_picker: ^9.4.2
