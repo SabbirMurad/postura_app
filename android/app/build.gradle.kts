@@ -51,6 +51,12 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+            // R8 runs on release; feed it our keep/dontwarn rules for the
+            // TFLite GPU delegate + MediaPipe (referenced reflectively/JNI).
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
 }
