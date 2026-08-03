@@ -1,6 +1,6 @@
 part of '../media.dart';
 
-enum AssetUsedAt { ProfilePic, Capture }
+enum AssetUsedAt { ProfilePic, Capture, Signature }
 
 /// Uploads [images] to the server and returns their assigned IDs.
 ///

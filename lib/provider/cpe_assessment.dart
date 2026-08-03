@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:posture_detector_app/models/prepared_image.dart';
+import 'package:posture_detector_app/utils/media.dart' as media;
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/models/analysis/body_angles.dart';
@@ -401,31 +404,43 @@ class CpeAssessmentNotifier
   Future<bool> submitReview() async {
     final s = state;
     if (s == null) return false;
+
+    // A signature image is required (the backend rejects a submission without one).
+    if (s.signaturePath.isEmpty) {
+      final loc = AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;
+      showCustomToast(text: '${loc.error}: ${loc.failedToSubmit}');
+      return false;
+    }
+
     state = s.copyWith(isSubmitting: true);
     try {
-      final fields = <String, String>{
-        for (final item in s.approvalItems)
-          item.apiKey: item.isChecked ? 'True' : 'False',
+      // All image bytes go through the /image endpoint. Upload the signature
+      // there first and submit only its returned id (used_at = Signature, so it
+      // is auth-gated when served).
+      final prepared = PreparedImage.fromFile(File(s.signaturePath));
+      prepared.meta = await prepared.get_prepare_meta();
+      prepared.prepared = true;
+      final ids = await media.upload_images(
+        images: [prepared],
+        used_at: media.AssetUsedAt.Signature,
+      );
+      if (ids == null || ids.isEmpty) {
+        final loc = AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;
+        showCustomToast(text: '${loc.error}: ${loc.failedToSubmit}');
+        return false;
+      }
+
+      final body = <String, dynamic>{
+        for (final item in s.approvalItems) item.apiKey: item.isChecked,
         'review_type': s.reviewMode.apiValue,
         'review_status': s.decision.apiValue,
         'review_comment': s.comment,
+        'review_signature': ids.first,
       };
 
-      final files = <http.MultipartFile>[];
-      if (s.signaturePath.isNotEmpty) {
-        files.add(
-          await http.MultipartFile.fromPath(
-            'review_signature',
-            s.signaturePath,
-          ),
-        );
-      }
-
-      final result = await CustomHttp.multipart(
+      final result = await CustomHttp.post(
         endpoint: 'cpe/ergonomist/assessment/submit-review/$arg',
-        method: CommonCustomMethods.POST,
-        fields: fields,
-        files: files,
+        body: body,
       );
 
       if (result.error == null) {
