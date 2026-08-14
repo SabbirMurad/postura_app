@@ -1,58 +1,37 @@
-import 'package:get/get.dart';
-import 'package:posture_detector_app/view/auth/login/screens/select_user_login_screen.dart';
-import 'package:posture_detector_app/view/business/profile/screens/business_language_screen.dart';
-import 'package:posture_detector_app/view/auth/forgot_password/screens/confirm_code_forgot_screen.dart';
-import 'package:posture_detector_app/view/auth/forgot_password/screens/forgot_password_screen.dart';
-import 'package:posture_detector_app/view/auth/forgot_password/screens/verify_email_screen.dart';
-import 'package:posture_detector_app/view/auth/login/screens/login_screen.dart';
-import 'package:posture_detector_app/view/camera_capture/screens/camera_guide_screen.dart';
-import 'package:posture_detector_app/view/camera_capture/screens/correction_report_screen.dart';
-import 'package:posture_detector_app/view/camera_capture/screens/image_capture_screen.dart';
-import 'package:posture_detector_app/view/camera_capture/screens/image_preview_screen.dart';
-import 'package:posture_detector_app/view/camera_capture/screens/output_screen.dart';
-import 'package:posture_detector_app/view/auth/signup/business/company_credential_screen.dart';
-import 'package:posture_detector_app/view/assessment/work_pattern/business_work_pattern_screen.dart';
-import 'package:posture_detector_app/view/assessment/symptom/optional_symptom_screen.dart';
-import 'package:posture_detector_app/view/assessment/pain/pain_duration_screen.dart';
-import 'package:posture_detector_app/view/assessment/pain/pain_intensity_screen.dart';
-import 'package:posture_detector_app/view/assessment/body_region/select_body_region_screen.dart';
-import 'package:posture_detector_app/view/auth/signup/business/employee_credential_screen.dart';
-import 'package:posture_detector_app/view/auth/signup/business/equipment_screen_business.dart';
-import 'package:posture_detector_app/view/auth/signup/business/exercise_screen_business.dart';
-import 'package:posture_detector_app/view/auth/signup/business/select_language_screen.dart';
-import 'package:posture_detector_app/view/auth/signup/personal/confirm_code_screen.dart';
-import 'package:posture_detector_app/view/auth/signup/personal/congratulations_screen.dart';
-import 'package:posture_detector_app/view/auth/signup/personal/create_account_screen.dart';
-import 'package:posture_detector_app/view/auth/signup/screens/select_user_screen.dart';
-import 'package:posture_detector_app/view/auth/signup/screens/welcoming_screen.dart';
-import 'package:posture_detector_app/view/business/navigation/bottom_nav_business.dart';
-import 'package:posture_detector_app/view/business/exercises/screens/exercise_business_screen.dart';
-import 'package:posture_detector_app/view/business/home/screens/home_screen_business.dart';
-import 'package:posture_detector_app/view/business/profile/screens/business_profile_screen.dart';
-import 'package:posture_detector_app/view/business/profile/screens/account_settings_business_screen.dart';
-import 'package:posture_detector_app/view/business/scan/screens/scan_business_screen.dart';
-import 'package:posture_detector_app/view/cpe/screens/assessment_screen_cpe.dart';
-import 'package:posture_detector_app/view/cpe/screens/home_screen_cpe.dart';
+import 'package:posture_detector_app/view/assessment/workstation_questionnaire_screen.dart';
+import 'package:posture_detector_app/view/auth/forgot_password/confirm_code_forgot_screen.dart';
+import 'package:posture_detector_app/view/auth/forgot_password/forgot_password_screen.dart';
+import 'package:posture_detector_app/view/auth/forgot_password/verify_email_screen.dart';
+import 'package:posture_detector_app/view/auth/login/login_screen.dart';
+import 'package:posture_detector_app/view/assessment/camera_guide_screen.dart';
+import 'package:posture_detector_app/view/camera_capture/correction_report_screen.dart';
+import 'package:posture_detector_app/view/auth/signup/company_credential_screen.dart';
+import 'package:posture_detector_app/view/assessment/optional_symptom_screen.dart';
+import 'package:posture_detector_app/view/assessment/pain_duration_screen.dart';
+import 'package:posture_detector_app/view/assessment/pain_intensity_screen.dart';
+import 'package:posture_detector_app/view/assessment/select_body_region_screen.dart';
+import 'package:posture_detector_app/view/auth/signup/employee_credential_screen.dart';
+import 'package:posture_detector_app/view/equipment/equipment_screen.dart';
+import 'package:posture_detector_app/view/auth/signup/exercise_screen_business.dart';
+import 'package:posture_detector_app/view/auth/signup/select_language_screen.dart';
+import 'package:posture_detector_app/view/onboarding/welcoming_screen.dart';
+import 'package:posture_detector_app/view/navigation/bottom_nav.dart';
+import 'package:posture_detector_app/view/profile/account_settings_screen.dart';
+import 'package:posture_detector_app/view/profile/language_screen.dart';
+import 'package:posture_detector_app/view/cpe/assessment_details_screen.dart';
 import 'package:posture_detector_app/view/cpe/navigation/bottom_nav_cpe.dart';
-import 'package:posture_detector_app/view/e_learning/screens/elearning_screen.dart';
-import 'package:posture_detector_app/view/onboarding/screens/onboarding_screen.dart';
-import 'package:posture_detector_app/view/onboarding/screens/splash_screen.dart';
-import 'package:posture_detector_app/view/personal/navigation/bottom_nav_personal.dart';
-import 'package:posture_detector_app/view/personal/exercises/screens/exercise_personal_screen.dart';
-import 'package:posture_detector_app/view/personal/home/screens/home_screen_personal.dart';
-import 'package:posture_detector_app/view/personal/profile/screens/personal_language_screen.dart';
-import 'package:posture_detector_app/view/personal/profile/screens/profile_screen_personal.dart';
-import 'package:posture_detector_app/view/personal/profile/screens/account_settings_personal_screen.dart';
-import 'package:posture_detector_app/view/personal/scan/screens/scan_personal_screen.dart';
+import 'package:posture_detector_app/view/e_learning/elearning_screen.dart';
+import 'package:posture_detector_app/view/onboarding/onboarding_screen.dart';
+import 'package:posture_detector_app/view/onboarding/splash_screen.dart';
 
-import 'package:posture_detector_app/view/auth/signup/business/employee_work_detail_screen.dart';
+import 'package:posture_detector_app/view/auth/signup/employee_work_detail_screen.dart';
 import 'package:posture_detector_app/common/screens/privacy_policy_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class AppRoute {
   AppRoute._();
 
   static const bottomNavBusiness = '/bottom-nav-business';
-  static const bottomNavPersonal = '/bottom-nav-personal';
   static const bottomNavCpe = '/bottom-nav-cpe';
 
   // ── Onboarding ──
@@ -61,11 +40,7 @@ class AppRoute {
   static const welcomeScreen = '/welcome';
 
   // ── Auth - Signup ──
-  static const selectUser = '/select-user';
-  static const selectUserLogin = '/select-user-login';
   static const createAccountScreen = '/create-account';
-  static const confirmCode = '/confirm-code';
-  static const congratulationScreen = '/congratulations';
   static const selectLanguage = '/select-language';
 
   // ── Auth - Login ──
@@ -85,13 +60,13 @@ class AppRoute {
   static const employeeSelectBodyRegion = '/select-body-region';
   static const employeePainIntensityScreen = '/pain-intensity';
   static const employeePainDurationScreen = '/pain-duration';
-  static const employeeWorkPatternScreen = '/work-pattern';
+  static const workstationQuestionnaire = '/workstation-questionnaire';
   static const employeeOptionalSymptom = '/optional-symptom';
 
   // ── Camera Capture Flow ──
   static const cameraGuideScreen = '/camera-guide';
-  static const imageCaptureView = '/image-capture';
-  static const imagePreview = '/image-preview';
+  // static const imageCaptureView = '/image-capture';
+  // static const imagePreview = '/image-preview';
   static const outputScreenBusiness = '/output';
   static const correctionReportScreenBusiness = '/correction-report';
 
@@ -100,193 +75,176 @@ class AppRoute {
   static const equipmentScreenBusiness = '/equipment-selection-business';
 
   // ── Business Dashboard ──
-  static const businessHome = '/business-home';
-  static const businessExercise = '/business-exercise';
-  static const businessProfile = '/business-profile';
   static const businessAccountSettings = '/business-account-settings';
-  static const scanBusinessScreen = '/business-scan';
-  static const businessLanguageScreen = '/business-language';
-
-  // ── Personal Dashboard ──
-  static const personalHome = '/personal-home';
-  static const personalExercise = '/personal-exercise';
-  static const personalProfile = '/personal-profile';
-  static const personalAccountSettings = '/personal-account-settings';
-  static const personalScanScreen = '/personal-scan';
-  static const personalLanguageScreen = '/personal-language';
+  static const businessLanguage = '/business-language';
 
   // ── E-Learning ──
   static const elearning = '/e-learning';
 
   // ── CPE ──
-  static const cpeHome = '/cpe-home';
-  static const cpeSetting = '/cpe-setting';
   static const cpeAssessment = '/cpe-assessment';
 
   // ── Shared ──
   static const privacyPolicy = '/privacy-policy';
 
-  static final routes = [
-    /// -------------------------------------- Auth ------------------------------ ///
-    GetPage(name: AppRoute.splashScreen, page: () => SplashScreen()),
-    GetPage(name: AppRoute.onBoardingScreen, page: () => OnboardingScreen()),
-    GetPage(name: AppRoute.welcomeScreen, page: () => WelcomingScreen()),
-    GetPage(
-      name: AppRoute.createAccountScreen,
-      page: () => CreateAccountScreen(),
-    ),
-    GetPage(name: AppRoute.confirmCode, page: () => ConfirmCodeScreen()),
-    GetPage(
-      name: AppRoute.congratulationScreen,
-      page: () => CongratulationsScreen(),
-    ),
-    GetPage(name: AppRoute.loginScreen, page: () => LoginScreen()),
+  static void push(String route) => allRoutes.push(route);
+  static void go(String route) => allRoutes.go(route);
+  static void pop() {
+    if (allRoutes.canPop()) {
+      allRoutes.pop();
+    } else {
+      allRoutes.go(splashScreen);
+    }
+  }
 
-    /// -------------------------------- forgot password ------------------------------ ///
-    GetPage(name: AppRoute.verifyEmail, page: () => VerifyEmailScreen()),
-    GetPage(
-      name: AppRoute.confirmCodeForgot,
-      page: () => ConfirmCodeForgotScreen(),
-    ),
-    GetPage(
-      name: AppRoute.forgotPasswordScreen,
-      page: () => ForgotPasswordScreen(),
-    ),
+  static final allRoutes = GoRouter(
+    routes: [
+      /// ------------------------ Auth ------------------------------ ///
+      GoRoute(
+        path: AppRoute.splashScreen,
+        builder: (context, state) => SplashScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.onBoardingScreen,
+        builder: (context, state) => OnboardingScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.welcomeScreen,
+        builder: (context, state) => WelcomingScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.loginScreen,
+        builder: (context, state) => LoginScreen(),
+      ),
 
-    /// ------------------------------------------------------------------------------- ///
-    GetPage(name: AppRoute.selectUser, page: () => SelectUserScreen()),
-    GetPage(
-      name: AppRoute.selectUserLogin,
-      page: () => SelectUserLoginScreen(),
-    ),
-    GetPage(name: AppRoute.selectLanguage, page: () => SelectLanguageScreen()),
-    GetPage(
-      name: AppRoute.companyCredential,
-      page: () => CompanyCredentialScreen(),
-    ),
-    GetPage(
-      name: AppRoute.employeeCredential,
-      page: () => EmployeeCredentialScreen(),
-    ),
-    GetPage(
-      name: AppRoute.employeeWorkDetail,
-      page: () => EmployeeWorkDetailScreen(),
-    ),
-    GetPage(
-      name: AppRoute.employeeSelectBodyRegion,
-      page: () => SelectBodyRegionScreen(),
-    ),
-    GetPage(
-      name: AppRoute.employeePainIntensityScreen,
-      page: () => BusinessPainIntensityScreen(),
-    ),
-    GetPage(
-      name: AppRoute.employeePainDurationScreen,
-      page: () => BusinessPainDurationScreen(),
-    ),
-    GetPage(
-      name: AppRoute.employeeWorkPatternScreen,
-      page: () => BusinessWorkPatternScreen(),
-    ),
-    GetPage(
-      name: AppRoute.employeeOptionalSymptom,
-      page: () => BusinessOptionalSymptomScreen(),
-    ),
-    GetPage(name: AppRoute.cameraGuideScreen, page: () => CameraGuideScreen()),
-    GetPage(
-      name: AppRoute.imageCaptureView,
-      page: () => ImageCaptureScreen(type: Get.arguments['type']),
-    ),
-    GetPage(name: AppRoute.imagePreview, page: () => ImagePreviewScreen()),
-    GetPage(
-      name: AppRoute.outputScreenBusiness,
-      page: () => OutputScreenBusiness(),
-    ),
-    GetPage(
-      name: AppRoute.correctionReportScreenBusiness,
-      page: () => CorrectionReportScreenBusiness(),
-    ),
-    GetPage(
-      name: AppRoute.exerciseBusiness,
-      page: () => ExerciseScreenBusiness(),
-    ),
-    GetPage(
-      name: AppRoute.equipmentScreenBusiness,
-      page: () => EquipmentScreenBusiness(),
-    ),
+      /// ---------------------- forgot password ------------------------ ///
+      GoRoute(
+        path: AppRoute.verifyEmail,
+        builder: (context, state) => VerifyEmailScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.confirmCodeForgot,
+        builder: (context, state) => ConfirmCodeForgotScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.forgotPasswordScreen,
+        builder: (context, state) => ForgotPasswordScreen(),
+      ),
 
-    /// ------------------------- Business Dashboard ---------------------------------- ///
-    GetPage(name: AppRoute.businessHome, page: () => HomeScreenBusiness()),
-    GetPage(
-      name: AppRoute.businessExercise,
-      page: () => ExerciseBusinessScreen(),
-    ),
-    GetPage(
-      name: AppRoute.businessProfile,
-      page: () => BusinessProfileScreen(),
-    ),
-    GetPage(
-      name: AppRoute.businessAccountSettings,
-      page: () => AccountSettingsBusinessScreen(),
-    ),
-    GetPage(
-      name: AppRoute.scanBusinessScreen,
-      page: () => ScanBusinessScreen(),
-    ),
+      /// ---------------------------------------------------------------- ///
+      GoRoute(
+        path: AppRoute.selectLanguage,
+        builder: (context, state) => SelectLanguageScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.companyCredential,
+        builder: (context, state) => CompanyCredentialScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.employeeCredential,
+        builder: (context, state) => EmployeeCredentialScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.employeeWorkDetail,
+        builder: (context, state) => EmployeeWorkDetailScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.employeeSelectBodyRegion,
+        builder: (context, state) => SelectBodyRegionScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.employeePainIntensityScreen,
+        builder: (context, state) => PainIntensityScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.employeePainDurationScreen,
+        builder: (context, state) => PainDurationScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.workstationQuestionnaire,
+        builder: (context, state) => WorkstationQuestionnaireScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.employeeOptionalSymptom,
+        builder: (context, state) => OptionalSymptomScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.cameraGuideScreen,
+        builder: (context, state) => CameraGuideScreen(),
+      ),
+      // GoRoute(
+      //   path: AppRoute.imageCaptureView,
+      //   builder: (context, state) {
+      //     final query = state.uri.queryParameters;
+      //     final type = query['type']!;
 
-    /// ---------------------------- Bottom Nav business ----------------------------------- ///
-    GetPage(name: AppRoute.bottomNavBusiness, page: () => BottomNavBusiness()),
+      //     return ImageCaptureScreen(
+      //       type: type == 'primary'
+      //           ? ScanType.primaryScan
+      //           : ScanType.captureImage,
+      //     );
+      //   },
+      // ),
+      // GoRoute(
+      //   path: AppRoute.imagePreview,
+      //   builder: (context, state) => ImagePreviewScreen(),
+      // ),
+      GoRoute(
+        path: AppRoute.correctionReportScreenBusiness,
+        builder: (context, state) => CorrectionReportScreenBusiness(),
+      ),
+      GoRoute(
+        path: AppRoute.exerciseBusiness,
+        builder: (context, state) => ExerciseScreenBusiness(),
+      ),
+      GoRoute(
+        path: AppRoute.equipmentScreenBusiness,
+        builder: (context, state) => EquipmentScreenBusiness(
+          canSendListToCompany: true,
+          dashboardButton: true,
+          backButton: true,
+        ),
+      ),
 
-    /// ---------------------------- Bottom Nav personal ----------------------------------- ///
-    GetPage(name: AppRoute.bottomNavPersonal, page: () => BottomNavPersonal()),
+      /// ------------------------- Business Dashboard ---------------------------------- ///
+      GoRoute(
+        path: AppRoute.businessAccountSettings,
+        builder: (context, state) => AccountSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.businessLanguage,
+        builder: (context, state) => const LanguageScreen(),
+      ),
 
-    /// ---------------------------- Bottom Nav CPE ----------------------------------- ///
-    GetPage(name: AppRoute.bottomNavCpe, page: () => BottomNavCPE()),
+      /// ---------------------------- Bottom Nav business ----------------------------------- ///
+      GoRoute(
+        path: AppRoute.bottomNavBusiness,
+        builder: (context, state) => BottomNavBusiness(),
+      ),
 
-    /// ---------------------------- Personal Dashboard ------------------------------------ ///
-    GetPage(name: AppRoute.personalHome, page: () => HomeScreenPersonal()),
-    GetPage(
-      name: AppRoute.personalExercise,
-      page: () => ExercisePersonalScreen(),
-    ),
-    GetPage(
-      name: AppRoute.personalScanScreen,
-      page: () => ScanPersonalScreen(),
-    ),
-    GetPage(
-      name: AppRoute.personalProfile,
-      page: () => ProfileScreenPersonal(),
-    ),
-    GetPage(
-      name: AppRoute.personalAccountSettings,
-      page: () => AccountSettingsPersonalScreen(),
-    ),
+      /// ---------------------------- Bottom Nav CPE ----------------------------------- ///
+      GoRoute(
+        path: AppRoute.bottomNavCpe,
+        builder: (context, state) => BottomNavCPE(),
+      ),
 
-    GetPage(
-      name: AppRoute.businessLanguageScreen,
-      page: () => BusinessLanguageScreen(),
-    ),
-    GetPage(
-      name: AppRoute.personalLanguageScreen,
-      page: () => PersonalLanguageScreen(),
-    ),
+      /// -------------------------  e-learning ----------------------------------- ///
+      GoRoute(
+        path: AppRoute.elearning,
+        builder: (context, state) => ELearningScreen(),
+      ),
 
-    /// -------------------------  e-learning ----------------------------------- ///
-    GetPage(name: AppRoute.elearning, page: () => ELearningScreen()),
+      /// -------------------------  cpe ----------------------------------- ///
+      GoRoute(
+        path: AppRoute.cpeAssessment,
+        builder: (context, state) => const CPEAssessmentScreen(),
+      ),
 
-    /// -------------------------  cpe ----------------------------------- ///
-    GetPage(name: AppRoute.cpeHome, page: () => HomeScreenCPE()),
-    // GetPage(name: AppRoute.cpeSetting, page: () => CPESettingScreen()),
-    GetPage(
-      name: AppRoute.cpeAssessment,
-      page: () => const CPEAssessmentScreen(),
-      binding: CPEAssessmentBinding(),
-    ),
-
-    /// -------------------------  Shared ----------------------------------- ///
-    GetPage(
-      name: AppRoute.privacyPolicy,
-      page: () => const PrivacyPolicyScreen(),
-    ),
-  ];
+      /// -------------------------  Shared ----------------------------------- ///
+      GoRoute(
+        path: AppRoute.privacyPolicy,
+        builder: (context, state) => const PrivacyPolicyScreen(),
+      ),
+    ],
+  );
 }

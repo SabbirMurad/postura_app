@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 
 class IconContainer extends StatelessWidget {
   final double? width;
+  final double? height;
   final String path;
   final Color? color;
   final bool showBackground;
@@ -15,28 +16,25 @@ class IconContainer extends StatelessWidget {
     required this.path,
     this.color,
     this.width,
+    this.height,
     this.showBackground = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    final child = SvgPicture.asset(
-      path,
-      width: 24.w,
-      height: 24.h,
-    );
+    final child = SvgPicture.asset(path, width: 24.w, height: 24.h);
 
     if (!showBackground) {
       return SizedBox(
         width: width ?? 40.w,
-        height: 38.h,
+        height: height ?? 40.w,
         child: Center(child: child),
       );
     }
 
     return Container(
       width: width ?? 40.w,
-      height: 38.h,
+      height: height ?? 40.w,
       decoration: BoxDecoration(
         color:
             color?.withValues(alpha: 0.1) ??

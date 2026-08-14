@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
-import 'package:posture_detector_app/controller/assessment_controller_cpe.dart';
+import 'package:posture_detector_app/provider/cpe_assessment.dart';
 
 class SectionTitle extends StatelessWidget {
   final String title;
@@ -25,7 +26,10 @@ Widget decisionSvgIcon(ReviewDecision decision, {required double size}) {
     case ReviewDecision.approved:
       return Assets.icons.status.approved.svg(width: size, height: size);
     case ReviewDecision.followUpRequired:
-      return Assets.icons.status.followupRequired.svg(width: size, height: size);
+      return Assets.icons.status.followupRequired.svg(
+        width: size,
+        height: size,
+      );
     case ReviewDecision.needChanges:
       return Assets.icons.status.needChanges.svg(width: size, height: size);
     case ReviewDecision.pending:
@@ -49,13 +53,7 @@ Color statusBgColor(ReviewDecision decision) {
 BoxDecoration cardDecoration() {
   return BoxDecoration(
     color: Colors.white,
-    borderRadius: BorderRadius.circular(16),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withValues(alpha: 0.04),
-        blurRadius: 8,
-        offset: const Offset(0, 2),
-      ),
-    ],
+    borderRadius: BorderRadius.circular(12.r),
+    border: Border.all(color: AppColors.secondaryText.withValues(alpha: 0.15)),
   );
 }

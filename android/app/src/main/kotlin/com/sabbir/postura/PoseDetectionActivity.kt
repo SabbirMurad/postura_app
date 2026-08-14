@@ -1,0 +1,1336 @@
+package com.sabbir.postura
+
+import android.app.Activity
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.*
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
+import android.media.Image
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.OptIn
+import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.*
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import com.google.mediapipe.framework.image.BitmapImageBuilder
+import com.google.mediapipe.framework.image.MPImage
+import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
+import com.google.mediapipe.tasks.core.BaseOptions
+import com.google.mediapipe.tasks.core.Delegate
+import com.google.mediapipe.tasks.vision.core.RunningMode
+import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker
+import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarkerResult
+import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+
+class PoseDetectionActivity : AppCompatActivity() {
+
+    companion object {
+        /**
+         * Activity-result extra: a JSON object string of the whole capture, grouped as
+         *   { "side_captures": [ { image_path, rosa_score {…}, body_angles {…} }, … ],
+         *     "front_capture": { image_path, abduction_angle, wrist_deviation_angle } }
+         * All keys are snake_case — this is the Flutter-facing contract.
+         */
+        const val EXTRA_RESULT  = "result"
+        /** Launch extra: JSON object string of the manual workstation questionnaire answers. */
+        const val EXTRA_WORKSTATION_ANSWERS = "workstation_answers"
+
+        /** Pose landmark indices omitted in the front view (both the baked photo and
+         *  the live overlay): face/eyes/ears/mouth (0..10), wrist/palm (15..22) — the
+         *  hand landmarker supplies those on the photo — and legs (25..32). */
+        val FRONT_SKELETON_EXCLUDE = ((0..10) + (15..22) + (25..32)).toSet()
+    }
+
+    // FRONT is a 4th phase entered after the 3 side shots: the holder moves to
+    // the front of the person (behind the monitor) and a single extra photo is
+    // taken once the face, shoulders and hands are visible.
+    private enum class AppState { LIGHT_CHECK, DETECTING, POSE, FRONT }
+
+    // -------------------------------------------------------------------------
+    // Views
+    // -------------------------------------------------------------------------
+    private lateinit var previewView: PreviewView
+    private lateinit var poseOverlayView: PoseOverlayView
+    private lateinit var cameraLevel: CameraLevelView
+    private lateinit var statusPanel: LinearLayout
+    private lateinit var tvCaptureStatus: TextView
+    private lateinit var flashOverlay: View
+    private lateinit var tvLightStatus: TextView
+    private lateinit var tvPersonStatus: TextView
+    private lateinit var tvMonitorStatus: TextView
+    private lateinit var confirmProgress: ProgressBar
+    private lateinit var tvStatusMessage: TextView
+    private lateinit var tvTiltStatus: TextView
+    private lateinit var tvRotationStatus: TextView
+    private lateinit var tvDistanceStatus: TextView
+    private lateinit var tvSideViewStatus: TextView
+
+    // -------------------------------------------------------------------------
+    // Tilt
+    // -------------------------------------------------------------------------
+    private lateinit var tiltMonitor: TiltMonitor
+
+    // -------------------------------------------------------------------------
+    // ML
+    // -------------------------------------------------------------------------
+    private lateinit var cameraExecutor: ExecutorService
+    @Volatile private var poseLandmarker: PoseLandmarker? = null
+
+    // Hand landmarker — IMAGE mode, used only once on the captured FRONT still to
+    // overlay finger/palm points. Never runs on live frames. Created lazily when
+    // the front phase begins (the settle delay absorbs the one-time setup cost).
+    @Volatile private var handLandmarker: HandLandmarker? = null
+    private var yoloDetector: YoloDetector? = null
+
+    // -------------------------------------------------------------------------
+    // Camera
+    // -------------------------------------------------------------------------
+    private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    @Volatile private var cameraProvider: ProcessCameraProvider? = null
+    @Volatile private var lastImageWidth: Int  = 1
+    @Volatile private var lastImageHeight: Int = 1
+
+    // Set once from the first frame: anchors the preview to the top of the
+    // screen (sized to the video aspect) instead of vertically centered.
+    @Volatile private var previewLaidOut = false
+    private val previewTopGapDp = 48f
+
+    // Camera2 optics — read once per camera bind, used for distance estimation
+    @Volatile private var focalLengthMm: Float  = 4.25f  // sensible fallback
+    @Volatile private var sensorWidthMm: Float  = 6.4f   // landscape sensor width
+    @Volatile private var sensorHeightMm: Float = 4.8f   // landscape sensor height
+    private var frameCounter = 0
+    private val processEveryNFrames = 1
+
+    // -------------------------------------------------------------------------
+    // Smoother + leg estimator
+    // -------------------------------------------------------------------------
+    private val landmarkSmoother = LandmarkSmoother(minCutoff = 0.5f, beta = 0.5f)
+    private val legEstimator     = LegEstimator()
+
+    // -------------------------------------------------------------------------
+    // State machine  (only written on cameraExecutor thread except resets)
+    // -------------------------------------------------------------------------
+    @Volatile private var appState = AppState.LIGHT_CHECK
+    private var confirmationCount = 0
+    private val REQUIRED_CONFIRMATIONS = 4
+
+    // ── Multi-shot capture sequence ───────────────────────────────────────────
+    // Once conditions are met, captures TOTAL_SHOTS_NEEDED photos, each at least
+    // CAPTURE_COOLDOWN_MS apart and only while every condition is currently OK.
+    // The 3 side shots only. The front shot is held separately (frontPhoto).
+    private val capturedPhotos = mutableListOf<Bitmap>()
+    // Per-side-shot ROSA angles, kept so the shots can be scored *after* the front
+    // shot — the front view supplies the armrest-too-wide modifier (elbow abduction),
+    // which isn't known until then.
+    private val capturedAngles = mutableListOf<RosaAnglesCalculator.Angles?>()
+
+    // The front (4th) shot and its two raw measured angles (degrees). These feed the
+    // armrest-too-wide / keyboard-deviation modifiers and are also surfaced to Flutter.
+    private var frontPhoto: Bitmap? = null
+    private var frontAbductionAngle: Double = 0.0
+    private var frontWristDeviationAngle: Double = 0.0
+
+    /** Manual checklist answers gathered by the Flutter questionnaire before launch. */
+    private lateinit var workstationModifiers: RosaScorer.WorkstationModifiers
+    private val TOTAL_SHOTS_NEEDED = 3
+
+    // Elbow abduction (front-view shoulder→elbow angle from vertical) at or above
+    // this many degrees is scored as "armrests too wide / elbows pushed outward".
+    private val ARMREST_ABDUCTION_MAX_DEG = 20.0
+    // Wrist bend away from straight (front-view forearm→hand angle deviating from
+    // 180°) at or above this many degrees is scored as "wrist deviates while typing".
+    private val WRIST_DEVIATION_MAX_DEG = 15.0
+    private val CAPTURE_COOLDOWN_MS = 2000L
+
+    // Reference width the baked-in skeleton's stroke widths / dot radii are tuned
+    // against (see bakeSkeletonOntoPhoto). Using a fixed constant — instead of the
+    // capturing device's screen size — makes the skeleton's proportions relative
+    // to the photo a fixed, intrinsic property of the image itself: the same photo
+    // resolution always bakes the same skeleton, regardless of which phone took
+    // it or what screen it's later viewed on. That matters because these photos
+    // get sent to Flutter and on to the server for storage, where they must look
+    // consistent no matter where they came from or where they're displayed.
+    private val SKELETON_REFERENCE_WIDTH = 1080f
+    @Volatile private var nextCaptureEarliestAtMs = 0L
+
+    // ── Front-view (4th) shot ─────────────────────────────────────────────────
+    // Captured once face (nose), both shoulders and both wrists clear this
+    // visibility bar AND the phone is upright/level. The settle delay stops a
+    // premature capture while the holder is still walking the phone to the front.
+    private val FRONT_VISIBILITY_THRESHOLD = 0.5f
+    private val FRONT_READY_DELAY_MS = 1500L
+    // After the entry settle, the face/shoulders/hands must stay visible for this
+    // many *consecutive* frames before the front photo is taken — any drop in
+    // visibility resets the count, so the holder must hold steady once in position.
+    private val FRONT_FRAMES_NEEDED = 30
+    @Volatile private var frontReadyEarliestAtMs = 0L
+
+    // Phone-steadiness gate for the front shot: dynamic acceleration (m/s²) above
+    // PHONE_MOTION_MAX counts as movement, and the capture waits until the phone has
+    // been quiet for PHONE_STEADY_SETTLE_MS afterwards.
+    private val PHONE_MOTION_MAX = 0.8
+    private val PHONE_STEADY_SETTLE_MS = 400L
+    @Volatile private var lastShakeAtMs = 0L
+
+    // Hip spread / torso height ratio threshold for side-view detection.
+    // Accepts camera within ~30° of true side view; unaffected by torso lean.
+    private val SIDE_VIEW_THRESHOLD = 0.35f
+
+    // ── All-green success detection ───────────────────────────────────────────
+    // Shows confirmation overlay when every condition holds for ~1.5 s (~45 frames)
+    @Volatile private var tiltIsOk         = false
+    @Volatile private var rotationIsOk     = false
+    @Volatile private var sideIsOk         = false
+    @Volatile private var heightIsOk       = false
+    @Volatile private var distanceIsOk     = false
+    @Volatile private var lastFrameBitmap: Bitmap? = null
+    private val successCount           = java.util.concurrent.atomic.AtomicInteger(0)
+    private val SUCCESS_FRAMES_NEEDED  = 20
+
+    // Light thresholds (same as live_guidence project)
+    private val MIN_LUMINANCE = 0.25
+    private val MAX_LUMINANCE = 0.85
+
+    // -------------------------------------------------------------------------
+    // Colors
+    // -------------------------------------------------------------------------
+    private val COLOR_DETECTED     = Color.parseColor("#43A047") // green
+    private val COLOR_NOT_DETECTED = Color.parseColor("#E53935") // red
+    private val COLOR_NEUTRAL      = Color.parseColor("#9E9E9E") // grey
+
+    // =========================================================================
+    // Lifecycle
+    // =========================================================================
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        setupEdgeToEdge()
+
+        val answersJson = intent.getStringExtra(EXTRA_WORKSTATION_ANSWERS)
+        workstationModifiers = if (!answersJson.isNullOrEmpty()) {
+            val obj = org.json.JSONObject(answersJson)
+            val map = mutableMapOf<String, Any>()
+            obj.keys().forEach { key -> map[key] = obj.get(key) }
+            RosaScorer.WorkstationModifiers.fromMap(map)
+        } else {
+            RosaScorer.WorkstationModifiers()
+        }
+
+        previewView      = findViewById(R.id.previewCam)
+        poseOverlayView  = findViewById(R.id.poseOverlay)
+        statusPanel      = findViewById(R.id.statusPanel)
+        tvLightStatus    = findViewById(R.id.tvLightStatus)
+        tvPersonStatus   = findViewById(R.id.tvPersonStatus)
+        tvMonitorStatus  = findViewById(R.id.tvMonitorStatus)
+        confirmProgress  = findViewById(R.id.confirmProgress)
+        tvStatusMessage  = findViewById(R.id.tvStatusMessage)
+        tvTiltStatus          = findViewById(R.id.tvTiltStatus)
+        tvRotationStatus      = findViewById(R.id.tvRotationStatus)
+        tvDistanceStatus      = findViewById(R.id.tvDistanceStatus)
+        tvSideViewStatus      = findViewById(R.id.tvSideViewStatus)
+        tvCaptureStatus         = findViewById(R.id.tvCaptureStatus)
+        flashOverlay            = findViewById(R.id.flashOverlay)
+        cameraLevel             = findViewById(R.id.cameraLevel)
+
+        tiltMonitor = TiltMonitor(this) { tiltAngle, rollAngle, pitchAngle, motion ->
+            val tOk = TiltMonitor.isTiltAcceptable(tiltAngle)
+            val rOk = TiltMonitor.isRollAcceptable(rollAngle)
+            tiltIsOk     = tOk
+            rotationIsOk = rOk
+            // Latch the last time the phone was shaken/moved; the front capture waits
+            // for a quiet window after this before firing.
+            if (motion > PHONE_MOTION_MAX) lastShakeAtMs = android.os.SystemClock.elapsedRealtime()
+            cameraLevel.update(rollAngle, pitchAngle)
+
+            val tiltStr = "%.1f".format(tiltAngle)
+            tvTiltStatus.setTextColor(if (tOk) COLOR_DETECTED else COLOR_NOT_DETECTED)
+            tvTiltStatus.text = if (tOk) "● Tilt  $tiltStr°"
+                                else     "● Tilt  $tiltStr°  ·  Hold phone upright"
+
+            val rollStr = "%.1f".format(kotlin.math.abs(rollAngle))
+            tvRotationStatus.setTextColor(if (rOk) COLOR_DETECTED else COLOR_NOT_DETECTED)
+            tvRotationStatus.text = if (rOk) "● Rotation  OK"
+                                    else     "● Rotation  $rollStr°  ·  Level the phone"
+        }
+
+        cameraExecutor = Executors.newSingleThreadExecutor()
+        // Load YOLO model on the executor thread so it's ready for the first frame
+        cameraExecutor.execute { yoloDetector = YoloDetector(this) }
+
+        // Show initial panel state (all neutral, checking light)
+        updatePanel(lightOk = null)
+
+        findViewById<View>(R.id.btnSwitchCamera).setOnClickListener {
+            cameraSelector = if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA)
+                CameraSelector.DEFAULT_FRONT_CAMERA else CameraSelector.DEFAULT_BACK_CAMERA
+            fullReset()
+            setupCamera()
+        }
+
+        requestCameraPermission()
+    }
+
+    private fun fullReset() {
+        appState = AppState.LIGHT_CHECK
+        confirmationCount = 0
+        capturedPhotos.clear()
+        capturedAngles.clear()
+        frontPhoto = null
+        frontAbductionAngle = 0.0
+        frontWristDeviationAngle = 0.0
+        nextCaptureEarliestAtMs = 0L
+        frontReadyEarliestAtMs = 0L
+        lastFrameBitmap = null
+        successCount.set(0)
+        distanceIsOk = false
+        poseLandmarker?.close()
+        poseLandmarker = null
+        handLandmarker?.close()
+        handLandmarker = null
+        landmarkSmoother.reset()
+        legEstimator.reset()
+        cameraExecutor.execute {
+            yoloDetector?.dispose()
+            yoloDetector = YoloDetector(this)
+        }
+        runOnUiThread {
+            tvCaptureStatus.visibility = View.GONE
+            flashOverlay.visibility = View.GONE
+            flashOverlay.alpha = 0f
+            // Restore the condition chips the front phase hides, in case we reset
+            // (e.g. camera switch) while in that phase.
+            tvLightStatus.visibility    = View.VISIBLE
+            tvPersonStatus.visibility   = View.VISIBLE
+            tvMonitorStatus.visibility  = View.VISIBLE
+            tvRotationStatus.visibility = View.VISIBLE
+            tvTiltStatus.visibility     = View.VISIBLE
+            tvDistanceStatus.visibility = View.VISIBLE
+            poseOverlayView.updateLandmarks(emptyList(), 1, 1)
+            poseOverlayView.setHeightGuide(PoseOverlayView.HeightGuideState.HIDDEN)
+            poseOverlayView.setExcludedIndices(emptySet())
+            poseOverlayView.setShowShoulderAngles(false)
+            updatePanel(lightOk = null)
+            poseOverlayView.updateRosaAngles(null)
+        }
+    }
+
+    // =========================================================================
+    // Pose landmarker — created only after detection confirms both targets
+    // =========================================================================
+
+    private fun initializePoseLandmarker() {
+        val options = PoseLandmarker.PoseLandmarkerOptions.builder()
+                .setBaseOptions(
+                    BaseOptions.builder()
+                        .setModelAssetPath("pose_landmarker_full.task")
+                        .setDelegate(Delegate.GPU)
+                        .build()
+                )
+                .setRunningMode(RunningMode.LIVE_STREAM)
+                .setResultListener { result, _ ->
+                val currentState = appState
+                val landmarks = result.landmarks()
+                val w = lastImageWidth
+                val h = lastImageHeight
+                val tSec = android.os.SystemClock.elapsedRealtime() / 1000.0
+                val sm = if (landmarks.isNotEmpty()) {
+                    landmarkSmoother.smooth(landmarks[0], tSec)
+                } else {
+                    landmarkSmoother.reset(); null
+                }
+
+                // Check side view on the raw-smoothed landmarks (before estimation)
+                val sideOk = sm != null &&
+                             currentState == AppState.POSE &&
+                             checkSideView(sm)
+                sideIsOk = sideOk
+
+                // Only apply leg estimation in a confirmed seated side view —
+                // prevents bogus leg lines when the person faces the camera
+                val smoothed = when {
+                    sm == null -> emptyList()
+                    sideOk     -> legEstimator.estimate(landmarks[0], sm)
+                    else       -> sm
+                }
+
+                // ── Continuous side view + height guide ───────────────────────
+                if (currentState == AppState.POSE) {
+                    // Height guide is only meaningful when the phone is held upright (tilt OK).
+                    // A tilted phone skews the shoulder y position, producing false readings.
+                    val guideState: PoseOverlayView.HeightGuideState
+                    if (tiltIsOk && rotationIsOk) {
+                        val shoulderY = if (smoothed.size >= 13) (smoothed[11].y + smoothed[12].y) / 2f else -1f
+                        val hOk = shoulderY in 0.43f..0.57f
+                        heightIsOk = hOk
+                        guideState = when {
+                            shoulderY < 0f    -> PoseOverlayView.HeightGuideState.HIDDEN
+                            shoulderY > 0.57f -> PoseOverlayView.HeightGuideState.TOO_HIGH
+                            shoulderY < 0.43f -> PoseOverlayView.HeightGuideState.TOO_LOW
+                            else              -> PoseOverlayView.HeightGuideState.OK
+                        }
+                    } else {
+                        heightIsOk = false
+                        guideState = PoseOverlayView.HeightGuideState.HIDDEN
+                    }
+                    runOnUiThread {
+                        tvSideViewStatus.setTextColor(if (sideOk) COLOR_DETECTED else COLOR_NOT_DETECTED)
+                        tvSideViewStatus.text = if (sideOk) "● Side  OK" else "● Side  Adjust angle"
+                        poseOverlayView.setHeightGuide(guideState)
+                    }
+                }
+
+                // ── Multi-shot capture sequence ───────────────────────────────
+                // Captures TOTAL_SHOTS_NEEDED photos: each requires every condition
+                // to hold steady for SUCCESS_FRAMES_NEEDED frames AND at least
+                // CAPTURE_COOLDOWN_MS to have passed since the previous shot. If
+                // conditions drop, the steady-frame count simply resets and we wait
+                // for them to come back — the cooldown clock keeps running regardless.
+                val allOk     = sideOk && tiltIsOk && rotationIsOk && heightIsOk && distanceIsOk
+                val capturing = currentState == AppState.POSE && capturedPhotos.size < TOTAL_SHOTS_NEEDED
+                if (capturing) runOnUiThread { updateCaptureCue(allOk) }
+
+                if (capturing && allOk) {
+                    val now = android.os.SystemClock.elapsedRealtime()
+                    if (successCount.incrementAndGet() >= SUCCESS_FRAMES_NEEDED && now >= nextCaptureEarliestAtMs) {
+                        successCount.set(0)
+                        val captured  = smoothed.toList()
+                        val frameCopy = lastFrameBitmap?.copy(Bitmap.Config.ARGB_8888, true)
+                        if (frameCopy != null) {
+                            val blurred  = FaceBlurrer.blurFace(frameCopy, captured)
+                            val angles   = RosaAnglesCalculator.compute(captured)
+                            val photo    = bakeSkeletonOntoPhoto(blurred, captured, angles)
+                            capturedPhotos.add(photo)
+                            // Score is computed later (at the front shot) once the
+                            // armrest-too-wide modifier is known — store the angles.
+                            capturedAngles.add(angles)
+                            if (angles != null && angles.lowerBodyConfidence == RosaAnglesCalculator.LowerBodyConfidence.LOW) {
+                                Log.d("RosaScorer", "Shot ${capturedPhotos.size}: knee occluded, seat-height score is a best-effort guess (kneeAngle=${angles.kneeAngle})")
+                            }
+                            nextCaptureEarliestAtMs = now + CAPTURE_COOLDOWN_MS
+                            val shotNumber = capturedPhotos.size
+                            if (shotNumber >= TOTAL_SHOTS_NEEDED) {
+                                // Side shots done — switch to the front-view phase
+                                // instead of finishing. enterFrontPhase resets the
+                                // smoother/leg estimator; it must run on this
+                                // (result-listener) thread, not the UI thread.
+                                enterFrontPhase()
+                                runOnUiThread { triggerCaptureFlash() }
+                            } else {
+                                runOnUiThread {
+                                    triggerCaptureFlash()
+                                    updateCaptureCue(allOk = true)
+                                }
+                            }
+                        }
+                    }
+                } else if (capturing) {
+                    successCount.set(0)
+                }
+
+                // ── Front-view capture (4th shot, after the 3 side shots) ─────
+                // Condition: face/shoulders/hands visible AND the phone is not
+                // rotated (roll OK) AND the phone is held steady (no recent shake).
+                // No tilt gate — the front shot doesn't need the phone held perfectly
+                // upright, only un-rotated and still. Uses the raw
+                // (un-leg-estimated) smoothed landmarks and bakes the skeleton with
+                // no ROSA arcs. The photo carries no score.
+                if (currentState == AppState.FRONT) {
+                    val raw = landmarks.getOrNull(0)
+                    val frontVisible = raw != null && frontLandmarksVisible(raw)
+                    val nowF = android.os.SystemClock.elapsedRealtime()
+                    val phoneSteady = nowF - lastShakeAtMs >= PHONE_STEADY_SETTLE_MS
+                    val frontOk = frontVisible && rotationIsOk && phoneSteady
+                    runOnUiThread { updateFrontCue(frontVisible, rotationIsOk, phoneSteady) }
+                    if (frontOk && nowF >= frontReadyEarliestAtMs) {
+                        // Capture once the condition has held for FRONT_FRAMES_NEEDED
+                        // consecutive frames past the entry settle.
+                        if (successCount.incrementAndGet() >= FRONT_FRAMES_NEEDED) {
+                            successCount.set(0)
+                            val captured  = (sm ?: emptyList()).toList()
+                            val frameCopy = lastFrameBitmap?.copy(Bitmap.Config.ARGB_8888, true)
+                            if (frameCopy != null) {
+                                // Detect hands on the CLEAN frame first (before face
+                                // blur / skeleton bake mutate it), then draw the
+                                // finger/palm overlay on top of the baked photo.
+                                val handResult = detectHands(frameCopy)
+                                val blurred = FaceBlurrer.blurFace(frameCopy, captured)
+                                // Front view is upper-body only — drop the leg
+                                // landmarks (knees/ankles/feet, indices 25+). Also
+                                // drop the face/ear points (0..10) — the face is
+                                // blurred, so no face dots or lines — and the pose
+                                // wrist/palm points (15..22): the hand landmarker
+                                // supplies the wrist/finger detail, and we connect the
+                                // elbow straight to the hand's point 0 so the arm
+                                // flows seamlessly into the detected hand.
+                                val upperBody = captured.take(25)
+                                val photo   = bakeSkeletonOntoPhoto(
+                                    blurred, upperBody, null, excludeIndices = FRONT_SKELETON_EXCLUDE)
+                                drawHandsOntoPhoto(photo, handResult, captured)
+                                drawShoulderAnglesOntoPhoto(photo, captured)
+                                frontPhoto = photo   // held separately from the side shots
+
+                                // Armrest-too-wide and wrist-deviation are measured
+                                // here (front view) and applied to every side shot's
+                                // score, replacing the old questionnaire questions. The
+                                // raw angles are also surfaced to Flutter.
+                                frontAbductionAngle = frontAbductionAngleDeg(
+                                    captured, frameCopy.width, frameCopy.height)
+                                frontWristDeviationAngle = frontWristDeviationDeg(
+                                    handsToPoints(handResult), captured, frameCopy.width, frameCopy.height)
+                                val tooWide  = frontAbductionAngle >= ARMREST_ABDUCTION_MAX_DEG
+                                val deviated = frontWristDeviationAngle >= WRIST_DEVIATION_MAX_DEG
+                                val mods = workstationModifiers.copy(
+                                    armrestTooWide = tooWide, keyboardDeviation = deviated)
+                                val scores = capturedAngles.map {
+                                    if (it != null) RosaScorer.score(it, mods) else null
+                                }
+                                runOnUiThread {
+                                    triggerCaptureFlash()
+                                    pauseCameraPipeline()
+                                    finishWithCaptures(capturedPhotos.toList(), scores)
+                                }
+                            }
+                        }
+                    } else {
+                        // Visibility dropped (or still in the entry settle) — reset the count.
+                        successCount.set(0)
+                    }
+                }
+
+                // ── Distance (POSE only) ──────────────────────────────────────
+                val distanceM = if (currentState == AppState.POSE && smoothed.size >= 25) {
+                    val hipMidY = (smoothed[23].y + smoothed[24].y) / 2f
+                    val sensorDimForY = if (h > w) sensorWidthMm else sensorHeightMm
+                    DistanceEstimator.estimate(
+                        noseY          = smoothed[0].y,
+                        hipMidY        = hipMidY,
+                        imageHeightPx  = h,
+                        focalMm        = focalLengthMm,
+                        sensorHeightMm = sensorDimForY,
+                    )
+                } else null
+
+                val rosaAngles = if (currentState == AppState.POSE && smoothed.size >= 29)
+                    RosaAnglesCalculator.compute(smoothed) else null
+
+                distanceIsOk = distanceM != null && distanceM in 1.7f..2.1f
+
+                runOnUiThread {
+                    poseOverlayView.updateLandmarks(smoothed, w, h)
+                    poseOverlayView.updateRosaAngles(rosaAngles)
+                    if (distanceM != null) {
+                        val dOk = distanceM in 1.7f..2.1f
+                        val hint = when {
+                            distanceM < 1.7f -> "  ·  Move back"
+                            distanceM > 2.1f -> "  ·  Move closer"
+                            else             -> ""
+                        }
+                        tvDistanceStatus.text = "● Distance  ${"%.2f".format(distanceM)}m$hint"
+                        tvDistanceStatus.setTextColor(if (dOk) COLOR_DETECTED else COLOR_NOT_DETECTED)
+                    } else {
+                        distanceIsOk = false
+                        tvDistanceStatus.text = "● Distance  --"
+                        tvDistanceStatus.setTextColor(COLOR_NEUTRAL)
+                    }
+                }
+            }.build()
+
+        poseLandmarker = PoseLandmarker.createFromOptions(this, options)
+    }
+
+    /** Creates the IMAGE-mode hand landmarker if not already created. Runs CPU
+     *  delegate to avoid contending with the pose landmarker's GPU context — it
+     *  only ever fires once, on a single still, so throughput doesn't matter. */
+    private fun initializeHandLandmarker() {
+        if (handLandmarker != null) return
+        try {
+            val options = HandLandmarker.HandLandmarkerOptions.builder()
+                .setBaseOptions(
+                    BaseOptions.builder()
+                        .setModelAssetPath("hand_landmarker.task")
+                        .setDelegate(Delegate.CPU)
+                        .build()
+                )
+                .setRunningMode(RunningMode.IMAGE)
+                .setNumHands(2)
+                .build()
+            handLandmarker = HandLandmarker.createFromOptions(this, options)
+        } catch (e: Exception) {
+            Log.e("HandLandmarker", "Failed to create hand landmarker", e)
+        }
+    }
+
+    // =========================================================================
+    // Camera
+    // =========================================================================
+
+    private val cameraPermissionLauncher: ActivityResultLauncher<String> =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) setupCamera()
+            else Toast.makeText(this, "Camera permission required", Toast.LENGTH_SHORT).show()
+        }
+
+    private fun requestCameraPermission() {
+        if (hasCameraPermission()) setupCamera()
+        else cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+    }
+
+    private fun hasCameraPermission() =
+        ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+
+    private fun readCameraCharacteristics() {
+        try {
+            val mgr = getSystemService(Context.CAMERA_SERVICE) as CameraManager
+            val facing = if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA)
+                CameraCharacteristics.LENS_FACING_BACK else CameraCharacteristics.LENS_FACING_FRONT
+            val id = mgr.cameraIdList.firstOrNull { cid ->
+                mgr.getCameraCharacteristics(cid).get(CameraCharacteristics.LENS_FACING) == facing
+            } ?: return
+            val chars = mgr.getCameraCharacteristics(id)
+            chars.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)
+                ?.firstOrNull()?.let { focalLengthMm = it }
+            chars.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE)?.let { sz ->
+                // SizeF is always landscape (width > height) regardless of phone orientation
+                sensorWidthMm  = sz.width
+                sensorHeightMm = sz.height
+            }
+            Log.d("CameraChars", "focal=${focalLengthMm}mm  sensor=${sensorWidthMm}×${sensorHeightMm}mm")
+        } catch (e: Exception) {
+            Log.w("CameraChars", "Could not read characteristics: ${e.message}")
+        }
+    }
+
+    private fun setupCamera() {
+        readCameraCharacteristics()
+        val future = ProcessCameraProvider.getInstance(this)
+        future.addListener({
+            val provider = future.get()
+            cameraProvider = provider
+            val preview  = Preview.Builder().build().apply { setSurfaceProvider(previewView.surfaceProvider) }
+            val analyzer = ImageAnalysis.Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build().apply { setAnalyzer(cameraExecutor, ::analyzeImage) }
+            try {
+                provider.unbindAll()
+                provider.bindToLifecycle(this, cameraSelector, preview, analyzer)
+            } catch (e: Exception) {
+                Log.e("CameraSetup", "Bind failed", e)
+            }
+        }, ContextCompat.getMainExecutor(this))
+    }
+
+    /**
+     * Stops the camera feed and closes the pose landmarker once all shots are
+     * captured — there's nothing left to detect while the photo review screen
+     * is up, so keep it from burning CPU/battery in the background.
+     *
+     * unbindAll() must run on the main thread (camera lifecycle). The landmarker
+     * close is posted onto cameraExecutor — the same single-thread executor that
+     * calls detectAsync — so it's serialized after any in-flight frame analysis
+     * instead of racing with it (closing while detectAsync is in flight crashes
+     * MediaPipe; this also avoids closing it from inside its own result callback).
+     */
+    private fun pauseCameraPipeline() {
+        cameraProvider?.unbindAll()
+        cameraExecutor.execute {
+            poseLandmarker?.close()
+            poseLandmarker = null
+        }
+    }
+
+    // =========================================================================
+    // Frame analysis
+    // =========================================================================
+
+    @OptIn(ExperimentalGetImage::class)
+    private fun analyzeImage(imageProxy: ImageProxy) {
+        if (++frameCounter % processEveryNFrames != 0) { imageProxy.close(); return }
+
+        val mediaImage = imageProxy.image
+        if (mediaImage == null || imageProxy.format != ImageFormat.YUV_420_888) {
+            Log.e("AnalyzeImage", "Unsupported format"); imageProxy.close(); return
+        }
+
+        if (!previewLaidOut) {
+            // Upright (portrait) display dimensions, same basis the overlay uses.
+            val rotated = imageProxy.imageInfo.rotationDegrees.let { it == 90 || it == 270 }
+            val dispW = if (rotated) imageProxy.height else imageProxy.width
+            val dispH = if (rotated) imageProxy.width else imageProxy.height
+            previewLaidOut = true
+            runOnUiThread { applyTopPreviewLayout(dispW, dispH) }
+        }
+
+        when (appState) {
+            AppState.LIGHT_CHECK    -> runLightCheckPhase(mediaImage, imageProxy)
+            AppState.DETECTING      -> runDetectionPhase(mediaImage, imageProxy)
+            // FRONT also needs live pose frames, so it shares the pose pipeline.
+            AppState.POSE, AppState.FRONT -> runPosePhase(mediaImage, imageProxy)
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Phase 1: Light check
+    // -------------------------------------------------------------------------
+
+    private fun runLightCheckPhase(mediaImage: Image, imageProxy: ImageProxy) {
+        val luminance = computeLuminance(mediaImage)
+        when {
+            luminance < MIN_LUMINANCE -> runOnUiThread {
+                updatePanel(lightOk = false, message = "Room is too dark — turn on more lights")
+            }
+            luminance > MAX_LUMINANCE -> runOnUiThread {
+                updatePanel(lightOk = false, message = "Too bright — reduce glare or step back")
+            }
+            else -> {
+                // Light is good — start YOLO detection
+                appState = AppState.DETECTING
+                runOnUiThread { updatePanel(lightOk = true) }
+            }
+        }
+        imageProxy.close()
+    }
+
+    // Average the Y (luma) plane, sampling every 20th pixel — same algorithm as live_guidence
+    private fun computeLuminance(image: Image): Double {
+        val yPlane    = image.planes[0]
+        val yBuf      = yPlane.buffer
+        val rowStride = yPlane.rowStride
+        val width     = image.width
+        val height    = image.height
+        val step      = 20
+        var sum   = 0L
+        var count = 0
+        var row = 0
+        while (row < height) {
+            var col = 0
+            while (col < width) {
+                sum += yBuf.get(row * rowStride + col).toInt() and 0xFF
+                count++
+                col += step
+            }
+            row += step
+        }
+        return if (count == 0) 0.5 else (sum.toDouble() / count) / 255.0
+    }
+
+    // -------------------------------------------------------------------------
+    // Phase 2: YOLO detection
+    // -------------------------------------------------------------------------
+
+    private fun runDetectionPhase(mediaImage: Image, imageProxy: ImageProxy) {
+        val result = yoloDetector?.detect(mediaImage, imageProxy.imageInfo.rotationDegrees)
+            ?: run { imageProxy.close(); return }
+
+        if (result.personDetected && result.monitorDetected) {
+            confirmationCount++
+
+            if (confirmationCount >= REQUIRED_CONFIRMATIONS) {
+                runOnUiThread {
+                    updatePanel(
+                        lightOk         = true,
+                        personDetected  = true,
+                        monitorDetected = true,
+                        confirmCount    = REQUIRED_CONFIRMATIONS,
+                        message         = "Loading…"
+                    )
+                }
+                initializePoseLandmarker()
+                appState = AppState.POSE
+                yoloDetector?.dispose()
+                yoloDetector = null
+                runOnUiThread {
+                    // Entering pose phase: keep the condition list visible but
+                    // clear the detection-only progress bar and message.
+                    confirmProgress.visibility = View.INVISIBLE
+                    tvStatusMessage.visibility = View.GONE
+                }
+            } else {
+                runOnUiThread {
+                    updatePanel(
+                        lightOk         = true,
+                        personDetected  = true,
+                        monitorDetected = true,
+                        confirmCount    = confirmationCount,
+                        message         = "Hold still…"
+                    )
+                }
+            }
+        } else {
+            confirmationCount = 0
+            runOnUiThread {
+                updatePanel(
+                    lightOk         = true,
+                    personDetected  = result.personDetected,
+                    monitorDetected = result.monitorDetected,
+                    confirmCount    = 0
+                )
+            }
+        }
+        imageProxy.close()
+    }
+
+    // -------------------------------------------------------------------------
+    // Phase 3: Pose detection
+    // -------------------------------------------------------------------------
+
+    private fun runPosePhase(mediaImage: Image, imageProxy: ImageProxy) {
+        val bitmap = yuvToRgb(mediaImage, imageProxy)
+        val matrix = Matrix().apply {
+            postRotate(imageProxy.imageInfo.rotationDegrees.toFloat())
+            if (cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA)
+                postScale(-1f, 1f, bitmap.width.toFloat(), bitmap.height.toFloat())
+        }
+        val rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        lastImageWidth  = rotated.width
+        lastImageHeight = rotated.height
+        lastFrameBitmap = rotated
+        poseLandmarker?.detectAsync(BitmapImageBuilder(rotated).build(), imageProxy.imageInfo.timestamp)
+        imageProxy.close()
+    }
+
+    // =========================================================================
+    // Side view check
+    // =========================================================================
+
+    /**
+     * Returns true when the camera is at a side-on angle to the subject.
+     *
+     * Uses only hip spread relative to torso height. Hips stay planted in the
+     * chair regardless of how much the person leans forward — making this
+     * signal stable for typical seated office postures.
+     *
+     * Shoulder spread is intentionally excluded: when someone leans over a desk
+     * MediaPipe shifts the shoulder landmarks, causing false "not side-on" reads.
+     * Ears are intentionally excluded: the far ear can be occluded by hair or
+     * head angle even when the camera is not truly side-on.
+     *
+     * Geometry: hipSpread ≈ hipWidth × cos(angleFromFrontal) / torsoHeight.
+     * With typical proportions (hip width ≈ 70 % of torso height) a threshold
+     * of 0.35 accepts angles within ~30° of true side view.
+     */
+    private fun checkSideView(smoothed: List<LandmarkPoint>): Boolean {
+        if (smoothed.size < 25) return false
+        val lHip = smoothed[23]; val rHip = smoothed[24]
+        val lShoulder = smoothed[11]; val rShoulder = smoothed[12]
+        val torsoH = kotlin.math.abs(
+            (lShoulder.y + rShoulder.y) / 2f - (lHip.y + rHip.y) / 2f
+        )
+        if (torsoH < 0.01f) return false
+        return kotlin.math.abs(lHip.x - rHip.x) / torsoH < SIDE_VIEW_THRESHOLD
+    }
+
+    // =========================================================================
+    // Panel UI helper
+    // =========================================================================
+
+    /**
+     * Single method that drives all panel indicator states.
+     *
+     * lightOk  = null  → neutral grey (not yet checked)
+     * lightOk  = false → red  (out of range, message shown)
+     * lightOk  = true  → green (passed, locked)
+     *
+     * During LIGHT_CHECK: pass lightOk only; person/monitor stay neutral.
+     * During DETECTING:   pass lightOk=true + person/monitorDetected + confirmCount.
+     */
+    private fun updatePanel(
+        lightOk: Boolean?,
+        personDetected: Boolean  = false,
+        monitorDetected: Boolean = false,
+        confirmCount: Int        = 0,
+        message: String?         = null,
+    ) {
+        // Light
+        tvLightStatus.setTextColor(when (lightOk) {
+            null  -> COLOR_NEUTRAL
+            true  -> COLOR_DETECTED
+            false -> COLOR_NOT_DETECTED
+        })
+
+        // Person / monitor — grey until light passes
+        val yoloActive = lightOk == true
+        tvPersonStatus.setTextColor(when {
+            !yoloActive    -> COLOR_NEUTRAL
+            personDetected -> COLOR_DETECTED
+            else           -> COLOR_NOT_DETECTED
+        })
+        tvMonitorStatus.setTextColor(when {
+            !yoloActive     -> COLOR_NEUTRAL
+            monitorDetected -> COLOR_DETECTED
+            else            -> COLOR_NOT_DETECTED
+        })
+
+        // Progress bar
+        val showProgress = yoloActive && personDetected && monitorDetected && confirmCount > 0
+        confirmProgress.visibility = if (showProgress) View.VISIBLE else View.INVISIBLE
+        confirmProgress.progress   = confirmCount
+
+        // Status message
+        if (message != null) {
+            tvStatusMessage.text       = message
+            tvStatusMessage.visibility = View.VISIBLE
+        } else {
+            tvStatusMessage.visibility = View.GONE
+        }
+    }
+
+    // =========================================================================
+    // YUV → Bitmap
+    // =========================================================================
+
+    private fun yuvToRgb(image: Image, imageProxy: ImageProxy): Bitmap {
+        val yBuffer = image.planes[0].buffer
+        val uBuffer = image.planes[1].buffer
+        val vBuffer = image.planes[2].buffer
+        val ySize = yBuffer.remaining()
+        val uSize = uBuffer.remaining()
+        val vSize = vBuffer.remaining()
+        val nv21 = ByteArray(ySize + uSize + vSize)
+        yBuffer.get(nv21, 0, ySize)
+        vBuffer.get(nv21, ySize, vSize)
+        uBuffer.get(nv21, ySize + vSize, uSize)
+        val yuvImage = YuvImage(nv21, ImageFormat.NV21, imageProxy.width, imageProxy.height, null)
+        val out = ByteArrayOutputStream()
+        yuvImage.compressToJpeg(Rect(0, 0, imageProxy.width, imageProxy.height), 100, out)
+        return BitmapFactory.decodeByteArray(out.toByteArray(), 0, out.size())
+    }
+
+    /**
+     * Writes the captured photos (skeleton already baked in) to the cache dir as JPEGs
+     * and serialises the whole capture — grouped as `side_captures` (image + score +
+     * angles per side shot) and one `front_capture` (image + the two raw front-view
+     * angles) — to a single JSON object, handed back to MainActivity for Flutter.
+     */
+    private fun finishWithCaptures(sidePhotos: List<Bitmap>, scores: List<RosaScorer.Result?>) {
+        val dir = File(cacheDir, "posture_photos").apply { mkdirs() }
+
+        fun write(bitmap: Bitmap, name: String): String {
+            val file = File(dir, name)
+            FileOutputStream(file).use { out -> bitmap.compress(Bitmap.CompressFormat.JPEG, 92, out) }
+            return file.absolutePath
+        }
+
+        val sideCaptures = org.json.JSONArray().also { arr ->
+            sidePhotos.forEachIndexed { i, bitmap ->
+                val obj = org.json.JSONObject()
+                obj.put("image_path", write(bitmap, "side_${i + 1}.jpg"))
+                obj.put("rosa_score", scores.getOrNull(i)?.let { org.json.JSONObject(it.toMap()) }
+                    ?: org.json.JSONObject())
+                obj.put("body_angles", capturedAngles.getOrNull(i)?.let { org.json.JSONObject(it.toMap()) }
+                    ?: org.json.JSONObject())
+                arr.put(obj)
+            }
+        }
+
+        val frontCapture = org.json.JSONObject().also { obj ->
+            frontPhoto?.let { obj.put("image_path", write(it, "front.jpg")) }
+            obj.put("abduction_angle", frontAbductionAngle)
+            obj.put("wrist_deviation_angle", frontWristDeviationAngle)
+        }
+
+        val result = org.json.JSONObject()
+            .put("side_captures", sideCaptures)
+            .put("front_capture", frontCapture)
+
+        setResult(Activity.RESULT_OK, Intent().putExtra(EXTRA_RESULT, result.toString()))
+        finish()
+    }
+
+    // =========================================================================
+    // Capture sequence — visual cues + skeleton baking
+    // =========================================================================
+
+    /** Draws the pose skeleton and ROSA angle arcs onto the photo so each still image is self-contained. */
+    private fun bakeSkeletonOntoPhoto(
+        photo: Bitmap,
+        landmarks: List<LandmarkPoint>,
+        angles: RosaAnglesCalculator.Angles?,
+        excludeIndices: Set<Int> = emptySet(),
+    ): Bitmap {
+        val canvas = Canvas(photo)
+        val w = photo.width.toFloat()
+        val h = photo.height.toFloat()
+
+        // The line/dot sizes below are tuned to look right at SKELETON_REFERENCE_WIDTH.
+        // Scaling by (photo width / reference width) makes the skeleton's size a
+        // fixed proportion of the photo's own resolution — a property "baked in"
+        // and intrinsic to the image, not dependent on the capturing device's
+        // screen size. That keeps the result identical across devices and stable
+        // if the camera's capture resolution ever changes.
+        val bakeScale = w / SKELETON_REFERENCE_WIDTH
+
+        val linePaint = Paint().apply {
+            color = Color.WHITE; style = Paint.Style.STROKE; strokeWidth = 6f * bakeScale; isAntiAlias = true
+        }
+        val estimatedLinePaint = Paint().apply {
+            color = Color.WHITE; style = Paint.Style.STROKE; strokeWidth = 4f * bakeScale; isAntiAlias = true
+            pathEffect = DashPathEffect(floatArrayOf(14f * bakeScale, 9f * bakeScale), 0f)
+        }
+        val dotPaint = Paint().apply { color = Color.GREEN; style = Paint.Style.FILL; isAntiAlias = true }
+        val estimatedDotPaint = Paint().apply {
+            color = Color.argb(160, 0, 220, 0); style = Paint.Style.FILL; isAntiAlias = true
+        }
+
+        for ((start, end) in PoseOverlayView.POSE_CONNECTIONS) {
+            if (start in excludeIndices || end in excludeIndices) continue
+            if (start < landmarks.size && end < landmarks.size) {
+                val s = landmarks[start]
+                val e = landmarks[end]
+                val paint = if (s.estimated || e.estimated) estimatedLinePaint else linePaint
+                canvas.drawLine(s.x * w, s.y * h, e.x * w, e.y * h, paint)
+            }
+        }
+        for ((i, lm) in landmarks.withIndex()) {
+            if (i in excludeIndices) continue
+            val paint = if (lm.estimated) estimatedDotPaint else dotPaint
+            val radius = (if (lm.estimated) 5f else 7f) * bakeScale
+            canvas.drawCircle(lm.x * w, lm.y * h, radius, paint)
+        }
+
+        if (angles != null) {
+            val arcPaint = Paint().apply {
+                color = Color.parseColor("#FF5722"); style = Paint.Style.STROKE
+                strokeWidth = 4f * bakeScale; isAntiAlias = true
+            }
+            val vertRefPaint = Paint().apply {
+                color = Color.argb(200, 255, 87, 34); style = Paint.Style.STROKE
+                strokeWidth = 3f * bakeScale; isAntiAlias = true
+                pathEffect = DashPathEffect(floatArrayOf(12f * bakeScale, 8f * bakeScale), 0f)
+            }
+            val labelPaint = Paint().apply {
+                color = Color.parseColor("#FF5722"); textSize = 36f * bakeScale; isAntiAlias = true
+                typeface = android.graphics.Typeface.DEFAULT_BOLD
+                textAlign = Paint.Align.CENTER
+            }
+            PoseOverlayView.drawAngles(canvas, landmarks, angles, { x -> x * w }, { y -> y * h },
+                arcPaint, vertRefPaint, labelPaint)
+        }
+
+        return photo
+    }
+
+    /** Runs the hand landmarker on a single still (IMAGE mode). Returns null if the
+     *  landmarker isn't available or detection fails — the overlay is then simply
+     *  skipped, never blocking the capture. */
+    private fun detectHands(bitmap: Bitmap): HandLandmarkerResult? {
+        val hl = handLandmarker ?: return null
+        return try {
+            hl.detect(BitmapImageBuilder(bitmap).build())
+        } catch (e: Exception) {
+            Log.e("HandLandmarker", "detect failed", e)
+            null
+        }
+    }
+
+    /** Draws each detected hand's 21-point skeleton (finger joints + palm) onto the
+     *  photo, and joins each hand's wrist (point 0) to the nearest pose elbow with a
+     *  white arm-style bone so the arm flows seamlessly into the detected hand.
+     *  Uses the same white lines / green dots as the body skeleton so the hand reads
+     *  as a continuation of the arm. [poseLandmarks] supplies the elbows (13/14). */
+    private fun drawHandsOntoPhoto(
+        photo: Bitmap,
+        result: HandLandmarkerResult?,
+        poseLandmarks: List<LandmarkPoint>,
+    ) {
+        val hands = handsToPoints(result)
+        if (hands.isEmpty()) return
+
+        val canvas = Canvas(photo)
+        val w = photo.width.toFloat()
+        val h = photo.height.toFloat()
+        val bakeScale = w / SKELETON_REFERENCE_WIDTH
+
+        // Same paints as the baked body skeleton (white bones, green joints).
+        val linePaint = Paint().apply {
+            color = Color.WHITE; style = Paint.Style.STROKE; strokeWidth = 6f * bakeScale; isAntiAlias = true
+        }
+        val dotPaint = Paint().apply { color = Color.GREEN; style = Paint.Style.FILL; isAntiAlias = true }
+        // Orange arc + label for the wrist angle, matching the side-view ROSA angles.
+        val arcPaint = Paint().apply {
+            color = Color.parseColor("#FF5722"); style = Paint.Style.STROKE
+            strokeWidth = 4f * bakeScale; isAntiAlias = true
+        }
+        val labelPaint = Paint().apply {
+            color = Color.parseColor("#FF5722"); textSize = 36f * bakeScale; isAntiAlias = true
+            typeface = android.graphics.Typeface.DEFAULT_BOLD; textAlign = Paint.Align.CENTER
+        }
+
+        PoseOverlayView.drawHands(canvas, hands, poseLandmarks,
+            { x -> x * w }, { y -> y * h }, linePaint, dotPaint, 7f * bakeScale, arcPaint, labelPaint)
+    }
+
+    /** Converts a hand-landmarker result into normalised [LandmarkPoint] lists (one
+     *  per hand), the shape both the live overlay and the baked photo render. */
+    private fun handsToPoints(result: HandLandmarkerResult?): List<List<LandmarkPoint>> =
+        result?.landmarks()?.map { hand -> hand.map { LandmarkPoint(it.x(), it.y()) } } ?: emptyList()
+
+    /** Bakes the front-view shoulder verticals + shoulder→elbow angle onto the photo,
+     *  using the same dashed-orange reference / arc / label style as the ROSA arcs. */
+    private fun drawShoulderAnglesOntoPhoto(photo: Bitmap, landmarks: List<LandmarkPoint>) {
+        val canvas = Canvas(photo)
+        val w = photo.width.toFloat()
+        val h = photo.height.toFloat()
+        val bakeScale = w / SKELETON_REFERENCE_WIDTH
+
+        val vertPaint = Paint().apply {
+            color = Color.argb(200, 255, 87, 34); style = Paint.Style.STROKE
+            strokeWidth = 3f * bakeScale; isAntiAlias = true
+            pathEffect = DashPathEffect(floatArrayOf(12f * bakeScale, 8f * bakeScale), 0f)
+        }
+        val arcPaint = Paint().apply {
+            color = Color.parseColor("#FF5722"); style = Paint.Style.STROKE
+            strokeWidth = 4f * bakeScale; isAntiAlias = true
+        }
+        val labelPaint = Paint().apply {
+            color = Color.parseColor("#FF5722"); textSize = 36f * bakeScale; isAntiAlias = true
+            typeface = android.graphics.Typeface.DEFAULT_BOLD; textAlign = Paint.Align.CENTER
+        }
+        PoseOverlayView.drawShoulderVerticals(canvas, landmarks,
+            { x -> x * w }, { y -> y * h }, vertPaint, arcPaint, labelPaint)
+    }
+
+    /** Camera-shutter flash — brief white flash so the phone holder feels each shot register. */
+    private fun triggerCaptureFlash() {
+        flashOverlay.visibility = View.VISIBLE
+        flashOverlay.alpha = 1f
+        flashOverlay.animate().alpha(0f).setDuration(350)
+            .withEndAction { flashOverlay.visibility = View.GONE }
+            .start()
+    }
+
+    /** Drives tvCaptureStatus through the multi-shot sequence so the phone holder always
+     *  knows: how many shots are done, whether to hold steady, or to adjust position. */
+    private fun updateCaptureCue(allOk: Boolean) {
+        val done = capturedPhotos.size
+        if (done == 0 && !allOk) {
+            tvCaptureStatus.visibility = View.GONE
+            return
+        }
+        tvCaptureStatus.visibility = View.VISIBLE
+        tvCaptureStatus.text = when {
+            done >= TOTAL_SHOTS_NEEDED ->
+                "✓ All $TOTAL_SHOTS_NEEDED photos captured"
+            android.os.SystemClock.elapsedRealtime() < nextCaptureEarliestAtMs ->
+                "✓ Photo $done of $TOTAL_SHOTS_NEEDED captured — hold your position"
+            allOk ->
+                "Hold steady — capturing photo ${done + 1} of $TOTAL_SHOTS_NEEDED…"
+            else ->
+                "Get into position for photo ${done + 1} of $TOTAL_SHOTS_NEEDED"
+        }
+    }
+
+    // =========================================================================
+    // Front-view (4th) shot
+    // =========================================================================
+
+    /** Transitions from the side-shot phase to the front-view phase. Resets the
+     *  smoother/leg estimator (the view is changing entirely) and arms the settle
+     *  delay. Must be called on the result-listener thread — the same thread that
+     *  reads the smoother — so the resets don't race a frame in flight. */
+    private fun enterFrontPhase() {
+        appState = AppState.FRONT
+        successCount.set(0)
+        frontReadyEarliestAtMs = android.os.SystemClock.elapsedRealtime() + FRONT_READY_DELAY_MS
+        landmarkSmoother.reset()
+        legEstimator.reset()
+        // Prepare the hand landmarker now so it's ready to run on the front still.
+        initializeHandLandmarker()
+        runOnUiThread {
+            poseOverlayView.setHeightGuide(PoseOverlayView.HeightGuideState.HIDDEN)
+            // Live overlay mirrors the captured front photo: drop face/ears,
+            // wrist/palm and legs from the skeleton, and show the shoulder verticals.
+            poseOverlayView.setExcludedIndices(FRONT_SKELETON_EXCLUDE)
+            poseOverlayView.setShowShoulderAngles(true)
+            // None of the side-view conditions apply to the front shot — hide them
+            // all and keep only the repurposed Side→Front chip.
+            tvLightStatus.visibility    = View.GONE
+            tvPersonStatus.visibility   = View.GONE
+            tvMonitorStatus.visibility  = View.GONE
+            tvRotationStatus.visibility = View.GONE
+            tvTiltStatus.visibility     = View.GONE
+            tvDistanceStatus.visibility = View.GONE
+            tvCaptureStatus.visibility  = View.VISIBLE
+            tvCaptureStatus.text = "Side photos done — move to the FRONT of the person, behind the monitor"
+        }
+    }
+
+    /** Max elbow abduction (shoulder→elbow angle from vertical, degrees) across both
+     *  arms — the front-view "armrests too wide" measurement. Compared against
+     *  ARMREST_ABDUCTION_MAX_DEG at the call site; the raw angle is also surfaced to
+     *  Flutter. Uses the same angle drawn on the photo, in the image's pixel aspect
+     *  ([w]×[h]). */
+    private fun frontAbductionAngleDeg(landmarks: List<LandmarkPoint>, w: Int, h: Int): Double {
+        var maxAngle = 0.0
+        for ((shIdx, elIdx) in listOf(11 to 13, 12 to 14)) {
+            if (shIdx >= landmarks.size || elIdx >= landmarks.size) continue
+            val dx = (landmarks[elIdx].x - landmarks[shIdx].x) * w
+            val dy = (landmarks[elIdx].y - landmarks[shIdx].y) * h
+            val len = kotlin.math.hypot(dx.toDouble(), dy.toDouble())
+            if (len < 1.0) continue
+            val angle = Math.toDegrees(kotlin.math.acos(dy / len))
+            if (angle > maxAngle) maxAngle = angle
+        }
+        return maxAngle
+    }
+
+    /** Max wrist deviation (front-view forearm→hand angle away from a straight 180°,
+     *  degrees) across both hands — the "wrists deviate while typing" measurement.
+     *  Compared against WRIST_DEVIATION_MAX_DEG at the call site; the raw angle is also
+     *  surfaced to Flutter. Uses the forearm (elbow→wrist) vs hand axis (wrist→
+     *  middle-finger MCP) angle drawn on the photo. [hands] are the hand-landmarker
+     *  points; [poseLandmarks] supply the elbows (13/14). Returns 0.0 when no hand is
+     *  usable (straight = no deviation). */
+    private fun frontWristDeviationDeg(
+        hands: List<List<LandmarkPoint>>,
+        poseLandmarks: List<LandmarkPoint>,
+        w: Int, h: Int,
+    ): Double {
+        val elbows = listOfNotNull(poseLandmarks.getOrNull(13), poseLandmarks.getOrNull(14))
+        if (elbows.isEmpty()) return 0.0
+        var maxDeviation = 0.0
+        for (hand in hands) {
+            if (hand.size <= 9) continue
+            val wrist = hand[0]; val mcp = hand[9]
+            val nearest = elbows.minByOrNull {
+                val dx = (it.x - wrist.x) * w; val dy = (it.y - wrist.y) * h
+                dx * dx + dy * dy
+            }!!
+            val v1x = (nearest.x - wrist.x).toDouble() * w; val v1y = (nearest.y - wrist.y).toDouble() * h
+            val v2x = (mcp.x - wrist.x).toDouble() * w;     val v2y = (mcp.y - wrist.y).toDouble() * h
+            val m1 = kotlin.math.hypot(v1x, v1y); val m2 = kotlin.math.hypot(v2x, v2y)
+            if (m1 < 1.0 || m2 < 1.0) continue
+            val cosA = ((v1x * v2x + v1y * v2y) / (m1 * m2)).coerceIn(-1.0, 1.0)
+            val deviation = 180.0 - Math.toDegrees(kotlin.math.acos(cosA))
+            if (deviation > maxDeviation) maxDeviation = deviation
+        }
+        return maxDeviation
+    }
+
+    /** Face (nose), both shoulders and both wrists all above the visibility bar. */
+    private fun frontLandmarksVisible(raw: List<NormalizedLandmark>): Boolean {
+        if (raw.size < 17) return false
+        fun vis(i: Int) = raw[i].visibility().orElse(0f)
+        val face      = vis(0)  >= FRONT_VISIBILITY_THRESHOLD
+        val shoulders = vis(11) >= FRONT_VISIBILITY_THRESHOLD && vis(12) >= FRONT_VISIBILITY_THRESHOLD
+        val hands     = vis(15) >= FRONT_VISIBILITY_THRESHOLD && vis(16) >= FRONT_VISIBILITY_THRESHOLD
+        return face && shoulders && hands
+    }
+
+    /** Drives the capture banner + (repurposed) side chip during the front phase. */
+    private fun updateFrontCue(frontVisible: Boolean, rotationOk: Boolean, phoneSteady: Boolean) {
+        tvCaptureStatus.visibility = View.VISIBLE
+        val settling = android.os.SystemClock.elapsedRealtime() < frontReadyEarliestAtMs
+        tvCaptureStatus.text = when {
+            settling         -> "Move to the FRONT of the person, behind the monitor"
+            !frontVisible    -> "Show the person's face, shoulders and hands"
+            !rotationOk      -> "Straighten the phone — it's rotated"
+            !phoneSteady     -> "Hold the phone still"
+            else             -> "Hold steady — capturing front photo…"
+        }
+        val ok = frontVisible && rotationOk && phoneSteady
+        tvSideViewStatus.setTextColor(if (ok) COLOR_DETECTED else COLOR_NOT_DETECTED)
+        tvSideViewStatus.text = when {
+            !frontVisible -> "● Front  Face/shoulders/hands"
+            !rotationOk   -> "● Front  Straighten phone"
+            !phoneSteady  -> "● Front  Hold still"
+            else          -> "● Front  OK"
+        }
+    }
+
+    private fun setupEdgeToEdge() {
+        // #181818 status/navigation bars (overrides the Material3 theme's default
+        // purple status bar), with light icons so they stay visible. On Android 15
+        // the bars are transparent and the root background shows through instead;
+        // setting the colors covers older API levels where they're opaque.
+        val barColor = Color.parseColor("#181818")
+        window.statusBarColor = barColor
+        window.navigationBarColor = barColor
+        WindowCompat.getInsetsController(window, window.decorView)
+            .isAppearanceLightStatusBars = false
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            insets
+        }
+    }
+
+    /**
+     * Anchors the camera preview (and its pose overlay + shutter flash) to the
+     * top of the content area, [previewTopGapDp] below the status bar, sized to
+     * the video's aspect ratio so it isn't vertically centered. The root already
+     * pads for the status bar via [setupEdgeToEdge], so the gap is a plain top
+     * margin. Giving all three views the same width:height ratio keeps the
+     * skeleton overlay pixel-aligned with the preview.
+     */
+    private fun applyTopPreviewLayout(displayWidth: Int, displayHeight: Int) {
+        if (displayWidth <= 0 || displayHeight <= 0) return
+        val gap = (previewTopGapDp * resources.displayMetrics.density).toInt()
+        val ratio = "$displayWidth:$displayHeight" // W:H
+        for (id in intArrayOf(R.id.previewCam, R.id.poseOverlay, R.id.flashOverlay)) {
+            val view = findViewById<View>(id)
+            val lp = view.layoutParams as ConstraintLayout.LayoutParams
+            lp.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+            lp.bottomToBottom = ConstraintLayout.LayoutParams.UNSET
+            lp.startToStart = ConstraintLayout.LayoutParams.PARENT_ID
+            lp.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
+            lp.width = 0
+            lp.height = 0
+            lp.topMargin = gap
+            lp.dimensionRatio = ratio
+            view.layoutParams = lp
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        tiltMonitor.start()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        tiltMonitor.stop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Stop new frames on the main thread, then free the native TFLite /
+        // MediaPipe resources on the camera executor so the closes are serialized
+        // after any in-flight frame analysis. Closing them directly on the main
+        // thread races with inference still running on the executor and crashes in
+        // native code (SIGSEGV in libtensorflowlite_jni when the interpreter is
+        // freed mid-run — e.g. when the user swipes back during capture).
+        cameraProvider?.unbindAll()
+        cameraExecutor.execute {
+            poseLandmarker?.close()
+            poseLandmarker = null
+            handLandmarker?.close()
+            handLandmarker = null
+            yoloDetector?.dispose()
+            yoloDetector = null
+        }
+        cameraExecutor.shutdown()
+    }
+}

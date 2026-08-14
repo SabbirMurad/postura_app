@@ -30,7 +30,7 @@ QuizModule m1Es() => QuizModule(
         "Reemplazar a los trabajadores con automatizacion",
         "Centrarse unicamente en la productividad",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cual es un factor de riesgo tipico en el trabajo de escritorio?",
@@ -40,7 +40,7 @@ QuizModule m1Es() => QuizModule(
         "Beber agua",
         "Usar una silla con soporte lumbar",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "De que tratan principalmente las normas de estaciones de trabajo (como la ISO 9241-5)?",
@@ -50,7 +50,7 @@ QuizModule m1Es() => QuizModule(
         "Sistemas de nomina",
         "Solo calidad del aire",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Por que las organizaciones utilizan cuestionarios de sintomas?",
@@ -60,7 +60,7 @@ QuizModule m1Es() => QuizModule(
         "Para supervisar el uso de internet",
         "Para reemplazar la atencion medica",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cual afirmacion sobre los TME en trabajadores de oficina es mas precisa?",
@@ -70,7 +70,7 @@ QuizModule m1Es() => QuizModule(
         "Una configuracion deficiente de la estacion de trabajo y estar sentado estaticamente durante mucho tiempo pueden contribuir a problemas de cuello y miembros superiores",
         "No pueden verse influenciados por cambios en la estacion de trabajo",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Cual afirmacion describe mejor un Trastorno Musculoesqueletico (TME) en el trabajo de oficina?",
@@ -80,7 +80,7 @@ QuizModule m1Es() => QuizModule(
         "Una molestia o lesion que afecta musculos, tendones o articulaciones, a menudo relacionada con la postura de trabajo",
         "Una condicion causada unicamente por el deporte",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Cual combinacion de factores de riesgo es mas tipica del trabajo de escritorio?",
@@ -90,7 +90,7 @@ QuizModule m1Es() => QuizModule(
         "Altas temperaturas e iluminacion deficiente",
         "Solo correos cortos y tecleo ligero",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Por que es importante \"disenar el trabajo para adaptarse al trabajador\"?",
@@ -100,7 +100,7 @@ QuizModule m1Es() => QuizModule(
         "Reduce la tension y ayuda a prevenir los TME con el tiempo",
         "Se centra unicamente en aumentar la velocidad de tecleo",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Cual es una funcion de las normas de estaciones de trabajo como la ISO 9241-5 en las organizaciones?",
@@ -110,7 +110,7 @@ QuizModule m1Es() => QuizModule(
         "Proporcionan orientacion sobre la disposicion de la estacion de trabajo y los requisitos posturales",
         "Solo se aplican a maquinaria de fabrica",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Como pueden los cuestionarios de sintomas y las listas de verificacion postural apoyar los programas de ergonomia?",
@@ -120,7 +120,7 @@ QuizModule m1Es() => QuizModule(
         "Reemplazando todas las consultas medicas",
         "Midiendo unicamente la productividad y el rendimiento",
       ],
-      answer: 2,
+      answer: 1,
     ),
   ],
 );
@@ -151,12 +151,12 @@ QuizModule m2Es() => QuizModule(
         "Cruzados firmemente debajo de la silla",
         "Sobre las ruedas de la silla",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "La postura de cabeza adelantada aumenta principalmente la tension en que zona?",
       options: ["Dedos de los pies", "Cuello y parte superior de la espalda", "Tobillos", "Caderas"],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cual es una buena funcion del respaldo?",
@@ -166,7 +166,7 @@ QuizModule m2Es() => QuizModule(
         "Mantenerte inclinado muy hacia adelante",
         "Bloquear todo movimiento",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "La retraccion cervical trabaja principalmente que musculos?",
@@ -176,7 +176,7 @@ QuizModule m2Es() => QuizModule(
         "Musculos de la mano",
         "Musculos abdominales",
       ],
-      answer: 1,
+      answer: 0,
     ),
     QuizItemModel(
       question: "Que puedes usar si tus pies no llegan al suelo?",
@@ -186,7 +186,7 @@ QuizModule m2Es() => QuizModule(
         "No se necesita ningun cambio",
         "Colocar los pies sobre las ruedas de la silla",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cual descripcion se ajusta mejor a una \"postura sentada neutra\"?",
@@ -196,7 +196,7 @@ QuizModule m2Es() => QuizModule(
         "Sentado en el borde de la silla sin contacto con el respaldo",
         "Piernas cruzadas firmemente debajo de la silla",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cual es una forma practica de reducir la postura de cabeza adelantada en el escritorio?",
@@ -206,7 +206,7 @@ QuizModule m2Es() => QuizModule(
         "Usar el respaldo, acercar la silla al escritorio y colocar la pantalla a una distancia de vision comoda",
         "Mirar hacia abajo al regazo mientras se teclea",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Cual senal sugiere que la silla no esta apoyando correctamente la zona lumbar?",
@@ -216,7 +216,7 @@ QuizModule m2Es() => QuizModule(
         "Con frecuencia sientes que la zona lumbar se redondea y se cansa o duele",
         "Tus pies tocan el suelo",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Cual es el proposito principal de la aproximacion de omoplatos en el Modulo 2?",
@@ -226,7 +226,7 @@ QuizModule m2Es() => QuizModule(
         "Corregir los hombros redondeados y activar los musculos de la parte superior de la espalda",
         "Estirar los dedos y las munecas",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Cuando puede ser especialmente util un reposapies?",
@@ -236,7 +236,7 @@ QuizModule m2Es() => QuizModule(
         "Cuando la silla no se puede bajar lo suficiente y los pies no llegan al suelo",
         "Cuando quieres inclinarte mucho hacia adelante",
       ],
-      answer: 3,
+      answer: 2,
     ),
   ],
 );
@@ -265,7 +265,7 @@ QuizModule m3Es() => QuizModule(
         "A la altura de las rodillas",
         "En el suelo",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cual es una distancia de vision tipica para reducir la fatiga?",
@@ -275,7 +275,7 @@ QuizModule m3Es() => QuizModule(
         "Aproximadamente 3 metros",
         "Tocando la nariz",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Como deben colocarse las munecas al teclear o usar el raton?",
@@ -285,7 +285,7 @@ QuizModule m3Es() => QuizModule(
         "Apoyadas solo en el borde del escritorio",
         "Giradas fuertemente hacia afuera",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Si usas una pantalla la mayor parte del tiempo, donde debe colocarse?",
@@ -295,7 +295,7 @@ QuizModule m3Es() => QuizModule(
         "Detras de ti",
         "En el suelo",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cual es una senal de que el raton puede estar demasiado lejos?",
@@ -305,7 +305,7 @@ QuizModule m3Es() => QuizModule(
         "No puedes ver el cursor",
         "Tecleas mas rapido",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Que puede ocurrir si el monitor esta colocado demasiado bajo durante mucho tiempo?",
@@ -315,7 +315,7 @@ QuizModule m3Es() => QuizModule(
         "El usuario siempre se sentara perfectamente erguido",
         "Solo afecta la velocidad de tecleo",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Si el raton esta colocado demasiado lejos del cuerpo, cual es el efecto probable?",
@@ -325,7 +325,7 @@ QuizModule m3Es() => QuizModule(
         "Es posible que necesites estirarte y levantar el hombro, aumentando la tension",
         "Solo cambia el brillo de la pantalla",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Cual es la posicion ideal del teclado en relacion con los codos?",
@@ -335,7 +335,7 @@ QuizModule m3Es() => QuizModule(
         "Aproximadamente a la altura de los codos para que los antebrazos se mantengan aproximadamente horizontales",
         "Directamente sobre el regazo con las munecas dobladas",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Al usar dos pantallas por igual, cual es la mejor colocacion?",
@@ -345,7 +345,7 @@ QuizModule m3Es() => QuizModule(
         "Una muy alta, otra muy baja",
         "Una en el suelo, otra en la pared",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Por que es importante mantener las munecas rectas al teclear o usar el raton?",
@@ -355,7 +355,7 @@ QuizModule m3Es() => QuizModule(
         "Hace innecesario el teclado",
         "Previene todos los tipos de fatiga ocular",
       ],
-      answer: 2,
+      answer: 1,
     ),
   ],
 );
@@ -383,7 +383,7 @@ QuizModule m4Es() => QuizModule(
         "Apagar todas las luces",
         "Cerrar la aplicacion",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Por que las temperaturas extremas son problematicas en el trabajo?",
@@ -393,7 +393,7 @@ QuizModule m4Es() => QuizModule(
         "Solo afectan a los ordenadores",
         "Previenen los TME",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Que es una micropausa?",
@@ -403,7 +403,7 @@ QuizModule m4Es() => QuizModule(
         "Un dia completo libre",
         "Una reunion durante el almuerzo",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "La buena iluminacion de oficina debe ser:",
@@ -413,7 +413,7 @@ QuizModule m4Es() => QuizModule(
         "Completamente oscura",
         "Parpadeante",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cual es una actividad sencilla de micropausa?",
@@ -423,7 +423,7 @@ QuizModule m4Es() => QuizModule(
         "Contener la respiracion",
         "Teclear mas rapido",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cual es una consecuencia comun del deslumbramiento intenso en la pantalla?",
@@ -433,7 +433,7 @@ QuizModule m4Es() => QuizModule(
         "Aumento de la fatiga ocular, posibles dolores de cabeza y dificultad para leer",
         "Ningun impacto en los usuarios",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Como puedes reducir el contraste entre una ventana brillante y una pantalla mas oscura?",
@@ -443,7 +443,7 @@ QuizModule m4Es() => QuizModule(
         "Colocar la pantalla perpendicular a la ventana y ajustar persianas o cortinas",
         "Aumentar solo el brillo de la pantalla al maximo",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Por que se recomiendan micropausas regulares durante el trabajo con pantalla?",
@@ -453,7 +453,7 @@ QuizModule m4Es() => QuizModule(
         "Solo son necesarias para atletas",
         "Solo cambian la resolucion de la pantalla",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cual afirmacion sobre la temperatura y la concentracion es mas precisa?",
@@ -463,7 +463,7 @@ QuizModule m4Es() => QuizModule(
         "Los rangos de temperatura confortables favorecen la concentracion, mientras que los extremos pueden aumentar la fatiga",
         "Solo los niveles de ruido importan para la concentracion",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Cual es un ejemplo de micropausa sencilla durante el trabajo de escritorio?",
@@ -473,7 +473,7 @@ QuizModule m4Es() => QuizModule(
         "Contener la respiracion mientras se teclea",
         "Solo cerrar los ojos sin moverse",
       ],
-      answer: 2,
+      answer: 1,
     ),
   ],
 );
@@ -500,7 +500,7 @@ QuizModule m5Es() => QuizModule(
         "Por encima de la cabeza",
         "En un brazo extendido",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Que movimiento debe evitarse al levantar una carga?",
@@ -510,7 +510,7 @@ QuizModule m5Es() => QuizModule(
         "Respirar",
         "Usar ambas manos",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Como puedes reducir la tension en la espalda al levantar?",
@@ -520,7 +520,7 @@ QuizModule m5Es() => QuizModule(
         "Contener la respiracion",
         "Levantar rapidamente con un movimiento brusco",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cuando es mejor pedir ayuda o usar un dispositivo?",
@@ -530,7 +530,7 @@ QuizModule m5Es() => QuizModule(
         "Para una hoja de papel",
         "Nunca",
       ],
-      answer: 1,
+      answer: 0,
     ),
     QuizItemModel(
       question: "Cual afirmacion sobre el levantamiento en trabajos de oficina es verdadera?",
@@ -540,7 +540,7 @@ QuizModule m5Es() => QuizModule(
         "Solo importa el trabajo en fabrica",
         "Solo importa estar sentado",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Por que es tan importante mantener la carga cerca del cuerpo al levantar?",
@@ -550,7 +550,7 @@ QuizModule m5Es() => QuizModule(
         "No tiene efecto sobre el cuerpo",
         "Solo ayuda con el equilibrio pero no con la tension",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cual es la forma mas segura de girar mientras se transporta un objeto pesado?",
@@ -560,7 +560,7 @@ QuizModule m5Es() => QuizModule(
         "Mover los pies para girar todo el cuerpo junto con la carga",
         "Inclinarse lo mas atras posible mientras se gira",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Al levantar del suelo, cual es una mejor estrategia de movimiento?",
@@ -570,7 +570,7 @@ QuizModule m5Es() => QuizModule(
         "Mantener las piernas rectas y tirar solo con los brazos",
         "Saltar y atrapar la carga en el aire",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "En una oficina, cuando es mas apropiado usar un carrito o pedir ayuda?",
@@ -580,7 +580,7 @@ QuizModule m5Es() => QuizModule(
         "Nunca, porque las cargas de oficina siempre son seguras",
         "Solo para objetos muy pequenos",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cual situacion aumenta el riesgo de tension en la espalda al levantar en la oficina?",
@@ -590,7 +590,7 @@ QuizModule m5Es() => QuizModule(
         "Llevar un boligrafo en el bolsillo",
         "Usar ambas manos para sostener un teclado ligero",
       ],
-      answer: 2,
+      answer: 1,
     ),
   ],
 );
@@ -618,7 +618,7 @@ QuizModule m6Es() => QuizModule(
         "Trabajar solo desde la cama",
         "Trabajar en la oscuridad",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Una forma sencilla de reducir el tiempo sentado prolongado es:",
@@ -628,7 +628,7 @@ QuizModule m6Es() => QuizModule(
         "Bloquear la silla",
         "Evitar los descansos",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Para el uso del portatil, cual opcion es mejor?",
@@ -638,7 +638,7 @@ QuizModule m6Es() => QuizModule(
         "Usarlo acostado de lado",
         "Sostenerlo por encima de la cabeza",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Por que son utiles los cambios de postura frecuentes en el trabajo remoto?",
@@ -648,7 +648,7 @@ QuizModule m6Es() => QuizModule(
         "Solo interrumpen la concentracion",
         "Danan la silla",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cual comportamiento aumenta la tension cervical con los telefonos?",
@@ -658,7 +658,7 @@ QuizModule m6Es() => QuizModule(
         "Tomar descansos breves",
         "Usar auriculares",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Por que generalmente no se recomienda trabajar a largo plazo desde un sofa o la cama?",
@@ -668,7 +668,7 @@ QuizModule m6Es() => QuizModule(
         "A menudo conduce a una mala postura de espalda y cuello sin el soporte adecuado",
         "Impide usar un portatil",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Cual combinacion es la mejor para el uso prolongado del portatil en casa?",
@@ -678,7 +678,7 @@ QuizModule m6Es() => QuizModule(
         "Portatil elevado a la altura de los ojos mas teclado y raton externos",
         "Portatil a nivel del suelo, de pie sobre el",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Cual es una forma practica de reducir los periodos prolongados sentado al trabajar en remoto?",
@@ -688,7 +688,7 @@ QuizModule m6Es() => QuizModule(
         "Trabajar solo desde la cama",
         "Mantener la silla bloqueada y no moverse nunca",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cual comportamiento aumenta el riesgo de \"cuello de texto\"?",
@@ -698,7 +698,7 @@ QuizModule m6Es() => QuizModule(
         "Mirar hacia abajo al telefono con el cuello flexionado durante periodos prolongados",
         "Tomar descansos breves del telefono",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Por que se aplican los mismos principios ergonomicos en casa y en la oficina?",
@@ -708,7 +708,7 @@ QuizModule m6Es() => QuizModule(
         "Porque los portatiles solo funcionan en casa",
         "Porque la postura solo importa en la oficina",
       ],
-      answer: 1,
+      answer: 0,
     ),
   ],
 );
@@ -736,7 +736,7 @@ QuizModule m7Es() => QuizModule(
         "Eliminan la necesidad de ajustar la estacion de trabajo",
         "Reemplazan el sueno",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Un tiempo de mantenimiento tipico para un estiramiento suave es:",
@@ -746,7 +746,7 @@ QuizModule m7Es() => QuizModule(
         "Aproximadamente 5 minutos",
         "Aproximadamente 30 minutos",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cual de estos es un ejercicio sencillo de activacion de hombros?",
@@ -756,7 +756,7 @@ QuizModule m7Es() => QuizModule(
         "Cargar bolsas pesadas",
         "Encoger los hombros bajo una carga pesada",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cuando debe el usuario dejar de hacer un ejercicio?",
@@ -766,7 +766,7 @@ QuizModule m7Es() => QuizModule(
         "Nunca",
         "Solo despues de 3 horas",
       ],
-      answer: 1,
+      answer: 0,
     ),
     QuizItemModel(
       question: "Una frecuencia realista para las micropausas durante el trabajo con pantalla es:",
@@ -776,7 +776,7 @@ QuizModule m7Es() => QuizModule(
         "Una vez al ano",
         "Solo durante las vacaciones",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Cual es el objetivo principal de la rutina preventiva diaria del Modulo 7?",
@@ -786,7 +786,7 @@ QuizModule m7Es() => QuizModule(
         "Entrenar para deportes de competicion",
         "Evitar ajustar la estacion de trabajo",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Como deben sentirse generalmente los ejercicios de estiramiento?",
@@ -796,7 +796,7 @@ QuizModule m7Es() => QuizModule(
         "Completamente sin esfuerzo y sin ninguna sensacion",
         "Tan intensos que debes contener la respiracion",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Con que frecuencia se pueden integrar de forma realista las pausas cortas de ejercicio o estiramiento en el trabajo con pantalla?",
@@ -806,7 +806,7 @@ QuizModule m7Es() => QuizModule(
         "Unos segundos o minutos cada 20 a 30 minutos",
         "Solo una vez al ano",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Que debes hacer si el dolor aumenta bruscamente durante un ejercicio?",
@@ -816,7 +816,7 @@ QuizModule m7Es() => QuizModule(
         "Detener el ejercicio inmediatamente y volver a una posicion comoda",
         "Aumentar la intensidad",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Por que es util vincular los ejercicios con sintomas especificos (por ejemplo, tension en cuello u hombros)?",
@@ -826,7 +826,7 @@ QuizModule m7Es() => QuizModule(
         "Solo aumenta la complejidad sin ningun beneficio",
         "Reemplaza completamente los ajustes de la estacion de trabajo",
       ],
-      answer: 1,
+      answer: 0,
     ),
   ],
 );

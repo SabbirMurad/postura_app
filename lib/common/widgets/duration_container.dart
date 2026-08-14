@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 
 class DurationContainer extends StatelessWidget {
   final IconData? icon;
@@ -20,7 +20,7 @@ class DurationContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(6.h),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.w),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.r),
         color: bgColor ?? AppColors.greyDeemed,
@@ -33,7 +33,7 @@ class DurationContainer extends StatelessWidget {
           Text(
             icon != null ? "$content " : content,
             style: TextStyle(
-              fontSize: 13.sp,
+              fontSize: 12.sp,
               fontWeight: FontWeight.w400,
               color: textColor ?? AppColors.text,
             ),

@@ -315,17 +315,23 @@ abstract class AppLocalizations {
   /// **'Your employee ID'**
   String get employIdHint;
 
-  /// No description provided for @userDeskWorkZone.
+  /// No description provided for @workstationSetup.
   ///
   /// In en, this message translates to:
-  /// **'User Desk or Work Zone'**
-  String get userDeskWorkZone;
+  /// **'Workstation Setup'**
+  String get workstationSetup;
 
-  /// No description provided for @userDeskWorkZoneSubtitle.
+  /// No description provided for @workstationSetupSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Link your assessment to your desk and department'**
-  String get userDeskWorkZoneSubtitle;
+  /// **'Link your assessment to your workstation and department'**
+  String get workstationSetupSubtitle;
+
+  /// No description provided for @workstationType.
+  ///
+  /// In en, this message translates to:
+  /// **'Workstation type'**
+  String get workstationType;
 
   /// No description provided for @deskId.
   ///
@@ -492,7 +498,7 @@ abstract class AppLocalizations {
   /// No description provided for @workPatternSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Select your work pattern from here'**
+  /// **'Select your work pattern'**
   String get workPatternSubtitle;
 
   /// No description provided for @hoursAtDeskPerDay.
@@ -519,10 +525,16 @@ abstract class AppLocalizations {
   /// **'Every 3 Hours'**
   String get breakHabitsHint;
 
+  /// No description provided for @deviceSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Device setup'**
+  String get deviceSetup;
+
   /// No description provided for @selectDeviceUsage.
   ///
   /// In en, this message translates to:
-  /// **'Select device usage'**
+  /// **'Select device setup'**
   String get selectDeviceUsage;
 
   /// No description provided for @laptop.
@@ -542,6 +554,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dual Screen'**
   String get dualScreen;
+
+  /// No description provided for @mouseType.
+  ///
+  /// In en, this message translates to:
+  /// **'Mouse type'**
+  String get mouseType;
+
+  /// No description provided for @standardMouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard mouse'**
+  String get standardMouse;
+
+  /// No description provided for @smallOrNotebookMouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Small or notebook mouse'**
+  String get smallOrNotebookMouse;
+
+  /// No description provided for @trackpadOrNoMouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Trackpad or no mouse'**
+  String get trackpadOrNoMouse;
 
   /// No description provided for @optionalSymptom.
   ///
@@ -723,11 +759,11 @@ abstract class AppLocalizations {
   /// **'Retake'**
   String get retake;
 
-  /// No description provided for @isoErgonomicAnalysis.
+  /// No description provided for @rosaErgonomicAnalysis.
   ///
   /// In en, this message translates to:
-  /// **'ISO Ergonomic Analysis'**
-  String get isoErgonomicAnalysis;
+  /// **'ROSA Ergonomic Analysis'**
+  String get rosaErgonomicAnalysis;
 
   /// No description provided for @basedOnIso9241.
   ///
@@ -849,11 +885,11 @@ abstract class AppLocalizations {
   /// **'Hi'**
   String get hi;
 
-  /// No description provided for @welcomeHome.
+  /// No description provided for @welcomeToPostura.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Posture Care'**
-  String get welcomeHome;
+  /// **'Welcome to Postura'**
+  String get welcomeToPostura;
 
   /// No description provided for @immediateCorrectionRequired.
   ///
@@ -1539,11 +1575,11 @@ abstract class AppLocalizations {
   /// **'Loading analysis data...'**
   String get loadingAnalysisData;
 
-  /// No description provided for @exportIsoReportPdf.
+  /// No description provided for @exportRosaReportPdf.
   ///
   /// In en, this message translates to:
-  /// **'Export ISO Report (PDF)'**
-  String get exportIsoReportPdf;
+  /// **'Export ROSA Report (PDF)'**
+  String get exportRosaReportPdf;
 
   /// No description provided for @userFallbackName.
   ///
@@ -2072,6 +2108,111 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'If you have questions about this privacy policy or wish to exercise your data rights, please contact your company administrator or reach out to our support team through the app.'**
   String get ppContactContent;
+
+  /// No description provided for @workstation.
+  ///
+  /// In en, this message translates to:
+  /// **'Workstation'**
+  String get workstation;
+
+  /// No description provided for @yourWorkstation.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Workstation'**
+  String get yourWorkstation;
+
+  /// No description provided for @workstationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A few quick questions before we take the photo'**
+  String get workstationSubtitle;
+
+  /// No description provided for @canAdjustChairHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Can you adjust your chair height?'**
+  String get canAdjustChairHeight;
+
+  /// No description provided for @enoughLegRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Is there enough leg room under your desk?'**
+  String get enoughLegRoom;
+
+  /// No description provided for @chairHasLumbarSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Does your chair have lumbar support?'**
+  String get chairHasLumbarSupport;
+
+  /// No description provided for @monitorDistanceFromEyes.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor distance from eyes?'**
+  String get monitorDistanceFromEyes;
+
+  /// No description provided for @monitorDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor distance'**
+  String get monitorDistance;
+
+  /// No description provided for @monitorDistanceLessThan40cm.
+  ///
+  /// In en, this message translates to:
+  /// **'Less than 40 cm'**
+  String get monitorDistanceLessThan40cm;
+
+  /// No description provided for @monitorDistance40To70cm.
+  ///
+  /// In en, this message translates to:
+  /// **'40–70 cm'**
+  String get monitorDistance40To70cm;
+
+  /// No description provided for @monitorDistanceMoreThan70cm.
+  ///
+  /// In en, this message translates to:
+  /// **'More than 70 cm'**
+  String get monitorDistanceMoreThan70cm;
+
+  /// No description provided for @feetRestingFlat.
+  ///
+  /// In en, this message translates to:
+  /// **'Are your feet resting flat on the floor?'**
+  String get feetRestingFlat;
+
+  /// No description provided for @monitorDirectlyInFront.
+  ///
+  /// In en, this message translates to:
+  /// **'Is your monitor positioned directly in front of you (not to the side)?'**
+  String get monitorDirectlyInFront;
+
+  /// No description provided for @chairHasArmrests.
+  ///
+  /// In en, this message translates to:
+  /// **'Does your chair have armrests?'**
+  String get chairHasArmrests;
+
+  /// No description provided for @basedOnPostureAnalysisIso.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on your posture analysis and ISO 9241-5:2024 principles...'**
+  String get basedOnPostureAnalysisIso;
+
+  String get canAdjustChairHeightYes;
+  String get cannotAdjustChairHeight;
+  String get enoughLegRoomYes;
+  String get notEnoughLegRoom;
+  String get chairHasLumbarSupportYes;
+  String get chairHasLumbarSupportNo;
+  String get feetFlatYes;
+  String get feetFlatNo;
+  String get monitorInFrontYes;
+  String get monitorInFrontNo;
+  String get chairHasArmrestsYes;
+  String get chairHasArmrestsNo;
+  String get rosaSubScores;
+  String get photo;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

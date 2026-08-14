@@ -1,1 +1,0 @@
-enum Users { EMPLOYEE, PRIVATE, CPE, ERGONOMIST }

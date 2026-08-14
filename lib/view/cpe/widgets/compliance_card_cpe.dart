@@ -1,20 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
-import 'package:posture_detector_app/controller/assessment_controller_cpe.dart';
+import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/provider/cpe_assessment.dart';
 import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
+import 'package:posture_detector_app/common/widgets/rosa_sub_score.dart';
+import 'package:posture_detector_app/view/home/home_screen.dart';
 
 class ComplianceCardCPE extends StatelessWidget {
-  final CPEAssessmentController controller;
-  const ComplianceCardCPE({super.key, required this.controller});
+  final CpeAssessmentState state;
+  const ComplianceCardCPE({super.key, required this.state});
+
+  // ── Score → RosaRisk ─────────────────────────────────────────────────────
+
+  RosaRisk _subScoreRisk(int score) {
+    if (score >= 3) return RosaRisk.red;
+    if (score >= 2) return RosaRisk.orange;
+    return RosaRisk.green;
+  }
+
+  RosaRisk _finalScoreRisk(int score) {
+    if (score >= 7) return RosaRisk.red;
+    if (score >= 4) return RosaRisk.orange;
+    return RosaRisk.green;
+  }
+
+  // ── Score → label ─────────────────────────────────────────────────────────
+
+  String _subScoreLabel(int score) {
+    if (score == 0) return 'Not assessed';
+    if (score >= 3) return 'High risk';
+    if (score >= 2) return 'Review needed';
+    return 'Optimal';
+  }
+
+  String _finalLabel(int score) {
+    if (score >= 7) return 'High risk — immediate action required';
+    if (score >= 4) return 'Moderate risk — further investigation';
+    return 'Low risk — no immediate action needed';
+  }
+
+  String _actionLevel(int score) {
+    if (score >= 7) return 'Level 3 — Action required as soon as possible';
+    if (score >= 4) return 'Level 2 — Further investigation needed';
+    return 'Level 1 — No immediate action needed';
+  }
+
+  Color _riskColor(RosaRisk risk) {
+    switch (risk) {
+      case RosaRisk.red:
+        return const Color(0xFFE53935);
+      case RosaRisk.orange:
+        return const Color(0xFFFB8C00);
+      case RosaRisk.green:
+        return const Color(0xFF43A047);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final label = controller.complianceLabel;
-    final subtitle = controller.complianceSubtitle;
-    final isRed = label == 'Red';
     final loc = AppLocalizations.of(context)!;
 
     return Container(
@@ -22,86 +66,10 @@ class ComplianceCardCPE extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
       decoration: cardDecoration(),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            loc.isoErgonomicAnalysis,
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF202020),
-            ),
-          ),
-          SizedBox(height: 20.h),
-          SizedBox(
-            width: 150.w,
-            height: 150.w,
-            child: CircularPercentIndicator(
-              circularStrokeCap: CircularStrokeCap.round,
-              animationDuration: 1500,
-              animation: true,
-              radius: 80,
-              lineWidth: 14,
-              progressColor: AppColors.text,
-              backgroundColor: AppColors.text.withValues(alpha: 0.1),
-              percent: controller.compliancePercent,
-              center: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '${controller.compliance.value}%',
-                    style: TextStyle(
-                      fontSize: 28.sp,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Text(
-                    loc.complianceLabel,
-                    style: TextStyle(
-                      fontSize: 11.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 16.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                loc.overallScore,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF202020),
-                ),
-              ),
-              SizedBox(width: 6.w),
-              Container(
-                width: 8.w,
-                height: 8.w,
-                decoration: BoxDecoration(
-                  color: isRed ? Colors.red : Colors.green,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              SizedBox(width: 4.w),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w700,
-                  color: isRed ? Colors.red : Colors.green,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 4.h),
-          Text(
-            subtitle,
-            style: TextStyle(fontSize: 12.sp, color: const Color(0xFF4A4A4A)),
-          ),
+          /// Section title
+
         ],
       ),
     );

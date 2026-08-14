@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
-import 'package:posture_detector_app/models/quiz/module.dart';
 import 'package:posture_detector_app/models/quiz/quiz_module.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 
 class ELearningCard extends StatelessWidget {
   final QuizModule quizModule;
@@ -28,15 +26,11 @@ class ELearningCard extends StatelessWidget {
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 18.h),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18.r),
-          color: AppColors.onBoardingSurface,
-          boxShadow: [
-            BoxShadow(
-              color: Color(0xFF242424).withValues(alpha: 0.05),
-              blurRadius: 12.w,
-              offset: Offset(0, 4.h),
-            ),
-          ],
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: AppColors.secondaryText.withValues(alpha: 0.15),
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -46,6 +40,7 @@ class ELearningCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
+                    // EN: moduleLabel = "Module"
                     '${AppLocalizations.of(context)!.moduleLabel} ${quizModule.id} .',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w400,

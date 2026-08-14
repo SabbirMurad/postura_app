@@ -1,31 +1,24 @@
-
 class ProfileModel {
   String message;
   Data data;
 
-  ProfileModel({
-    required this.message,
-    required this.data,
-  });
+  ProfileModel({required this.message, required this.data});
 
-  ProfileModel copyWith({
-    String? message,
-    Data? data,
-  }) =>
-      ProfileModel(
-        message: message ?? this.message,
-        data: data ?? this.data,
-      );
+  ProfileModel copyWith({String? message, Data? data}) =>
+      ProfileModel(message: message ?? this.message, data: data ?? this.data);
 
-  factory ProfileModel.fromJson(Map<String, dynamic> json) => ProfileModel(
-    message: json["message"],
-    data: Data.fromJson(json["data"]),
-  );
+  factory ProfileModel.fromJson(Map<String, dynamic> json) {
+    print('');
+    print(json);
+    print('');
 
-  Map<String, dynamic> toJson() => {
-    "message": message,
-    "data": data.toJson(),
-  };
+    return ProfileModel(
+      message: json["message"],
+      data: Data.fromJson(json["data"]),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {"message": message, "data": data.toJson()};
 }
 
 class Data {
@@ -49,14 +42,13 @@ class Data {
     String? email,
     String? avatar,
     String? role,
-  }) =>
-      Data(
-        id: id ?? this.id,
-        fullName: fullName ?? this.fullName,
-        email: email ?? this.email,
-        avatar: avatar ?? this.avatar,
-        role: role ?? this.role,
-      );
+  }) => Data(
+    id: id ?? this.id,
+    fullName: fullName ?? this.fullName,
+    email: email ?? this.email,
+    avatar: avatar ?? this.avatar,
+    role: role ?? this.role,
+  );
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     id: json["id"],

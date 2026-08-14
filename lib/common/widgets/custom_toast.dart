@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:posture_detector_app/main.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 
 enum ToastTypes { success, error, warning, info }
 
@@ -102,8 +102,8 @@ class _CustomToastNotificationState extends State<CustomToastNotification>
     )..forward();
 
     _controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      if (status == AnimationStatus.completed && mounted) {
+        scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
       }
     });
 
@@ -210,12 +210,13 @@ void showCustomToast({
       duration: duration,
       toastType: toastType ?? ToastTypesInfo(ToastTypes.error),
       onCloseClick: () {
-        ScaffoldMessenger.of(
-          scaffoldMessengerKey.currentContext!,
-        ).hideCurrentSnackBar();
+        scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
       },
     ),
   );
 
-  scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
+  final messengerState = scaffoldMessengerKey.currentState;
+  if (messengerState != null && messengerState.mounted) {
+    messengerState.showSnackBar(snackBar);
+  }
 }

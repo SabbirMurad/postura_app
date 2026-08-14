@@ -117,10 +117,13 @@ class AppLocalizationsNl extends AppLocalizations {
   String get employIdHint => 'Je medewerker ID';
 
   @override
-  String get userDeskWorkZone => 'Bureau of werkzone';
+  String get workstationSetup => 'Bureau of werkzone';
 
   @override
-  String get userDeskWorkZoneSubtitle => 'Koppel je beoordeling aan je bureau en afdeling';
+  String get workstationSetupSubtitle => 'Koppel je beoordeling aan je bureau en afdeling';
+
+  @override
+  String get workstationType => 'Type werkstation';
 
   @override
   String get deskId => 'Bureau-ID of locatie (aanbevolen)';
@@ -219,6 +222,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get breakHabitsHint => 'Elke 3 uur';
 
   @override
+  String get deviceSetup => 'Apparaatinstelling';
+
+  @override
   String get selectDeviceUsage => 'Selecteer apparaatgebruik';
 
   @override
@@ -229,6 +235,18 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get dualScreen => 'Dubbel scherm';
+
+  @override
+  String get mouseType => 'Muistype';
+
+  @override
+  String get standardMouse => 'Standaardmuis';
+
+  @override
+  String get smallOrNotebookMouse => 'Kleine of notebookmuis';
+
+  @override
+  String get trackpadOrNoMouse => 'Trackpad of geen muis';
 
   @override
   String get optionalSymptom => 'Optionele symptomen';
@@ -321,7 +339,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get retake => 'Opnieuw';
 
   @override
-  String get isoErgonomicAnalysis => 'ISO Ergonomische Analyse';
+  String get rosaErgonomicAnalysis => 'ROSA Ergonomische Analyse';
 
   @override
   String get basedOnIso9241 => 'Gebaseerd op ISO 9241.5:2024';
@@ -384,7 +402,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get hi => 'Hoi';
 
   @override
-  String get welcomeHome => 'Welkom bij PostureCare';
+  String get welcomeToPostura => 'Welkom bij Postura';
 
   @override
   String get immediateCorrectionRequired => 'Onmiddellijke correctie vereist!';
@@ -729,7 +747,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get loadingAnalysisData => 'Analysegegevens laden...';
 
   @override
-  String get exportIsoReportPdf => 'ISO-rapport exporteren (PDF)';
+  String get exportRosaReportPdf => 'ROSA-rapport exporteren (PDF)';
 
   @override
   String get userFallbackName => 'Gebruiker';
@@ -996,4 +1014,78 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get ppContactContent => 'Als u vragen heeft over dit privacybeleid of uw gegevensrechten wilt uitoefenen, neem dan contact op met uw bedrijfsbeheerder of ons ondersteuningsteam via de app.';
+
+  @override
+  String get workstation => 'Werkplek';
+
+  @override
+  String get yourWorkstation => 'Uw werkplek';
+
+  @override
+  String get workstationSubtitle => 'Een paar korte vragen voordat we de foto nemen';
+
+  @override
+  String get canAdjustChairHeight => 'Kunt u de hoogte van uw stoel aanpassen?';
+
+  @override
+  String get enoughLegRoom => 'Is er voldoende beenruimte onder uw bureau?';
+
+  @override
+  String get chairHasLumbarSupport => 'Heeft uw stoel lendensteun?';
+
+  @override
+  String get monitorDistanceFromEyes => 'Afstand van de monitor tot de ogen?';
+
+  @override
+  String get monitorDistance => 'Monitorafstand';
+
+  @override
+  String get monitorDistanceLessThan40cm => 'Minder dan 40 cm';
+
+  @override
+  String get monitorDistance40To70cm => '40–70 cm';
+
+  @override
+  String get monitorDistanceMoreThan70cm => 'Meer dan 70 cm';
+
+  @override
+  String get feetRestingFlat => 'Rusten uw voeten plat op de vloer?';
+
+  @override
+  String get monitorDirectlyInFront => 'Staat uw monitor direct voor u (niet opzij)?';
+
+  @override
+  String get chairHasArmrests => 'Heeft uw stoel armleuningen?';
+
+  @override
+  String get basedOnPostureAnalysisIso => 'Op basis van uw houdingsanalyse en ISO 9241-5:2024-principes...';
+
+  @override
+  String get canAdjustChairHeightYes => 'Stoelhoogte kan worden aangepast';
+  @override
+  String get cannotAdjustChairHeight => 'Stoelhoogte kan niet worden aangepast';
+  @override
+  String get enoughLegRoomYes => 'Genoeg beenruimte onder het bureau';
+  @override
+  String get notEnoughLegRoom => 'Niet genoeg ruimte onder het bureau';
+  @override
+  String get chairHasLumbarSupportYes => 'Stoel heeft lendensteuning';
+  @override
+  String get chairHasLumbarSupportNo => 'Stoel heeft geen lendensteuning';
+  @override
+  String get feetFlatYes => 'Voeten rusten plat op de vloer';
+  @override
+  String get feetFlatNo => 'Voeten rusten niet plat op de vloer';
+  @override
+  String get monitorInFrontYes => 'Monitor staat direct voor de gebruiker';
+  @override
+  String get monitorInFrontNo => 'Monitor staat niet direct voor de gebruiker';
+  @override
+  String get chairHasArmrestsYes => 'Stoel heeft armleuningen';
+  @override
+  String get chairHasArmrestsNo => 'Stoel heeft geen armleuningen';
+  @override
+  String get rosaSubScores => 'ROSA Deelscores';
+  @override
+  String get photo => 'Foto';
 }

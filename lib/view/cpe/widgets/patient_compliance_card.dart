@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:posture_detector_app/l10n/app_localizations.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
-import 'package:posture_detector_app/controller/home_controller_cpe.dart';
+import 'package:posture_detector_app/provider/cpe_home.dart';
 
 enum ComplianceStatus { excellent, good, moderate, low }
 
@@ -21,6 +21,12 @@ ComplianceStatus statusFromReview(String reviewStatus) {
   }
 }
 
+Color _rosaScoreColor(int score) {
+  if (score >= 7) return const Color(0xFFE53935);
+  if (score >= 4) return const Color(0xFFFB8C00);
+  return const Color(0xFF43A047);
+}
+
 class PatientComplianceCard extends StatelessWidget {
   final ScanItem scan;
 
@@ -28,21 +34,16 @@ class PatientComplianceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
     final status = statusFromReview(scan.reviewStatus);
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(
+          color: AppColors.secondaryText.withValues(alpha: 0.15),
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -90,18 +91,33 @@ class PatientComplianceCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                '${scan.compliance}%',
-                style: TextStyle(
-                  fontSize: 28.sp,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF202020),
-                  height: 1,
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '${scan.rosaFinal}',
+                      style: TextStyle(
+                        fontSize: 28.sp,
+                        fontWeight: FontWeight.w700,
+                        color: _rosaScoreColor(scan.rosaFinal),
+                        height: 1,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' /10',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF6B6B6B),
+                        height: 1,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: 2.h),
               Text(
-                loc.complianceLabel,
+                'ROSA SCORE',
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,

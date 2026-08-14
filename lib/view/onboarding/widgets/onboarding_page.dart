@@ -4,21 +4,21 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'package:posture_detector_app/common/widgets/custom_clipper.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
-import 'package:posture_detector_app/controller/onboarding_controller.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 
 class OnboardingPage extends StatelessWidget {
+  final PageController pageController;
+  final int currentPage;
   final AssetGenImage image;
   final String title;
 
   const OnboardingPage({
     super.key,
-    required this.onboardingController,
+    required this.pageController,
+    required this.currentPage,
     required this.image,
     required this.title,
   });
-
-  final OnboardingController onboardingController;
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +34,10 @@ class OnboardingPage extends StatelessWidget {
         ),
         SizedBox(height: 22.h),
         SmoothPageIndicator(
-          controller: onboardingController.pageController,
+          controller: pageController,
           count: 3,
           onDotClicked: (index) {
-            onboardingController.dotNavigation(index);
+            pageController.jumpToPage(index);
           },
           effect: ExpandingDotsEffect(
             dotHeight: 6,

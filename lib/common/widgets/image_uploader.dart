@@ -3,11 +3,12 @@ import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 
 /// ===============================
 /// IMAGE UPLOADER WIDGET
@@ -86,6 +87,7 @@ class _ImageUploaderVOneState extends State<ImageUploaderVOne> {
             children: [
               ListTile(
                 leading: const Icon(Icons.camera_alt),
+                // EN: "Take a photo"
                 title: Text(loc.takePhoto),
                 onTap: () {
                   Navigator.pop(context);
@@ -94,6 +96,7 @@ class _ImageUploaderVOneState extends State<ImageUploaderVOne> {
               ),
               ListTile(
                 leading: const Icon(Icons.photo_library),
+                // EN: "Choose from gallery"
                 title: Text(loc.chooseFromGallery),
                 onTap: () {
                   Navigator.pop(context);
@@ -129,13 +132,16 @@ class _ImageUploaderVOneState extends State<ImageUploaderVOne> {
     if (_imageData != null) {
       // picked image from device
       return Image.memory(_imageData!, fit: BoxFit.cover);
-    } else if (widget.currentImage != null && widget.currentImage!.startsWith('http')) {
+    } else if (widget.currentImage != null &&
+        widget.currentImage!.startsWith('http')) {
       // network image from server
       return CachedNetworkImage(
         imageUrl: widget.currentImage!,
         fit: BoxFit.cover,
-        errorWidget: (_, __, ___) => const Icon(Icons.person, size: 40, color: Colors.grey),
-        placeholder: (_, __) => const Center(child: CircularProgressIndicator()),
+        errorWidget: (_, __, ___) =>
+            const Icon(Icons.person, size: 40, color: Colors.grey),
+        placeholder: (_, __) =>
+            const Center(child: CircularProgressIndicator()),
       );
     } else if (widget.currentImage != null) {
       // local asset image
@@ -149,11 +155,14 @@ class _ImageUploaderVOneState extends State<ImageUploaderVOne> {
       // fallback default image
       final ext = widget.defaultImage!.split('.').last.toLowerCase();
       if (ext == 'svg') {
-        return SvgPicture.asset(
-          widget.defaultImage!,
-          width: widget.height * .6,
-          height: widget.height * .6,
-          color: Colors.grey,
+        return Padding(
+          padding: EdgeInsets.all(12.w),
+          child: SvgPicture.asset(
+            widget.defaultImage!,
+            width: widget.height * .6,
+            height: widget.height * .6,
+            color: Colors.white,
+          ),
         );
       } else {
         return Image.asset(
@@ -167,7 +176,6 @@ class _ImageUploaderVOneState extends State<ImageUploaderVOne> {
       return const Icon(Icons.person, size: 40, color: Colors.grey);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -185,11 +193,13 @@ class _ImageUploaderVOneState extends State<ImageUploaderVOne> {
               width: double.infinity,
               height: double.infinity,
               decoration: BoxDecoration(
-                color: const Color(0xffEFEEF9),
-                border: Border.all(
-                  color: Colors.grey.withValues(alpha: 0.3),
-                  width: 1.5,
-                ),
+                color: Colors.grey[300],
+                border: widget.showBorder
+                    ? Border.all(
+                        color: Colors.grey.withValues(alpha: 0.3),
+                        width: 1.5,
+                      )
+                    : null,
                 borderRadius: BorderRadius.circular(widget.height / 2),
               ),
               child: ClipRRect(
@@ -203,7 +213,7 @@ class _ImageUploaderVOneState extends State<ImageUploaderVOne> {
           if (widget.loading)
             Container(
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha:.3),
+                color: Colors.black.withValues(alpha: .3),
                 borderRadius: BorderRadius.circular(widget.height / 2),
               ),
               child: const Center(
@@ -229,6 +239,10 @@ class _ImageUploaderVOneState extends State<ImageUploaderVOne> {
                   decoration: BoxDecoration(
                     color: AppColors.surface,
                     shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.grey.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
                   ),
                   child: Icon(
                     Icons.camera_alt,

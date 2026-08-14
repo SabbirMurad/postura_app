@@ -117,10 +117,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get employIdHint => 'Your employee ID';
 
   @override
-  String get userDeskWorkZone => 'User Desk or Work Zone';
+  String get workstationSetup => 'Workstation Setup';
 
   @override
-  String get userDeskWorkZoneSubtitle => 'Link your assessment to your desk and department';
+  String get workstationSetupSubtitle => 'Link your assessment to your workstation and department';
+
+  @override
+  String get workstationType => 'Workstation type';
 
   @override
   String get deskId => 'Desk ID or Location (Recommended)';
@@ -204,7 +207,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workPattern => 'Work Pattern';
 
   @override
-  String get workPatternSubtitle => 'Select your work pattern from here';
+  String get workPatternSubtitle => 'Select your work pattern';
 
   @override
   String get hoursAtDeskPerDay => 'Hours at desk per day';
@@ -219,7 +222,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get breakHabitsHint => 'Every 3 Hours';
 
   @override
-  String get selectDeviceUsage => 'Select device usage';
+  String get deviceSetup => 'Device setup';
+
+  @override
+  String get selectDeviceUsage => 'Select device setup';
 
   @override
   String get laptop => 'Laptop';
@@ -229,6 +235,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dualScreen => 'Dual Screen';
+
+  @override
+  String get mouseType => 'Mouse type';
+
+  @override
+  String get standardMouse => 'Standard mouse';
+
+  @override
+  String get smallOrNotebookMouse => 'Small or notebook mouse';
+
+  @override
+  String get trackpadOrNoMouse => 'Trackpad or no mouse';
 
   @override
   String get optionalSymptom => 'Optional Symptoms';
@@ -321,7 +339,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retake => 'Retake';
 
   @override
-  String get isoErgonomicAnalysis => 'ISO Ergonomic Analysis';
+  String get rosaErgonomicAnalysis => 'ROSA Ergonomic Analysis';
 
   @override
   String get basedOnIso9241 => 'Based on ISO 9241.5:2024';
@@ -384,7 +402,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hi => 'Hi';
 
   @override
-  String get welcomeHome => 'Welcome to Posture Care';
+  String get welcomeToPostura => 'Welcome to Postura';
 
   @override
   String get immediateCorrectionRequired => 'Immediate correction required!';
@@ -729,7 +747,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadingAnalysisData => 'Loading analysis data...';
 
   @override
-  String get exportIsoReportPdf => 'Export ISO Report (PDF)';
+  String get exportRosaReportPdf => 'Export ROSA Report (PDF)';
 
   @override
   String get userFallbackName => 'User';
@@ -996,4 +1014,78 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ppContactContent => 'If you have questions about this privacy policy or wish to exercise your data rights, please contact your company administrator or reach out to our support team through the app.';
+
+  @override
+  String get workstation => 'Workstation';
+
+  @override
+  String get yourWorkstation => 'Your Workstation';
+
+  @override
+  String get workstationSubtitle => 'A few quick questions before we take the photo';
+
+  @override
+  String get canAdjustChairHeight => 'Can you adjust your chair height?';
+
+  @override
+  String get enoughLegRoom => 'Is there enough leg room under your desk?';
+
+  @override
+  String get chairHasLumbarSupport => 'Does your chair have lumbar support?';
+
+  @override
+  String get monitorDistanceFromEyes => 'Monitor distance from eyes?';
+
+  @override
+  String get monitorDistance => 'Monitor distance';
+
+  @override
+  String get monitorDistanceLessThan40cm => 'Less than 40 cm';
+
+  @override
+  String get monitorDistance40To70cm => '40–70 cm';
+
+  @override
+  String get monitorDistanceMoreThan70cm => 'More than 70 cm';
+
+  @override
+  String get feetRestingFlat => 'Are your feet resting flat on the floor?';
+
+  @override
+  String get monitorDirectlyInFront => 'Is your monitor positioned directly in front of you (not to the side)?';
+
+  @override
+  String get chairHasArmrests => 'Does your chair have armrests?';
+
+  @override
+  String get basedOnPostureAnalysisIso => 'Based on your posture analysis and ISO 9241-5:2024 principles...';
+
+  @override
+  String get canAdjustChairHeightYes => 'Can adjust chair height';
+  @override
+  String get cannotAdjustChairHeight => 'Cannot adjust chair height';
+  @override
+  String get enoughLegRoomYes => 'Enough leg room under desk';
+  @override
+  String get notEnoughLegRoom => 'Not enough room under desk';
+  @override
+  String get chairHasLumbarSupportYes => 'Chair has lumbar support';
+  @override
+  String get chairHasLumbarSupportNo => 'Chair does not have lumbar support';
+  @override
+  String get feetFlatYes => 'Feet resting flat on the floor';
+  @override
+  String get feetFlatNo => 'Feet not resting flat on the floor';
+  @override
+  String get monitorInFrontYes => 'Monitor positioned directly in front';
+  @override
+  String get monitorInFrontNo => 'Monitor is not positioned directly in front';
+  @override
+  String get chairHasArmrestsYes => 'Chair has armrests';
+  @override
+  String get chairHasArmrestsNo => 'Chair does not have armrests';
+  @override
+  String get rosaSubScores => 'ROSA Sub Scores';
+  @override
+  String get photo => 'Photo';
 }

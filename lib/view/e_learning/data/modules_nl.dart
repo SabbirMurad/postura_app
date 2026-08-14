@@ -29,7 +29,7 @@ QuizModule m1Nl() => QuizModule(
         "Werknemers vervangen door automatisering",
         "Alleen focussen op productiviteit",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wat is een typische risicofactor bij bureauwerk?",
@@ -39,7 +39,7 @@ QuizModule m1Nl() => QuizModule(
         "Water drinken",
         "Een stoel met rugsteun gebruiken",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Waar gaan werkpleknormen (zoals ISO 9241-5) voornamelijk over?",
@@ -49,7 +49,7 @@ QuizModule m1Nl() => QuizModule(
         "Salarissystemen",
         "Uitsluitend luchtkwaliteit",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Waarom gebruiken organisaties klachtenvragenlijsten?",
@@ -59,7 +59,7 @@ QuizModule m1Nl() => QuizModule(
         "Om internetgebruik te monitoren",
         "Om medische zorg te vervangen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welke uitspraak over MSA's bij kantoormedewerkers is het meest accuraat?",
@@ -69,7 +69,7 @@ QuizModule m1Nl() => QuizModule(
         "Een slechte werkplekinrichting en langdurig statisch zitten kunnen bijdragen aan nek- en bovenste ledematenklachten",
         "Ze kunnen niet beïnvloed worden door werkplekaanpassingen",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Welke uitspraak beschrijft een aandoening aan het bewegingsapparaat (MSA) bij kantoorwerk het best?",
@@ -79,7 +79,7 @@ QuizModule m1Nl() => QuizModule(
         "Ongemak of letsel aan spieren, pezen of gewrichten, vaak gerelateerd aan werkhouding",
         "Een aandoening die alleen door sport wordt veroorzaakt",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Welke combinatie van risicofactoren is het meest typisch voor bureauwerk?",
@@ -89,7 +89,7 @@ QuizModule m1Nl() => QuizModule(
         "Hoge temperaturen en slechte verlichting",
         "Alleen korte e-mails en licht typen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Waarom is \"werk aanpassen aan de werknemer\" belangrijk?",
@@ -99,7 +99,7 @@ QuizModule m1Nl() => QuizModule(
         "Het vermindert belasting en helpt MSA's in de loop van de tijd te voorkomen",
         "Het richt zich uitsluitend op het verhogen van de typsnelheid",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Wat is een rol van werkpleknormen zoals ISO 9241-5 in organisaties?",
@@ -109,7 +109,7 @@ QuizModule m1Nl() => QuizModule(
         "Ze geven richtlijnen voor werkplekinrichting en houdingsvereisten",
         "Ze zijn alleen van toepassing op fabrieksmachines",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Hoe kunnen klachtenvragenlijsten en houdingschecklists ergonomieprogramma's ondersteunen?",
@@ -119,7 +119,7 @@ QuizModule m1Nl() => QuizModule(
         "Door alle medische consulten te vervangen",
         "Door alleen productiviteit en output te meten",
       ],
-      answer: 2,
+      answer: 1,
     ),
   ],
 );
@@ -149,12 +149,12 @@ QuizModule m2Nl() => QuizModule(
         "Strak gekruist onder de stoel",
         "Op de stoelwielen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Een voorwaartse hoofdhouding verhoogt vooral de belasting op welk gebied?",
       options: ["Tenen", "Nek en bovenrug", "Enkels", "Heupen"],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wat is een goede functie van de rugleuning?",
@@ -164,7 +164,7 @@ QuizModule m2Nl() => QuizModule(
         "Je ver voorover laten leunen",
         "Alle beweging blokkeren",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Kinintrektrekkingen richten zich voornamelijk op welke spieren?",
@@ -174,7 +174,7 @@ QuizModule m2Nl() => QuizModule(
         "Handspieren",
         "Buikspieren",
       ],
-      answer: 1,
+      answer: 0,
     ),
     QuizItemModel(
       question: "Wat kun je gebruiken als je voeten de vloer niet bereiken?",
@@ -184,7 +184,7 @@ QuizModule m2Nl() => QuizModule(
         "Geen verandering nodig",
         "Voeten op de stoelwielen plaatsen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welke beschrijving past het best bij een \"neutrale zithouding\"?",
@@ -194,7 +194,7 @@ QuizModule m2Nl() => QuizModule(
         "Op de rand van de stoel zitten zonder rugcontact",
         "Benen strak gekruist onder de stoel",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wat is een praktische manier om een voorwaartse hoofdhouding aan het bureau te verminderen?",
@@ -204,7 +204,7 @@ QuizModule m2Nl() => QuizModule(
         "De rugleuning gebruiken, de stoel dichter bij het bureau trekken en het scherm op comfortabele kijkafstand brengen",
         "Naar je schoot kijken tijdens het typen",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Welk teken wijst erop dat je stoel je onderrug niet goed ondersteunt?",
@@ -214,7 +214,7 @@ QuizModule m2Nl() => QuizModule(
         "Je merkt regelmatig dat je onderrug afrondt en moe of pijnlijk wordt",
         "Je voeten raken de vloer",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Wat is het hoofddoel van schouderbladknijpingen in Module 2?",
@@ -224,7 +224,7 @@ QuizModule m2Nl() => QuizModule(
         "Afgeronde schouders corrigeren en bovenrugspieren activeren",
         "De vingers en polsen stretchen",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Wanneer kan een voetensteun bijzonder nuttig zijn?",
@@ -234,7 +234,7 @@ QuizModule m2Nl() => QuizModule(
         "Wanneer je stoel niet laag genoeg kan worden ingesteld en je voeten de vloer niet bereiken",
         "Wanneer je ver voorover wilt leunen",
       ],
-      answer: 3,
+      answer: 2,
     ),
   ],
 );
@@ -262,7 +262,7 @@ QuizModule m3Nl() => QuizModule(
         "Op kniehoogte",
         "Op de vloer",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wat is een gebruikelijke kijkafstand om belasting te verminderen?",
@@ -272,7 +272,7 @@ QuizModule m3Nl() => QuizModule(
         "Ongeveer 3 meter weg",
         "Je neus aanrakend",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Hoe moeten de polsen gepositioneerd zijn bij het typen of muisgebruik?",
@@ -282,7 +282,7 @@ QuizModule m3Nl() => QuizModule(
         "Alleen rustend op de rand van het bureau",
         "Sterk naar buiten gedraaid",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Als je het meeste van de tijd één scherm gebruikt, waar moet het dan geplaatst worden?",
@@ -292,7 +292,7 @@ QuizModule m3Nl() => QuizModule(
         "Achter je",
         "Op de vloer",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wat is een teken dat de muis te ver weg staat?",
@@ -302,7 +302,7 @@ QuizModule m3Nl() => QuizModule(
         "Je kunt de cursor niet zien",
         "Je typt sneller",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wat kan er gebeuren als de monitor langdurig te laag staat?",
@@ -312,7 +312,7 @@ QuizModule m3Nl() => QuizModule(
         "De gebruiker zal altijd perfect rechtop zitten",
         "Het beïnvloedt alleen de typsnelheid",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Als je muis te ver van je lichaam staat, wat is dan het waarschijnlijke effect?",
@@ -322,7 +322,7 @@ QuizModule m3Nl() => QuizModule(
         "Je moet mogelijk reiken en je schouder optillen, wat de spanning verhoogt",
         "Het verandert alleen de schermhelderheid",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Waar is een ideale positie voor het toetsenbord ten opzichte van je ellebogen?",
@@ -332,7 +332,7 @@ QuizModule m3Nl() => QuizModule(
         "Ongeveer op ellebooghoogte zodat de onderarmen ongeveer horizontaal kunnen blijven",
         "Direct op je schoot met gebogen polsen",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Wat is de beste plaatsing wanneer je twee schermen gelijkmatig gebruikt?",
@@ -342,7 +342,7 @@ QuizModule m3Nl() => QuizModule(
         "Eén heel hoog, één heel laag",
         "Eén op de vloer, één aan de muur",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Waarom is het belangrijk om de polsen recht te houden bij het typen of muisgebruik?",
@@ -352,7 +352,7 @@ QuizModule m3Nl() => QuizModule(
         "Het maakt het toetsenbord overbodig",
         "Het voorkomt alle vormen van oogbelasting",
       ],
-      answer: 2,
+      answer: 1,
     ),
   ],
 );
@@ -380,7 +380,7 @@ QuizModule m4Nl() => QuizModule(
         "Alle lichten uitdoen",
         "De applicatie sluiten",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Waarom zijn extreme temperaturen problematisch op het werk?",
@@ -390,7 +390,7 @@ QuizModule m4Nl() => QuizModule(
         "Ze beïnvloeden alleen computers",
         "Ze voorkomen MSA's",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wat is een micropauze?",
@@ -400,7 +400,7 @@ QuizModule m4Nl() => QuizModule(
         "Een volledige vrije dag",
         "Een lunchvergadering",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Goede kantoorverlichting moet zijn:",
@@ -410,7 +410,7 @@ QuizModule m4Nl() => QuizModule(
         "Volledig donker",
         "Flikkerend",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wat is een eenvoudige micropauze-activiteit?",
@@ -420,7 +420,7 @@ QuizModule m4Nl() => QuizModule(
         "De adem inhouden",
         "Sneller typen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wat is een veelvoorkomend gevolg van sterke schittering op je scherm?",
@@ -430,7 +430,7 @@ QuizModule m4Nl() => QuizModule(
         "Verhoogde oogbelasting, mogelijke hoofdpijn en moeite met lezen",
         "Geen invloed op gebruikers",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Hoe kun je het contrast tussen een helder raam en een donkerder scherm verminderen?",
@@ -440,7 +440,7 @@ QuizModule m4Nl() => QuizModule(
         "Het scherm haaks op het raam plaatsen en jaloezieën of gordijnen aanpassen",
         "Alleen de schermhelderheid op maximaal zetten",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Waarom worden regelmatige micropauzes aanbevolen tijdens beeldschermwerk?",
@@ -450,7 +450,7 @@ QuizModule m4Nl() => QuizModule(
         "Ze zijn alleen nodig voor sporters",
         "Ze veranderen alleen de schermresolutie",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welke uitspraak over temperatuur en concentratie is het meest accuraat?",
@@ -460,7 +460,7 @@ QuizModule m4Nl() => QuizModule(
         "Comfortabele temperatuurbereiken ondersteunen de focus, terwijl extremen de vermoeidheid kunnen verhogen",
         "Alleen geluidsniveaus zijn belangrijk voor concentratie",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Wat is een voorbeeld van een eenvoudige micropauze tijdens bureauwerk?",
@@ -470,7 +470,7 @@ QuizModule m4Nl() => QuizModule(
         "Je adem inhouden tijdens het typen",
         "Alleen je ogen sluiten zonder te bewegen",
       ],
-      answer: 2,
+      answer: 1,
     ),
   ],
 );
@@ -497,7 +497,7 @@ QuizModule m5Nl() => QuizModule(
         "Boven het hoofd",
         "Op één uitgestrekte arm",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welke beweging moet vermeden worden tijdens het tillen?",
@@ -507,7 +507,7 @@ QuizModule m5Nl() => QuizModule(
         "Ademen",
         "Beide handen gebruiken",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Hoe kun je de rugbelasting bij het tillen verminderen?",
@@ -517,7 +517,7 @@ QuizModule m5Nl() => QuizModule(
         "Je adem inhouden",
         "Snel tillen met een schokkerige beweging",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wanneer is het beter om hulp of een hulpmiddel te vragen?",
@@ -527,7 +527,7 @@ QuizModule m5Nl() => QuizModule(
         "Voor een vel papier",
         "Nooit",
       ],
-      answer: 1,
+      answer: 0,
     ),
     QuizItemModel(
       question: "Welke uitspraak over tillen bij kantoorwerk is juist?",
@@ -537,7 +537,7 @@ QuizModule m5Nl() => QuizModule(
         "Alleen fabriekswerk is relevant",
         "Alleen zitten is van belang",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Waarom is het zo belangrijk om een last dicht bij je lichaam te houden tijdens het tillen?",
@@ -547,7 +547,7 @@ QuizModule m5Nl() => QuizModule(
         "Het heeft geen effect op je lichaam",
         "Het helpt alleen bij de balans, maar niet bij de belasting",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wat is de veiligste manier om te draaien terwijl je een zwaar voorwerp draagt?",
@@ -557,7 +557,7 @@ QuizModule m5Nl() => QuizModule(
         "Je voeten verplaatsen om je hele lichaam samen met de last te draaien",
         "Zo ver mogelijk achterover leunen tijdens het draaien",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Wat is een betere bewegingsstrategie bij het tillen van de vloer?",
@@ -567,7 +567,7 @@ QuizModule m5Nl() => QuizModule(
         "Je benen recht houden en alleen met je armen trekken",
         "Springen en de last in de lucht opvangen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wanneer is het op kantoor het meest gepast om een steekwagen te gebruiken of hulp te vragen?",
@@ -577,7 +577,7 @@ QuizModule m5Nl() => QuizModule(
         "Nooit, want kantoorlasten zijn altijd veilig",
         "Alleen voor heel kleine voorwerpen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welke situatie verhoogt het risico op rugbelasting bij tillen op kantoor?",
@@ -587,7 +587,7 @@ QuizModule m5Nl() => QuizModule(
         "Een pen in je zak dragen",
         "Beide handen gebruiken om een licht toetsenbord vast te houden",
       ],
-      answer: 2,
+      answer: 1,
     ),
   ],
 );
@@ -615,7 +615,7 @@ QuizModule m6Nl() => QuizModule(
         "Alleen vanuit bed werken",
         "In het donker werken",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Een eenvoudige manier om langdurig zitten te verminderen is:",
@@ -625,7 +625,7 @@ QuizModule m6Nl() => QuizModule(
         "De stoel vastzetten",
         "Pauzes vermijden",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welke optie is beter voor laptopgebruik?",
@@ -635,7 +635,7 @@ QuizModule m6Nl() => QuizModule(
         "De laptop gebruiken terwijl je op je zij ligt",
         "De laptop boven je hoofd houden",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Waarom zijn regelmatige houdingsveranderingen nuttig bij thuiswerken?",
@@ -645,7 +645,7 @@ QuizModule m6Nl() => QuizModule(
         "Ze verstoren alleen de concentratie",
         "Ze beschadigen de stoel",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welk gedrag verhoogt de nekbelasting bij telefoons?",
@@ -655,7 +655,7 @@ QuizModule m6Nl() => QuizModule(
         "Korte pauzes nemen",
         "Een headset gebruiken",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Waarom wordt langdurig werken vanaf een bank of bed meestal niet aanbevolen?",
@@ -665,7 +665,7 @@ QuizModule m6Nl() => QuizModule(
         "Het leidt vaak tot een slechte rug- en nekhouding zonder goede ondersteuning",
         "Het voorkomt dat je een laptop kunt gebruiken",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Welke combinatie is het best voor langdurig laptopgebruik thuis?",
@@ -675,7 +675,7 @@ QuizModule m6Nl() => QuizModule(
         "Laptop verhoogd tot ooghoogte plus extern toetsenbord en muis",
         "Laptop op vloerniveau, er staand boven",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Wat is een praktische manier om langdurig zitten te verminderen bij thuiswerken?",
@@ -685,7 +685,7 @@ QuizModule m6Nl() => QuizModule(
         "Alleen vanuit bed werken",
         "De stoel vastzetten en nooit bewegen",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welk gedrag verhoogt het risico op \"tekstnek\"?",
@@ -695,7 +695,7 @@ QuizModule m6Nl() => QuizModule(
         "Langdurig met een gebogen nek naar de telefoon kijken",
         "Korte pauzes nemen van de telefoon",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Waarom gelden dezelfde ergonomische principes thuis als op kantoor?",
@@ -705,7 +705,7 @@ QuizModule m6Nl() => QuizModule(
         "Omdat laptops alleen thuis werken",
         "Omdat houding alleen op kantoor belangrijk is",
       ],
-      answer: 1,
+      answer: 0,
     ),
   ],
 );
@@ -733,7 +733,7 @@ QuizModule m7Nl() => QuizModule(
         "Ze maken werkplekaanpassingen overbodig",
         "Ze vervangen slaap",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Een gebruikelijke houdtijd voor een lichte stretching is:",
@@ -743,7 +743,7 @@ QuizModule m7Nl() => QuizModule(
         "Ongeveer 5 minuten",
         "Ongeveer 30 minuten",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Welke van deze is een eenvoudige schouderactivatieoefening?",
@@ -753,7 +753,7 @@ QuizModule m7Nl() => QuizModule(
         "Zware tassen dragen",
         "Optrekken onder een zware belasting",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wanneer moet een gebruiker stoppen met een oefening?",
@@ -763,7 +763,7 @@ QuizModule m7Nl() => QuizModule(
         "Nooit",
         "Alleen na 3 uur",
       ],
-      answer: 1,
+      answer: 0,
     ),
     QuizItemModel(
       question: "Een realistische frequentie voor micropauzes tijdens beeldschermwerk is:",
@@ -773,7 +773,7 @@ QuizModule m7Nl() => QuizModule(
         "Eén keer per jaar",
         "Alleen tijdens vakanties",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Wat is het hoofddoel van de dagelijkse preventieve routine in Module 7?",
@@ -783,7 +783,7 @@ QuizModule m7Nl() => QuizModule(
         "Trainen voor wedstrijdsport",
         "Werkplekaanpassingen vermijden",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Hoe moeten stretchoefeningen over het algemeen aanvoelen?",
@@ -793,7 +793,7 @@ QuizModule m7Nl() => QuizModule(
         "Volledig moeiteloos zonder enig gevoel",
         "Zo intens dat je je adem moet inhouden",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Hoe vaak kunnen korte oefen- of stretchpauzes realistisch in beeldschermwerk worden ingebouwd?",
@@ -803,7 +803,7 @@ QuizModule m7Nl() => QuizModule(
         "Een paar seconden of minuten elke 20–30 minuten",
         "Alleen eenmaal per jaar",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Wat moet je doen als de pijn scherp toeneemt tijdens een oefening?",
@@ -813,7 +813,7 @@ QuizModule m7Nl() => QuizModule(
         "De oefening onmiddellijk stoppen en terugkeren naar een comfortabele positie",
         "De intensiteit verhogen",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Waarom is het nuttig om oefeningen te koppelen aan specifieke klachten (bijvoorbeeld nek- of schouderspanning)?",
@@ -823,7 +823,7 @@ QuizModule m7Nl() => QuizModule(
         "Het voegt alleen complexiteit toe zonder voordeel",
         "Het vervangt werkplekaanpassingen volledig",
       ],
-      answer: 1,
+      answer: 0,
     ),
   ],
 );

@@ -9,11 +9,14 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
 
+    <!-- Cleartext (HTTP) traffic is NOT allowed in release builds. Local dev over
+         http:// is re-enabled only for debug builds via
+         android/app/src/debug/AndroidManifest.xml. -->
     <application
-    android:label="Postura"
-    android:name="${applicationName}"
-    android:icon="@mipmap/launcher_icon"
-    android:usesCleartextTraffic="true">  <!-- ✅ Add this line -->
+        android:label="Postura"
+        android:name="${applicationName}"
+        android:icon="@mipmap/launcher_icon"
+        android:enableOnBackInvokedCallback="true">
 
     <provider
         android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"
@@ -47,6 +50,12 @@
             <category android:name="android.intent.category.LAUNCHER"/>
         </intent-filter>
     </activity>
+
+    <activity
+        android:name=".PoseDetectionActivity"
+        android:exported="false"
+        android:screenOrientation="portrait"
+        android:theme="@style/Theme.Exercises_FitFuel" />
 
     <meta-data
         android:name="flutterEmbedding"

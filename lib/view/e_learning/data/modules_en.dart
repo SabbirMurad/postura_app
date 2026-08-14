@@ -27,7 +27,7 @@ QuizModule m1En() => QuizModule(
         "Replace workers with automation",
         "Focus only on productivity",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Which is a typical risk factor in desk work?",
@@ -37,7 +37,7 @@ QuizModule m1En() => QuizModule(
         "Drinking water",
         "Using a chair with back support",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "What do workstation standards (like ISO 9241-5) mainly deal with?",
@@ -47,7 +47,7 @@ QuizModule m1En() => QuizModule(
         "Payroll systems",
         "Air quality only",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Why do organizations use symptom questionnaires?",
@@ -57,7 +57,7 @@ QuizModule m1En() => QuizModule(
         "To monitor internet usage",
         "To replace medical care",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Which statement about MSDs in office workers is most accurate?",
@@ -67,7 +67,7 @@ QuizModule m1En() => QuizModule(
         "Poor workstation setup and long static sitting can contribute to neck and upper limb problems",
         "They cannot be influenced by workstation changes",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Which statement best describes a Musculoskeletal Disorder (MSD) in office work?",
@@ -77,7 +77,7 @@ QuizModule m1En() => QuizModule(
         "A discomfort or injury affecting muscles, tendons, or joints, often linked to work posture",
         "A condition caused only by sports",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Which combination of risk factors is most typical for desk work?",
@@ -87,7 +87,7 @@ QuizModule m1En() => QuizModule(
         "High temperatures and poor lighting",
         "Only short emails and light typing",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Why is \"designing work to fit the worker\" important?",
@@ -97,7 +97,7 @@ QuizModule m1En() => QuizModule(
         "It reduces strain and helps prevent MSDs over time",
         "It focuses only on increasing typing speed",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "What is one role of workstation standards like ISO 9241-5 in organizations?",
@@ -107,7 +107,7 @@ QuizModule m1En() => QuizModule(
         "They give guidance on workstation layout and postural requirements",
         "They only apply to factory machinery",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "How can symptom questionnaires and posture checklists support ergonomics programs?",
@@ -117,7 +117,7 @@ QuizModule m1En() => QuizModule(
         "By replacing all medical consultations",
         "By measuring only productivity and output",
       ],
-      answer: 2,
+      answer: 1,
     ),
   ],
 );
@@ -146,12 +146,12 @@ QuizModule m2En() => QuizModule(
         "Crossed tightly under the chair",
         "On the chair wheels",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "A forward head posture mainly increases strain on which area?",
       options: ["Toes", "Neck and upper back", "Ankles", "Hips"],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "What is a good role of the backrest?",
@@ -161,7 +161,7 @@ QuizModule m2En() => QuizModule(
         "Keep you leaning far forward",
         "Block all movement",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Chin tucks mainly target which muscles?",
@@ -171,7 +171,7 @@ QuizModule m2En() => QuizModule(
         "Hand muscles",
         "Abdominal muscles",
       ],
-      answer: 1,
+      answer: 0,
     ),
     QuizItemModel(
       question: "What can you use if your feet do not reach the floor?",
@@ -181,7 +181,7 @@ QuizModule m2En() => QuizModule(
         "No change needed",
         "Place feet on chair wheels",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Which description best matches a \"neutral sitting posture\"?",
@@ -191,7 +191,7 @@ QuizModule m2En() => QuizModule(
         "Sitting on the edge of the chair with no back contact",
         "Legs tightly crossed under the chair",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "What is a practical way to reduce forward head posture at the desk?",
@@ -201,7 +201,7 @@ QuizModule m2En() => QuizModule(
         "Use the backrest, pull the chair closer to the desk, and bring the screen within comfortable viewing distance",
         "Look down at your lap while typing",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Which sign suggests your chair is not supporting your lower back correctly?",
@@ -211,7 +211,7 @@ QuizModule m2En() => QuizModule(
         "You regularly feel your lower back rounding and becoming tired or achy",
         "Your feet touch the floor",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "What is the main purpose of shoulder blade squeezes in Module 2?",
@@ -221,7 +221,7 @@ QuizModule m2En() => QuizModule(
         "To correct rounded shoulders and activate upper-back muscles",
         "To stretch the fingers and wrists",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "When might a footrest be especially helpful?",
@@ -231,7 +231,7 @@ QuizModule m2En() => QuizModule(
         "When your chair cannot be lowered enough and your feet do not reach the floor",
         "When you want to lean far forward",
       ],
-      answer: 3,
+      answer: 2,
     ),
   ],
 );
@@ -259,7 +259,7 @@ QuizModule m3En() => QuizModule(
         "At knee level",
         "On the floor",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "What is a typical viewing distance to reduce strain?",
@@ -269,7 +269,7 @@ QuizModule m3En() => QuizModule(
         "About 3 meters away",
         "Touching your nose",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "How should wrists be positioned when typing or using the mouse?",
@@ -279,7 +279,7 @@ QuizModule m3En() => QuizModule(
         "Resting only on the edge of the desk",
         "Rotated strongly outward",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "If you use one screen most of the time, where should it be placed?",
@@ -289,7 +289,7 @@ QuizModule m3En() => QuizModule(
         "Behind you",
         "On the floor",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "What is a sign that the mouse may be too far away?",
@@ -299,7 +299,7 @@ QuizModule m3En() => QuizModule(
         "You cannot see the cursor",
         "You type faster",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "What can happen if the monitor is placed too low for a long time?",
@@ -309,7 +309,7 @@ QuizModule m3En() => QuizModule(
         "The user will always sit perfectly straight",
         "It only affects typing speed",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "If your mouse is placed too far away from your body, what is the likely effect?",
@@ -319,7 +319,7 @@ QuizModule m3En() => QuizModule(
         "You may need to reach and lift your shoulder, increasing tension",
         "It only changes screen brightness",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Where is an ideal position for the keyboard relative to your elbows?",
@@ -329,7 +329,7 @@ QuizModule m3En() => QuizModule(
         "About at elbow height so the forearms can stay roughly horizontal",
         "Directly on your lap with bent wrists",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "When using two screens equally, what is the best placement?",
@@ -339,7 +339,7 @@ QuizModule m3En() => QuizModule(
         "One very high, one very low",
         "One on the floor, one on the wall",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Why is it important to keep wrists straight while typing or using the mouse?",
@@ -349,7 +349,7 @@ QuizModule m3En() => QuizModule(
         "It makes the keyboard unnecessary",
         "It prevents all types of eye strain",
       ],
-      answer: 2,
+      answer: 1,
     ),
   ],
 );
@@ -376,7 +376,7 @@ QuizModule m4En() => QuizModule(
         "Turn all lights off",
         "Close the app",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Why are extreme temperatures problematic at work?",
@@ -386,7 +386,7 @@ QuizModule m4En() => QuizModule(
         "They only affect computers",
         "They prevent MSDs",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "What is a microbreak?",
@@ -396,7 +396,7 @@ QuizModule m4En() => QuizModule(
         "A full day off",
         "A lunch meeting",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Good office lighting should be:",
@@ -406,7 +406,7 @@ QuizModule m4En() => QuizModule(
         "Completely dark",
         "Flickering",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Which is a simple microbreak activity?",
@@ -416,7 +416,7 @@ QuizModule m4En() => QuizModule(
         "Holding the breath",
         "Typing faster",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "What is a common consequence of strong glare on your screen?",
@@ -426,7 +426,7 @@ QuizModule m4En() => QuizModule(
         "Increased eye strain, possible headaches, and difficulty reading",
         "No impact on users",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "How can you reduce contrast between a bright window and a darker screen?",
@@ -436,7 +436,7 @@ QuizModule m4En() => QuizModule(
         "Position the screen perpendicular to the window and adjust blinds or curtains",
         "Increase only screen brightness to maximum",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Why are regular microbreaks recommended during screen work?",
@@ -446,7 +446,7 @@ QuizModule m4En() => QuizModule(
         "They are only needed for athletes",
         "They only change screen resolution",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Which statement about temperature and concentration is most accurate?",
@@ -456,7 +456,7 @@ QuizModule m4En() => QuizModule(
         "Comfortable temperature ranges support focus, while extremes can increase fatigue",
         "Only noise levels matter for concentration",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "What is an example of a simple microbreak during desk work?",
@@ -466,7 +466,7 @@ QuizModule m4En() => QuizModule(
         "Holding your breath while typing",
         "Only closing your eyes without moving",
       ],
-      answer: 2,
+      answer: 1,
     ),
   ],
 );
@@ -492,7 +492,7 @@ QuizModule m5En() => QuizModule(
         "Above the head",
         "On one stretched arm",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Which motion should be avoided while lifting?",
@@ -502,7 +502,7 @@ QuizModule m5En() => QuizModule(
         "Breathing",
         "Using both hands",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "How can you lower back strain when lifting?",
@@ -512,7 +512,7 @@ QuizModule m5En() => QuizModule(
         "Hold your breath",
         "Lift quickly with a jerking motion",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "When is it better to get help or a device?",
@@ -522,7 +522,7 @@ QuizModule m5En() => QuizModule(
         "For a sheet of paper",
         "Never",
       ],
-      answer: 1,
+      answer: 0,
     ),
     QuizItemModel(
       question: "Which statement about lifting in office jobs is true?",
@@ -532,7 +532,7 @@ QuizModule m5En() => QuizModule(
         "Only factory work matters",
         "Only sitting matters",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Why is keeping a load close to your body when lifting so important?",
@@ -542,7 +542,7 @@ QuizModule m5En() => QuizModule(
         "It has no effect on your body",
         "It only helps with balance but not with strain",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "What is the safest way to turn while carrying a heavy object?",
@@ -552,7 +552,7 @@ QuizModule m5En() => QuizModule(
         "Move your feet to turn your whole body together with the load",
         "Lean as far back as possible while turning",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "When lifting from the floor, what is a better movement strategy?",
@@ -562,7 +562,7 @@ QuizModule m5En() => QuizModule(
         "Keep your legs straight and pull only with your arms",
         "Jump and catch the load in mid-air",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "In an office, when is it most appropriate to use a trolley or ask for help?",
@@ -572,7 +572,7 @@ QuizModule m5En() => QuizModule(
         "Never, because office loads are always safe",
         "Only for very small items",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Which situation increases the risk of back strain in office lifting?",
@@ -582,7 +582,7 @@ QuizModule m5En() => QuizModule(
         "Carrying a pen in your pocket",
         "Using both hands to hold a light keyboard",
       ],
-      answer: 2,
+      answer: 1,
     ),
   ],
 );
@@ -609,7 +609,7 @@ QuizModule m6En() => QuizModule(
         "Work only from bed",
         "Work in the dark",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "A simple way to reduce prolonged sitting is to:",
@@ -619,7 +619,7 @@ QuizModule m6En() => QuizModule(
         "Lock the chair",
         "Avoid breaks",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "For laptop use, which option is better?",
@@ -629,7 +629,7 @@ QuizModule m6En() => QuizModule(
         "Use it lying on your side",
         "Hold it above your head",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Why are frequent posture changes helpful in remote work?",
@@ -639,7 +639,7 @@ QuizModule m6En() => QuizModule(
         "They only break concentration",
         "They damage the chair",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Which behaviour increases neck strain with phones?",
@@ -649,7 +649,7 @@ QuizModule m6En() => QuizModule(
         "Taking short breaks",
         "Using a headset",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Why is working long-term from a sofa or bed usually not recommended?",
@@ -659,7 +659,7 @@ QuizModule m6En() => QuizModule(
         "It often leads to poor back and neck posture without proper support",
         "It prevents you from using a laptop",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Which combination is best for longer laptop use at home?",
@@ -669,7 +669,7 @@ QuizModule m6En() => QuizModule(
         "Laptop raised to eye level plus external keyboard and mouse",
         "Laptop at floor level, standing above it",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "What is a practical way to reduce long sitting periods when working remotely?",
@@ -679,7 +679,7 @@ QuizModule m6En() => QuizModule(
         "Work only from the bed",
         "Keep the chair locked and never move",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Which behavior increases the risk of \"text neck\"?",
@@ -689,7 +689,7 @@ QuizModule m6En() => QuizModule(
         "Looking down at the phone with a bent neck for long periods",
         "Taking short breaks from the phone",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Why do the same ergonomics principles apply at home and in the office?",
@@ -699,7 +699,7 @@ QuizModule m6En() => QuizModule(
         "Because laptops only work at home",
         "Because posture only matters in the office",
       ],
-      answer: 1,
+      answer: 0,
     ),
   ],
 );
@@ -726,7 +726,7 @@ QuizModule m7En() => QuizModule(
         "They eliminate the need to adjust the workstation",
         "They replace sleep",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "A typical hold time for a gentle stretch is:",
@@ -736,7 +736,7 @@ QuizModule m7En() => QuizModule(
         "About 5 minutes",
         "About 30 minutes",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "Which of these is a simple shoulder activation exercise?",
@@ -746,7 +746,7 @@ QuizModule m7En() => QuizModule(
         "Carrying heavy bags",
         "Shrugging under a heavy load",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "When should a user stop an exercise?",
@@ -756,7 +756,7 @@ QuizModule m7En() => QuizModule(
         "Never",
         "Only after 3 hours",
       ],
-      answer: 1,
+      answer: 0,
     ),
     QuizItemModel(
       question: "A realistic frequency for microbreaks during screen work is:",
@@ -766,7 +766,7 @@ QuizModule m7En() => QuizModule(
         "Once per year",
         "Only during holidays",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "What is the main goal of the daily preventive routine in Module 7?",
@@ -776,7 +776,7 @@ QuizModule m7En() => QuizModule(
         "To train for competitive sports",
         "To avoid adjusting the workstation",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "How should stretching exercises generally feel?",
@@ -786,7 +786,7 @@ QuizModule m7En() => QuizModule(
         "Completely effortless with no sensation at all",
         "So intense you must hold your breath",
       ],
-      answer: 2,
+      answer: 1,
     ),
     QuizItemModel(
       question: "How often can short exercise or stretch breaks be realistically integrated into screen work?",
@@ -796,7 +796,7 @@ QuizModule m7En() => QuizModule(
         "A few seconds or minutes every 20–30 minutes",
         "Only once per year",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "What should you do if pain sharply increases during an exercise?",
@@ -806,7 +806,7 @@ QuizModule m7En() => QuizModule(
         "Stop the exercise immediately and return to a comfortable position",
         "Increase the intensity",
       ],
-      answer: 3,
+      answer: 2,
     ),
     QuizItemModel(
       question: "Why is linking exercises to specific symptoms helpful (for example, neck or shoulder tension)?",
@@ -816,7 +816,7 @@ QuizModule m7En() => QuizModule(
         "It only increases complexity with no benefit",
         "It replaces workstation adjustments completely",
       ],
-      answer: 1,
+      answer: 0,
     ),
   ],
 );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 
 class CustomTextField extends StatefulWidget {
   final TextEditingController controller;
@@ -129,11 +129,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.r),
-              borderSide: BorderSide(color: AppColors.border,  width: 1.2),
+              borderSide: BorderSide(color: AppColors.border, width: 1.2),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.r),
-              borderSide: BorderSide(color: Color(0xFF8A8A8A),  width: 1.2),
+              borderSide: BorderSide(color: Color(0xFF8A8A8A), width: 1.2),
             ),
             suffixIcon: widget.isPassword
                 ? GestureDetector(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 
 class AppBackButton extends StatelessWidget {
   final Color? backgroundColor;
@@ -12,12 +12,13 @@ class AppBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Nothing to pop (e.g. this screen was reached via context.go, which
+    // replaces the stack) — don't show a back button that leads nowhere.
+    if (!context.canPop()) return const SizedBox.shrink();
+
     return GestureDetector(
       onTap: () {
-        if (Get.isSnackbarOpen) {
-          Get.closeAllSnackbars();
-        }
-        Get.back();
+        context.pop();
       },
       child: Container(
         width: 40.w,

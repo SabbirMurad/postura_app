@@ -1,44 +1,74 @@
+import 'dart:io';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:posture_detector_app/data/services/db/sqlite_service.dart';
-import 'package:posture_detector_app/core/bindings/app_binding.dart';
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/firebase/firebase_options.dart';
+import 'package:posture_detector_app/services/db/sqlite_service.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/routes.dart';
-import 'package:posture_detector_app/routes.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
-import 'package:posture_detector_app/data/helpers/app_helper.dart';
+import 'package:posture_detector_app/helpers/app_helper.dart';
+import 'package:posture_detector_app/provider/locale_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
+/// DEBUG-ONLY: accepts self-signed certs so the app can talk to a local dev
+/// server over TLS. This bypass MUST never run in release builds — doing so
+/// would disable certificate validation and allow trivial MITM. It is gated on
+/// `kDebugMode` below and is never installed in a release build.
+class DevHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
+
 void main() async {
+  // Only relax certificate validation in debug builds; release enforces TLS.
+  if (kDebugMode) {
+    HttpOverrides.global = DevHttpOverrides();
+  }
   WidgetsFlutterBinding.ensureInitialized();
 
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await AppHelper.init();
   await Sqlite.instance.init();
 
   final savedLang = await AppHelper.instance.getLanguage();
+  final savedLocale = savedLang != null ? Locale(savedLang) : null;
 
-  runApp(MyApp(savedLocale: savedLang != null ? Locale(savedLang) : null));
+  runApp(
+    ProviderScope(
+      overrides: [
+        localeProvider.overrideWith(
+          (ref) => savedLocale ?? const Locale('en'),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-//
-class MyApp extends StatelessWidget {
-  final Locale? savedLocale;
-
-  const MyApp({super.key, this.savedLocale});
+class MyApp extends ConsumerWidget {
+  const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+
     return ScreenUtilInit(
       designSize: Size(375, 812),
-      child: GetMaterialApp(
+      child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        title: 'Posture detector app',
+        title: 'Postura',
         theme: ThemeData(
           fontFamily: GoogleFonts.inter().fontFamily,
           bottomSheetTheme: BottomSheetThemeData(
@@ -46,9 +76,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         themeMode: ThemeMode.light,
-        initialRoute: AppRoute.splashScreen,
-        getPages: AppRoute.routes,
-        initialBinding: AppBindings(),
+        routerConfig: AppRoute.allRoutes,
         scaffoldMessengerKey: scaffoldMessengerKey,
         localizationsDelegates: [
           AppLocalizations.delegate,
@@ -62,8 +90,13 @@ class MyApp extends StatelessWidget {
           Locale('de'),
           Locale('nl'),
         ],
-        locale: savedLocale ?? Get.deviceLocale,
-        fallbackLocale: Locale('en'),
+        locale: locale,
+        localeResolutionCallback: (deviceLocale, supportedLocales) {
+          for (final supported in supportedLocales) {
+            if (supported.languageCode == deviceLocale?.languageCode) return supported;
+          }
+          return const Locale('en');
+        },
       ),
     );
   }

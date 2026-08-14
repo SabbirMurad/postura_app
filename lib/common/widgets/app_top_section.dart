@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/routes.dart';
-import 'package:posture_detector_app/core/constants/app_text.dart';
+import 'package:posture_detector_app/constants/app_text.dart';
 
-import 'package:posture_detector_app/core/constants/app_colors.dart';
+import 'package:posture_detector_app/constants/colors.dart';
 import 'back_button.dart';
 
 class AppTopSection extends StatelessWidget {
   final String title;
   final String subtitle;
   final bool? isSkip;
+  final bool hasBackButton;
 
   const AppTopSection({
     super.key,
+    this.hasBackButton = true,
     required this.title,
     required this.subtitle,
     this.isSkip = false,
@@ -26,11 +28,12 @@ class AppTopSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Align(alignment: Alignment.centerLeft, child: AppBackButton()),
+            if (hasBackButton)
+              Align(alignment: Alignment.centerLeft, child: AppBackButton()),
             if (isSkip ?? false)
               TextButton(
                 onPressed: () {
-                  Get.toNamed(AppRoute.cameraGuideScreen);
+                  context.push(AppRoute.cameraGuideScreen);
                 },
                 child: Text(
                   AppText.skip,
@@ -43,22 +46,22 @@ class AppTopSection extends StatelessWidget {
               ),
           ],
         ),
-        SizedBox(height: 17.h),
+        SizedBox(height: 12.h),
         Align(
           alignment: Alignment.center,
           child: Text(
             title,
-            style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 6.h),
         Text(
           subtitle,
           style: TextStyle(
-            fontSize: 16.sp,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w400,
             color: AppColors.text.withValues(alpha: 0.7),
           ),

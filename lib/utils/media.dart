@@ -1,0 +1,33 @@
+library media_utils;
+
+import 'dart:convert';
+import 'dart:io';
+import 'dart:isolate';
+import 'dart:typed_data';
+import 'package:posture_detector_app/utils.dart';
+import 'package:posture_detector_app/utils/print_helper.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
+import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/helpers/app_helper.dart';
+import 'package:posture_detector_app/models/prepared_image.dart';
+import 'package:posture_detector_app/services/network/custom_http.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
+import 'package:blurhash_ffi/blurhash_ffi.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:posture_detector_app/constants/credential.dart';
+
+part '/utils/media/image_blur_hash.dart';
+part '/utils/media/image_uploader.dart';
+part '/utils/media/image_picker.dart';
+part '/utils/media/image_viewer.dart';
+part '/utils/media/video_picker.dart';
+part '/utils/media/audio_picker.dart';
