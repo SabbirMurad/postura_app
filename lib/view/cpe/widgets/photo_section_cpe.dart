@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/provider/cpe_assessment.dart';
 import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
@@ -80,6 +81,9 @@ class _CaptureCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(14.r),
           child: CachedNetworkImage(
             imageUrl: imageUrl,
+            // Scan captures are served token-gated (used_at = Capture); send the
+            // bearer token or the request 404s and only the errorWidget shows.
+            httpHeaders: AppHelper.authHeaders,
             width: double.infinity,
             height: 350.h,
             fit: BoxFit.cover,
