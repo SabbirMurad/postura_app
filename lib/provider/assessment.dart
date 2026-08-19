@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/widgets.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/models/analysis/analysis_report.dart';
@@ -177,8 +178,34 @@ class AssessmentNotifier extends _$AssessmentNotifier {
       state = state.copyWith(workstationAnswers: answers);
 
   /// Store the captures returned by the native PostureEngine.
-  void setCaptures(List<SideViewCapture> side, FrontViewCapture? front) =>
-      state = state.copyWith(sideCaptures: side, frontCapture: front);
+  ///
+  /// Assigns a fresh state (not `copyWith`) so a scan with no front shot clears
+  /// any previous `frontCapture` — `copyWith(frontCapture: null)` would keep the
+  /// old one and the review screen would show the earlier scan's front photo.
+  /// Also evicts every capture file from the image cache: the native pipeline
+  /// can reuse the same file paths across scans, and `Image.file` caches decoded
+  /// bytes by path, so without eviction the review screen shows the prior scan's
+  /// image even though the file on disk is new.
+  void setCaptures(List<SideViewCapture> side, FrontViewCapture? front) {
+    for (final c in side) {
+      _evictFromImageCache(c.image);
+    }
+    if (front != null) _evictFromImageCache(front.image);
+
+    state = AssessmentState(
+      selectedBodyRegions: state.selectedBodyRegions,
+      painIntensity: state.painIntensity,
+      painDuration: state.painDuration,
+      selectedOptionalSymptoms: state.selectedOptionalSymptoms,
+      workstationAnswers: state.workstationAnswers,
+      sideCaptures: side,
+      frontCapture: front,
+    );
+  }
+
+  void _evictFromImageCache(File file) {
+    PaintingBinding.instance.imageCache.evict(FileImage(file));
+  }
 
   /// Submits the assessment. Uploads every capture image (side shots + the front
   /// shot), then posts the grouped structure.

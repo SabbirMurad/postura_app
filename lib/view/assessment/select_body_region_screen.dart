@@ -12,11 +12,31 @@ import 'package:posture_detector_app/common/widgets/selection_chip.dart';
 import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/routes.dart';
 
-class SelectBodyRegionScreen extends ConsumerWidget {
+class SelectBodyRegionScreen extends ConsumerStatefulWidget {
   const SelectBodyRegionScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SelectBodyRegionScreen> createState() =>
+      _SelectBodyRegionScreenState();
+}
+
+class _SelectBodyRegionScreenState
+    extends ConsumerState<SelectBodyRegionScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // First screen of a new scan: clear anything left from a previous
+    // assessment. The notifier is keepAlive, so without this the old pain
+    // selections and captured photos persist and the review screen shows the
+    // earlier scan's images. Deferred to post-frame — a provider can't be
+    // mutated while the widget tree is still building.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(assessmentNotifierProvider.notifier).reset();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final assessment = ref.watch(assessmentNotifierProvider);
 
