@@ -8,13 +8,13 @@ class ELearningModuleData {
   static List<QuizModule> getModules(String locale) {
     switch (locale) {
       case 'nl':
-        return [nl.m1Nl(), nl.m2Nl(), nl.m3Nl(), nl.m4Nl(), nl.m5Nl(), nl.m6Nl(), nl.m7Nl()];
+        return [nl.m1Nl(), nl.m2Nl(), nl.m3Nl(), nl.m4Nl(), nl.m5Nl(), nl.m6Nl(), nl.m7Nl(), nl.m8Nl()];
       case 'de':
-        return [de.m1De(), de.m2De(), de.m3De(), de.m4De(), de.m5De(), de.m6De(), de.m7De()];
+        return [de.m1De(), de.m2De(), de.m3De(), de.m4De(), de.m5De(), de.m6De(), de.m7De(), de.m8De()];
       case 'es':
-        return [es.m1Es(), es.m2Es(), es.m3Es(), es.m4Es(), es.m5Es(), es.m6Es(), es.m7Es()];
+        return [es.m1Es(), es.m2Es(), es.m3Es(), es.m4Es(), es.m5Es(), es.m6Es(), es.m7Es(), es.m8Es()];
       default:
-        return [en.m1En(), en.m2En(), en.m3En(), en.m4En(), en.m5En(), en.m6En(), en.m7En()];
+        return [en.m1En(), en.m2En(), en.m3En(), en.m4En(), en.m5En(), en.m6En(), en.m7En(), en.m8En()];
     }
   }
 

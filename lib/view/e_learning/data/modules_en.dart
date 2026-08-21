@@ -820,3 +820,179 @@ QuizModule m7En() => QuizModule(
     ),
   ],
 );
+
+QuizModule m8En() => QuizModule(
+  id: 8,
+  title: "Understanding Pain & Staying Active at Work",
+  objectives: [
+    "Understand that pain does not always equal tissue damage.",
+    "Recognize fear-avoidance thinking and why it increases the risk of longer-term problems.",
+    "Apply graded activity principles during normal desk work.",
+    "Know when extra professional support is still useful.",
+  ],
+  content:
+      "Musculoskeletal discomfort at a desk is very common. Many people "
+      "assume that if something hurts, the tissue must be damaged and rest "
+      "is the only safe option, but modern pain science shows a more "
+      "complete picture: pain is a protective signal produced by the "
+      "nervous system, shaped not only by the state of the tissues but also "
+      "by stress, sleep, previous experiences, beliefs about pain, and how "
+      "much you move. Pain can be present even when no serious damage is "
+      "occurring, and its intensity does not always match the amount of "
+      "tissue injury. Believing that \"hurt always equals harm\" often leads "
+      "people to reduce activity more than necessary, which over time can "
+      "cause stiffness, loss of confidence in movement, and a longer "
+      "recovery.\n\n"
+      "Fear-avoidance is the tendency to avoid movement or normal "
+      "activities because you fear the activity will increase pain or "
+      "cause damage. It is a normal short-term protective response, but "
+      "becomes a problem when it continues past the acute phase. Typical "
+      "fear-avoidance thoughts include \"I should not do anything that "
+      "causes any discomfort,\" \"if I keep working I will make the injury "
+      "worse,\" and \"I must wait until the pain is completely gone before I "
+      "return to normal duties.\" Research using screening tools such as "
+      "the Örebro Musculoskeletal Pain Screening Questionnaire shows that "
+      "high fear-avoidance and low recovery expectations are among the "
+      "strongest predictors that short-term pain becomes long-term, with "
+      "the high-risk group having substantially more sick leave days and a "
+      "much higher risk of long-term work disability than the low-risk "
+      "group.\n\n"
+      "Instead of complete rest or waiting for zero pain, graded activity "
+      "is a more effective strategy for most desk-related musculoskeletal "
+      "problems: start with a manageable level of movement and work, then "
+      "gradually increase it over days and weeks. Some mild discomfort "
+      "during activity is often normal and does not mean damage is "
+      "occurring. Break work into shorter periods with frequent short "
+      "movement breaks, then slowly increase the duration. Focus on "
+      "returning to normal function rather than eliminating every "
+      "sensation of discomfort, and combine this approach with a "
+      "well-adjusted workstation. Graded activity helps retrain the "
+      "nervous system, rebuild confidence in movement, and reduce the risk "
+      "that the problem becomes chronic.\n\n"
+      "You can apply these ideas immediately: keep using a good "
+      "workstation setup with your chair, screen, keyboard and mouse in "
+      "neutral positions; take short movement breaks every 20–30 minutes "
+      "rather than sitting for very long periods; when discomfort is "
+      "present, reduce the intensity or duration of the activity instead "
+      "of stopping completely; gradually return to your normal work "
+      "pattern as tolerance improves; and use the simple exercises "
+      "recommended in your Postura programme as part of this graded "
+      "approach.\n\n"
+      "Self-management and graded activity are powerful, but not always "
+      "enough. Seek extra support from an ergonomist, physiotherapist or "
+      "occupational health when pain is severe or rapidly getting worse, "
+      "when it stops you performing normal work duties despite gradual "
+      "activity and workstation improvements, if you notice new symptoms "
+      "such as significant numbness, weakness, or pain spreading into the "
+      "arms or legs, or if you have already been struggling for several "
+      "weeks with little improvement. Early professional support for "
+      "people at elevated risk of long-term problems has been shown to "
+      "reduce lost work days compared with usual care.\n\n"
+      "Good workstation setup reduces physical load. Understanding pain "
+      "and staying active reduces the risk that short-term discomfort "
+      "becomes a long-term problem. Together they form a more complete "
+      "approach to preventing musculoskeletal disorders and unnecessary "
+      "sick leave.",
+  quizzes: [
+    QuizItemModel(
+      question: "What is the most accurate statement about musculoskeletal pain at a desk?",
+      options: [
+        "If it hurts, you are always damaging the tissues",
+        "Pain is a complex signal and does not always equal tissue damage",
+        "Pain always means you should stop all activity",
+        "Pain only comes from poor posture",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "What is \"fear-avoidance\"?",
+      options: [
+        "Being careful with heavy lifting only",
+        "Avoiding movement or activity because you fear it will make the pain worse or cause damage",
+        "Taking regular stretch breaks",
+        "Using an ergonomic chair",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "According to research, people with high fear-avoidance and low recovery expectations tend to have:",
+      options: [
+        "The same number of sick days as others",
+        "Significantly more sick leave days and higher risk of long-term problems",
+        "Faster recovery",
+        "No difference in outcome",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "What is the better approach when you have ongoing desk-related discomfort?",
+      options: [
+        "Complete rest until the pain is 0/10",
+        "Only do exercises that cause zero discomfort",
+        "Gradually increase activity and movement even if there is some mild discomfort",
+        "Avoid all computer work",
+      ],
+      answer: 2,
+    ),
+    QuizItemModel(
+      question: "Which thought is more helpful for recovery?",
+      options: [
+        "\"I should not do anything that causes any pain\"",
+        "\"Some discomfort during activity is normal and does not mean I am harming myself\"",
+        "\"Pain means I need more imaging and rest\"",
+        "\"I must wait until I am 100% pain-free before returning to normal duties\"",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "What is one practical way to apply graded activity at a desk job?",
+      options: [
+        "Work through pain without any breaks",
+        "Completely stop using the mouse or keyboard",
+        "Start with shorter periods of work + frequent short movement breaks, then gradually increase",
+        "Only work when pain is completely gone",
+      ],
+      answer: 2,
+    ),
+    QuizItemModel(
+      question: "When is it still important to seek extra help (ergonomist, physiotherapist or occupational health)?",
+      options: [
+        "Only if pain is 9 or 10 out of 10",
+        "If pain is severe, getting worse, or stopping you from normal work despite gradual activity and workstation improvements",
+        "Never - you should always manage alone",
+        "Only after 6 months",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "The combination of good workstation setup + understanding pain + staying active is important because:",
+      options: [
+        "It only helps with posture",
+        "It addresses both the physical load and the risk that pain becomes long-term",
+        "It replaces the need for any professional support",
+        "It is only useful for athletes",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Which statement best describes graded activity?",
+      options: [
+        "Doing the most difficult activity first",
+        "Avoiding all activities that cause any sensation",
+        "Starting with a manageable level of activity and gradually increasing it over time",
+        "Only stretching when pain is zero",
+      ],
+      answer: 2,
+    ),
+    QuizItemModel(
+      question: "Why can understanding pain help reduce long-term sick days?",
+      options: [
+        "It has no effect on sick days",
+        "It only helps elite athletes",
+        "It reduces unhelpful avoidance behaviour and supports earlier, safer return to normal activity",
+        "It replaces the need for any workstation improvements",
+      ],
+      answer: 2,
+    ),
+  ],
+);

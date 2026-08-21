@@ -311,7 +311,7 @@ class ELearningNotifier extends Notifier<ELearningState> {
       }
 
       // fetchQuizResults also re-parses certificate status from the response,
-      // so after module 7 passes the cert card updates automatically.
+      // so after the final module passes the cert card updates automatically.
       await fetchQuizResults();
 
       return createResult;

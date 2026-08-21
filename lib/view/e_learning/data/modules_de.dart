@@ -830,3 +830,189 @@ QuizModule m7De() => QuizModule(
     ),
   ],
 );
+
+QuizModule m8De() => QuizModule(
+  id: 8,
+  title: "Schmerz verstehen und bei der Arbeit aktiv bleiben",
+  objectives: [
+    "Verstehen, dass Schmerz nicht immer Gewebeschaden bedeutet.",
+    "Angst-Vermeidungs-Denken erkennen und verstehen, warum es das Risiko laengerfristiger Probleme erhoeht.",
+    "Prinzipien der gestuften Aktivitaet waehrend der normalen Buerotaetigkeit anwenden.",
+    "Wissen, wann zusaetzliche professionelle Unterstuetzung noch sinnvoll ist.",
+  ],
+  content:
+      "Muskuloskelettale Beschwerden am Schreibtisch sind sehr haeufig. "
+      "Viele Menschen nehmen an, dass bei Schmerzen das Gewebe geschaedigt "
+      "sein muss und Ruhe die einzig sichere Option ist. Die moderne "
+      "Schmerzforschung zeigt jedoch ein vollstaendigeres Bild: Schmerz ist "
+      "ein Schutzsignal des Nervensystems, das nicht nur vom Zustand des "
+      "Gewebes, sondern auch von Stress, Schlaf, frueheren Erfahrungen, "
+      "Ueberzeugungen ueber Schmerz und der Menge an Bewegung beeinflusst "
+      "wird. Schmerz kann auch ohne ernsthafte Schaedigung auftreten, und "
+      "die Schmerzintensitaet entspricht nicht immer dem Ausmass der "
+      "Gewebeverletzung. Der Glaube \"Schmerz bedeutet immer Schaden\" "
+      "fuehrt oft dazu, dass Menschen die Aktivitaet mehr als noetig "
+      "einschraenken, was mit der Zeit zu Steifheit, Verlust des "
+      "Vertrauens in Bewegung und einer laengeren Genesung fuehren "
+      "kann.\n\n"
+      "Angst-Vermeidung ist die Tendenz, Bewegung oder normale "
+      "Aktivitaeten zu vermeiden, weil man befuerchtet, dass die "
+      "Aktivitaet den Schmerz verstaerkt oder Schaden verursacht. Es ist "
+      "eine normale kurzfristige Schutzreaktion, wird aber zum Problem, "
+      "wenn sie ueber die akute Phase hinaus anhaelt. Typische "
+      "Angst-Vermeidungs-Gedanken sind: \"Ich sollte nichts tun, was "
+      "irgendwelche Beschwerden verursacht\", \"wenn ich weiterarbeite, "
+      "verschlimmere ich die Verletzung\" und \"ich muss warten, bis der "
+      "Schmerz vollstaendig weg ist, bevor ich zu normalen Taetigkeiten "
+      "zurueckkehre\". Untersuchungen mit Screening-Instrumenten wie dem "
+      "Oerebro-Fragebogen zur muskuloskelettalen Schmerzeinschaetzung "
+      "zeigen, dass hohe Angst-Vermeidung und geringe Genesungserwartungen "
+      "zu den staerksten Praediktoren dafuer gehoeren, dass kurzfristiger "
+      "Schmerz langfristig wird - die Hochrisikogruppe hat deutlich mehr "
+      "Krankheitstage und ein wesentlich hoeheres Risiko einer "
+      "langfristigen Arbeitsunfaehigkeit als die Niedrigrisikogruppe.\n\n"
+      "Statt vollstaendiger Ruhe oder dem Warten auf Schmerzfreiheit ist "
+      "gestufte Aktivitaet fuer die meisten schreibtischbedingten "
+      "muskuloskelettalen Probleme die wirksamere Strategie: Beginnen Sie "
+      "mit einem handhabbaren Mass an Bewegung und Arbeit und steigern Sie "
+      "dieses ueber Tage und Wochen schrittweise. Leichte Beschwerden "
+      "waehrend der Aktivitaet sind oft normal und bedeuten nicht, dass "
+      "ein Schaden entsteht. Teilen Sie die Arbeit in kuerzere Abschnitte "
+      "mit haeufigen kurzen Bewegungspausen auf und steigern Sie die Dauer "
+      "dann langsam. Konzentrieren Sie sich darauf, die normale Funktion "
+      "wiederherzustellen, statt jede Empfindung von Unbehagen zu "
+      "beseitigen, und kombinieren Sie dies mit einem gut eingestellten "
+      "Arbeitsplatz. Gestufte Aktivitaet hilft, das Nervensystem neu zu "
+      "trainieren, das Vertrauen in Bewegung wiederherzustellen und das "
+      "Risiko zu verringern, dass das Problem chronisch wird.\n\n"
+      "Sie koennen diese Grundsaetze sofort anwenden: Nutzen Sie weiterhin "
+      "einen gut eingestellten Arbeitsplatz mit Stuhl, Bildschirm, "
+      "Tastatur und Maus in neutraler Position; machen Sie alle 20-30 "
+      "Minuten kurze Bewegungspausen, statt sehr lange zu sitzen; "
+      "reduzieren Sie bei Beschwerden die Intensitaet oder Dauer der "
+      "Taetigkeit, statt ganz aufzuhoeren; kehren Sie schrittweise zu "
+      "Ihrem normalen Arbeitspensum zurueck, sobald sich Ihre Toleranz "
+      "verbessert; und nutzen Sie die in Ihrem Postura-Programm "
+      "empfohlenen einfachen Uebungen als Teil dieses gestuften "
+      "Vorgehens.\n\n"
+      "Selbstmanagement und gestufte Aktivitaet sind wirkungsvoll, aber "
+      "nicht immer ausreichend. Suchen Sie zusaetzliche Unterstuetzung bei "
+      "einem Ergonomen, Physiotherapeuten oder der Arbeitsmedizin, wenn "
+      "der Schmerz stark ist oder sich schnell verschlimmert, wenn er Sie "
+      "trotz gestufter Aktivitaet und Arbeitsplatzverbesserungen an der "
+      "normalen Arbeit hindert, wenn Sie neue Symptome wie deutliche "
+      "Taubheit, Schwaeche oder in Arme oder Beine ausstrahlende Schmerzen "
+      "bemerken, oder wenn Sie bereits seit mehreren Wochen mit wenig "
+      "Besserung kaempfen. Es hat sich gezeigt, dass fruehe professionelle "
+      "Unterstuetzung fuer Personen mit erhoehtem Risiko fuer "
+      "langfristige Probleme im Vergleich zur ueblichen Versorgung "
+      "weniger verlorene Arbeitstage zur Folge hat.\n\n"
+      "Ein gut eingestellter Arbeitsplatz reduziert die koerperliche "
+      "Belastung. Das Verstaendnis von Schmerz und aktiv zu bleiben "
+      "verringert das Risiko, dass kurzfristige Beschwerden zu einem "
+      "langfristigen Problem werden. Zusammen bilden sie einen "
+      "umfassenderen Ansatz zur Vorbeugung muskuloskelettaler "
+      "Erkrankungen und unnoetiger Krankheitstage.",
+  quizzes: [
+    QuizItemModel(
+      question: "Was ist die zutreffendste Aussage ueber muskuloskelettale Schmerzen am Schreibtisch?",
+      options: [
+        "Wenn es wehtut, schaedigen Sie immer das Gewebe",
+        "Schmerz ist ein komplexes Signal und bedeutet nicht immer eine Gewebeschaedigung",
+        "Schmerz bedeutet immer, dass Sie jede Aktivitaet stoppen sollten",
+        "Schmerz entsteht nur durch schlechte Haltung",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Was ist \"Angst-Vermeidung\"?",
+      options: [
+        "Nur bei schwerem Heben vorsichtig zu sein",
+        "Bewegung oder Aktivitaet zu vermeiden, weil man befuerchtet, dass sich der Schmerz verschlimmert oder ein Schaden entsteht",
+        "Regelmaessige Dehnpausen einzulegen",
+        "Einen ergonomischen Stuhl zu benutzen",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Laut Forschung neigen Menschen mit hoher Angst-Vermeidung und geringen Genesungserwartungen dazu:",
+      options: [
+        "Genauso viele Krankheitstage zu haben wie andere",
+        "Deutlich mehr Krankheitstage und ein hoeheres Risiko fuer langfristige Probleme zu haben",
+        "Schneller zu genesen",
+        "Keinen Unterschied im Ergebnis zu zeigen",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Was ist der bessere Ansatz bei anhaltenden schreibtischbedingten Beschwerden?",
+      options: [
+        "Vollstaendige Ruhe, bis der Schmerz bei 0/10 liegt",
+        "Nur Uebungen machen, die keinerlei Beschwerden verursachen",
+        "Aktivitaet und Bewegung schrittweise steigern, auch wenn leichte Beschwerden auftreten",
+        "Jegliche Computerarbeit vermeiden",
+      ],
+      answer: 2,
+    ),
+    QuizItemModel(
+      question: "Welcher Gedanke ist hilfreicher fuer die Genesung?",
+      options: [
+        "\"Ich sollte nichts tun, was irgendwelche Schmerzen verursacht\"",
+        "\"Manche Beschwerden waehrend der Aktivitaet sind normal und bedeuten nicht, dass ich mir schade\"",
+        "\"Schmerz bedeutet, dass ich mehr Bildgebung und Ruhe brauche\"",
+        "\"Ich muss warten, bis ich zu 100% schmerzfrei bin, bevor ich zu normalen Taetigkeiten zurueckkehre\"",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Was ist eine praktische Moeglichkeit, gestufte Aktivitaet bei der Buerotaetigkeit anzuwenden?",
+      options: [
+        "Ohne jegliche Pausen durch den Schmerz hindurcharbeiten",
+        "Die Nutzung von Maus oder Tastatur vollstaendig einstellen",
+        "Mit kuerzeren Arbeitsphasen und haeufigen kurzen Bewegungspausen beginnen und dann schrittweise steigern",
+        "Nur arbeiten, wenn der Schmerz vollstaendig weg ist",
+      ],
+      answer: 2,
+    ),
+    QuizItemModel(
+      question: "Wann ist es weiterhin wichtig, zusaetzliche Hilfe zu suchen (Ergonom, Physiotherapeut oder Arbeitsmedizin)?",
+      options: [
+        "Nur wenn der Schmerz 9 oder 10 von 10 betraegt",
+        "Wenn der Schmerz stark ist, sich verschlimmert oder Sie trotz gestufter Aktivitaet und Arbeitsplatzverbesserungen an normaler Arbeit hindert",
+        "Nie - Sie sollten immer allein zurechtkommen",
+        "Erst nach 6 Monaten",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Die Kombination aus gut eingestelltem Arbeitsplatz, Schmerzverstaendnis und Aktivbleiben ist wichtig, weil:",
+      options: [
+        "Sie nur bei der Haltung hilft",
+        "Sie sowohl die koerperliche Belastung als auch das Risiko, dass Schmerz langfristig wird, angeht",
+        "Sie jegliche professionelle Unterstuetzung ueberfluessig macht",
+        "Sie nur fuer Sportler nuetzlich ist",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Welche Aussage beschreibt gestufte Aktivitaet am besten?",
+      options: [
+        "Zuerst die schwierigste Aktivitaet ausfuehren",
+        "Alle Aktivitaeten vermeiden, die irgendeine Empfindung verursachen",
+        "Mit einem handhabbaren Aktivitaetsniveau beginnen und es im Laufe der Zeit schrittweise steigern",
+        "Nur dehnen, wenn der Schmerz null ist",
+      ],
+      answer: 2,
+    ),
+    QuizItemModel(
+      question: "Warum kann das Verstaendnis von Schmerz helfen, langfristige Krankheitstage zu reduzieren?",
+      options: [
+        "Es hat keinen Einfluss auf Krankheitstage",
+        "Es hilft nur Spitzensportlern",
+        "Es reduziert unhilfreiches Vermeidungsverhalten und unterstuetzt eine fruehere, sicherere Rueckkehr zur normalen Aktivitaet",
+        "Es ersetzt die Notwendigkeit jeglicher Arbeitsplatzverbesserungen",
+      ],
+      answer: 2,
+    ),
+  ],
+);

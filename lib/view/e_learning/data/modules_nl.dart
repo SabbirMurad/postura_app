@@ -827,3 +827,183 @@ QuizModule m7Nl() => QuizModule(
     ),
   ],
 );
+
+QuizModule m8Nl() => QuizModule(
+  id: 8,
+  title: "Pijn Begrijpen & Actief Blijven op het Werk",
+  objectives: [
+    "Begrijpen dat pijn niet altijd weefselschade betekent.",
+    "Angst-vermijdingsgedachten herkennen en begrijpen waarom ze het risico op langduriger problemen vergroten.",
+    "Principes van graduele activiteit toepassen tijdens normaal bureauwerk.",
+    "Weten wanneer extra professionele ondersteuning nog steeds nuttig is.",
+  ],
+  content:
+      "Musculoskeletale klachten achter een bureau komen zeer vaak voor. "
+      "Veel mensen denken dat als iets pijn doet, het weefsel beschadigd "
+      "moet zijn en dat rust de enige veilige optie is. Moderne "
+      "pijnwetenschap laat een vollediger beeld zien: pijn is een "
+      "beschermend signaal van het zenuwstelsel, dat niet alleen wordt "
+      "beïnvloed door de toestand van de weefsels, maar ook door stress, "
+      "slaap, eerdere ervaringen, overtuigingen over pijn en hoeveel je "
+      "beweegt. Pijn kan aanwezig zijn zonder dat er ernstige schade "
+      "optreedt, en de intensiteit van de pijn komt niet altijd overeen "
+      "met de mate van weefselletsel. Het geloof dat \"pijn altijd schade "
+      "betekent\" leidt er vaak toe dat mensen hun activiteit meer "
+      "beperken dan nodig is, wat na verloop van tijd kan leiden tot "
+      "stijfheid, verlies van vertrouwen in beweging en een langere "
+      "hersteltijd.\n\n"
+      "Angst-vermijding is de neiging om beweging of normale activiteiten "
+      "te vermijden uit angst dat de activiteit de pijn zal verergeren of "
+      "schade zal veroorzaken. Het is een normale kortetermijn-"
+      "beschermingsreactie, maar wordt een probleem wanneer het aanhoudt "
+      "na de acute fase. Typische angst-vermijdingsgedachten zijn: \"ik "
+      "mag niets doen dat enig ongemak veroorzaakt\", \"als ik doorwerk, "
+      "maak ik het letsel erger\" en \"ik moet wachten tot de pijn helemaal "
+      "weg is voordat ik terugkeer naar mijn normale taken\". Onderzoek met "
+      "screeningsinstrumenten zoals de Örebro Vragenlijst voor "
+      "Musculoskeletale Pijnscreening toont aan dat hoge angst-vermijding "
+      "en lage herstelverwachtingen tot de sterkste voorspellers behoren "
+      "dat kortdurende pijn langdurig wordt, waarbij de hoogrisicogroep "
+      "aanzienlijk meer ziekteverzuimdagen heeft en een veel hoger risico "
+      "op langdurige arbeidsongeschiktheid dan de laagrisicogroep.\n\n"
+      "In plaats van volledige rust of wachten tot de pijn nul is, is "
+      "graduele activiteit een effectievere strategie voor de meeste "
+      "bureaugerelateerde musculoskeletale problemen: begin met een "
+      "haalbaar niveau van beweging en werk, en verhoog dit geleidelijk "
+      "over dagen en weken. Lichte klachten tijdens activiteit zijn vaak "
+      "normaal en betekenen niet dat er schade ontstaat. Verdeel het werk "
+      "in kortere periodes met frequente korte bewegingspauzes, en "
+      "verhoog de duur daarna langzaam. Richt je op het herstellen van "
+      "normale functie in plaats van op het volledig wegnemen van elk "
+      "gevoel van ongemak, en combineer dit met een goed ingestelde "
+      "werkplek. Graduele activiteit helpt het zenuwstelsel opnieuw te "
+      "trainen, vertrouwen in beweging op te bouwen en het risico te "
+      "verminderen dat het probleem chronisch wordt.\n\n"
+      "Je kunt deze ideeën direct toepassen: blijf een goede "
+      "werkplekinstelling gebruiken met je stoel, scherm, toetsenbord en "
+      "muis in neutrale posities; neem elke 20–30 minuten korte "
+      "bewegingspauzes in plaats van heel lang te blijven zitten; "
+      "verminder bij ongemak de intensiteit of duur van de activiteit in "
+      "plaats van volledig te stoppen; keer geleidelijk terug naar je "
+      "normale werkpatroon naarmate je tolerantie verbetert; en gebruik "
+      "de eenvoudige oefeningen die worden aanbevolen in je "
+      "Postura-programma als onderdeel van deze graduele aanpak.\n\n"
+      "Zelfmanagement en graduele activiteit zijn krachtig, maar niet "
+      "altijd voldoende. Zoek extra ondersteuning bij een ergonoom, "
+      "fysiotherapeut of bedrijfsarts wanneer de pijn ernstig is of snel "
+      "verergert, wanneer deze je verhindert je normale werkzaamheden uit "
+      "te voeren ondanks geleidelijke activiteit en werkplekverbeteringen, "
+      "als je nieuwe symptomen opmerkt zoals aanzienlijke gevoelloosheid, "
+      "zwakte of pijn die uitstraalt naar de armen of benen, of als je al "
+      "enkele weken worstelt met weinig verbetering. Vroege professionele "
+      "ondersteuning voor mensen met een verhoogd risico op langdurige "
+      "problemen blijkt minder verloren werkdagen op te leveren "
+      "vergeleken met de gebruikelijke zorg.\n\n"
+      "Een goede werkplekinstelling vermindert de fysieke belasting. Het "
+      "begrijpen van pijn en actief blijven vermindert het risico dat "
+      "kortdurend ongemak een langdurig probleem wordt. Samen vormen ze "
+      "een vollediger aanpak om musculoskeletale aandoeningen en onnodig "
+      "ziekteverzuim te voorkomen.",
+  quizzes: [
+    QuizItemModel(
+      question: "Wat is de meest accurate uitspraak over musculoskeletale pijn achter een bureau?",
+      options: [
+        "Als het pijn doet, beschadig je altijd de weefsels",
+        "Pijn is een complex signaal en betekent niet altijd weefselschade",
+        "Pijn betekent altijd dat je alle activiteit moet stoppen",
+        "Pijn komt alleen door een slechte houding",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Wat is \"angst-vermijding\"?",
+      options: [
+        "Alleen voorzichtig zijn bij zwaar tillen",
+        "Beweging of activiteit vermijden omdat je vreest dat het de pijn erger maakt of schade veroorzaakt",
+        "Regelmatig rekpauzes nemen",
+        "Een ergonomische stoel gebruiken",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Volgens onderzoek hebben mensen met hoge angst-vermijding en lage herstelverwachtingen doorgaans:",
+      options: [
+        "Evenveel ziektedagen als anderen",
+        "Aanzienlijk meer ziekteverzuimdagen en een hoger risico op langdurige problemen",
+        "Een sneller herstel",
+        "Geen verschil in uitkomst",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Wat is de betere aanpak bij aanhoudend bureaugerelateerd ongemak?",
+      options: [
+        "Volledige rust tot de pijn 0/10 is",
+        "Alleen oefeningen doen die geen enkel ongemak veroorzaken",
+        "Geleidelijk activiteit en beweging verhogen, ook al is er wat licht ongemak",
+        "Alle computerwerk vermijden",
+      ],
+      answer: 2,
+    ),
+    QuizItemModel(
+      question: "Welke gedachte is nuttiger voor herstel?",
+      options: [
+        "\"Ik mag niets doen dat pijn veroorzaakt\"",
+        "\"Wat ongemak tijdens activiteit is normaal en betekent niet dat ik mezelf schade\"",
+        "\"Pijn betekent dat ik meer beeldvorming en rust nodig heb\"",
+        "\"Ik moet wachten tot ik 100% pijnvrij ben voordat ik terugkeer naar normale taken\"",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Wat is een praktische manier om graduele activiteit toe te passen bij bureauwerk?",
+      options: [
+        "Doorwerken door de pijn heen zonder enige pauze",
+        "Volledig stoppen met het gebruik van de muis of het toetsenbord",
+        "Beginnen met kortere werkperiodes en frequente korte bewegingspauzes, en dan geleidelijk opbouwen",
+        "Alleen werken wanneer de pijn helemaal weg is",
+      ],
+      answer: 2,
+    ),
+    QuizItemModel(
+      question: "Wanneer is het nog steeds belangrijk om extra hulp te zoeken (ergonoom, fysiotherapeut of bedrijfsarts)?",
+      options: [
+        "Alleen als de pijn 9 of 10 van de 10 is",
+        "Als de pijn ernstig is, verergert, of je verhindert normaal te werken ondanks geleidelijke activiteit en werkplekverbeteringen",
+        "Nooit - je moet het altijd zelf oplossen",
+        "Pas na 6 maanden",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "De combinatie van een goede werkplekinstelling, het begrijpen van pijn en actief blijven is belangrijk omdat:",
+      options: [
+        "Het alleen helpt bij de houding",
+        "Het zowel de fysieke belasting als het risico aanpakt dat pijn langdurig wordt",
+        "Het de noodzaak van professionele ondersteuning volledig wegneemt",
+        "Het alleen nuttig is voor sporters",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Welke uitspraak beschrijft graduele activiteit het best?",
+      options: [
+        "Eerst de moeilijkste activiteit doen",
+        "Alle activiteiten vermijden die enige sensatie veroorzaken",
+        "Beginnen met een haalbaar activiteitenniveau en dit geleidelijk verhogen in de loop van de tijd",
+        "Alleen rekken wanneer de pijn nul is",
+      ],
+      answer: 2,
+    ),
+    QuizItemModel(
+      question: "Waarom kan het begrijpen van pijn helpen om langdurig ziekteverzuim te verminderen?",
+      options: [
+        "Het heeft geen effect op ziektedagen",
+        "Het helpt alleen topsporters",
+        "Het vermindert onnodig vermijdingsgedrag en ondersteunt een eerdere, veiligere terugkeer naar normale activiteit",
+        "Het neemt de noodzaak van werkplekverbeteringen weg",
+      ],
+      answer: 2,
+    ),
+  ],
+);

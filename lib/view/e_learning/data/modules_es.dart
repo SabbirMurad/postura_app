@@ -830,3 +830,186 @@ QuizModule m7Es() => QuizModule(
     ),
   ],
 );
+
+QuizModule m8Es() => QuizModule(
+  id: 8,
+  title: "Comprender el Dolor y Mantenerse Activo en el Trabajo",
+  objectives: [
+    "Comprender que el dolor no siempre significa dano en el tejido.",
+    "Reconocer el pensamiento de evitacion por miedo y por que aumenta el riesgo de problemas a largo plazo.",
+    "Aplicar los principios de actividad gradual durante el trabajo normal de oficina.",
+    "Saber cuando el apoyo profesional adicional sigue siendo util.",
+  ],
+  content:
+      "Las molestias musculoesqueleticas en el escritorio son muy "
+      "comunes. Muchas personas asumen que si algo duele, el tejido debe "
+      "estar danado y que el reposo es la unica opcion segura, pero la "
+      "ciencia moderna del dolor muestra un panorama mas completo: el "
+      "dolor es una senal protectora producida por el sistema nervioso, "
+      "influida no solo por el estado de los tejidos, sino tambien por el "
+      "estres, el sueno, las experiencias previas, las creencias sobre el "
+      "dolor y cuanto te mueves. El dolor puede estar presente incluso sin "
+      "que exista un dano grave, y su intensidad no siempre coincide con "
+      "la magnitud de la lesion. Creer que \"si duele siempre hay dano\" a "
+      "menudo lleva a las personas a reducir la actividad mas de lo "
+      "necesario, lo que con el tiempo puede causar rigidez, perdida de "
+      "confianza en el movimiento y una recuperacion mas larga.\n\n"
+      "La evitacion por miedo es la tendencia a evitar el movimiento o "
+      "las actividades normales por temor a que la actividad aumente el "
+      "dolor o cause dano. Es una respuesta protectora normal a corto "
+      "plazo, pero se convierte en un problema cuando continua despues de "
+      "la fase aguda. Pensamientos tipicos de evitacion por miedo "
+      "incluyen: \"no deberia hacer nada que cause ninguna molestia\", \"si "
+      "sigo trabajando, empeorare la lesion\" y \"debo esperar hasta que el "
+      "dolor desaparezca por completo antes de volver a mis tareas "
+      "normales\". Estudios que usan herramientas de deteccion como el "
+      "Cuestionario de Deteccion de Dolor Musculoesqueletico de Orebro "
+      "muestran que la alta evitacion por miedo y las bajas expectativas "
+      "de recuperacion se encuentran entre los predictores mas fuertes de "
+      "que el dolor a corto plazo se vuelva cronico, con el grupo de alto "
+      "riesgo teniendo sustancialmente mas dias de baja y un riesgo mucho "
+      "mayor de incapacidad laboral a largo plazo que el grupo de bajo "
+      "riesgo.\n\n"
+      "En lugar del reposo completo o de esperar a estar sin dolor, la "
+      "actividad gradual es una estrategia mas eficaz para la mayoria de "
+      "los problemas musculoesqueleticos relacionados con el escritorio: "
+      "comienza con un nivel manejable de movimiento y trabajo, y luego "
+      "aumentalo gradualmente a lo largo de dias y semanas. Una molestia "
+      "leve durante la actividad suele ser normal y no significa que se "
+      "este produciendo dano. Divide el trabajo en periodos mas cortos "
+      "con pausas de movimiento breves y frecuentes, y luego aumenta la "
+      "duracion poco a poco. Concentrate en recuperar la funcion normal "
+      "en lugar de eliminar toda sensacion de molestia, y combina este "
+      "enfoque con un puesto de trabajo bien ajustado. La actividad "
+      "gradual ayuda a reentrenar el sistema nervioso, reconstruir la "
+      "confianza en el movimiento y reducir el riesgo de que el problema "
+      "se vuelva cronico.\n\n"
+      "Puedes aplicar estas ideas de inmediato: sigue usando un buen "
+      "puesto de trabajo con la silla, la pantalla, el teclado y el "
+      "raton en posiciones neutras; toma pausas de movimiento breves "
+      "cada 20-30 minutos en lugar de permanecer sentado durante periodos "
+      "muy largos; cuando haya molestias, reduce la intensidad o la "
+      "duracion de la actividad en lugar de detenerte por completo; "
+      "vuelve gradualmente a tu patron de trabajo normal a medida que "
+      "mejora tu tolerancia; y usa los ejercicios sencillos recomendados "
+      "en tu programa Postura como parte de este enfoque gradual.\n\n"
+      "El automanejo y la actividad gradual son poderosos, pero no "
+      "siempre suficientes. Busca apoyo adicional de un ergonomista, "
+      "fisioterapeuta o salud ocupacional cuando el dolor sea intenso o "
+      "empeore rapidamente, cuando te impida realizar tus tareas normales "
+      "de trabajo a pesar de la actividad gradual y las mejoras del "
+      "puesto de trabajo, si notas nuevos sintomas como entumecimiento "
+      "significativo, debilidad o dolor que se extiende a los brazos o "
+      "las piernas, o si ya llevas varias semanas luchando con poca "
+      "mejoria. Se ha demostrado que el apoyo profesional temprano para "
+      "personas con riesgo elevado de problemas a largo plazo reduce los "
+      "dias de trabajo perdidos en comparacion con la atencion "
+      "habitual.\n\n"
+      "Un buen puesto de trabajo reduce la carga fisica. Comprender el "
+      "dolor y mantenerse activo reduce el riesgo de que una molestia a "
+      "corto plazo se convierta en un problema a largo plazo. Juntos "
+      "forman un enfoque mas completo para prevenir los trastornos "
+      "musculoesqueleticos y las bajas laborales innecesarias.",
+  quizzes: [
+    QuizItemModel(
+      question: "Cual es la afirmacion mas precisa sobre el dolor musculoesqueletico en el escritorio?",
+      options: [
+        "Si duele, siempre estas danando los tejidos",
+        "El dolor es una senal compleja y no siempre significa dano en el tejido",
+        "El dolor siempre significa que debes detener toda actividad",
+        "El dolor solo proviene de una mala postura",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Que es la \"evitacion por miedo\"?",
+      options: [
+        "Tener cuidado solo con el levantamiento de cargas pesadas",
+        "Evitar el movimiento o la actividad porque temes que empeore el dolor o cause dano",
+        "Tomar pausas de estiramiento regulares",
+        "Usar una silla ergonomica",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Segun la investigacion, las personas con alta evitacion por miedo y bajas expectativas de recuperacion tienden a tener:",
+      options: [
+        "El mismo numero de dias de baja que los demas",
+        "Significativamente mas dias de baja y mayor riesgo de problemas a largo plazo",
+        "Una recuperacion mas rapida",
+        "Ninguna diferencia en el resultado",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Cual es el mejor enfoque cuando tienes molestias continuas relacionadas con el escritorio?",
+      options: [
+        "Reposo completo hasta que el dolor sea 0/10",
+        "Hacer solo ejercicios que no causen ninguna molestia",
+        "Aumentar gradualmente la actividad y el movimiento aunque haya alguna molestia leve",
+        "Evitar todo el trabajo con el ordenador",
+      ],
+      answer: 2,
+    ),
+    QuizItemModel(
+      question: "Que pensamiento es mas util para la recuperacion?",
+      options: [
+        "\"No deberia hacer nada que cause ningun dolor\"",
+        "\"Algo de molestia durante la actividad es normal y no significa que me este haciendo dano\"",
+        "\"El dolor significa que necesito mas pruebas de imagen y reposo\"",
+        "\"Debo esperar a estar 100% libre de dolor antes de volver a mis tareas normales\"",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Cual es una forma practica de aplicar la actividad gradual en un trabajo de oficina?",
+      options: [
+        "Trabajar a pesar del dolor sin ninguna pausa",
+        "Dejar de usar por completo el raton o el teclado",
+        "Comenzar con periodos de trabajo mas cortos y pausas de movimiento breves y frecuentes, y luego aumentar gradualmente",
+        "Trabajar solo cuando el dolor haya desaparecido por completo",
+      ],
+      answer: 2,
+    ),
+    QuizItemModel(
+      question: "Cuando sigue siendo importante buscar ayuda adicional (ergonomista, fisioterapeuta o salud ocupacional)?",
+      options: [
+        "Solo si el dolor es 9 o 10 sobre 10",
+        "Si el dolor es intenso, empeora o te impide trabajar con normalidad a pesar de la actividad gradual y las mejoras del puesto de trabajo",
+        "Nunca - siempre debes manejarlo solo",
+        "Solo despues de 6 meses",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "La combinacion de un buen puesto de trabajo, comprender el dolor y mantenerse activo es importante porque:",
+      options: [
+        "Solo ayuda con la postura",
+        "Aborda tanto la carga fisica como el riesgo de que el dolor se vuelva cronico",
+        "Elimina la necesidad de cualquier apoyo profesional",
+        "Solo es util para deportistas",
+      ],
+      answer: 1,
+    ),
+    QuizItemModel(
+      question: "Que afirmacion describe mejor la actividad gradual?",
+      options: [
+        "Hacer primero la actividad mas dificil",
+        "Evitar todas las actividades que causen cualquier sensacion",
+        "Comenzar con un nivel manejable de actividad y aumentarlo gradualmente con el tiempo",
+        "Estirar solo cuando el dolor es cero",
+      ],
+      answer: 2,
+    ),
+    QuizItemModel(
+      question: "Por que comprender el dolor puede ayudar a reducir los dias de baja a largo plazo?",
+      options: [
+        "No tiene ningun efecto en los dias de baja",
+        "Solo ayuda a deportistas de elite",
+        "Reduce el comportamiento de evitacion poco util y favorece un regreso mas temprano y seguro a la actividad normal",
+        "Elimina la necesidad de cualquier mejora del puesto de trabajo",
+      ],
+      answer: 2,
+    ),
+  ],
+);
