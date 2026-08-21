@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:posture_detector_app/common/widgets/recovery_outlook_banner.dart';
 import 'package:posture_detector_app/common/widgets/rosa_sub_score.dart';
 import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
@@ -44,6 +45,32 @@ class CPEAssessmentScreen extends ConsumerWidget {
             SizedBox(width: 4.w),
             Text(
               deskLocation,
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500,
+                color: AppColors.text,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  /// Employee height — context for chair/monitor recommendations. Never
+  /// affects ROSA scoring; shown for the ergonomist's reference only.
+  Widget _heightInfo(double? heightCm) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SectionTitle('Height'),
+        SizedBox(height: 8.h),
+        Row(
+          children: [
+            Icon(Icons.height, size: 16.w, color: const Color(0xFF0078B5)),
+            SizedBox(width: 4.w),
+            Text(
+              heightCm != null ? '${heightCm.round()} cm' : 'Not provided',
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
@@ -302,12 +329,28 @@ class CPEAssessmentScreen extends ConsumerWidget {
                     ),
                     SizedBox(height: 16.h),
                     PatientInfoCardCPE(state: state),
+                    if (state.chronicityElevated) ...[
+                      SizedBox(height: 12.h),
+                      const RecoveryOutlookBanner(compact: true),
+                    ],
                     SizedBox(height: 20.h),
                     ..._mainRosaScores(state: state, loc: loc),
                     SizedBox(height: 20.h),
                     _rosaAssessmentSection(state.rosaScore),
                     SizedBox(height: 20.h),
-                    _deskInfo(deskLocation: state.deskLocation, loc: loc),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: _deskInfo(
+                            deskLocation: state.deskLocation,
+                            loc: loc,
+                          ),
+                        ),
+                        SizedBox(width: 16.w),
+                        Expanded(child: _heightInfo(state.heightCm)),
+                      ],
+                    ),
                     SizedBox(height: 20.h),
                     PainSymptomsSectionCPE(state: state),
                     SizedBox(height: 20.h),

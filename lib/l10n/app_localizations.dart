@@ -465,6 +465,18 @@ abstract class AppLocalizations {
   /// **'Select your pain duration pattern'**
   String get painDurationSubtitle;
 
+  /// No description provided for @workAbilityRecoveryOutlook.
+  ///
+  /// In en, this message translates to:
+  /// **'Work Ability & Recovery Outlook'**
+  String get workAbilityRecoveryOutlook;
+
+  /// No description provided for @workAbilityRecoveryOutlookSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'These questions help us estimate the risk of longer-term problems and how your pain may affect work. Your answers remain private and make the recommendations more accurate.'**
+  String get workAbilityRecoveryOutlookSubtitle;
+
   /// No description provided for @lessThanWeek.
   ///
   /// In en, this message translates to:
@@ -687,17 +699,17 @@ abstract class AppLocalizations {
   /// **'Wait for green validation indicator'**
   String get guideB4;
 
-  /// No description provided for @primaryScan.
+  /// No description provided for @startScan.
   ///
   /// In en, this message translates to:
-  /// **'Primary Scan'**
-  String get primaryScan;
+  /// **'Start Scan'**
+  String get startScan;
 
-  /// No description provided for @primaryScanInfo.
+  /// No description provided for @startScanInfo.
   ///
   /// In en, this message translates to:
-  /// **'If you perform a primary scan, you will get a new set of suggestions and score and your previous scores and suggestions will be replaced by the new OR You can perform an Instant scan!'**
-  String get primaryScanInfo;
+  /// **'You\'ll get a new set of suggestions and score, and your previous results will be replaced by the new ones.'**
+  String get startScanInfo;
 
   /// No description provided for @cancel.
   ///
@@ -710,18 +722,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yes, I\'m Sure'**
   String get yesSure;
-
-  /// No description provided for @instantScan.
-  ///
-  /// In en, this message translates to:
-  /// **'Instant Scan'**
-  String get instantScan;
-
-  /// No description provided for @instantScanInfo.
-  ///
-  /// In en, this message translates to:
-  /// **'If you perform an instant scan, you will get a new set of suggestions and score and your previous scores and suggestions will be replaced by the new.'**
-  String get instantScanInfo;
 
   /// No description provided for @consentToUpload.
   ///
@@ -2199,19 +2199,88 @@ abstract class AppLocalizations {
   /// **'Based on your posture analysis and ISO 9241-5:2024 principles...'**
   String get basedOnPostureAnalysisIso;
 
+  /// No description provided for @canAdjustChairHeightYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Can adjust chair height'**
   String get canAdjustChairHeightYes;
+
+  /// No description provided for @cannotAdjustChairHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot adjust chair height'**
   String get cannotAdjustChairHeight;
+
+  /// No description provided for @enoughLegRoomYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Enough leg room under desk'**
   String get enoughLegRoomYes;
+
+  /// No description provided for @notEnoughLegRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough room under desk'**
   String get notEnoughLegRoom;
+
+  /// No description provided for @chairHasLumbarSupportYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Chair has lumbar support'**
   String get chairHasLumbarSupportYes;
+
+  /// No description provided for @chairHasLumbarSupportNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Chair does not have lumbar support'**
   String get chairHasLumbarSupportNo;
+
+  /// No description provided for @feetFlatYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Feet resting flat on the floor'**
   String get feetFlatYes;
+
+  /// No description provided for @feetFlatNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Feet not resting flat on the floor'**
   String get feetFlatNo;
+
+  /// No description provided for @monitorInFrontYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor positioned directly in front'**
   String get monitorInFrontYes;
+
+  /// No description provided for @monitorInFrontNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor is not positioned directly in front'**
   String get monitorInFrontNo;
+
+  /// No description provided for @chairHasArmrestsYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Chair has armrests'**
   String get chairHasArmrestsYes;
+
+  /// No description provided for @chairHasArmrestsNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Chair does not have armrests'**
   String get chairHasArmrestsNo;
+
+  /// No description provided for @rosaSubScores.
+  ///
+  /// In en, this message translates to:
+  /// **'ROSA Sub Scores'**
   String get rosaSubScores;
+
+  /// No description provided for @photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
   String get photo;
 }
 

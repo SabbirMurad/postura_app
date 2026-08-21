@@ -73,6 +73,9 @@
 
   "painDuration": "Duración / patrón del dolor",
   "painDurationSubtitle": "Selecciona tu patrón de duración del dolor",
+
+  "workAbilityRecoveryOutlook": "Capacidad Laboral y Perspectiva de Recuperación",
+  "workAbilityRecoveryOutlookSubtitle": "Estas preguntas nos ayudan a estimar el riesgo de problemas a largo plazo y cómo tu dolor puede afectar tu trabajo. Tus respuestas siguen siendo privadas y hacen que las recomendaciones sean más precisas.",
   "lessThanWeek": "Menos de 1 semana",
   "week1To6": "1–6 semanas",
   "moreThan6Week": "Más de 6 semanas",
@@ -114,12 +117,10 @@
   "guideB3": "Asegúrate de que todo el cuerpo sea visible",
   "guideB4": "Espera la indicación verde de validación",
 
-  "primaryScan": "Escaneo Principal",
-  "primaryScanInfo": "Si realizas un escaneo primario, obtendrás un nuevo conjunto de sugerencias y puntuación y tus resultados anteriores serán reemplazados por los nuevos. También puedes realizar un escaneo instantáneo.",
+  "startScan": "Iniciar escaneo",
+  "startScanInfo": "Obtendrás un nuevo conjunto de sugerencias y puntuación, y tus resultados anteriores serán reemplazados por los nuevos.",
   "cancel": "Cancelar",
   "yesSure": "Sí, estoy seguro",
-  "instantScan": "Escaneo Instantáneo",
-  "instantScanInfo": "Si realizas un escaneo instantáneo, obtendrás un nuevo conjunto de sugerencias y puntuación y tus resultados anteriores serán reemplazados por los nuevos.",
   "consentToUpload": "¿Consientes subir esta foto?",
   "consentToUploadInfo": "Para analizar tu postura, esta foto debe ser subida a nuestros servidores seguros. Se almacenará cifrada hasta 12 meses.",
 

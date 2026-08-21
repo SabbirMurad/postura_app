@@ -73,6 +73,9 @@
 
   "painDuration": "Schmerzdauer / Muster",
   "painDurationSubtitle": "Wähle dein Schmerz-Dauer-Muster",
+
+  "workAbilityRecoveryOutlook": "Arbeitsfähigkeit & Genesungsaussicht",
+  "workAbilityRecoveryOutlookSubtitle": "Diese Fragen helfen uns, das Risiko längerfristiger Probleme einzuschätzen und wie sich deine Schmerzen auf die Arbeit auswirken könnten. Deine Antworten bleiben privat und machen die Empfehlungen genauer.",
   "lessThanWeek": "Weniger als 1 Woche",
   "week1To6": "1–6 Wochen",
   "moreThan6Week": "Mehr als 6 Wochen",
@@ -114,12 +117,10 @@
   "guideB3": "Stelle sicher, dass der ganze Körper sichtbar ist",
   "guideB4": "Warte auf grünes Bestätigungszeichen",
 
-  "primaryScan": "Hauptscan",
-  "primaryScanInfo": "Wenn du einen Primärscan durchführst, erhältst du ein neues Set an Vorschlägen und Bewertung, und deine vorherigen Ergebnisse werden ersetzt. Du kannst auch einen Instant-Scan durchführen.",
+  "startScan": "Scan starten",
+  "startScanInfo": "Du erhältst ein neues Set an Vorschlägen und Bewertung, und deine vorherigen Ergebnisse werden ersetzt.",
   "cancel": "Abbrechen",
   "yesSure": "Ja, ich bin sicher",
-  "instantScan": "Schnellscan",
-  "instantScanInfo": "Bei einem Instant-Scan erhältst du ein neues Set an Vorschlägen und Bewertung, und deine vorherigen Ergebnisse werden ersetzt.",
   "consentToUpload": "Stimmst du dem Hochladen dieses Fotos zu?",
   "consentToUploadInfo": "Um deine Haltung zu analysieren, muss dieses Foto auf unsere sicheren Server hochgeladen werden. Es wird bis zu 12 Monate verschlüsselt gespeichert.",
 

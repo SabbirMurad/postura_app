@@ -72,6 +72,10 @@
 
   "painDuration": "Pain duration / pattern",
   "painDurationSubtitle": "Select your pain duration pattern",
+
+  "workAbilityRecoveryOutlook": "Work Ability & Recovery Outlook",
+  "workAbilityRecoveryOutlookSubtitle": "These questions help us estimate the risk of longer-term problems and how your pain may affect work. Your answers remain private and make the recommendations more accurate.",
+
   "lessThanWeek": "Less than 1 week",
   "week1To6": "1-6 weeks",
   "moreThan6Week": "More than 6 weeks",
@@ -113,12 +117,10 @@
   "guideB3": "Ensure full body visible in frame",
   "guideB4": "Wait for green validation indicator",
 
-  "primaryScan": "Primary Scan",
-  "primaryScanInfo": "If you perform a primary scan, you will get a new set of suggestions and score and your previous scores and suggestions will be replaced by the new OR You can perform an Instant scan!",
+  "startScan": "Start Scan",
+  "startScanInfo": "You'll get a new set of suggestions and score, and your previous results will be replaced by the new ones.",
   "cancel": "Cancel",
   "yesSure": "Yes, I'm Sure",
-  "instantScan": "Instant Scan",
-  "instantScanInfo": "If you perform an instant scan, you will get a new set of suggestions and score and your previous scores and suggestions will be replaced by the new.",
   "consentToUpload": "Do you consent to upload this photo?",
   "consentToUploadInfo": "To analyze your posture, this photo must be uploaded to our secure servers. It will be stored encrypted for up to 12 months and deleted earlier if you request it.",
 

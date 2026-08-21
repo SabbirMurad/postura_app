@@ -72,6 +72,9 @@
 
   "painDuration": "Duur / patroon van pijn",
   "painDurationSubtitle": "Selecteer je pijnpatroon",
+
+  "workAbilityRecoveryOutlook": "Arbeidsvermogen & Herstelvooruitzicht",
+  "workAbilityRecoveryOutlookSubtitle": "Deze vragen helpen ons het risico op langdurige klachten in te schatten en hoe je pijn je werk kan beïnvloeden. Je antwoorden blijven privé en maken de aanbevelingen nauwkeuriger.",
   "lessThanWeek": "Minder dan 1 week",
   "week1To6": "1–6 weken",
   "moreThan6Week": "Meer dan 6 weken",
@@ -113,12 +116,10 @@
   "guideB3": "Zorg dat het hele lichaam zichtbaar is",
   "guideB4": "Wacht op groene bevestigingsindicator",
 
-  "primaryScan": "Primaire Scan",
-  "primaryScanInfo": "Bij een primaire scan krijg je een nieuwe set suggesties en score en worden je eerdere resultaten vervangen. Je kunt ook een instant scan uitvoeren.",
+  "startScan": "Start scan",
+  "startScanInfo": "Je krijgt een nieuwe set suggesties en score, en je eerdere resultaten worden vervangen door de nieuwe.",
   "cancel": "Annuleren",
   "yesSure": "Ja, ik weet het zeker",
-  "instantScan": "Directe Scan",
-  "instantScanInfo": "Bij een instant scan krijg je een nieuwe set suggesties en score en worden je eerdere resultaten vervangen.",
   "consentToUpload": "Ga je akkoord met het uploaden van deze foto?",
   "consentToUploadInfo": "Om je houding te analyseren, moet deze foto naar onze beveiligde servers worden geüpload. Wordt maximaal 12 maanden versleuteld opgeslagen.",
 

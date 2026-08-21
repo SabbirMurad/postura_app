@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
+import 'package:posture_detector_app/common/widgets/recovery_outlook_banner.dart';
 import 'package:posture_detector_app/common/widgets/rosa_sub_score.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
@@ -10,6 +11,7 @@ import 'package:posture_detector_app/provider/report.dart';
 import 'package:posture_detector_app/common/widgets/home_top_section.dart';
 import 'package:posture_detector_app/common/widgets/risky_body_region_menu.dart';
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/models/analysis/body_region_risk_model.dart';
 import 'package:posture_detector_app/provider/author.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
@@ -235,6 +237,68 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
     );
   }
 
+  /// Friendly copy for a supplemental CPE finding code. These are
+  /// informational only — they never affect the ROSA score, sub-scores, tier,
+  /// or main risk driver.
+  String _cpeFindingLabel(String flag) {
+    switch (flag) {
+      case 'B_PHONE_CRADLE':
+        return 'Cradles the phone between ear and shoulder during calls';
+      case 'B_PHONE_HANDSFREE':
+        return 'No hands-free option available for phone calls';
+      default:
+        return flag;
+    }
+  }
+
+  Widget _supplementalCpeFindingsSection(SupplementalCpeFindings findings) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+      decoration: BoxDecoration(
+        color: AppColors.secondaryText.withValues(alpha: 0.04),
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: AppColors.secondaryText.withValues(alpha: 0.15)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Supplemental CPE Findings',
+            style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+          ),
+          SizedBox(height: 10.h),
+          ...findings.flags.map(
+            (flag) => Padding(
+              padding: EdgeInsets.only(bottom: 6.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 16.sp,
+                    color: AppColors.secondaryText,
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Text(
+                      _cpeFindingLabel(flag),
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        color: AppColors.text,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _bodyRegionRiskSection(List<BodyRegionRiskModel> items) {
     return Wrap(
       spacing: 12.w,
@@ -356,6 +420,10 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                         ),
                         SizedBox(height: 12.h),
                         _rosaScoreCard(analysisData.rosaScore),
+                        if (analysisData.chronicityElevated) ...[
+                          SizedBox(height: 12.h),
+                          const RecoveryOutlookBanner(),
+                        ],
                         SizedBox(height: 18.h),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -386,6 +454,12 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                         ),
                         SizedBox(height: 12.h),
                         _bodyRegionRiskSection(bodyRegionRiskItems),
+                        if (analysisData.supplementalCpeFindings.hasFindings) ...[
+                          SizedBox(height: 24.h),
+                          _supplementalCpeFindingsSection(
+                            analysisData.supplementalCpeFindings,
+                          ),
+                        ],
                         SizedBox(height: 24.h),
                         PrimaryButton(
                           onTap: () {

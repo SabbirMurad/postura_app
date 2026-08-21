@@ -46,6 +46,12 @@ class _WorkstationQuestionnaireScreenState
   bool _phoneCradleNeckShoulder = false;
   bool _hasHandsFreeOption = true;
 
+  // Supplemental CPE findings — never affect ROSA scoring or the workstation
+  // checklist, submitted as a fully separate payload. Only surfaced in the
+  // Action Report's "Supplemental CPE Findings" section.
+  bool _phoneCradleSupplemental = false;
+  bool _handsFreeAvailableSupplemental = true;
+
   // Section C — Mouse & Keyboard
   bool _mouseKeyboardDifferentSurfaces = false;
   bool _mousePinchGrip = false;
@@ -86,6 +92,10 @@ class _WorkstationQuestionnaireScreenState
         keyboardPlatformNonAdjustable: !_keyboardPlatformAdjustable,
         deskDuration: _deskDuration,
       ),
+    );
+    ref.read(assessmentNotifierProvider.notifier).setSupplementalPhoneFindings(
+      phoneCradle: _phoneCradleSupplemental,
+      handsFreeAvailable: _handsFreeAvailableSupplemental,
     );
     context.push(AppRoute.employeeOptionalSymptom);
   }
@@ -203,6 +213,19 @@ class _WorkstationQuestionnaireScreenState
                   (v) => setState(() => _hasHandsFreeOption = v),
                 ),
               ],
+              // Supplemental — informational only, never affects ROSA scoring.
+              _BoolQuestion(
+                'Do you hold/cradle the phone between your ear and shoulder '
+                'during calls?',
+                _phoneCradleSupplemental,
+                (v) => setState(() => _phoneCradleSupplemental = v),
+              ),
+              _BoolQuestion(
+                'Do you have a hands-free option available for phone calls '
+                '(headset, speakerphone, or similar)?',
+                _handsFreeAvailableSupplemental,
+                (v) => setState(() => _handsFreeAvailableSupplemental = v),
+              ),
 
               _SectionHeader('Mouse & Keyboard'),
               _BoolQuestion(
@@ -318,6 +341,8 @@ class _SegmentLabel extends StatelessWidget {
   }
 }
 
+/// Explicit Yes/No question — clearer than a toggle switch, where the
+/// on/off direction isn't always obvious for a statement-style label.
 class _BoolQuestion extends StatelessWidget {
   final String label;
   final bool value;
@@ -326,16 +351,77 @@ class _BoolQuestion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SwitchListTile(
-      contentPadding: EdgeInsets.zero,
-      dense: true,
-      activeThumbColor: AppColors.primaryColor,
-      title: Text(
-        label,
-        style: TextStyle(fontSize: 14.sp, color: AppColors.text),
+    return Padding(
+      padding: EdgeInsets.only(bottom: 14.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(fontSize: 14.sp, color: AppColors.text),
+          ),
+          SizedBox(height: 8.h),
+          Row(
+            children: [
+              Expanded(
+                child: _YesNoOption(
+                  text: 'Yes',
+                  selected: value,
+                  onTap: () => onChanged(true),
+                ),
+              ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: _YesNoOption(
+                  text: 'No',
+                  selected: !value,
+                  onTap: () => onChanged(false),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
-      value: value,
-      onChanged: onChanged,
+    );
+  }
+}
+
+class _YesNoOption extends StatelessWidget {
+  final String text;
+  final bool selected;
+  final VoidCallback onTap;
+  const _YesNoOption({
+    required this.text,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 10.h),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: selected
+              ? AppColors.primaryColor.withValues(alpha: 0.12)
+              : AppColors.onBoardingSurface,
+          borderRadius: BorderRadius.circular(10.r),
+          border: Border.all(
+            color: selected ? AppColors.primaryColor : AppColors.blackDeemed,
+            width: 2,
+          ),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 13.sp,
+            fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+            color: selected ? AppColors.primaryColor : AppColors.text,
+          ),
+        ),
+      ),
     );
   }
 }

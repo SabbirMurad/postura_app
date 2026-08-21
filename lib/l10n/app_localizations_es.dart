@@ -192,6 +192,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get painDurationSubtitle => 'Selecciona tu patrón de duración del dolor';
 
   @override
+  String get workAbilityRecoveryOutlook => 'Capacidad Laboral y Perspectiva de Recuperación';
+
+  @override
+  String get workAbilityRecoveryOutlookSubtitle => 'Estas preguntas nos ayudan a estimar el riesgo de problemas a largo plazo y cómo tu dolor puede afectar tu trabajo. Tus respuestas siguen siendo privadas y hacen que las recomendaciones sean más precisas.';
+
+  @override
   String get lessThanWeek => 'Menos de 1 semana';
 
   @override
@@ -303,22 +309,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get guideB4 => 'Espera la indicación verde de validación';
 
   @override
-  String get primaryScan => 'Escaneo Principal';
+  String get startScan => 'Iniciar escaneo';
 
   @override
-  String get primaryScanInfo => 'Si realizas un escaneo primario, obtendrás un nuevo conjunto de sugerencias y puntuación y tus resultados anteriores serán reemplazados por los nuevos. También puedes realizar un escaneo instantáneo.';
+  String get startScanInfo => 'Obtendrás un nuevo conjunto de sugerencias y puntuación, y tus resultados anteriores serán reemplazados por los nuevos.';
 
   @override
   String get cancel => 'Cancelar';
 
   @override
   String get yesSure => 'Sí, estoy seguro';
-
-  @override
-  String get instantScan => 'Escaneo Instantáneo';
-
-  @override
-  String get instantScanInfo => 'Si realizas un escaneo instantáneo, obtendrás un nuevo conjunto de sugerencias y puntuación y tus resultados anteriores serán reemplazados por los nuevos.';
 
   @override
   String get consentToUpload => '¿Consientes subir esta foto?';
@@ -1062,30 +1062,43 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get canAdjustChairHeightYes => 'Puede ajustar la altura de la silla';
+
   @override
   String get cannotAdjustChairHeight => 'No puede ajustar la altura de la silla';
+
   @override
   String get enoughLegRoomYes => 'Suficiente espacio para las piernas bajo el escritorio';
+
   @override
   String get notEnoughLegRoom => 'No hay suficiente espacio bajo el escritorio';
+
   @override
   String get chairHasLumbarSupportYes => 'La silla tiene soporte lumbar';
+
   @override
   String get chairHasLumbarSupportNo => 'La silla no tiene soporte lumbar';
+
   @override
   String get feetFlatYes => 'Los pies descansan planos en el suelo';
+
   @override
   String get feetFlatNo => 'Los pies no descansan planos en el suelo';
+
   @override
   String get monitorInFrontYes => 'Monitor posicionado directamente en frente';
+
   @override
   String get monitorInFrontNo => 'El monitor no está posicionado directamente en frente';
+
   @override
   String get chairHasArmrestsYes => 'La silla tiene reposabrazos';
+
   @override
   String get chairHasArmrestsNo => 'La silla no tiene reposabrazos';
+
   @override
   String get rosaSubScores => 'Subpuntuaciones ROSA';
+
   @override
   String get photo => 'Foto';
 }

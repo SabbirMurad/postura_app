@@ -97,7 +97,7 @@ class PainDurationScreen extends ConsumerWidget {
                 showCustomToast(text: loc.pleaseFillAllFields);
                 return;
               }
-              context.push(AppRoute.workstationQuestionnaire);
+              context.push(AppRoute.workAbilityRecoveryOutlook);
             },
             // EN: "Continue"
             text: loc.continueButton,

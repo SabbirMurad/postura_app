@@ -127,6 +127,8 @@ class CpeAssessmentState {
   final String patientId;
   final int compliance;
   final String riskLevel;
+  final String chronicityLevel;
+  final double? heightCm;
   final String deskLocation;
   final List<PainSymptom> painSymptoms;
   final List<SideCaptureView> sideCaptures;
@@ -150,6 +152,8 @@ class CpeAssessmentState {
     this.patientId = '',
     this.compliance = 0,
     this.riskLevel = '',
+    this.chronicityLevel = 'Low',
+    this.heightCm,
     this.deskLocation = '',
     this.painSymptoms = const [],
     this.sideCaptures = const [],
@@ -165,6 +169,8 @@ class CpeAssessmentState {
   });
 
   double get compliancePercent => (compliance / 100.0).clamp(0.0, 1.0);
+
+  bool get chronicityElevated => chronicityLevel == 'Elevated';
 
   String get complianceLabel {
     switch (riskLevel.toLowerCase()) {
@@ -202,6 +208,8 @@ class CpeAssessmentState {
     String? patientId,
     int? compliance,
     String? riskLevel,
+    String? chronicityLevel,
+    double? heightCm,
     String? deskLocation,
     List<PainSymptom>? painSymptoms,
     List<PhotoItem>? photoItems,
@@ -220,6 +228,8 @@ class CpeAssessmentState {
     patientId: patientId ?? this.patientId,
     compliance: compliance ?? this.compliance,
     riskLevel: riskLevel ?? this.riskLevel,
+    chronicityLevel: chronicityLevel ?? this.chronicityLevel,
+    heightCm: heightCm ?? this.heightCm,
     deskLocation: deskLocation ?? this.deskLocation,
     painSymptoms: painSymptoms ?? this.painSymptoms,
     sideCaptures: sideCaptures,
@@ -311,6 +321,8 @@ class CpeAssessmentNotifier
         patientId: '${d['employee_id'] ?? ''}',
         compliance: rawRisk.toInt(),
         riskLevel: d['risk_level'] ?? '',
+        chronicityLevel: d['chronicity_level'] ?? 'Low',
+        heightCm: (d['height_cm'] as num?)?.toDouble(),
         deskLocation: d['desk_location'] ?? '',
         painSymptoms: painSymptoms,
         sideCaptures: (d['side_captures'] as List? ?? const [])

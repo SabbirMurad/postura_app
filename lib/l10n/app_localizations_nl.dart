@@ -192,6 +192,12 @@ class AppLocalizationsNl extends AppLocalizations {
   String get painDurationSubtitle => 'Selecteer je pijnpatroon';
 
   @override
+  String get workAbilityRecoveryOutlook => 'Arbeidsvermogen & Herstelvooruitzicht';
+
+  @override
+  String get workAbilityRecoveryOutlookSubtitle => 'Deze vragen helpen ons het risico op langdurige klachten in te schatten en hoe je pijn je werk kan beïnvloeden. Je antwoorden blijven privé en maken de aanbevelingen nauwkeuriger.';
+
+  @override
   String get lessThanWeek => 'Minder dan 1 week';
 
   @override
@@ -303,22 +309,16 @@ class AppLocalizationsNl extends AppLocalizations {
   String get guideB4 => 'Wacht op groene bevestigingsindicator';
 
   @override
-  String get primaryScan => 'Primaire Scan';
+  String get startScan => 'Start scan';
 
   @override
-  String get primaryScanInfo => 'Bij een primaire scan krijg je een nieuwe set suggesties en score en worden je eerdere resultaten vervangen. Je kunt ook een instant scan uitvoeren.';
+  String get startScanInfo => 'Je krijgt een nieuwe set suggesties en score, en je eerdere resultaten worden vervangen door de nieuwe.';
 
   @override
   String get cancel => 'Annuleren';
 
   @override
   String get yesSure => 'Ja, ik weet het zeker';
-
-  @override
-  String get instantScan => 'Directe Scan';
-
-  @override
-  String get instantScanInfo => 'Bij een instant scan krijg je een nieuwe set suggesties en score en worden je eerdere resultaten vervangen.';
 
   @override
   String get consentToUpload => 'Ga je akkoord met het uploaden van deze foto?';
@@ -1062,30 +1062,43 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get canAdjustChairHeightYes => 'Stoelhoogte kan worden aangepast';
+
   @override
   String get cannotAdjustChairHeight => 'Stoelhoogte kan niet worden aangepast';
+
   @override
   String get enoughLegRoomYes => 'Genoeg beenruimte onder het bureau';
+
   @override
   String get notEnoughLegRoom => 'Niet genoeg ruimte onder het bureau';
+
   @override
   String get chairHasLumbarSupportYes => 'Stoel heeft lendensteuning';
+
   @override
   String get chairHasLumbarSupportNo => 'Stoel heeft geen lendensteuning';
+
   @override
   String get feetFlatYes => 'Voeten rusten plat op de vloer';
+
   @override
   String get feetFlatNo => 'Voeten rusten niet plat op de vloer';
+
   @override
   String get monitorInFrontYes => 'Monitor staat direct voor de gebruiker';
+
   @override
   String get monitorInFrontNo => 'Monitor staat niet direct voor de gebruiker';
+
   @override
   String get chairHasArmrestsYes => 'Stoel heeft armleuningen';
+
   @override
   String get chairHasArmrestsNo => 'Stoel heeft geen armleuningen';
+
   @override
   String get rosaSubScores => 'ROSA Deelscores';
+
   @override
   String get photo => 'Foto';
 }

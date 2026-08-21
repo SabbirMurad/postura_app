@@ -6,7 +6,9 @@ import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/models/analysis/capture.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 import 'package:posture_detector_app/models/assessment/pain.dart';
+import 'package:posture_detector_app/models/assessment/scan_supplemental.dart';
 import 'package:posture_detector_app/models/assessment/workstation_answers.dart';
+import 'package:posture_detector_app/models/assessment/yellow_flag.dart';
 import 'package:posture_detector_app/provider/report.dart';
 import 'package:posture_detector_app/models/scan_type.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
@@ -18,6 +20,8 @@ import 'package:posture_detector_app/utils/media.dart' as media;
 // Re-exported so the many screens that import this provider keep naming the
 // pain enums (and the ROSA models) without a separate import.
 export 'package:posture_detector_app/models/assessment/pain.dart';
+export 'package:posture_detector_app/models/assessment/scan_supplemental.dart';
+export 'package:posture_detector_app/models/assessment/yellow_flag.dart';
 export 'package:posture_detector_app/models/analysis/rosa_score.dart';
 export 'package:posture_detector_app/models/analysis/body_angles.dart';
 export 'package:posture_detector_app/models/analysis/capture.dart';
@@ -32,8 +36,16 @@ class AssessmentState {
   final Map<BodyRegion, PainDuration> painDuration;
   final Set<OptionalSymptom> selectedOptionalSymptoms;
 
+  /// Yellow-flag / chronicity risk screen answers ("Work Ability & Recovery
+  /// Outlook") — collected after Pain Duration, before the Workstation checklist.
+  final YellowFlagAnswers yellowFlagAnswers;
+
   /// Manual ROSA checklist answers, fed to the native PostureEngine.
   final WorkstationAnswers workstationAnswers;
+
+  /// Height + the two supplemental phone questions. Never affects ROSA scoring
+  /// — kept and submitted fully separately from [workstationAnswers].
+  final ScanSupplemental scanSupplemental;
 
   /// The side-view shots from the capture session (image + score + angles each).
   final List<SideViewCapture> sideCaptures;
@@ -46,7 +58,9 @@ class AssessmentState {
     this.painIntensity = const {},
     this.painDuration = const {},
     this.selectedOptionalSymptoms = const {},
+    this.yellowFlagAnswers = const YellowFlagAnswers(),
     this.workstationAnswers = const WorkstationAnswers(),
+    this.scanSupplemental = const ScanSupplemental(),
     this.sideCaptures = const [],
     this.frontCapture,
   });
@@ -100,7 +114,9 @@ class AssessmentState {
     Map<BodyRegion, int>? painIntensity,
     Map<BodyRegion, PainDuration>? painDuration,
     Set<OptionalSymptom>? selectedOptionalSymptoms,
+    YellowFlagAnswers? yellowFlagAnswers,
     WorkstationAnswers? workstationAnswers,
+    ScanSupplemental? scanSupplemental,
     List<SideViewCapture>? sideCaptures,
     FrontViewCapture? frontCapture,
   }) {
@@ -110,7 +126,9 @@ class AssessmentState {
       painDuration: painDuration ?? this.painDuration,
       selectedOptionalSymptoms:
           selectedOptionalSymptoms ?? this.selectedOptionalSymptoms,
+      yellowFlagAnswers: yellowFlagAnswers ?? this.yellowFlagAnswers,
       workstationAnswers: workstationAnswers ?? this.workstationAnswers,
+      scanSupplemental: scanSupplemental ?? this.scanSupplemental,
       sideCaptures: sideCaptures ?? this.sideCaptures,
       frontCapture: frontCapture ?? this.frontCapture,
     );
@@ -174,8 +192,27 @@ class AssessmentNotifier extends _$AssessmentNotifier {
     state = state.copyWith(selectedOptionalSymptoms: symptoms);
   }
 
+  void setYellowFlagAnswers(YellowFlagAnswers answers) =>
+      state = state.copyWith(yellowFlagAnswers: answers);
+
   void setWorkstationAnswers(WorkstationAnswers answers) =>
       state = state.copyWith(workstationAnswers: answers);
+
+  /// Height doesn't change scan-to-scan, so it's set independently of (and
+  /// earlier than) the two supplemental phone answers below.
+  void setHeightCm(double heightCm) => state = state.copyWith(
+    scanSupplemental: state.scanSupplemental.copyWith(heightCm: heightCm),
+  );
+
+  void setSupplementalPhoneFindings({
+    required bool phoneCradle,
+    required bool handsFreeAvailable,
+  }) => state = state.copyWith(
+    scanSupplemental: state.scanSupplemental.copyWith(
+      phoneCradle: phoneCradle,
+      handsFreeAvailable: handsFreeAvailable,
+    ),
+  );
 
   /// Store the captures returned by the native PostureEngine.
   ///
@@ -197,7 +234,9 @@ class AssessmentNotifier extends _$AssessmentNotifier {
       painIntensity: state.painIntensity,
       painDuration: state.painDuration,
       selectedOptionalSymptoms: state.selectedOptionalSymptoms,
+      yellowFlagAnswers: state.yellowFlagAnswers,
       workstationAnswers: state.workstationAnswers,
+      scanSupplemental: state.scanSupplemental,
       sideCaptures: side,
       frontCapture: front,
     );
@@ -262,6 +301,10 @@ class AssessmentNotifier extends _$AssessmentNotifier {
             .toList(),
         // Manual ROSA checklist answers (native scorer input contract).
         'workstation_answers': state.workstationAnswers.toMap(),
+        // Yellow-flag / chronicity screen answers — backend computes the level.
+        'yellow_flag_answers': state.yellowFlagAnswers.toMap(),
+        // Height + supplemental phone questions — never affects ROSA scoring.
+        'scan_supplemental': state.scanSupplemental.toMap(),
         // One ROSA score per scan (the side shots' scores averaged).
         'rosa_score': state.rosaScore?.toJson() ?? {},
         // Grouped captures: one entry per side shot (image + measured angles),
@@ -296,5 +339,9 @@ class AssessmentNotifier extends _$AssessmentNotifier {
     return false;
   }
 
-  void reset() => state = const AssessmentState();
+  /// Resets for a new scan. Height never changes between scans, so it's the
+  /// one piece of state carried forward — everything else starts fresh.
+  void reset() => state = AssessmentState(
+    scanSupplemental: ScanSupplemental(heightCm: state.scanSupplemental.heightCm),
+  );
 }

@@ -18,6 +18,17 @@ class AnalysisReport {
 
   final List<String> symptoms;
 
+  /// Yellow-flag / chronicity risk level computed by the backend from the
+  /// Work Ability & Recovery Outlook screen answers — "Low" or "Elevated".
+  final String chronicityLevel;
+
+  /// Employee height in centimeters, if entered. Never affects ROSA scoring.
+  final double? heightCm;
+
+  /// The two supplemental phone questions — informational only, shown in the
+  /// Action Report's "Supplemental CPE Findings" section.
+  final SupplementalCpeFindings supplementalCpeFindings;
+
   AnalysisReport({
     required this.workPattern,
     required this.bodyRegionRisks,
@@ -30,7 +41,12 @@ class AnalysisReport {
     required this.symptoms,
     required this.painIntensities,
     required this.painDuration,
+    this.chronicityLevel = 'Low',
+    this.heightCm,
+    this.supplementalCpeFindings = const SupplementalCpeFindings(),
   });
+
+  bool get chronicityElevated => chronicityLevel == 'Elevated';
 
   factory AnalysisReport.fromJson(Map<String, dynamic> json) {
     return AnalysisReport(
@@ -71,6 +87,11 @@ class AnalysisReport {
       rosaScore: RosaScore.fromJson(json['rosa_score'] ?? const {}),
 
       symptoms: List<String>.from(json['symptoms'] ?? const []),
+      chronicityLevel: json['chronicity_level'] ?? 'Low',
+      heightCm: (json['height_cm'] as num?)?.toDouble(),
+      supplementalCpeFindings: SupplementalCpeFindings.fromJson(
+        json['supplemental_cpe_findings'] as Map<String, dynamic>? ?? const {},
+      ),
     );
   }
 
@@ -84,8 +105,42 @@ class AnalysisReport {
     'rosa_score': rosaScore.toJson(),
     'symptoms': symptoms,
     'work_pattern': workPattern.toJson(),
+    'height_cm': heightCm,
+    'supplemental_cpe_findings': supplementalCpeFindings.toJson(),
     'pain_intensities': painIntensities.map((e) => e.toJson()).toList(),
     'pain_duration': painDuration,
+    'chronicity_level': chronicityLevel,
+  };
+}
+
+// ===================== SUPPLEMENTAL CPE FINDINGS =====================
+// The two supplemental phone questions — informational only, never affects
+// ROSA scoring. `flags` carries the backend-computed finding codes
+// (B_PHONE_CRADLE / B_PHONE_HANDSFREE).
+class SupplementalCpeFindings {
+  final bool phoneCradle;
+  final bool handsFreeAvailable;
+  final List<String> flags;
+
+  const SupplementalCpeFindings({
+    this.phoneCradle = false,
+    this.handsFreeAvailable = true,
+    this.flags = const [],
+  });
+
+  bool get hasFindings => flags.isNotEmpty;
+
+  factory SupplementalCpeFindings.fromJson(Map<String, dynamic> json) =>
+      SupplementalCpeFindings(
+        phoneCradle: json['phone_cradle'] as bool? ?? false,
+        handsFreeAvailable: json['hands_free_available'] as bool? ?? true,
+        flags: List<String>.from(json['flags'] ?? const []),
+      );
+
+  Map<String, dynamic> toJson() => {
+    'phone_cradle': phoneCradle,
+    'hands_free_available': handsFreeAvailable,
+    'flags': flags,
   };
 }
 
