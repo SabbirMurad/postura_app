@@ -128,14 +128,8 @@ class AppText {
   static const guideB3 = 'Ensure full body visible in frame';
   static const guideB4 = 'Wait for green validation indicator';
 
-  static const primaryScan = "Primary Scan";
-  static const primaryScanInfo =
-      "If you perform a primary scan, you will get a new set of suggestions and score and your previous scores and suggestions will replaced by the new OR You can perform an Instant scan!";
   static const cancel = 'Cancel';
   static const yesSure = 'Yes, i\'m Sure';
-  static const instantScan = "Instant Scan";
-  static const instantScanInfo =
-      'If you perform a Instant scan, you will get a new set of suggestions and score and your previous scores and suggestions will replaced by the new OR You can perform an Instant scan! ';
   static const consentToUpload = "Do you consent to upload this photo?";
   static const consentToUploadInfo =
       "To analyze your posture, this photo must be uploaded to our secure servers. It will be stored encrypted for up to 12 months and deleted earlier if you request it.";

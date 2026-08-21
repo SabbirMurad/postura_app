@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/constants/colors.dart';
 
@@ -27,6 +28,7 @@ class CustomTextField extends StatefulWidget {
   final int? maxLength;
   final bool? showLimit;
   final VoidCallback? onTap;
+  final List<TextInputFormatter>? inputFormatters;
 
   // final bool isRequired;
 
@@ -55,6 +57,7 @@ class CustomTextField extends StatefulWidget {
     this.isPassword = false,
     this.onTap,
     this.showLimit,
+    this.inputFormatters,
     // this.isRequired = false,
   });
 
@@ -80,6 +83,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         TextFormField(
           controller: widget.controller,
           keyboardType: widget.keyboardType,
+          inputFormatters: widget.inputFormatters,
           obscuringCharacter: widget.obscure!,
           minLines: widget.minLines,
           maxLines: widget.maxLines ?? 1,

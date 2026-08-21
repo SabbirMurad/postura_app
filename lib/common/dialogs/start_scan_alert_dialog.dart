@@ -4,12 +4,15 @@ import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/constants/app_text.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 
-void showPrimaryScanAlert(
+void showStartScanAlert(
   BuildContext context, {
   required VoidCallback onConfirm,
   VoidCallback? onCancel,
 }) {
+  final loc = AppLocalizations.of(context)!;
+
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -18,12 +21,12 @@ void showPrimaryScanAlert(
       icon: Assets.icons.nav.cameraScan.svg(height: 46.h, width: 46.w),
       title: Center(
         child: Text(
-          AppText.primaryScan,
+          loc.startScan,
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.sp),
         ),
       ),
       content: Text(
-        AppText.primaryScanInfo,
+        loc.startScanInfo,
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400),
       ),
