@@ -8,7 +8,6 @@ import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
-import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/provider/cpe_assessment.dart';
 import 'package:posture_detector_app/view/home/home_screen.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
@@ -50,156 +49,6 @@ class CPEAssessmentScreen extends ConsumerWidget {
                 fontWeight: FontWeight.w500,
                 color: AppColors.text,
               ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  List<Widget> _infoRow(String label, String value) {
-    return [
-      Text(
-        label,
-        style: TextStyle(
-          fontSize: 13.sp,
-          color: AppColors.text,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      Text(
-        value,
-        style: TextStyle(
-          fontSize: 14.sp,
-          color: AppColors.text,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    ];
-  }
-
-  Widget _wordPatternSection({
-    required WorkPattern workPattern,
-    required AppLocalizations loc,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SectionTitle(loc.workPattern),
-        SizedBox(height: 12.h),
-        Container(
-          width: double.infinity,
-          decoration: cardDecoration(),
-          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ..._infoRow(loc.hoursAtDeskPerDay, workPattern.hoursAtDesk),
-              SizedBox(height: 10.h),
-              ..._infoRow(loc.breakHabits, workPattern.breakHabit),
-              SizedBox(height: 10.h),
-              ..._infoRow(loc.selectDeviceUsage, workPattern.deviceUsage),
-              SizedBox(height: 10.h),
-              ..._infoRow(loc.mouseType, workPattern.mouseType),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _workstationItem({required String text, required bool value}) {
-    final workstationItemColor = !value
-        ? const Color(0xFFE53935)
-        : const Color(0xFF43A047);
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-      width: (1.sw - 40.w - 12.w) / 2,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(
-          color: AppColors.secondaryText.withValues(alpha: 0.15),
-        ),
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(
-            value
-                ? Icons.check_circle_outline_rounded
-                : Icons.error_outline_outlined,
-            color: workstationItemColor,
-            size: 36.w,
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w500,
-              color: AppColors.text,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _workstation({
-    required Workstation workstation,
-    required AppLocalizations loc,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SectionTitle(loc.workstation),
-        SizedBox(height: 8.h),
-        Wrap(
-          spacing: 12.w,
-          runSpacing: 12.w,
-          children: [
-            _workstationItem(
-              text: workstation.canAdjustChairHeight!
-                  ? loc.canAdjustChairHeightYes
-                  : loc.cannotAdjustChairHeight,
-              value: workstation.canAdjustChairHeight!,
-            ),
-            _workstationItem(
-              text: workstation.enoughLegRoom!
-                  ? loc.enoughLegRoomYes
-                  : loc.notEnoughLegRoom,
-              value: workstation.enoughLegRoom!,
-            ),
-            _workstationItem(
-              text: workstation.chairHasLumbarSupport!
-                  ? loc.chairHasLumbarSupportYes
-                  : loc.chairHasLumbarSupportNo,
-              value: workstation.chairHasLumbarSupport!,
-            ),
-            _workstationItem(
-              text: '${loc.monitorDistance}: ${workstation.monitorDistance}',
-              value: workstation.monitorDistance == '40-75cm',
-            ),
-            _workstationItem(
-              text: workstation.feetRestingFlat!
-                  ? loc.feetFlatYes
-                  : loc.feetFlatNo,
-              value: workstation.feetRestingFlat!,
-            ),
-            _workstationItem(
-              text: workstation.monitorDirectlyInFront!
-                  ? loc.monitorInFrontYes
-                  : loc.monitorInFrontNo,
-              value: workstation.monitorDirectlyInFront!,
-            ),
-            _workstationItem(
-              text: workstation.chairHasArmrests!
-                  ? loc.chairHasArmrestsYes
-                  : loc.chairHasArmrestsNo,
-              value: workstation.chairHasArmrests!,
             ),
           ],
         ),
@@ -459,13 +308,6 @@ class CPEAssessmentScreen extends ConsumerWidget {
                     _rosaAssessmentSection(state.rosaScore),
                     SizedBox(height: 20.h),
                     _deskInfo(deskLocation: state.deskLocation, loc: loc),
-                    SizedBox(height: 20.h),
-                    _wordPatternSection(
-                      workPattern: state.workPattern,
-                      loc: loc,
-                    ),
-                    SizedBox(height: 20.h),
-                    _workstation(workstation: state.workstation, loc: loc),
                     SizedBox(height: 20.h),
                     PainSymptomsSectionCPE(state: state),
                     SizedBox(height: 20.h),

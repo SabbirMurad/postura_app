@@ -35,7 +35,7 @@ class _LogoutModalState extends State<LogoutModal> {
       final fcmToken = await FirebaseMessaging.instance.getToken();
       if (fcmToken == null) return;
 
-      final response = await CustomHttp.delete(
+      final response = await CustomHttp.post(
         endpoint: 'notifications/fcm/unregister/',
         body: {'token': fcmToken},
         needAuth: true,
@@ -46,6 +46,21 @@ class _LogoutModalState extends State<LogoutModal> {
       }
     } catch (e) {
       printLine('_removeFcmToken error: $e');
+    }
+  }
+
+  /// Invalidate the refresh token server-side. Must run before local prefs are
+  /// cleared (it needs the access token). Failures are non-fatal — we still log
+  /// the user out locally.
+  Future<void> _signOut() async {
+    try {
+      await CustomHttp.post(
+        endpoint: 'auth/sign-out',
+        needAuth: true,
+        showFloatingError: false,
+      );
+    } catch (e) {
+      printLine('_signOut error: $e');
     }
   }
 
@@ -99,6 +114,8 @@ class _LogoutModalState extends State<LogoutModal> {
                   onTap: () async {
                     setState(() => _loading = true);
                     await _removeFcmToken();
+                    // Revoke the session server-side before wiping local tokens.
+                    await _signOut();
                     setState(() => _loading = false);
                     final container = ProviderScope.containerOf(context);
                     container.read(signupNotifierProvider.notifier).reset();

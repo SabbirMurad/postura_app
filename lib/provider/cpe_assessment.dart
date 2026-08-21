@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:posture_detector_app/models/prepared_image.dart';
 import 'package:posture_detector_app/utils/media.dart' as media;
 import 'package:posture_detector_app/l10n/app_localizations.dart';
-import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/models/analysis/body_angles.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/provider/cpe_home.dart';
@@ -129,8 +128,6 @@ class CpeAssessmentState {
   final int compliance;
   final String riskLevel;
   final String deskLocation;
-  final WorkPattern workPattern;
-  final Workstation workstation;
   final List<PainSymptom> painSymptoms;
   final List<SideCaptureView> sideCaptures;
   final FrontCaptureView? frontCapture;
@@ -154,8 +151,6 @@ class CpeAssessmentState {
     this.compliance = 0,
     this.riskLevel = '',
     this.deskLocation = '',
-    required this.workPattern,
-    required this.workstation,
     this.painSymptoms = const [],
     this.sideCaptures = const [],
     this.frontCapture,
@@ -208,8 +203,6 @@ class CpeAssessmentState {
     int? compliance,
     String? riskLevel,
     String? deskLocation,
-    WorkPattern? workPattern,
-    Workstation? workstation,
     List<PainSymptom>? painSymptoms,
     List<PhotoItem>? photoItems,
     List<ApprovalItem>? approvalItems,
@@ -228,8 +221,6 @@ class CpeAssessmentState {
     compliance: compliance ?? this.compliance,
     riskLevel: riskLevel ?? this.riskLevel,
     deskLocation: deskLocation ?? this.deskLocation,
-    workPattern: workPattern ?? this.workPattern,
-    workstation: workstation ?? this.workstation,
     painSymptoms: painSymptoms ?? this.painSymptoms,
     sideCaptures: sideCaptures,
     frontCapture: frontCapture,
@@ -276,14 +267,15 @@ class CpeAssessmentNotifier
 
       final rawRisk = (d['risk_score'] ?? 0).toDouble();
 
-      final painDuration = d['pain_duration'] ?? '';
-      final intensities = d['pain_intensities'] as List<dynamic>? ?? [];
-      final painSymptoms = intensities.map((e) {
-        final m = Map<String, dynamic>.from(e);
+      // Backend sends `pain_units` — each row carries its own body_region,
+      // intensity and duration (not the old flat pain_intensities/pain_duration).
+      final painUnits = d['pain_units'] as List<dynamic>? ?? [];
+      final painSymptoms = painUnits.map((e) {
+        final m = Map<String, dynamic>.from(e as Map);
         return PainSymptom(
           area: m['body_region'] ?? '',
-          duration: painDuration,
-          intensity: (m['intensity'] ?? 0) as int,
+          duration: m['duration'] ?? '',
+          intensity: (m['intensity'] as num?)?.toInt() ?? 0,
         );
       }).toList();
 
@@ -311,11 +303,6 @@ class CpeAssessmentNotifier
         ),
       ];
 
-      // The backend replaced work_pattern / top-level workstation with
-      // workstation_answers, so these are absent now — parse null-safely into
-      // empty placeholders instead of crashing the whole screen on a cast.
-      final wp = (d['work_pattern'] as Map?)?.cast<String, dynamic>() ?? const <String, dynamic>{};
-      final ws = (d['workstation'] as Map?)?.cast<String, dynamic>() ?? const <String, dynamic>{};
       final reviewType = d['review_type'] as String?;
 
       state = CpeAssessmentState(
@@ -325,8 +312,6 @@ class CpeAssessmentNotifier
         compliance: rawRisk.toInt(),
         riskLevel: d['risk_level'] ?? '',
         deskLocation: d['desk_location'] ?? '',
-        workPattern: WorkPattern.fromJson(wp),
-        workstation: Workstation.fromJson(ws),
         painSymptoms: painSymptoms,
         sideCaptures: (d['side_captures'] as List? ?? const [])
             .map((e) => SideCaptureView.fromJson(Map<String, dynamic>.from(e as Map)))

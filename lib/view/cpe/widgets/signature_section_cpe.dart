@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/provider/cpe_assessment.dart';
 import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
@@ -52,6 +53,9 @@ class SignatureSectionCPE extends StatelessWidget {
                               )
                             : CachedNetworkImage(
                                 imageUrl: remoteUrl,
+                                // Signatures are served token-gated (used_at =
+                                // Signature); send the bearer token.
+                                httpHeaders: AppHelper.authHeaders,
                                 width: double.infinity,
                                 height: 120.h,
                                 fit: BoxFit.contain,
