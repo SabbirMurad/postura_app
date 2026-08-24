@@ -4,6 +4,12 @@ enum PhoneUsage { none, headsetOrOneHand, reachFar }
 
 enum DeskDuration { short, medium, long }
 
+/// Top of the monitor relative to eye level — directional signal for
+/// B_MON_LOW / B_MON_HIGH (Action Report v1.3 / Equipment Engine v1.3).
+/// `monitorNonAdjustable` stays a separate ROSA modifier and does not carry
+/// direction.
+enum MonitorHeightDirection { below, atEyeLevel, above }
+
 /// Manual answers to the ROSA checklist items the camera can't see.
 /// Field names mirror the official ROSA form's +1/+2 modifiers.
 ///
@@ -22,6 +28,13 @@ class WorkstationAnswers {
   final bool backrestNonAdjustable;
   final bool workSurfaceTooHigh;
 
+  // A_LUMBAR / A_FEET / A_NO_BACK source fields (Action Report v1.3). These
+  // are separate from the ROSA-affecting adjustability booleans above and
+  // only feed FINDING_ID derivation — they never change the ROSA score.
+  final bool lumbarSupport;
+  final bool feetSupported;
+  final bool usableBackrest;
+
   // Section B — Monitor & Telephone
   final bool monitorNonAdjustable;
   final bool neckTwistOver30;
@@ -32,11 +45,16 @@ class WorkstationAnswers {
   final bool phoneCradleNeckShoulder;
   final bool noHandsFreeOption;
 
+  // B_MON_LOW / B_MON_HIGH direction (Action Report v1.3). Separate from
+  // monitorNonAdjustable, which stays a ROSA-only modifier.
+  final MonitorHeightDirection monitorHeightDirection;
+
   // Section C — Mouse & Keyboard
   final bool mouseKeyboardDifferentSurfaces;
   final bool mousePinchGrip;
   final bool mousePalmrest;
   final bool mouseNonAdjustable;
+  final bool mouseTooFar;
   final bool keyboardDeviation;
   final bool keyboardTooHigh;
   final bool reachingOverhead;
@@ -55,6 +73,9 @@ class WorkstationAnswers {
     this.armrestTooWide = false,
     this.backrestNonAdjustable = false,
     this.workSurfaceTooHigh = false,
+    this.lumbarSupport = true,
+    this.feetSupported = true,
+    this.usableBackrest = true,
     this.monitorNonAdjustable = false,
     this.neckTwistOver30 = false,
     this.monitorTooFar = false,
@@ -63,10 +84,12 @@ class WorkstationAnswers {
     this.phoneUsage = PhoneUsage.none,
     this.phoneCradleNeckShoulder = false,
     this.noHandsFreeOption = false,
+    this.monitorHeightDirection = MonitorHeightDirection.atEyeLevel,
     this.mouseKeyboardDifferentSurfaces = false,
     this.mousePinchGrip = false,
     this.mousePalmrest = false,
     this.mouseNonAdjustable = false,
+    this.mouseTooFar = false,
     this.keyboardDeviation = false,
     this.keyboardTooHigh = false,
     this.reachingOverhead = false,
@@ -84,6 +107,9 @@ class WorkstationAnswers {
     bool? armrestTooWide,
     bool? backrestNonAdjustable,
     bool? workSurfaceTooHigh,
+    bool? lumbarSupport,
+    bool? feetSupported,
+    bool? usableBackrest,
     bool? monitorNonAdjustable,
     bool? neckTwistOver30,
     bool? monitorTooFar,
@@ -92,10 +118,12 @@ class WorkstationAnswers {
     PhoneUsage? phoneUsage,
     bool? phoneCradleNeckShoulder,
     bool? noHandsFreeOption,
+    MonitorHeightDirection? monitorHeightDirection,
     bool? mouseKeyboardDifferentSurfaces,
     bool? mousePinchGrip,
     bool? mousePalmrest,
     bool? mouseNonAdjustable,
+    bool? mouseTooFar,
     bool? keyboardDeviation,
     bool? keyboardTooHigh,
     bool? reachingOverhead,
@@ -115,6 +143,9 @@ class WorkstationAnswers {
       backrestNonAdjustable:
           backrestNonAdjustable ?? this.backrestNonAdjustable,
       workSurfaceTooHigh: workSurfaceTooHigh ?? this.workSurfaceTooHigh,
+      lumbarSupport: lumbarSupport ?? this.lumbarSupport,
+      feetSupported: feetSupported ?? this.feetSupported,
+      usableBackrest: usableBackrest ?? this.usableBackrest,
       monitorNonAdjustable: monitorNonAdjustable ?? this.monitorNonAdjustable,
       neckTwistOver30: neckTwistOver30 ?? this.neckTwistOver30,
       monitorTooFar: monitorTooFar ?? this.monitorTooFar,
@@ -124,11 +155,14 @@ class WorkstationAnswers {
       phoneCradleNeckShoulder:
           phoneCradleNeckShoulder ?? this.phoneCradleNeckShoulder,
       noHandsFreeOption: noHandsFreeOption ?? this.noHandsFreeOption,
+      monitorHeightDirection:
+          monitorHeightDirection ?? this.monitorHeightDirection,
       mouseKeyboardDifferentSurfaces:
           mouseKeyboardDifferentSurfaces ?? this.mouseKeyboardDifferentSurfaces,
       mousePinchGrip: mousePinchGrip ?? this.mousePinchGrip,
       mousePalmrest: mousePalmrest ?? this.mousePalmrest,
       mouseNonAdjustable: mouseNonAdjustable ?? this.mouseNonAdjustable,
+      mouseTooFar: mouseTooFar ?? this.mouseTooFar,
       keyboardDeviation: keyboardDeviation ?? this.keyboardDeviation,
       keyboardTooHigh: keyboardTooHigh ?? this.keyboardTooHigh,
       reachingOverhead: reachingOverhead ?? this.reachingOverhead,
@@ -142,17 +176,32 @@ class WorkstationAnswers {
     'chair_height_non_adjustable': chairHeightNonAdjustable,
     'insufficient_under_desk_space': insufficientUnderDeskSpace,
     'seat_depth_score': seatDepthFit == SeatDepthFit.ok ? 1 : 2,
+    // Direction the lossy seat_depth_score above can't carry — FINDING_ID
+    // derivation only (A_SEAT_LONG / A_SEAT_SHORT), never fed into ROSA.
+    'seat_depth_direction': switch (seatDepthFit) {
+      SeatDepthFit.ok => 'ok',
+      SeatDepthFit.tooLong => 'too_long',
+      SeatDepthFit.tooShort => 'too_short',
+    },
     'seat_pan_non_adjustable': seatPanNonAdjustable,
     'armrest_non_adjustable': armrestNonAdjustable,
     'armrest_hard_damaged': armrestHardDamaged,
     'armrest_too_wide': armrestTooWide,
     'backrest_non_adjustable': backrestNonAdjustable,
     'work_surface_too_high': workSurfaceTooHigh,
+    'lumbar_support': lumbarSupport,
+    'feet_supported': feetSupported,
+    'usable_backrest': usableBackrest,
     'monitor_non_adjustable': monitorNonAdjustable,
     'neck_twist_over_30': neckTwistOver30,
     'monitor_too_far': monitorTooFar,
     'screen_glare': screenGlare,
     'no_document_holder': noDocumentHolder,
+    'monitor_height_direction': switch (monitorHeightDirection) {
+      MonitorHeightDirection.below => 'below',
+      MonitorHeightDirection.atEyeLevel => 'at',
+      MonitorHeightDirection.above => 'above',
+    },
     'phone_score': switch (phoneUsage) {
       PhoneUsage.none => 0,
       PhoneUsage.headsetOrOneHand => 1,
@@ -164,6 +213,7 @@ class WorkstationAnswers {
     'mouse_pinch_grip': mousePinchGrip,
     'mouse_palmrest': mousePalmrest,
     'mouse_non_adjustable': mouseNonAdjustable,
+    'mouse_too_far': mouseTooFar,
     'keyboard_deviation': keyboardDeviation,
     'keyboard_too_high': keyboardTooHigh,
     'reaching_overhead': reachingOverhead,

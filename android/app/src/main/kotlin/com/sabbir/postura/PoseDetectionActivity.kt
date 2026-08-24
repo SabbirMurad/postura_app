@@ -162,6 +162,11 @@ class PoseDetectionActivity : AppCompatActivity() {
     // Wrist bend away from straight (front-view forearm→hand angle deviating from
     // 180°) at or above this many degrees is scored as "wrist deviates while typing".
     private val WRIST_DEVIATION_MAX_DEG = 15.0
+    // Wrist extension (elbow.y - wrist.y, side view) at or above this value is
+    // scored as "wrists extended while typing" (C_WRIST_EXT, Action Report v1.3).
+    // Reuses RosaScorer's own "elevated risk" keyboard/mouse cutoff (RosaScorer.kt)
+    // as the finding-flag threshold, rather than a new unvalidated number.
+    private val WRIST_EXTENSION_FINDING_THRESHOLD = 0.03f
     private val CAPTURE_COOLDOWN_MS = 2000L
 
     // Reference width the baked-in skeleton's stroke widths / dot radii are tuned
@@ -945,10 +950,21 @@ class PoseDetectionActivity : AppCompatActivity() {
             }
         }
 
+        // wristExtension / shrugGap are measured per side-view shot (not the front
+        // view) but were never surfaced (RosaAnglesCalculator.Angles doc comment).
+        // Use the first valid side-shot's reading, same "first with data" choice
+        // Flutter already makes for body_angles (BodyAngles.firstWithData).
+        val repAngles = capturedAngles.firstOrNull { it != null }
+        val wristExtensionFinding =
+            (repAngles?.wristExtension ?: 0f) >= WRIST_EXTENSION_FINDING_THRESHOLD
+        val shrugGapValue = (repAngles?.shrugGap ?: 0f).toDouble()
+
         val frontCapture = org.json.JSONObject().also { obj ->
             frontPhoto?.let { obj.put("image_path", write(it, "front.jpg")) }
             obj.put("abduction_angle", frontAbductionAngle)
             obj.put("wrist_deviation_angle", frontWristDeviationAngle)
+            obj.put("wrist_extension", wristExtensionFinding)
+            obj.put("shrug_gap", shrugGapValue)
         }
 
         val result = org.json.JSONObject()

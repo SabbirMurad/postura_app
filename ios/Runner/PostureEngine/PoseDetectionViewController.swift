@@ -105,6 +105,11 @@ final class PoseDetectionViewController: UIViewController {
     // Wrist bend away from straight (front-view forearm→hand angle deviating from
     // 180°) at or above this many degrees is scored as "wrist deviates while typing".
     private let WRIST_DEVIATION_MAX_DEG: Double = 15
+    // Wrist extension (elbow.y - wrist.y, side view) at or above this value is
+    // scored as "wrists extended while typing" (C_WRIST_EXT, Action Report v1.3).
+    // Reuses RosaScorer's own "elevated risk" keyboard/mouse cutoff as the
+    // finding-flag threshold, rather than a new unvalidated number.
+    private let WRIST_EXTENSION_FINDING_THRESHOLD: Double = 0.03
     private var nextCaptureEarliestAtMs: Double = 0
     private let SKELETON_REFERENCE_WIDTH: CGFloat = 1080
     private let SIDE_VIEW_THRESHOLD: Float = 0.35
@@ -893,9 +898,20 @@ final class PoseDetectionViewController: UIViewController {
             sideCaptures.append(obj)
         }
 
+        // wristExtension / shrugGap are measured per side-view shot (not the front
+        // view) but were never surfaced (RosaAnglesCalculator.Angles doc comment).
+        // Use the first valid side-shot's reading, same "first with data" choice
+        // Flutter already makes for body_angles (BodyAngles.firstWithData).
+        let repAngles = capturedAngles.first { $0 != nil } ?? nil
+        let wristExtensionFinding =
+            (repAngles?.wristExtension ?? 0) >= Float(WRIST_EXTENSION_FINDING_THRESHOLD)
+        let shrugGapValue = Double(repAngles?.shrugGap ?? 0)
+
         var frontCapture: [String: Any] = [
             "abduction_angle": frontAbductionAngle,
             "wrist_deviation_angle": frontWristDeviationAngle,
+            "wrist_extension": wristExtensionFinding,
+            "shrug_gap": shrugGapValue,
         ]
         if let front = frontPhoto, let path = write(front, "front.jpg") {
             frontCapture["image_path"] = path

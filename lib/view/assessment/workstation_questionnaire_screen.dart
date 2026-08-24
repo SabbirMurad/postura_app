@@ -35,9 +35,14 @@ class _WorkstationQuestionnaireScreenState
   bool _armrestHardDamaged = false;
   bool _backrestAdjustable = true;
   bool _workSurfaceTooHigh = false;
+  bool _lumbarSupport = true;
+  bool _usableBackrest = true;
+  bool _feetSupported = true;
 
   // Section B — Monitor & Telephone
   bool _monitorAdjustable = true;
+  MonitorHeightDirection _monitorHeightDirection =
+      MonitorHeightDirection.atEyeLevel;
   bool _neckTwistOver30 = false;
   bool _monitorTooFar = false;
   bool _screenGlare = false;
@@ -57,6 +62,7 @@ class _WorkstationQuestionnaireScreenState
   bool _mousePinchGrip = false;
   bool _mousePalmrest = false;
   bool _mouseAdjustable = true;
+  bool _mouseTooFar = false;
   bool _keyboardTooHigh = false;
   bool _reachingOverhead = false;
   bool _keyboardPlatformAdjustable = true;
@@ -75,6 +81,9 @@ class _WorkstationQuestionnaireScreenState
         armrestHardDamaged: _armrestHardDamaged,
         backrestNonAdjustable: !_backrestAdjustable,
         workSurfaceTooHigh: _workSurfaceTooHigh,
+        lumbarSupport: _lumbarSupport,
+        feetSupported: _feetSupported,
+        usableBackrest: _usableBackrest,
         monitorNonAdjustable: !_monitorAdjustable,
         neckTwistOver30: _neckTwistOver30,
         monitorTooFar: _monitorTooFar,
@@ -83,10 +92,12 @@ class _WorkstationQuestionnaireScreenState
         phoneUsage: _phoneUsage,
         phoneCradleNeckShoulder: _phoneCradleNeckShoulder,
         noHandsFreeOption: !_hasHandsFreeOption,
+        monitorHeightDirection: _monitorHeightDirection,
         mouseKeyboardDifferentSurfaces: _mouseKeyboardDifferentSurfaces,
         mousePinchGrip: _mousePinchGrip,
         mousePalmrest: _mousePalmrest,
         mouseNonAdjustable: !_mouseAdjustable,
+        mouseTooFar: _mouseTooFar,
         keyboardTooHigh: _keyboardTooHigh,
         reachingOverhead: _reachingOverhead,
         keyboardPlatformNonAdjustable: !_keyboardPlatformAdjustable,
@@ -160,6 +171,23 @@ class _WorkstationQuestionnaireScreenState
                 (v) => setState(() => _backrestAdjustable = v),
               ),
               _BoolQuestion(
+                'Chair has a usable backrest that supports your back while '
+                'working',
+                _usableBackrest,
+                (v) => setState(() => _usableBackrest = v),
+              ),
+              _BoolQuestion(
+                'Chair provides lumbar support that contacts your lower back '
+                'while sitting normally',
+                _lumbarSupport,
+                (v) => setState(() => _lumbarSupport = v),
+              ),
+              _BoolQuestion(
+                'Both feet are flat on the floor or a footrest while typing',
+                _feetSupported,
+                (v) => setState(() => _feetSupported = v),
+              ),
+              _BoolQuestion(
                 'Desk/work surface is too high (shoulders shrug)',
                 _workSurfaceTooHigh,
                 (v) => setState(() => _workSurfaceTooHigh = v),
@@ -170,6 +198,16 @@ class _WorkstationQuestionnaireScreenState
                 'Monitor position is adjustable',
                 _monitorAdjustable,
                 (v) => setState(() => _monitorAdjustable = v),
+              ),
+              _SegmentLabel('Top of the monitor relative to eye level'),
+              _Segments<MonitorHeightDirection>(
+                segments: const {
+                  MonitorHeightDirection.below: 'Below',
+                  MonitorHeightDirection.atEyeLevel: 'At eye level',
+                  MonitorHeightDirection.above: 'Above',
+                },
+                selected: _monitorHeightDirection,
+                onChanged: (v) => setState(() => _monitorHeightDirection = v),
               ),
               _BoolQuestion(
                 'You twist your neck more than 30° to view the monitor',
@@ -247,6 +285,12 @@ class _WorkstationQuestionnaireScreenState
                 'Mouse position is adjustable',
                 _mouseAdjustable,
                 (v) => setState(() => _mouseAdjustable = v),
+              ),
+              _BoolQuestion(
+                'Mouse is positioned far enough away that you have to reach '
+                'for it',
+                _mouseTooFar,
+                (v) => setState(() => _mouseTooFar = v),
               ),
               _BoolQuestion(
                 'Keyboard is too high (shoulders shrug)',

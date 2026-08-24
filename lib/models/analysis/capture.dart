@@ -37,12 +37,16 @@ class SideViewCapture {
 }
 
 /// The single front-view shot: the captured image plus the two raw front-view
-/// angles (elbow abduction and wrist deviation, in degrees).
+/// angles (elbow abduction and wrist deviation, in degrees), plus the two
+/// side-view-derived findings that used to be internal-only (C_WRIST_EXT /
+/// A_SURFACE_HIGH source, Action Report v1.3).
 class FrontViewCapture {
   const FrontViewCapture({
     required this.image,
     required this.abductionAngle,
     required this.wristDeviationAngle,
+    this.wristExtension = false,
+    this.shrugGap = 0,
   });
 
   final File image;
@@ -54,17 +58,30 @@ class FrontViewCapture {
   /// "wrists deviate while typing".
   final double wristDeviationAngle;
 
+  /// C_WRIST_EXT source: native wristExtension >= 0.03 (RosaScorer's own
+  /// "elevated risk" cutoff). Previously computed but never surfaced.
+  final bool wristExtension;
+
+  /// A_SURFACE_HIGH support signal: raw shrugGap (ear.y - shoulder.y),
+  /// surfaced for diagnostics/logging alongside the boolean gate the backend
+  /// applies (RosaScorer's own armrestScore cutoff, shrugGap > -0.06).
+  final double shrugGap;
+
   factory FrontViewCapture.fromChannel(Map<String, dynamic> m) =>
       FrontViewCapture(
         image: File(m['image_path'] as String? ?? ''),
         abductionAngle: (m['abduction_angle'] as num?)?.toDouble() ?? 0,
         wristDeviationAngle:
             (m['wrist_deviation_angle'] as num?)?.toDouble() ?? 0,
+        wristExtension: m['wrist_extension'] as bool? ?? false,
+        shrugGap: (m['shrug_gap'] as num?)?.toDouble() ?? 0,
       );
 
   Map<String, dynamic> toJson(String imageId) => {
     'image_id': imageId,
     'abduction_angle': abductionAngle,
     'wrist_deviation_angle': wristDeviationAngle,
+    'wrist_extension': wristExtension,
+    'shrug_gap': shrugGap,
   };
 }
