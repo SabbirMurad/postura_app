@@ -45,8 +45,8 @@ class PreparedImage {
     final new_path =
         '${dir.path}/${DateTime.now().microsecondsSinceEpoch}.$ext';
 
-    await File(new_path).create()
-      ..writeAsBytes(compressed_bytes);
+    final new_file = await File(new_path).create();
+    await new_file.writeAsBytes(compressed_bytes);
 
     final decoded = img.decodeImage(compressed_bytes)!;
 

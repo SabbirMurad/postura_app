@@ -40,7 +40,6 @@ class ImageUploaderVOne extends StatefulWidget {
 }
 
 class _ImageUploaderVOneState extends State<ImageUploaderVOne> {
-  File? _imageFile;
   Uint8List? _imageData;
 
   /// Pick image from camera or gallery
@@ -61,7 +60,6 @@ class _ImageUploaderVOneState extends State<ImageUploaderVOne> {
       if (!mounted) return;
 
       setState(() {
-        _imageFile = imgFile;
         _imageData = bytes;
       });
 
@@ -120,7 +118,6 @@ class _ImageUploaderVOneState extends State<ImageUploaderVOne> {
       widget.selectedImage!.readAsBytes().then((bytes) {
         if (!mounted) return;
         setState(() {
-          _imageFile = widget.selectedImage;
           _imageData = bytes;
         });
       });
@@ -161,7 +158,7 @@ class _ImageUploaderVOneState extends State<ImageUploaderVOne> {
             widget.defaultImage!,
             width: widget.height * .6,
             height: widget.height * .6,
-            color: Colors.white,
+            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
           ),
         );
       } else {

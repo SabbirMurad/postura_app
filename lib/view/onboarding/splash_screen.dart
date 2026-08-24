@@ -133,7 +133,7 @@ class _SplashScreenState extends State<SplashScreen>
           if (mounted) context.go(AppRoute.employeeSelectBodyRegion);
         }
       }
-    } else {
+    } else if (mounted) {
       // EN: "Login first"
       showCustomToast(
         text: AppLocalizations.of(context)?.loginFirst ?? 'Login first',

@@ -29,7 +29,7 @@ class ToastTypesInfo {
         color = Colors.green;
         image = SvgPicture.string(
           successSvg,
-          color: Colors.green,
+          colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
           height: 24.w,
           width: 24.w,
         );
@@ -38,7 +38,7 @@ class ToastTypesInfo {
         color = Colors.red;
         image = SvgPicture.string(
           warningSvg,
-          color: Colors.red,
+          colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
           height: 24.w,
           width: 24.w,
         );
@@ -48,7 +48,7 @@ class ToastTypesInfo {
         color = Colors.orange;
         image = SvgPicture.string(
           warningSvg,
-          color: Colors.orange,
+          colorFilter: const ColorFilter.mode(Colors.orange, BlendMode.srcIn),
           height: 24.w,
           width: 24.w,
         );
@@ -57,7 +57,7 @@ class ToastTypesInfo {
         color = Colors.blue;
         image = SvgPicture.string(
           infoSvg,
-          color: Colors.blue,
+          colorFilter: const ColorFilter.mode(Colors.blue, BlendMode.srcIn),
           height: 24.w,
           width: 24.w,
         );
@@ -81,7 +81,7 @@ class CustomToastNotification extends StatefulWidget {
   });
 
   @override
-  _CustomToastNotificationState createState() =>
+  State<CustomToastNotification> createState() =>
       _CustomToastNotificationState();
 }
 

@@ -49,10 +49,10 @@ class ImageModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'uuid': this.uuid,
-      'blur_hash': this.blur_hash,
-      'width': this.width,
-      'height': this.height,
+      'uuid': uuid,
+      'blur_hash': blur_hash,
+      'width': width,
+      'height': height,
     };
   }
 }

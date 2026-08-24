@@ -138,7 +138,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
               padding: EdgeInsets.only(bottom: 48.h),
               child: _buildQuizQuestion(idx, item),
             );
-          }).toList(),
+          }),
 
           const SizedBox(height: 24),
 
@@ -212,7 +212,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             padding: EdgeInsets.only(bottom: 18.h),
             child: _buildRadioOption(index, optionIndex, option),
           );
-        }).toList(),
+        }),
       ],
     );
   }

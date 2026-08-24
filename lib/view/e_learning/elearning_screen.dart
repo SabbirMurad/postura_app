@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
 import 'package:posture_detector_app/common/widgets/e_learning_card.dart';
 import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/provider/e_learning.dart';
-import 'package:posture_detector_app/routes.dart';
-import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/view/e_learning/certificate_details.dart';
 import 'package:posture_detector_app/view/e_learning/quiz_screen.dart';
 

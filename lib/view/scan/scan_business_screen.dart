@@ -100,7 +100,10 @@ class _ScanBusinessScreenState extends ConsumerState<ScanBusinessScreen> {
                         'assets/icons/scan_center_icon.svg',
                         width: 200.w,
                         height: 200.w,
-                        color: AppColors.primaryColor,
+                        colorFilter: ColorFilter.mode(
+                          AppColors.primaryColor,
+                          BlendMode.srcIn,
+                        ),
                       ),
                       SizedBox(height: 28.h),
                       Padding(

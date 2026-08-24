@@ -120,7 +120,7 @@ class SubmitButtonCPE extends StatelessWidget {
               ? null
               : () async {
                   final result = await notifier.submitReview();
-                  if (result) {
+                  if (result && context.mounted) {
                     Navigator.pop(context);
                   }
                 },

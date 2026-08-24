@@ -97,7 +97,7 @@ Future<File?> crop_image(String path) async {
     ],
   );
 
-  return cropped != null ? await File(cropped.path) : null;
+  return cropped != null ? File(cropped.path) : null;
 }
 
 // ── Bottom-sheet picker ───────────────────────────────────────────────────────
@@ -154,7 +154,7 @@ Widget _icon_button({
       height: 72.w,
       child: SvgPicture.string(
         svg_string,
-        color: AppColors.text,
+        colorFilter: ColorFilter.mode(AppColors.text, BlendMode.srcIn),
         width: 72.w,
         fit: BoxFit.fitWidth,
       ),

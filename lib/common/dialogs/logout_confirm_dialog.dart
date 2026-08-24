@@ -66,6 +66,21 @@ class _LogoutModalState extends State<LogoutModal> {
 
   bool _loading = false;
 
+  Future<void> _confirmLogout() async {
+    setState(() => _loading = true);
+    await _removeFcmToken();
+    // Revoke the session server-side before wiping local tokens.
+    await _signOut();
+    if (!mounted) return;
+    final container = ProviderScope.containerOf(context);
+    setState(() => _loading = false);
+    container.read(signupNotifierProvider.notifier).reset();
+    container.read(assessmentNotifierProvider.notifier).reset();
+    container.read(reportNotifierProvider.notifier).clearData();
+    AppHelper.instance.clearAllPrefValue();
+    AppRoute.go(AppRoute.loginScreen);
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -111,19 +126,7 @@ class _LogoutModalState extends State<LogoutModal> {
                   height: 46.h,
                   loading: _loading,
                   borderRadius: BorderRadius.circular(8.r),
-                  onTap: () async {
-                    setState(() => _loading = true);
-                    await _removeFcmToken();
-                    // Revoke the session server-side before wiping local tokens.
-                    await _signOut();
-                    setState(() => _loading = false);
-                    final container = ProviderScope.containerOf(context);
-                    container.read(signupNotifierProvider.notifier).reset();
-                    container.read(assessmentNotifierProvider.notifier).reset();
-                    container.read(reportNotifierProvider.notifier).clearData();
-                    AppHelper.instance.clearAllPrefValue();
-                    AppRoute.go(AppRoute.loginScreen);
-                  },
+                  onTap: _confirmLogout,
                   // EN: "Yes"
                   text: loc.yes,
                   backgroundColor: AppColors.primaryColor,

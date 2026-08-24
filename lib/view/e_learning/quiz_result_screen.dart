@@ -55,7 +55,7 @@ class QuizResultScreen extends ConsumerWidget {
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
                   child: _buildQuizQuestion(idx, item, selectedAnswers),
                 );
-              }).toList(),
+              }),
 
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
@@ -125,7 +125,7 @@ class QuizResultScreen extends ConsumerWidget {
               quiz.answer,
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

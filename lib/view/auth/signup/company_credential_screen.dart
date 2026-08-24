@@ -50,6 +50,8 @@ class _CompanyCredentialScreenState
       needAuth: false,
     );
 
+    if (!mounted) return;
+
     if (response.ok) {
       ref.read(signupNotifierProvider.notifier).setCompanyCode(code);
       context.push(AppRoute.employeeCredential);

@@ -187,7 +187,7 @@ class CustomHttp {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final body = await response.stream.bytesToString();
         final json = jsonDecode(body);
-        printLine('Response body: ${json}');
+        printLine('Response body: $json');
         return CustomHttpResult(
           ok: true,
           status_code: response.statusCode,

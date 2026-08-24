@@ -8,10 +8,6 @@ class ProfileModel {
       ProfileModel(message: message ?? this.message, data: data ?? this.data);
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
-    print('');
-    print(json);
-    print('');
-
     return ProfileModel(
       message: json["message"],
       data: Data.fromJson(json["data"]),

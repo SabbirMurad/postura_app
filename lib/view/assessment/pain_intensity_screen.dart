@@ -6,7 +6,6 @@ import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
-import 'package:posture_detector_app/common/widgets/slider_widget.dart';
 import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/routes.dart';
 
@@ -19,7 +18,7 @@ class PainIntensityScreen extends ConsumerWidget {
     final assessment = ref.watch(assessmentNotifierProvider);
     final notifier = ref.read(assessmentNotifierProvider.notifier);
 
-    Color _intensityColor(int value) {
+    Color intensityColor(int value) {
       if (value <= 3) return Colors.green;
       if (value <= 6) return Colors.amber;
       return Colors.red;
@@ -68,7 +67,7 @@ class PainIntensityScreen extends ConsumerWidget {
                             Text(
                               '$value / 10',
                               style: TextStyle(
-                                color: _intensityColor(value.toInt()),
+                                color: intensityColor(value.toInt()),
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -81,7 +80,7 @@ class PainIntensityScreen extends ConsumerWidget {
                           min: 1,
                           max: 10,
                           divisions: 9,
-                          activeColor: _intensityColor(value.toInt()),
+                          activeColor: intensityColor(value.toInt()),
                           inactiveColor: AppColors.border,
                           onChanged: (value) {
                             notifier.setPainForRegion(region, value.round());

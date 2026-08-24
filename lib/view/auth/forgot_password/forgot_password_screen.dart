@@ -34,6 +34,26 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     super.dispose();
   }
 
+  Future<void> _confirmPassword() async {
+    final loc = AppLocalizations.of(context)!;
+    if (_passwordController.text.trim() !=
+        _confirmPasswordController.text.trim()) {
+      // EN: "Passwords do not match"
+      showCustomToast(text: loc.passwordNotMatched);
+      return;
+    }
+    setState(() => _loading = true);
+    final res = await ref
+        .read(authorNotifierProvider.notifier)
+        .resetPassword(
+          _passwordController.text.trim(),
+          _confirmPasswordController.text.trim(),
+        );
+    if (!mounted) return;
+    if (res) context.push(AppRoute.loginScreen);
+    setState(() => _loading = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -122,23 +142,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           loading: _loading,
           // EN: "Confirm Password"
           text: loc.confirmPassword,
-          onTap: () async {
-            if (_passwordController.text.trim() !=
-                _confirmPasswordController.text.trim()) {
-              // EN: "Passwords do not match"
-              showCustomToast(text: loc.passwordNotMatched);
-              return;
-            }
-            setState(() => _loading = true);
-            final res = await ref
-                .read(authorNotifierProvider.notifier)
-                .resetPassword(
-                  _passwordController.text.trim(),
-                  _confirmPasswordController.text.trim(),
-                );
-            setState(() => _loading = false);
-            if (res) context.push(AppRoute.loginScreen);
-          },
+          onTap: _confirmPassword,
           backgroundColor: AppColors.primaryColor,
           textStyle: TextStyle(
             color: AppColors.surface,

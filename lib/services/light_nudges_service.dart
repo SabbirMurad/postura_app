@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:posture_detector_app/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';

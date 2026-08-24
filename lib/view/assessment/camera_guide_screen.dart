@@ -8,7 +8,6 @@ import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
-import 'package:posture_detector_app/models/analysis/capture.dart';
 import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/utils/print_helper.dart';
 import 'package:posture_detector_app/view/assessment/analysis_result_screen.dart';
@@ -26,7 +25,7 @@ class _CameraGuideScreenState extends ConsumerState<CameraGuideScreen> {
   static const _channel = MethodChannel('posture_detection');
   bool _detecting = false;
 
-  Future<void> _handleCaptureCallBack(BuildContext context) async {
+  Future<void> _handleCaptureCallBack() async {
     if (_detecting) return;
     final assessment = ref.read(assessmentNotifierProvider);
     final notifier = ref.read(assessmentNotifierProvider.notifier);
@@ -190,7 +189,7 @@ class _CameraGuideScreenState extends ConsumerState<CameraGuideScreen> {
           padding: EdgeInsets.only(bottom: 20.h, left: 20.w, right: 20.w),
           child: SizedBox(
             child: PrimaryButton(
-              onTap: () => _handleCaptureCallBack(context),
+              onTap: () => _handleCaptureCallBack(),
               // EN: "Continue"
               text: loc.continueButton,
               backgroundColor: AppColors.primaryColor,

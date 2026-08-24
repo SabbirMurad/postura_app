@@ -23,6 +23,14 @@ class _ConfirmCodeForgotScreenState
   String _otp = '';
   bool _loading = false;
 
+  Future<void> _confirmCode() async {
+    setState(() => _loading = true);
+    final res = await ref.read(authorNotifierProvider.notifier).verifyOtp(_otp);
+    if (!mounted) return;
+    if (res) context.push(AppRoute.forgotPasswordScreen);
+    setState(() => _loading = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -112,14 +120,7 @@ class _ConfirmCodeForgotScreenState
           loading: _loading,
           // EN: "Confirm Code"
           text: loc.confirmCode,
-          onTap: () async {
-            setState(() => _loading = true);
-            final res = await ref
-                .read(authorNotifierProvider.notifier)
-                .verifyOtp(_otp);
-            setState(() => _loading = false);
-            if (res) context.push(AppRoute.forgotPasswordScreen);
-          },
+          onTap: _confirmCode,
           backgroundColor: AppColors.primaryColor,
           textStyle: TextStyle(
             color: AppColors.surface,

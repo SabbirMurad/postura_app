@@ -27,6 +27,16 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
     super.dispose();
   }
 
+  Future<void> _confirmEmail() async {
+    setState(() => _loading = true);
+    final res = await ref
+        .read(authorNotifierProvider.notifier)
+        .verifyEmail(_emailController.text.trim());
+    if (!mounted) return;
+    if (res) context.push(AppRoute.confirmCodeForgot);
+    setState(() => _loading = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -79,14 +89,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
           loading: _loading,
           // EN: "Confirm Email"
           text: loc.confirmEmail,
-          onTap: () async {
-            setState(() => _loading = true);
-            final res = await ref
-                .read(authorNotifierProvider.notifier)
-                .verifyEmail(_emailController.text.trim());
-            setState(() => _loading = false);
-            if (res) context.push(AppRoute.confirmCodeForgot);
-          },
+          onTap: _confirmEmail,
           backgroundColor: AppColors.primaryColor,
           textStyle: TextStyle(
             color: AppColors.surface,

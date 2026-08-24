@@ -227,7 +227,7 @@ class _CertificateDetailsScreenState extends State<CertificateDetailsScreen> {
                             ],
                           ),
                         );
-                      }).toList(),
+                      }),
                       SizedBox(height: 48.h),
                       Text(
                         'Certificate ID',

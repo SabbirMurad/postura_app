@@ -53,7 +53,10 @@ class HomeTopSection extends StatelessWidget {
                     Assets.icons.auth.user.path,
                     width: 24.w,
                     height: 24.w,
-                    color: AppColors.primaryColor,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.primaryColor,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 )
               : NetworkHashedImageViewer(
