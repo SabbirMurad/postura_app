@@ -11,6 +11,8 @@ import 'package:posture_detector_app/provider/cpe_home.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/main.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
+import 'package:posture_detector_app/models/analysis/analysis_report.dart'
+    show ActionReportV13;
 
 // ─────────────────────────────────────────
 // Models
@@ -144,6 +146,10 @@ class CpeAssessmentState {
   // ROSA scores
   final RosaScore rosaScore;
 
+  /// The deterministic Action Report v1.3 (tier-limited priority findings +
+  /// equipment cards) for this scan, when the backend has computed one.
+  final ActionReportV13? actionReportV13;
+
   const CpeAssessmentState({
     this.isLoading = true,
     this.isSubmitting = false,
@@ -166,6 +172,7 @@ class CpeAssessmentState {
     this.signaturePath = '',
     this.signatureRemoteUrl = '',
     required this.rosaScore,
+    this.actionReportV13,
   });
 
   double get compliancePercent => (compliance / 100.0).clamp(0.0, 1.0);
@@ -242,6 +249,9 @@ class CpeAssessmentState {
     signaturePath: signaturePath ?? this.signaturePath,
     signatureRemoteUrl: signatureRemoteUrl ?? this.signatureRemoteUrl,
     rosaScore: rosaScore ?? this.rosaScore,
+    // Not a copyWith param — only ever set once in _loadData, same as
+    // sideCaptures/frontCapture above, so always preserved as-is.
+    actionReportV13: actionReportV13,
   );
 }
 
@@ -342,6 +352,11 @@ class CpeAssessmentNotifier
         rosaScore: RosaScore.fromJson(
           (d['rosa_score'] as Map?)?.cast<String, dynamic>() ?? const <String, dynamic>{},
         ),
+        actionReportV13: d['action_report_v1_3'] is Map
+            ? ActionReportV13.fromJson(
+                Map<String, dynamic>.from(d['action_report_v1_3'] as Map),
+              )
+            : null,
       );
     } catch (e) {
       final loc = AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;
@@ -444,6 +459,7 @@ class CpeAssessmentNotifier
         ref.read(cpeHomeNotifierProvider.notifier).fetchAssessmentList();
         final ctx = scaffoldMessengerKey.currentContext;
         if (ctx != null) {
+          // ignore: use_build_context_synchronously
           final loc = AppLocalizations.of(ctx)!;
           showCustomToast(
             text: '${loc.success}: ${loc.reviewSubmittedSuccessfully}',

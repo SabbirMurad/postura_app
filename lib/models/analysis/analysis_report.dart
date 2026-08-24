@@ -29,6 +29,11 @@ class AnalysisReport {
   /// Action Report's "Supplemental CPE Findings" section.
   final SupplementalCpeFindings supplementalCpeFindings;
 
+  /// The deterministic, fixed-copy Action Report v1.3 (tier-limited priority
+  /// findings + equipment cards). Additive alongside [corrections] — the
+  /// AI-generated free-text guidance the backend still returns for now.
+  final ActionReportV13? actionReportV13;
+
   AnalysisReport({
     required this.workPattern,
     required this.bodyRegionRisks,
@@ -44,6 +49,7 @@ class AnalysisReport {
     this.chronicityLevel = 'Low',
     this.heightCm,
     this.supplementalCpeFindings = const SupplementalCpeFindings(),
+    this.actionReportV13,
   });
 
   bool get chronicityElevated => chronicityLevel == 'Elevated';
@@ -92,6 +98,11 @@ class AnalysisReport {
       supplementalCpeFindings: SupplementalCpeFindings.fromJson(
         json['supplemental_cpe_findings'] as Map<String, dynamic>? ?? const {},
       ),
+      actionReportV13: json['action_report_v1_3'] is Map
+          ? ActionReportV13.fromJson(
+              json['action_report_v1_3'] as Map<String, dynamic>,
+            )
+          : null,
     );
   }
 
@@ -110,6 +121,213 @@ class AnalysisReport {
     'pain_intensities': painIntensities.map((e) => e.toJson()).toList(),
     'pain_duration': painDuration,
     'chronicity_level': chronicityLevel,
+    'action_report_v1_3': actionReportV13?.toJson(),
+  };
+}
+
+// ===================== ACTION REPORT v1.3 =====================
+// The deterministic finding -> fixed-copy -> equipment pipeline (Postura
+// Action Report v1.3 / Equipment Engine v1.3). Every text field here is fixed
+// copy from the backend — no free-form text is generated for this section.
+
+class ActionReportV13 {
+  final int tierNumber;
+  final String tierName;
+  final int rosaScore;
+  final String mainRiskDriver;
+  final String executiveSummary;
+  final String priorityFindingsIntro;
+  final List<FindingV13> priorityFindings;
+  final String? supplementalCpeIntro;
+  final List<FindingV13> supplementalCpeFindings;
+  final List<String> whatYouCanDoNow;
+  final String? equipmentHelpsText;
+  final List<EquipmentCardV13> equipmentCards;
+  final String generalWorkstationHabits;
+  final String? professionalReviewLine;
+
+  const ActionReportV13({
+    required this.tierNumber,
+    required this.tierName,
+    required this.rosaScore,
+    required this.mainRiskDriver,
+    required this.executiveSummary,
+    required this.priorityFindingsIntro,
+    required this.priorityFindings,
+    this.supplementalCpeIntro,
+    required this.supplementalCpeFindings,
+    required this.whatYouCanDoNow,
+    this.equipmentHelpsText,
+    required this.equipmentCards,
+    required this.generalWorkstationHabits,
+    this.professionalReviewLine,
+  });
+
+  factory ActionReportV13.fromJson(Map<String, dynamic> json) {
+    final header = json['header'] as Map<String, dynamic>? ?? const {};
+    return ActionReportV13(
+      tierNumber: header['tier_number'] ?? 1,
+      tierName: header['tier_name'] ?? 'Low',
+      rosaScore: header['rosa_score'] ?? 0,
+      mainRiskDriver: header['main_risk_driver'] ?? '',
+      executiveSummary: json['executive_summary'] ?? '',
+      priorityFindingsIntro: json['priority_findings_intro'] ?? '',
+      priorityFindings: (json['priority_findings'] as List<dynamic>? ?? [])
+          .map((e) => FindingV13.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      supplementalCpeIntro: json['supplemental_cpe_intro'] as String?,
+      supplementalCpeFindings:
+          (json['supplemental_cpe_findings'] as List<dynamic>? ?? [])
+              .map((e) => FindingV13.fromJson(e as Map<String, dynamic>))
+              .toList(),
+      whatYouCanDoNow: List<String>.from(json['what_you_can_do_now'] ?? const []),
+      equipmentHelpsText: json['equipment_helps_text'] as String?,
+      equipmentCards: (json['equipment_cards'] as List<dynamic>? ?? [])
+          .map((e) => EquipmentCardV13.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      generalWorkstationHabits: json['general_workstation_habits'] ?? '',
+      professionalReviewLine: json['professional_review_line'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'header': {
+      'tier_number': tierNumber,
+      'tier_name': tierName,
+      'rosa_score': rosaScore,
+      'main_risk_driver': mainRiskDriver,
+    },
+    'executive_summary': executiveSummary,
+    'priority_findings_intro': priorityFindingsIntro,
+    'priority_findings': priorityFindings.map((e) => e.toJson()).toList(),
+    'supplemental_cpe_intro': supplementalCpeIntro,
+    'supplemental_cpe_findings':
+        supplementalCpeFindings.map((e) => e.toJson()).toList(),
+    'what_you_can_do_now': whatYouCanDoNow,
+    'equipment_helps_text': equipmentHelpsText,
+    'equipment_cards': equipmentCards.map((e) => e.toJson()).toList(),
+    'general_workstation_habits': generalWorkstationHabits,
+    'professional_review_line': professionalReviewLine,
+  };
+}
+
+class FindingV13 {
+  final String findingId;
+  final String section;
+  final String sourceType;
+  final bool rosaScored;
+  final String employeeLabel;
+  final String actionNow;
+  final String ergonomicTarget;
+  final String isoExplanation;
+  final String driverText;
+  final bool equipmentHandoff;
+  final String? equipmentHandoffText;
+  final String? relatedActionLabel;
+
+  const FindingV13({
+    required this.findingId,
+    required this.section,
+    required this.sourceType,
+    required this.rosaScored,
+    required this.employeeLabel,
+    required this.actionNow,
+    required this.ergonomicTarget,
+    required this.isoExplanation,
+    required this.driverText,
+    required this.equipmentHandoff,
+    this.equipmentHandoffText,
+    this.relatedActionLabel,
+  });
+
+  factory FindingV13.fromJson(Map<String, dynamic> json) => FindingV13(
+    findingId: json['finding_id'] ?? '',
+    section: json['section'] ?? '',
+    sourceType: json['source_type'] ?? '',
+    rosaScored: json['rosa_scored'] as bool? ?? false,
+    employeeLabel: json['employee_label'] ?? '',
+    actionNow: json['action_now'] ?? '',
+    ergonomicTarget: json['ergonomic_target'] ?? '',
+    isoExplanation: json['iso_explanation'] ?? '',
+    driverText: json['driver_text'] ?? '',
+    equipmentHandoff: json['equipment_handoff'] as bool? ?? false,
+    equipmentHandoffText: json['equipment_handoff_text'] as String?,
+    relatedActionLabel: json['related_action_label'] as String?,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'finding_id': findingId,
+    'section': section,
+    'source_type': sourceType,
+    'rosa_scored': rosaScored,
+    'employee_label': employeeLabel,
+    'action_now': actionNow,
+    'ergonomic_target': ergonomicTarget,
+    'iso_explanation': isoExplanation,
+    'driver_text': driverText,
+    'equipment_handoff': equipmentHandoff,
+    'equipment_handoff_text': equipmentHandoffText,
+    'related_action_label': relatedActionLabel,
+  };
+}
+
+class EquipmentCardV13 {
+  final String equipmentId;
+  final String cardTitle;
+  final String cardDescription;
+  final String priorityLabel;
+  final String priorityText;
+  final List<String> relatedFindings;
+  final List<String> whyText;
+  final String targetText;
+  final List<String> requiredFeatures;
+  final String nextStepText;
+  final String relatedActionLabel;
+  final String? consolidationNote;
+
+  const EquipmentCardV13({
+    required this.equipmentId,
+    required this.cardTitle,
+    required this.cardDescription,
+    required this.priorityLabel,
+    required this.priorityText,
+    required this.relatedFindings,
+    required this.whyText,
+    required this.targetText,
+    required this.requiredFeatures,
+    required this.nextStepText,
+    required this.relatedActionLabel,
+    this.consolidationNote,
+  });
+
+  factory EquipmentCardV13.fromJson(Map<String, dynamic> json) => EquipmentCardV13(
+    equipmentId: json['equipment_id'] ?? '',
+    cardTitle: json['card_title'] ?? '',
+    cardDescription: json['card_description'] ?? '',
+    priorityLabel: json['priority_label'] ?? '',
+    priorityText: json['priority_text'] ?? '',
+    relatedFindings: List<String>.from(json['related_findings'] ?? const []),
+    whyText: List<String>.from(json['why_text'] ?? const []),
+    targetText: json['target_text'] ?? '',
+    requiredFeatures: List<String>.from(json['required_features'] ?? const []),
+    nextStepText: json['next_step_text'] ?? '',
+    relatedActionLabel: json['related_action_label'] ?? 'View related action',
+    consolidationNote: json['consolidation_note'] as String?,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'equipment_id': equipmentId,
+    'card_title': cardTitle,
+    'card_description': cardDescription,
+    'priority_label': priorityLabel,
+    'priority_text': priorityText,
+    'related_findings': relatedFindings,
+    'why_text': whyText,
+    'target_text': targetText,
+    'required_features': requiredFeatures,
+    'next_step_text': nextStepText,
+    'related_action_label': relatedActionLabel,
+    'consolidation_note': consolidationNote,
   };
 }
 
