@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/view/equipment/widgets/equipment_recommendation_card.dart';
+import 'package:posture_detector_app/view/equipment/widgets/equipment_recommendation_card_v13.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
@@ -103,7 +104,13 @@ class _EquipmentScreenBusinessState
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final reportState = ref.watch(reportNotifierProvider);
-    final engineOutput = _buildEngineOutput(reportState);
+    // Equipment Engine v1.3 — deterministic, fixed-copy cards from the
+    // backend, shared FINDING_IDs with the Action Report. Preferred whenever
+    // present; the local ROSA/VAS-based EquipmentEngine and the AI-generated
+    // list only cover scans that predate the v1.3 rollout.
+    final v13Report = reportState.analysisReport?.actionReportV13;
+    final v13Cards = v13Report?.equipmentCards ?? const [];
+    final engineOutput = v13Report == null ? _buildEngineOutput(reportState) : null;
     final fallbackList = reportState.analysisReport?.equipment ?? [];
 
     return Scaffold(
@@ -130,8 +137,35 @@ class _EquipmentScreenBusinessState
                       ),
                     ),
                     SizedBox(height: 12.h),
-                    // Tier message banner (when engine output available)
-                    if (engineOutput != null) ...[
+                    // Tier banner — v1.3 report preferred, legacy engine as fallback.
+                    if (v13Report != null) ...[
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 12.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor.withValues(alpha: 0.06),
+                            borderRadius: BorderRadius.circular(10.r),
+                            border: Border.all(
+                              color: AppColors.primaryColor.withValues(alpha: 0.25),
+                            ),
+                          ),
+                          child: Text(
+                            'Tier ${v13Report.tierNumber} - ${v13Report.tierName} | ROSA ${v13Report.rosaScore}/10',
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 14.h),
+                    ] else if (engineOutput != null) ...[
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20.w),
                         child: Container(
@@ -191,8 +225,45 @@ class _EquipmentScreenBusinessState
                       SizedBox(height: 14.h),
                     ],
 
-                    // Equipment cards — engine output preferred
-                    if (engineOutput != null &&
+                    // Equipment cards — v1.3 report preferred over the legacy engine.
+                    if (v13Report != null && v13Cards.isNotEmpty)
+                      ...v13Cards.map(
+                        (card) => Padding(
+                          padding: EdgeInsets.only(
+                            bottom: 12.h,
+                            left: 20.w,
+                            right: 20.w,
+                          ),
+                          child: EquipmentRecommendationCardV13(card: card),
+                        ),
+                      )
+                    else if (v13Report != null && v13Cards.isEmpty)
+                      Padding(
+                        padding: EdgeInsets.only(top: 72.w),
+                        child: Center(
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.shopping_bag_outlined,
+                                size: 64.sp,
+                                color: AppColors.secondaryText.withValues(
+                                  alpha: 0.5,
+                                ),
+                              ),
+                              SizedBox(height: 16.h),
+                              Text(
+                                loc.noDataFound,
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.secondaryText,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    else if (engineOutput != null &&
                         engineOutput.equipmentCards.isNotEmpty)
                       ...engineOutput.equipmentCards.map((card) {
                         return Padding(
