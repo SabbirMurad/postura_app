@@ -6,6 +6,7 @@ import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/models/analysis/capture.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 import 'package:posture_detector_app/models/assessment/pain.dart';
+import 'package:posture_detector_app/models/assessment/red_flag_screening.dart';
 import 'package:posture_detector_app/models/assessment/scan_supplemental.dart';
 import 'package:posture_detector_app/models/assessment/workstation_answers.dart';
 import 'package:posture_detector_app/models/assessment/yellow_flag.dart';
@@ -20,6 +21,7 @@ import 'package:posture_detector_app/utils/media.dart' as media;
 // Re-exported so the many screens that import this provider keep naming the
 // pain enums (and the ROSA models) without a separate import.
 export 'package:posture_detector_app/models/assessment/pain.dart';
+export 'package:posture_detector_app/models/assessment/red_flag_screening.dart';
 export 'package:posture_detector_app/models/assessment/scan_supplemental.dart';
 export 'package:posture_detector_app/models/assessment/yellow_flag.dart';
 export 'package:posture_detector_app/models/analysis/rosa_score.dart';
@@ -40,6 +42,10 @@ class AssessmentState {
   /// Outlook") — collected after Pain Duration, before the Workstation checklist.
   final YellowFlagAnswers yellowFlagAnswers;
 
+  /// Medical red-flag safety screen — collected after Work Ability &
+  /// Recovery Outlook, before the Workstation checklist.
+  final RedFlagScreening redFlagScreening;
+
   /// Manual ROSA checklist answers, fed to the native PostureEngine.
   final WorkstationAnswers workstationAnswers;
 
@@ -59,6 +65,7 @@ class AssessmentState {
     this.painDuration = const {},
     this.selectedOptionalSymptoms = const {},
     this.yellowFlagAnswers = const YellowFlagAnswers(),
+    this.redFlagScreening = const RedFlagScreening(),
     this.workstationAnswers = const WorkstationAnswers(),
     this.scanSupplemental = const ScanSupplemental(),
     this.sideCaptures = const [],
@@ -94,6 +101,7 @@ class AssessmentState {
   static const Set<PainDuration> allPainDurations = {
     PainDuration.lessThan1Week,
     PainDuration.oneToFourWeeks,
+    PainDuration.sixToTwelveWeeks,
     PainDuration.oneToThreeMonths,
     PainDuration.threeToSixMonths,
     PainDuration.moreThanSixMonths,
@@ -115,6 +123,7 @@ class AssessmentState {
     Map<BodyRegion, PainDuration>? painDuration,
     Set<OptionalSymptom>? selectedOptionalSymptoms,
     YellowFlagAnswers? yellowFlagAnswers,
+    RedFlagScreening? redFlagScreening,
     WorkstationAnswers? workstationAnswers,
     ScanSupplemental? scanSupplemental,
     List<SideViewCapture>? sideCaptures,
@@ -127,6 +136,7 @@ class AssessmentState {
       selectedOptionalSymptoms:
           selectedOptionalSymptoms ?? this.selectedOptionalSymptoms,
       yellowFlagAnswers: yellowFlagAnswers ?? this.yellowFlagAnswers,
+      redFlagScreening: redFlagScreening ?? this.redFlagScreening,
       workstationAnswers: workstationAnswers ?? this.workstationAnswers,
       scanSupplemental: scanSupplemental ?? this.scanSupplemental,
       sideCaptures: sideCaptures ?? this.sideCaptures,
@@ -195,6 +205,9 @@ class AssessmentNotifier extends _$AssessmentNotifier {
   void setYellowFlagAnswers(YellowFlagAnswers answers) =>
       state = state.copyWith(yellowFlagAnswers: answers);
 
+  void setRedFlagScreening(RedFlagScreening answers) =>
+      state = state.copyWith(redFlagScreening: answers);
+
   void setWorkstationAnswers(WorkstationAnswers answers) =>
       state = state.copyWith(workstationAnswers: answers);
 
@@ -235,6 +248,7 @@ class AssessmentNotifier extends _$AssessmentNotifier {
       painDuration: state.painDuration,
       selectedOptionalSymptoms: state.selectedOptionalSymptoms,
       yellowFlagAnswers: state.yellowFlagAnswers,
+      redFlagScreening: state.redFlagScreening,
       workstationAnswers: state.workstationAnswers,
       scanSupplemental: state.scanSupplemental,
       sideCaptures: side,
@@ -303,6 +317,8 @@ class AssessmentNotifier extends _$AssessmentNotifier {
         'workstation_answers': state.workstationAnswers.toMap(),
         // Yellow-flag / chronicity screen answers — backend computes the level.
         'yellow_flag_answers': state.yellowFlagAnswers.toMap(),
+        // Medical red-flag safety screening — backend computes red_flag_positive.
+        'red_flag_screening': state.redFlagScreening.toMap(),
         // Height + supplemental phone questions — never affects ROSA scoring.
         'scan_supplemental': state.scanSupplemental.toMap(),
         // One ROSA score per scan (the side shots' scores averaged).

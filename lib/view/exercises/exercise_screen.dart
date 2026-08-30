@@ -10,17 +10,18 @@ import 'package:posture_detector_app/constants/colors.dart';
 class ExerciseBusinessScreen extends ConsumerWidget {
   const ExerciseBusinessScreen({super.key});
 
-  /// Derive sensitivity level from average VAS score
-  String _sensitivityLabel(int vas) {
-    if (vas >= 7) return 'Active';
-    if (vas >= 4) return 'Moderate';
-    return 'Gentle';
+  /// Dose label from the backend's `readiness` — pain/duration-driven, and
+  /// deliberately never escalates to a higher-intensity label just because
+  /// reported pain is higher (that inverted vas>=7 => "Active" mapping was
+  /// the exact bug the client's audit flagged; GENTLE/GENTLE_MAINTENANCE
+  /// both read as "Gentle" here, MODERATE as "Moderate" — there is no
+  /// "Active"/higher-intensity tier).
+  String _sensitivityLabel(String readiness) {
+    return readiness == 'MODERATE' ? 'Moderate' : 'Gentle';
   }
 
   Color _tierColor(String label) {
     switch (label) {
-      case 'Active':
-        return const Color(0xFFA13544);
       case 'Moderate':
         return const Color(0xFFDA7101);
       default:
@@ -30,8 +31,6 @@ class ExerciseBusinessScreen extends ConsumerWidget {
 
   String _tierMessage(String label) {
     switch (label) {
-      case 'Active':
-        return 'Higher-intensity programme for significant pain relief.';
       case 'Moderate':
         return 'Balanced programme to reduce discomfort and improve mobility.';
       default:
@@ -41,23 +40,11 @@ class ExerciseBusinessScreen extends ConsumerWidget {
 
   String _frequency(String label) {
     switch (label) {
-      case 'Active':
-        return '4× per week · 15 min sessions';
       case 'Moderate':
         return '3× per week · 12 min sessions';
       default:
         return '3× per week · 10 min sessions';
     }
-  }
-
-  /// Detect acute flag: pain or tingling
-  String? _acuteFlag(List<String> symptoms, int vas) {
-    final lower = symptoms.map((s) => s.toLowerCase()).toList();
-    if (lower.any((s) => s.contains('tingling') || s.contains('numbness'))) {
-      return 'tingling';
-    }
-    if (vas >= 7) return 'pain';
-    return null;
   }
 
   @override
@@ -90,8 +77,10 @@ class ExerciseBusinessScreen extends ConsumerWidget {
                 builder: (context) {
                   final exercisesData = reportState.analysisReport?.exercises;
                   final exercises = exercisesData?.recommendedSession;
-                  final vas = exercisesData?.averagePainVas ?? 0;
-                  final symptoms = reportState.analysisReport?.symptoms ?? [];
+                  final needsCpeReview = exercisesData?.needsCpeReview ?? false;
+                  final stopped =
+                      exercisesData?.exerciseStatus ==
+                      'STOP_AND_SEEK_CLINICAL_ASSESSMENT';
 
                   // Filter out exercises that duplicate clinical projection
                   final filteredExercises = exercises?.where((e) {
@@ -107,40 +96,52 @@ class ExerciseBusinessScreen extends ConsumerWidget {
 
                   if (filteredExercises == null || filteredExercises.isEmpty) {
                     return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.fitness_center_rounded,
-                            size: 80.sp,
-                            color: AppColors.secondaryText.withValues(alpha: 0.5),
-                          ),
-                          SizedBox(height: 20.h),
-                          Text(
-                            'No Exercises Yet',
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.secondaryText,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              stopped
+                                  ? Icons.health_and_safety_rounded
+                                  : Icons.fitness_center_rounded,
+                              size: 80.sp,
+                              color: AppColors.secondaryText.withValues(alpha: 0.5),
                             ),
-                          ),
-                          SizedBox(height: 8.h),
-                          Text(
-                            'Please complete your assessment first',
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              color: AppColors.secondaryText.withValues(alpha: 0.7),
+                            SizedBox(height: 20.h),
+                            Text(
+                              stopped
+                                  ? 'Please Check In With a Professional'
+                                  : 'No Exercises Yet',
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.secondaryText,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                            SizedBox(height: 8.h),
+                            Text(
+                              stopped
+                                  ? (exercisesData?.message ??
+                                        'Based on your screening answers, please consult a '
+                                            'healthcare professional before starting exercises.')
+                                  : 'Please complete your assessment first',
+                              style: TextStyle(
+                                fontSize: 13.sp,
+                                color: AppColors.secondaryText.withValues(alpha: 0.7),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   }
 
-                  final tierLabel = _sensitivityLabel(vas);
+                  final readiness = exercisesData?.readiness ?? 'GENTLE_MAINTENANCE';
+                  final tierLabel = _sensitivityLabel(readiness);
                   final tierColor = _tierColor(tierLabel);
-                  final acuteFlag = _acuteFlag(symptoms, vas);
 
                   return ListView.builder(
                     padding: EdgeInsets.only(
@@ -214,8 +215,9 @@ class ExerciseBusinessScreen extends ConsumerWidget {
                                 ],
                               ),
 
-                              /// AcuteFlag warning banner
-                              if (acuteFlag != null) ...[
+                              /// CPE-review banner (backend-driven — never a
+                              /// diagnosis claim, just "worth a second look").
+                              if (needsCpeReview) ...[
                                 SizedBox(height: 12.h),
                                 Container(
                                   padding: EdgeInsets.symmetric(
@@ -242,9 +244,10 @@ class ExerciseBusinessScreen extends ConsumerWidget {
                                       SizedBox(width: 8.w),
                                       Expanded(
                                         child: Text(
-                                          acuteFlag == 'tingling'
-                                              ? 'Tingling or numbness detected — all exercises set to Gentle. Stop immediately if symptoms worsen.'
-                                              : 'High pain level detected — start slowly and stop if any exercise increases your pain.',
+                                          'Based on your answers, we recommend keeping these '
+                                          'gentle and reviewing them with your CPE or a healthcare '
+                                          'professional. Stop immediately if any exercise increases '
+                                          'your symptoms.',
                                           style: TextStyle(
                                             fontSize: 12.sp,
                                             color: const Color(0xFF856404),

@@ -528,7 +528,20 @@ class Exercises {
   final MainPainRegion? mainPainRegion;
   final int averagePainVas;
   final List<RecommendedSession> recommendedSession;
-  final ClinicalProjection? clinicalProjection; // ✅ NEW
+  // Legacy — the backend no longer sends this (unvalidated improvement
+  // projections removed per client audit); kept nullable so old cached
+  // reports still parse.
+  final ClinicalProjection? clinicalProjection;
+
+  /// "OK" | "STOP_AND_SEEK_CLINICAL_ASSESSMENT" — a real red-flag-checklist
+  /// stop, not an NRS cutoff.
+  final String exerciseStatus;
+
+  /// "GENTLE" | "MODERATE" | "GENTLE_MAINTENANCE" — pain/duration-driven
+  /// dose; never escalates purely because reported pain is higher.
+  final String readiness;
+  final bool needsCpeReview;
+  final String? message;
 
   Exercises({
     required this.conditionType,
@@ -536,7 +549,11 @@ class Exercises {
     this.mainPainRegion,
     required this.averagePainVas,
     required this.recommendedSession,
-    this.clinicalProjection, // ✅ NEW
+    this.clinicalProjection,
+    this.exerciseStatus = 'OK',
+    this.readiness = 'GENTLE_MAINTENANCE',
+    this.needsCpeReview = false,
+    this.message,
   });
 
   factory Exercises.fromJson(Map<String, dynamic> json) => Exercises(
@@ -551,13 +568,15 @@ class Exercises {
     recommendedSession: (json['recommended_session'] as List<dynamic>? ?? [])
         .map((e) => RecommendedSession.fromJson(e as Map<String, dynamic>))
         .toList(),
-    clinicalProjection:
-        json['clinical_projection'] !=
-            null // ✅ NEW
+    clinicalProjection: json['clinical_projection'] != null
         ? ClinicalProjection.fromJson(
             json['clinical_projection'] as Map<String, dynamic>,
           )
         : null,
+    exerciseStatus: json['exercise_status'] ?? 'OK',
+    readiness: json['readiness'] ?? 'GENTLE_MAINTENANCE',
+    needsCpeReview: json['needs_cpe_review'] ?? false,
+    message: json['message'],
   );
 
   Map<String, dynamic> toJson() => {
@@ -566,7 +585,10 @@ class Exercises {
     'main_pain_region': mainPainRegion?.toJson(),
     'average_pain_vas': averagePainVas,
     'recommended_session': recommendedSession.map((e) => e.toJson()).toList(),
-    'clinical_projection': clinicalProjection?.toJson(), // ✅ NEW
+    'exercise_status': exerciseStatus,
+    'readiness': readiness,
+    'needs_cpe_review': needsCpeReview,
+    'message': message,
   };
 }
 
@@ -615,8 +637,16 @@ class RecommendedSession {
   final String recommendedDuration;
   final String safetyNote;
   final int? regionVas;
+  // Legacy — the backend no longer sends these (unvalidated "Therapy
+  // Priority" badge + improvement projections removed per client audit);
+  // kept nullable so old cached reports still parse.
   final String? badge;
   final int? improvementPercentage;
+
+  /// "reported_pain" | "image_risk" — whether this exercise was dosed from
+  /// employee-reported NRS or is optional gentle movement from a
+  /// ROSA/image-only finding (never a "priority" treatment).
+  final String? source;
 
   RecommendedSession({
     required this.id,
@@ -633,6 +663,7 @@ class RecommendedSession {
     this.regionVas,
     this.badge,
     this.improvementPercentage,
+    this.source,
   });
 
   factory RecommendedSession.fromJson(Map<String, dynamic> json) {
@@ -653,6 +684,7 @@ class RecommendedSession {
       regionVas: json['region_vas'] as int?,
       badge: json['badge'] as String?,
       improvementPercentage: json['improvement_percentage'] as int?,
+      source: json['source'] as String?,
     );
   }
 
@@ -669,8 +701,7 @@ class RecommendedSession {
     'recommended_duration': recommendedDuration,
     'safety_note': safetyNote,
     'region_vas': regionVas,
-    'badge': badge,
-    'improvement_percentage': improvementPercentage,
+    'source': source,
   };
 }
 

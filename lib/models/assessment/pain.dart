@@ -29,6 +29,9 @@ enum PainDuration {
   none('No pain'),
   lessThan1Week('Less than 1 week'),
   oneToFourWeeks('1-4 weeks'),
+  // Subacute bucket: lets the exercise engine tell "6-12 weeks" apart from
+  // true chronic (matches the backend's PainDurationEnum::SixToTwelveWeeks).
+  sixToTwelveWeeks('6-12 weeks'),
   oneToThreeMonths('1-3 months'),
   threeToSixMonths('3-6 months'),
   moreThanSixMonths('More than 6 months');

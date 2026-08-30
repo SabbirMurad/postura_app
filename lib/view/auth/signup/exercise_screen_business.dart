@@ -63,8 +63,12 @@ class ExerciseScreenBusiness extends ConsumerWidget {
             Expanded(
               child: Builder(
                 builder: (context) {
-                  final exercises =
-                      reportState.analysisReport?.exercises.recommendedSession;
+                  final exercisesData = reportState.analysisReport?.exercises;
+                  final exercises = exercisesData?.recommendedSession;
+                  final stopped =
+                      exercisesData?.exerciseStatus ==
+                      'STOP_AND_SEEK_CLINICAL_ASSESSMENT';
+                  final needsCpeReview = exercisesData?.needsCpeReview ?? false;
 
                   final clinicalProjection =
                       reportState.analysisReport?.exercises.clinicalProjection;
@@ -89,38 +93,50 @@ class ExerciseScreenBusiness extends ConsumerWidget {
                   /// ✅ Empty State
                   if (filteredExercises == null || filteredExercises.isEmpty) {
                     return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.fitness_center_rounded,
-                            size: 80.sp,
-                            color: AppColors.secondaryText.withValues(
-                              alpha: 0.5,
-                            ),
-                          ),
-                          SizedBox(height: 20.h),
-                          Text(
-                            'No Exercises Yet',
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.secondaryText,
-                            ),
-                          ),
-                          SizedBox(height: 8.h),
-                          Text(
-                            'Please complete your assessment first',
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.w400,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              stopped
+                                  ? Icons.health_and_safety_rounded
+                                  : Icons.fitness_center_rounded,
+                              size: 80.sp,
                               color: AppColors.secondaryText.withValues(
-                                alpha: 0.7,
+                                alpha: 0.5,
                               ),
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                            SizedBox(height: 20.h),
+                            Text(
+                              stopped
+                                  ? 'Please Check In With a Professional'
+                                  : 'No Exercises Yet',
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.secondaryText,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              stopped
+                                  ? (exercisesData?.message ??
+                                        'Based on your screening answers, please consult a '
+                                            'healthcare professional before starting exercises.')
+                                  : 'Please complete your assessment first',
+                              style: TextStyle(
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.secondaryText.withValues(
+                                  alpha: 0.7,
+                                ),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   }
@@ -146,9 +162,58 @@ class ExerciseScreenBusiness extends ConsumerWidget {
                           top: 16.h,
                           bottom: clinicalFooterHeight + 16.h + 80.h,
                         ),
-                        itemCount: filteredExercises.length,
+                        itemCount:
+                            filteredExercises.length + (needsCpeReview ? 1 : 0),
                         itemBuilder: (context, index) {
-                          final exercise = filteredExercises[index];
+                          if (needsCpeReview && index == 0) {
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 14.w,
+                                  vertical: 10.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFF3CD),
+                                  borderRadius: BorderRadius.circular(10.r),
+                                  border: Border.all(
+                                    color: const Color(
+                                      0xFFDAA101,
+                                    ).withValues(alpha: 0.5),
+                                  ),
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Icon(
+                                      Icons.warning_amber_rounded,
+                                      color: Color(0xFF856404),
+                                      size: 18,
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    Expanded(
+                                      child: Text(
+                                        'Based on your answers, we recommend keeping '
+                                        'these gentle and reviewing them with your CPE '
+                                        'or a healthcare professional. Stop immediately '
+                                        'if any exercise increases your symptoms.',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: const Color(0xFF856404),
+                                          height: 1.4,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+
+                          final exercise =
+                              filteredExercises[needsCpeReview
+                                  ? index - 1
+                                  : index];
 
                           return Padding(
                             padding: EdgeInsets.only(bottom: 12.h),

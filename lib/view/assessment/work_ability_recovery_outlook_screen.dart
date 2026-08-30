@@ -11,7 +11,8 @@ import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/routes.dart';
 
 /// "Work Ability & Recovery Outlook" — yellow-flag / chronicity risk screen.
-/// Sits after Pain Intensity + Pain Duration, before the Workstation checklist.
+/// Sits after Pain Intensity + Pain Duration, before the Red Flag Screening
+/// (and then the Workstation checklist).
 /// The 8 answers here let the backend compute a simple Chronicity Level
 /// (Low / Elevated); see Postura_Yellow_Flag_Chronicity_Implementation.pdf.
 class WorkAbilityRecoveryOutlookScreen extends ConsumerStatefulWidget {
@@ -46,7 +47,7 @@ class _WorkAbilityRecoveryOutlookScreenState
         workplaceSupport: _workplaceSupport,
       ),
     );
-    context.push(AppRoute.workstationQuestionnaire);
+    context.push(AppRoute.redFlagScreening);
   }
 
   @override

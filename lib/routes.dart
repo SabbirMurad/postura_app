@@ -10,6 +10,7 @@ import 'package:posture_detector_app/view/assessment/optional_symptom_screen.dar
 import 'package:posture_detector_app/view/assessment/pain_duration_screen.dart';
 import 'package:posture_detector_app/view/assessment/pain_intensity_screen.dart';
 import 'package:posture_detector_app/view/assessment/work_ability_recovery_outlook_screen.dart';
+import 'package:posture_detector_app/view/assessment/red_flag_screening_screen.dart';
 import 'package:posture_detector_app/view/assessment/select_body_region_screen.dart';
 import 'package:posture_detector_app/view/auth/signup/employee_credential_screen.dart';
 import 'package:posture_detector_app/view/equipment/equipment_screen.dart';
@@ -62,6 +63,7 @@ class AppRoute {
   static const employeePainIntensityScreen = '/pain-intensity';
   static const employeePainDurationScreen = '/pain-duration';
   static const workAbilityRecoveryOutlook = '/work-ability-recovery-outlook';
+  static const redFlagScreening = '/red-flag-screening';
   static const workstationQuestionnaire = '/workstation-questionnaire';
   static const employeeOptionalSymptom = '/optional-symptom';
 
@@ -165,6 +167,10 @@ class AppRoute {
       GoRoute(
         path: AppRoute.workAbilityRecoveryOutlook,
         builder: (context, state) => WorkAbilityRecoveryOutlookScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.redFlagScreening,
+        builder: (context, state) => RedFlagScreeningScreen(),
       ),
       GoRoute(
         path: AppRoute.workstationQuestionnaire,
