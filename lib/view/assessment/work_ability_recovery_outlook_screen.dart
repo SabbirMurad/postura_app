@@ -236,22 +236,27 @@ class _SliderQuestion extends StatelessWidget {
             onChanged: (v) => onChanged(v.round()),
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                lowLabel,
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  color: AppColors.secondaryText,
+              Expanded(
+                child: Text(
+                  lowLabel,
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: AppColors.secondaryText,
+                  ),
                 ),
               ),
-              Text(
-                highLabel,
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  color: AppColors.secondaryText,
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Text(
+                  highLabel,
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: AppColors.secondaryText,
+                  ),
+                  textAlign: TextAlign.end,
                 ),
-                textAlign: TextAlign.end,
               ),
             ],
           ),
