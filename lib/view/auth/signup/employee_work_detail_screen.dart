@@ -9,7 +9,7 @@ import 'package:posture_detector_app/common/widgets/custom_text_field.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/provider/author.dart';
 import 'package:posture_detector_app/provider/signup.dart';
-import 'package:posture_detector_app/view/auth/signup/waiting_company_response.dart';
+import 'package:posture_detector_app/view/auth/signup/employee_verify_email_screen.dart';
 
 class EmployeeWorkDetailScreen extends ConsumerStatefulWidget {
   const EmployeeWorkDetailScreen({super.key});
@@ -70,8 +70,11 @@ class _EmployeeWorkDetailScreenState
 
     if (res == true) {
       if (mounted) {
+        // Confirm the OTP that was just emailed before sending them off to wait
+        // for company approval — this account can't sign in until both this and
+        // the approval step are done (see sign_in.rs).
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const WaitingCompanyResponse()),
+          MaterialPageRoute(builder: (_) => const EmployeeVerifyEmailScreen()),
         );
       }
     }
