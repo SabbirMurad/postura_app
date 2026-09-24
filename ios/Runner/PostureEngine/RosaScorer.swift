@@ -56,6 +56,7 @@ enum RosaScorer {
         var armrestHardDamaged = false
         var armrestTooWide = false
         var backrestNonAdjustable = false
+        var usableBackrest = true
         var workSurfaceTooHigh = false
         // Section B — Monitor & Telephone
         var monitorNonAdjustable = false
@@ -95,6 +96,7 @@ enum RosaScorer {
             w.armrestHardDamaged = b("armrest_hard_damaged")
             w.armrestTooWide = b("armrest_too_wide")
             w.backrestNonAdjustable = b("backrest_non_adjustable")
+            w.usableBackrest = (m["usable_backrest"] as? Bool) ?? true
             w.workSurfaceTooHigh = b("work_surface_too_high")
             w.monitorNonAdjustable = b("monitor_non_adjustable")
             w.neckTwistOver30 = b("neck_twist_over_30")
@@ -170,7 +172,10 @@ enum RosaScorer {
         } else {
             seatHeightScore = 1       // neutral
         }
-        let backrestScore = angles.trunkAngle > 28 ? 2 : 1
+        // Official ROSA scores "not using the backrest" the same as excessive trunk
+        // lean (score 2) — a worker sitting within 28° of vertical but not actually
+        // resting against the backrest is still unsupported.
+        let backrestScore = (!mods.usableBackrest || angles.trunkAngle > 28) ? 2 : 1
         // shrugGap = ear.y − shoulder.y; > −0.06 means shoulder hiked toward ear
         let armrestScore = angles.shrugGap > -0.06 ? 2 : 1
 
@@ -201,8 +206,10 @@ enum RosaScorer {
         case .forwardHead: monitorScore = 2
         case .neutral: monitorScore = 1
         }
+        // Note: monitor adjustability is NOT part of the official ROSA Section B
+        // scoring (only the Chair section scores component adjustability) — asked
+        // in the app, kept in WorkstationModifiers, but deliberately not added here.
         let monitorArea = monitorScore
-            + (mods.monitorNonAdjustable ? 1 : 0)
             + (mods.neckTwistOver30 ? 1 : 0)
             + (mods.monitorTooFar ? 1 : 0)
             + (mods.screenGlare ? 1 : 0)
@@ -234,11 +241,13 @@ enum RosaScorer {
 
         // ── MOUSE ─────────────────────────────────────────────────────────────────
         let mouseScore = angles.mouseReach > 0.18 ? 2 : 1
+        // Note: mouse adjustability is NOT part of the official ROSA Section C
+        // scoring (only the Chair section scores component adjustability) — asked
+        // in the app, kept in WorkstationModifiers, but deliberately not added here.
         let mouseArea = mouseScore
             + (mods.mouseKeyboardDifferentSurfaces ? 2 : 0)
             + (mods.mousePinchGrip ? 1 : 0)
             + (mods.mousePalmrest ? 1 : 0)
-            + (mods.mouseNonAdjustable ? 1 : 0)
 
         let sectC = tlu(tableC,
                         clamp(mouseArea + mods.durationModifier, 0, 7),

@@ -54,6 +54,7 @@ object RosaScorer {
         val armrestHardDamaged: Boolean = false,
         val armrestTooWide: Boolean = false,
         val backrestNonAdjustable: Boolean = false,
+        val usableBackrest: Boolean = true,
         val workSurfaceTooHigh: Boolean = false,
         // Section B — Monitor & Telephone
         val monitorNonAdjustable: Boolean = false,
@@ -90,6 +91,7 @@ object RosaScorer {
                     armrestHardDamaged            = b("armrest_hard_damaged"),
                     armrestTooWide                = b("armrest_too_wide"),
                     backrestNonAdjustable         = b("backrest_non_adjustable"),
+                    usableBackrest                = (m["usable_backrest"] as? Boolean) ?: true,
                     workSurfaceTooHigh            = b("work_surface_too_high"),
                     monitorNonAdjustable          = b("monitor_non_adjustable"),
                     neckTwistOver30               = b("neck_twist_over_30"),
@@ -161,7 +163,10 @@ object RosaScorer {
             angles.kneeAngle > 100f -> 2  // chair too high
             else                    -> 1  // neutral
         }
-        val backrestScore = if (angles.trunkAngle > 28f) 2 else 1
+        // Official ROSA scores "not using the backrest" the same as excessive trunk
+        // lean (score 2) — a worker sitting within 28° of vertical but not actually
+        // resting against the backrest is still unsupported.
+        val backrestScore = if (!mods.usableBackrest || angles.trunkAngle > 28f) 2 else 1
         // shrugGap = ear.y − shoulder.y; > −0.06 means shoulder hiked toward ear
         val armrestScore  = if (angles.shrugGap > -0.06f) 2 else 1
 
@@ -191,8 +196,10 @@ object RosaScorer {
             RosaAnglesCalculator.NeckState.FORWARD_HEAD   -> 2
             RosaAnglesCalculator.NeckState.NEUTRAL        -> 1
         }
+        // Note: monitor adjustability is NOT part of the official ROSA Section B
+        // scoring (only the Chair section scores component adjustability) — asked
+        // in the app, kept in WorkstationModifiers, but deliberately not added here.
         val monitorArea = monitorScore +
-            (if (mods.monitorNonAdjustable) 1 else 0) +
             (if (mods.neckTwistOver30) 1 else 0) +
             (if (mods.monitorTooFar) 1 else 0) +
             (if (mods.screenGlare) 1 else 0) +
@@ -221,11 +228,13 @@ object RosaScorer {
 
         // ── MOUSE ─────────────────────────────────────────────────────────────────
         val mouseScore = if (angles.mouseReach > 0.18f) 2 else 1
+        // Note: mouse adjustability is NOT part of the official ROSA Section C
+        // scoring (only the Chair section scores component adjustability) — asked
+        // in the app, kept in WorkstationModifiers, but deliberately not added here.
         val mouseArea = mouseScore +
             (if (mods.mouseKeyboardDifferentSurfaces) 2 else 0) +
             (if (mods.mousePinchGrip) 1 else 0) +
-            (if (mods.mousePalmrest) 1 else 0) +
-            (if (mods.mouseNonAdjustable) 1 else 0)
+            (if (mods.mousePalmrest) 1 else 0)
 
         val sectC = tlu(tableC,
             (mouseArea + mods.durationModifier).coerceIn(0, 7),
