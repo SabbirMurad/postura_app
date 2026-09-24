@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
+import 'package:posture_detector_app/common/widgets/selection_chip.dart';
 import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/provider/assessment.dart';
@@ -69,38 +70,45 @@ class _RedFlagScreeningScreenState
               ),
               SizedBox(height: 24.h),
               _BoolQuestion(
+                1,
                 'New loss of bladder or bowel control',
                 _newBladderOrBowelDysfunction,
                 (v) => setState(() => _newBladderOrBowelDysfunction = v),
               ),
               _BoolQuestion(
+                2,
                 'Numbness in the saddle area (inner thighs, groin, or genitals)',
                 _saddleAnaesthesia,
                 (v) => setState(() => _saddleAnaesthesia = v),
               ),
               _BoolQuestion(
+                3,
                 'New or worsening weakness in your legs or arms',
                 _progressiveMotorWeakness,
                 (v) => setState(() => _progressiveMotorWeakness = v),
               ),
               _BoolQuestion(
+                4,
                 'A significant recent trauma (e.g. a fall, accident, or blow '
                 'to your back)',
                 _significantRecentTrauma,
                 (v) => setState(() => _significantRecentTrauma = v),
               ),
               _BoolQuestion(
+                5,
                 'Fever, a recent infection, or a weakened immune system '
                 'along with back pain',
                 _feverOrInfectionOrImmunosuppression,
                 (v) => setState(() => _feverOrInfectionOrImmunosuppression = v),
               ),
               _BoolQuestion(
+                6,
                 'A history of cancer, with new or worsening back/spine pain',
                 _cancerHistoryWithNewSpinalPain,
                 (v) => setState(() => _cancerHistoryWithNewSpinalPain = v),
               ),
               _BoolQuestion(
+                7,
                 "Severe pain that doesn't ease up, especially at night",
                 _severeUnremittingOrNightPain,
                 (v) => setState(() => _severeUnremittingOrNightPain = v),
@@ -129,85 +137,63 @@ class _RedFlagScreeningScreenState
   }
 }
 
-/// Explicit Yes/No question — mirrors the Workstation checklist's styling.
+/// Numbered yes/no question — the two answers are pill chips, matching the
+/// chip pickers used elsewhere in the assessment flow.
 class _BoolQuestion extends StatelessWidget {
+  final int number;
   final String label;
   final bool value;
   final ValueChanged<bool> onChanged;
-  const _BoolQuestion(this.label, this.value, this.onChanged);
+  const _BoolQuestion(this.number, this.label, this.value, this.onChanged);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 14.h),
+      padding: EdgeInsets.only(bottom: 18.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: TextStyle(fontSize: 14.sp, color: AppColors.text),
-          ),
-          SizedBox(height: 8.h),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: _YesNoOption(
-                  text: 'Yes',
-                  selected: value,
-                  onTap: () => onChanged(true),
+              SizedBox(
+                width: 22.w,
+                child: Text(
+                  '$number.',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.text,
+                  ),
                 ),
               ),
-              SizedBox(width: 10.w),
               Expanded(
-                child: _YesNoOption(
-                  text: 'No',
-                  selected: !value,
-                  onTap: () => onChanged(false),
+                child: Text(
+                  label,
+                  style: TextStyle(fontSize: 14.sp, color: AppColors.text),
                 ),
               ),
             ],
           ),
+          SizedBox(height: 10.h),
+          Padding(
+            padding: EdgeInsets.only(left: 22.w),
+            child: Wrap(
+              spacing: 8.w,
+              runSpacing: 8.w,
+              children: [
+                GestureDetector(
+                  onTap: () => onChanged(true),
+                  child: SelectionChip(title: 'Yes', selected: value),
+                ),
+                GestureDetector(
+                  onTap: () => onChanged(false),
+                  child: SelectionChip(title: 'No', selected: !value),
+                ),
+              ],
+            ),
+          ),
         ],
-      ),
-    );
-  }
-}
-
-class _YesNoOption extends StatelessWidget {
-  final String text;
-  final bool selected;
-  final VoidCallback onTap;
-  const _YesNoOption({
-    required this.text,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 10.h),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: selected
-              ? AppColors.primaryColor.withValues(alpha: 0.12)
-              : AppColors.onBoardingSurface,
-          borderRadius: BorderRadius.circular(10.r),
-          border: Border.all(
-            color: selected ? AppColors.primaryColor : AppColors.blackDeemed,
-            width: 2,
-          ),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: 13.sp,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-            color: selected ? AppColors.primaryColor : AppColors.text,
-          ),
-        ),
       ),
     );
   }

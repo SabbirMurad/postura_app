@@ -96,7 +96,7 @@ class AnalysisReport {
       chronicityLevel: json['chronicity_level'] ?? 'Low',
       heightCm: (json['height_cm'] as num?)?.toDouble(),
       supplementalCpeFindings: SupplementalCpeFindings.fromJson(
-        json['supplemental_cpe_findings'] as Map<String, dynamic>? ?? const {},
+        json['supplemental_cpe_findings'],
       ),
       actionReportV13: json['action_report_v1_3'] is Map
           ? ActionReportV13.fromJson(
@@ -348,12 +348,21 @@ class SupplementalCpeFindings {
 
   bool get hasFindings => flags.isNotEmpty;
 
-  factory SupplementalCpeFindings.fromJson(Map<String, dynamic> json) =>
-      SupplementalCpeFindings(
-        phoneCradle: json['phone_cradle'] as bool? ?? false,
-        handsFreeAvailable: json['hands_free_available'] as bool? ?? true,
-        flags: List<String>.from(json['flags'] ?? const []),
-      );
+  // Tolerant of either shape the backend may send: the object
+  // { phone_cradle, hands_free_available, flags } (my-reports / cpe / scan-
+  // analyse) or a bare flags list (older scan-analyse), so a shape mismatch
+  // never hard-crashes AnalysisReport.fromJson on submission.
+  factory SupplementalCpeFindings.fromJson(dynamic json) {
+    if (json is List) {
+      return SupplementalCpeFindings(flags: List<String>.from(json));
+    }
+    final m = json is Map<String, dynamic> ? json : const <String, dynamic>{};
+    return SupplementalCpeFindings(
+      phoneCradle: m['phone_cradle'] as bool? ?? false,
+      handsFreeAvailable: m['hands_free_available'] as bool? ?? true,
+      flags: List<String>.from(m['flags'] ?? const []),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     'phone_cradle': phoneCradle,

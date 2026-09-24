@@ -16,8 +16,7 @@ class ScanBusinessScreen extends ConsumerStatefulWidget {
   const ScanBusinessScreen({super.key});
 
   @override
-  ConsumerState<ScanBusinessScreen> createState() =>
-      _ScanBusinessScreenState();
+  ConsumerState<ScanBusinessScreen> createState() => _ScanBusinessScreenState();
 }
 
 class _ScanBusinessScreenState extends ConsumerState<ScanBusinessScreen> {
@@ -60,81 +59,94 @@ class _ScanBusinessScreenState extends ConsumerState<ScanBusinessScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.surface,
+      // The keyboard shrinks the body when the height field is focused, so the
+      // page scrolls instead of overflowing; IntrinsicHeight keeps the Expanded
+      // spacer working (button pinned to the bottom) while there is room.
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 16.h),
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: IntrinsicHeight(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 16.h),
 
-              /// Header
-              Text(
-                // EN: "Scan your posture!"
-                loc.scanYourPosture,
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20.sp),
-              ),
-              Text(
-                // EN: "Scan and get personalized posture"
-                loc.scanYourPostureSubtitle,
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14.sp,
-                  color: AppColors.secondaryText,
-                ),
-              ),
+                    /// Header
+                    Text(
+                      // EN: "Scan your posture!"
+                      loc.scanYourPosture,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20.sp,
+                      ),
+                    ),
+                    Text(
+                      // EN: "Scan and get personalized posture"
+                      loc.scanYourPostureSubtitle,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14.sp,
+                        color: AppColors.secondaryText,
+                      ),
+                    ),
 
-              SizedBox(height: 20.h),
-              HeightInputField(
-                initialHeightCm: _heightCm,
-                onChanged: (cm) => _heightCm = cm,
-              ),
+                    SizedBox(height: 20.h),
+                    HeightInputField(
+                      initialHeightCm: _heightCm,
+                      onChanged: (cm) => _heightCm = cm,
+                    ),
 
-              /// Scan Image + Info
-              Expanded(
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icons/scan_center_icon.svg',
-                        width: 200.w,
-                        height: 200.w,
-                        colorFilter: ColorFilter.mode(
-                          AppColors.primaryColor,
-                          BlendMode.srcIn,
+                    /// Scan Image + Info
+                    Expanded(
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/scan_center_icon.svg',
+                              width: 200.w,
+                              height: 200.w,
+                              colorFilter: ColorFilter.mode(
+                                AppColors.primaryColor,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                            SizedBox(height: 28.h),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 12.w),
+                              child: Text(
+                                // EN: "You'll get a new set of suggestions and score, and your previous results will be replaced by the new ones."
+                                loc.startScanInfo,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 13.sp,
+                                  height: 1.5,
+                                  color: AppColors.secondaryText,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 28.h),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w),
-                        child: Text(
-                          // EN: "You'll get a new set of suggestions and score, and your previous results will be replaced by the new ones."
-                          loc.startScanInfo,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 13.sp,
-                            height: 1.5,
-                            color: AppColors.secondaryText,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+
+                    /// Start Scan Button
+                    PrimaryButton(
+                      // EN: "Start Scan"
+                      text: loc.startScan,
+                      onTap: _onStartScan,
+                      backgroundColor: AppColors.primaryColor,
+                      textColor: AppColors.surface,
+                    ),
+                    SizedBox(height: 24.h),
+                  ],
                 ),
               ),
-
-              /// Start Scan Button
-              PrimaryButton(
-                // EN: "Start Scan"
-                text: loc.startScan,
-                onTap: _onStartScan,
-                backgroundColor: AppColors.primaryColor,
-                textColor: AppColors.surface,
-              ),
-              SizedBox(height: 24.h),
-            ],
+            ),
           ),
         ),
       ),
