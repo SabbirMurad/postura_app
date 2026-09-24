@@ -155,7 +155,32 @@ class AuthorNotifier extends _$AuthorNotifier {
       needAuth: false,
     );
 
+    // The employee-work-detail screen needs the new account's id to drive the
+    // email-verification step (verifySignupEmail / resendOtp) that follows.
+    if (response.ok && response.data?['user_id'] != null) {
+      await AppHelper.instance.setUserId(response.data['user_id']);
+    }
+
     return response.ok;
+  }
+
+  /// Confirms the sign-up OTP sent to the new employee's email. Companion to
+  /// [resendOtp] — both key off the user_id persisted by [signUp].
+  Future<bool> verifySignupEmail(String otp) async {
+    final userId = await AppHelper.instance.getUserId();
+    if (userId == null) return false;
+
+    final response = await CustomHttp.post(
+      endpoint: 'auth/verify-email',
+      body: {'user_id': userId, 'verification_code': otp},
+      needAuth: false,
+    );
+
+    if (!response.ok) {
+      showCustomToast(text: response.error ?? 'Something went wrong');
+      return false;
+    }
+    return true;
   }
 
   Future<bool> verifyEmail(String email) async {
