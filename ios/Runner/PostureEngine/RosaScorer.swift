@@ -198,12 +198,18 @@ enum RosaScorer {
         let chairScore = clamp(tlu(tableA, seatCombined, armsCombined) + mods.durationModifier, 1, 10)
 
         // ── MONITOR ───────────────────────────────────────────────────────────────
+        // Official ROSA Section B has exactly 3 monitor-position tiers (confirmed
+        // against the reviewer's reference figure): eye level = 1, too low / neck
+        // flexion = 2, too high / neck extension = 3. severeFlexion folds into the
+        // same "too low" tier as mildFlexion (the original doesn't grade flexion
+        // severity), and forwardHead — not an official category at all — folds
+        // into neutral.
         let monitorScore: Int
         switch angles.neckState {
         case .headBack: monitorScore = 3
-        case .severeFlexion: monitorScore = 3
+        case .severeFlexion: monitorScore = 2
         case .mildFlexion: monitorScore = 2
-        case .forwardHead: monitorScore = 2
+        case .forwardHead: monitorScore = 1
         case .neutral: monitorScore = 1
         }
         // Note: monitor adjustability is NOT part of the official ROSA Section B
@@ -225,14 +231,11 @@ enum RosaScorer {
                         clamp(monitorArea + mods.durationModifier, 0, 7))
 
         // ── KEYBOARD ──────────────────────────────────────────────────────────────
-        let keyboardScore: Int
-        if angles.wristExtension > 0.07 {
-            keyboardScore = 3
-        } else if angles.wristExtension > 0.03 {
-            keyboardScore = 2
-        } else {
-            keyboardScore = 1
-        }
+        // Official ROSA Section D has exactly 2 wrist-extension tiers (confirmed
+        // against the reviewer's reference figure): wrists straight = 1, wrists
+        // extended beyond ~15 deg = 2. There is no third "large extension" tier —
+        // any extension past the threshold is the same score.
+        let keyboardScore: Int = angles.wristExtension > 0.03 ? 2 : 1
         let keyboardArea = keyboardScore
             + (mods.keyboardDeviation ? 1 : 0)
             + (mods.keyboardTooHigh ? 1 : 0)

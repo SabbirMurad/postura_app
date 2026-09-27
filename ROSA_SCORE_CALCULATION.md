@@ -79,24 +79,35 @@ Measured as how close the shoulder sits to the ear (vertically).
 
 ### Monitor/neck score (from neck posture)
 
-The app first classifies the neck into one of five postures (checked in this
-order — the first match wins), then maps that posture to a score:
+The app first classifies the neck into one of five postures internally
+(checked in this order — the first match wins), then maps that posture onto
+the three official ROSA tiers — eye level, too low (neck flexion), too high
+(neck extension):
 
 | Neck posture detected | Score |
 |---|---|
-| Head tilted back | **3** |
-| Neck bent down severely (chin near chest) | **3** |
+| Head tilted back (too high / neck extension) | **3** |
+| Neck bent down severely (chin near chest) | **2** |
 | Neck bent down mildly | **2** |
-| Head jutting forward | **2** |
-| Neutral | **1** |
+| Head jutting forward | **1** |
+| Neutral / eye level | **1** |
+
+Severe and mild flexion score the same (official ROSA doesn't grade flexion
+severity separately) — the app keeps the finer camera-detected distinction
+internally for the Action Report's posture-severity reporting, but both map
+to the same ROSA score. "Head jutting forward" isn't an official monitor-
+position category at all, so it scores as neutral.
 
 ### Keyboard/wrist score (from wrist bend)
 
+Official ROSA has exactly two tiers here — wrists straight, or wrists
+extended beyond ~15°. There's no third "large extension" tier; any extension
+past the threshold scores the same.
+
 | Wrist extension (bend upward) | Score |
 |---|---|
-| Small or none | **1** |
-| Moderate | **2** |
-| Large | **3** |
+| Small or none (wrists straight) | **1** |
+| Moderate or large (extended beyond ~15°) | **2** |
 
 ### Mouse score (from sideways reach)
 

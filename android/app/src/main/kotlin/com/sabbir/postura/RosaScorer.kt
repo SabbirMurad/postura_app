@@ -189,11 +189,17 @@ object RosaScorer {
         val chairScore   = (tlu(tableA, seatCombined, armsCombined) + mods.durationModifier).coerceIn(1, 10)
 
         // ── MONITOR ───────────────────────────────────────────────────────────────
+        // Official ROSA Section B has exactly 3 monitor-position tiers (confirmed
+        // against the reviewer's reference figure): eye level = 1, too low / neck
+        // flexion = 2, too high / neck extension = 3. SEVERE_FLEXION folds into the
+        // same "too low" tier as MILD_FLEXION (the original doesn't grade flexion
+        // severity), and FORWARD_HEAD — not an official category at all — folds
+        // into neutral.
         val monitorScore = when (angles.neckState) {
             RosaAnglesCalculator.NeckState.HEAD_BACK      -> 3
-            RosaAnglesCalculator.NeckState.SEVERE_FLEXION -> 3
+            RosaAnglesCalculator.NeckState.SEVERE_FLEXION -> 2
             RosaAnglesCalculator.NeckState.MILD_FLEXION   -> 2
-            RosaAnglesCalculator.NeckState.FORWARD_HEAD   -> 2
+            RosaAnglesCalculator.NeckState.FORWARD_HEAD   -> 1
             RosaAnglesCalculator.NeckState.NEUTRAL        -> 1
         }
         // Note: monitor adjustability is NOT part of the official ROSA Section B
@@ -215,11 +221,11 @@ object RosaScorer {
             (monitorArea + mods.durationModifier).coerceIn(0, 7))
 
         // ── KEYBOARD ──────────────────────────────────────────────────────────────
-        val keyboardScore = when {
-            angles.wristExtension > 0.07f -> 3
-            angles.wristExtension > 0.03f -> 2
-            else                          -> 1
-        }
+        // Official ROSA Section D has exactly 2 wrist-extension tiers (confirmed
+        // against the reviewer's reference figure): wrists straight = 1, wrists
+        // extended beyond ~15 deg = 2. There is no third "large extension" tier —
+        // any extension past the threshold is the same score.
+        val keyboardScore = if (angles.wristExtension > 0.03f) 2 else 1
         val keyboardArea = keyboardScore +
             (if (mods.keyboardDeviation) 1 else 0) +
             (if (mods.keyboardTooHigh) 1 else 0) +
