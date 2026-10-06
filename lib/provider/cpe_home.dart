@@ -5,7 +5,7 @@ import 'package:posture_detector_app/services/network/custom_http.dart';
 // Models
 // ─────────────────────────────────────────
 class CpeCompany {
-  final int id;
+  final String id;
   final String name;
   final String companyCode;
 
@@ -17,7 +17,7 @@ class CpeCompany {
 
   factory CpeCompany.fromJson(Map<String, dynamic> json) {
     return CpeCompany(
-      id: json['id'] ?? 0,
+      id: '${json['id'] ?? ''}',
       name: json['name'] ?? '',
       companyCode: json['company_code'] ?? '',
     );
@@ -25,9 +25,9 @@ class CpeCompany {
 }
 
 class ScanItem {
-  final int scanId;
-  final int assessmentId;
-  final int employeeId;
+  final String scanId;
+  final String assessmentId;
+  final String employeeId;
   final String employeeName;
   final String employeeEmail;
   final String deskLocation;
@@ -64,9 +64,9 @@ class ScanItem {
   factory ScanItem.fromJson(Map<String, dynamic> json) {
     final riskScore = (json['risk_score'] ?? 0).toDouble();
     return ScanItem(
-      scanId: json['scan_id'] ?? 0,
-      assessmentId: json['assessment_id'] ?? 0,
-      employeeId: json['employee_id'] ?? 0,
+      scanId: '${json['scan_id'] ?? ''}',
+      assessmentId: '${json['assessment_id'] ?? ''}',
+      employeeId: '${json['employee_id'] ?? ''}',
       employeeName: json['employee_name'] ?? '',
       employeeEmail: json['employee_email'] ?? '',
       deskLocation: json['desk_location'] ?? '',
@@ -180,7 +180,7 @@ class CpeHomeNotifier extends Notifier<CpeHomeState> {
         company: state.company,
         scanList: state.scanList,
         isLoading: false,
-        error: e.toString(),
+        error: 'Failed to load assessments.',
       );
     }
   }

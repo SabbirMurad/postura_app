@@ -102,7 +102,7 @@ class HomeScreenCPE extends ConsumerWidget {
                 'scan_id': scan.scanId,
                 'assessment_id': scan.assessmentId,
                 'name': scan.employeeName,
-                'id': '${scan.employeeId}',
+                'id': scan.employeeId,
                 'compliance': scan.compliance,
                 'desk_location': scan.deskLocation,
                 'risk_level': scan.riskLevel,

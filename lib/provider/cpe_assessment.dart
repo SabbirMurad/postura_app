@@ -259,11 +259,11 @@ class CpeAssessmentState {
 // Notifier
 // ─────────────────────────────────────────
 class CpeAssessmentNotifier
-    extends AutoDisposeFamilyNotifier<CpeAssessmentState?, int> {
+    extends AutoDisposeFamilyNotifier<CpeAssessmentState?, String> {
   final _picker = ImagePicker();
 
   @override
-  CpeAssessmentState? build(int scanId) {
+  CpeAssessmentState? build(String scanId) {
     _loadData(scanId);
     return null;
   }
@@ -271,7 +271,7 @@ class CpeAssessmentNotifier
   // ─────────────────────────────────────
   // GET  cpe/ergonomist/company/assessment/detail/{scan_id}/
   // ─────────────────────────────────────
-  Future<void> _loadData(int scanId) async {
+  Future<void> _loadData(String scanId) async {
     final result = await CustomHttp.get(
       endpoint: 'cpe/ergonomist/company/assessment/detail/$scanId',
       needAuth: true,
@@ -360,7 +360,7 @@ class CpeAssessmentNotifier
       );
     } catch (e) {
       final loc = AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;
-      showCustomToast(text: '${loc.error}: ${loc.failedToParseResponse}: $e');
+      showCustomToast(text: '${loc.error}: ${loc.failedToParseResponse}');
     }
   }
 
@@ -470,7 +470,7 @@ class CpeAssessmentNotifier
       }
     } catch (e) {
       final loc = AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;
-      showCustomToast(text: '${loc.error}: ${loc.failedToSubmit}: $e');
+      showCustomToast(text: '${loc.error}: ${loc.failedToSubmit}');
     } finally {
       state = state?.copyWith(isSubmitting: false);
     }
@@ -479,6 +479,6 @@ class CpeAssessmentNotifier
 }
 
 final cpeAssessmentNotifierProvider = NotifierProvider.autoDispose
-    .family<CpeAssessmentNotifier, CpeAssessmentState?, int>(
+    .family<CpeAssessmentNotifier, CpeAssessmentState?, String>(
       CpeAssessmentNotifier.new,
     );

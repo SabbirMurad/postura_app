@@ -70,7 +70,7 @@ class PatientComplianceCard extends StatelessWidget {
                       BlendMode.srcIn,
                     ),
                   ),
-                  label: '${scan.employeeId}',
+                  label: scan.employeeId,
                 ),
                 SizedBox(height: 5.h),
                 _InfoRow(

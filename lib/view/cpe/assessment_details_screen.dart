@@ -289,7 +289,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final args = GoRouterState.of(context).extra as Map<String, dynamic>?;
-    final scanId = (args?['scan_id'] ?? 0) as int;
+    final scanId = '${args?['scan_id'] ?? ''}';
     final state = ref.watch(cpeAssessmentNotifierProvider(scanId));
     final notifier = ref.read(cpeAssessmentNotifierProvider(scanId).notifier);
     final loc = AppLocalizations.of(context)!;
