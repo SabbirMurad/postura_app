@@ -1,0 +1,4 @@
+# Never line-ending-convert binary documents (ReportLab PDFs are mostly ASCII
+# and get corrupted by CRLF conversion on Windows checkouts).
+*.pdf binary
+*.docx binary
