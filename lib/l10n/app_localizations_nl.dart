@@ -504,7 +504,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get confirmEmail => 'Bevestig e-mail';
 
   @override
-  String get weSend6digitCode => 'We hebben een 4-cijferige code naar je e-mail gestuurd';
+  String get weSend6digitCode => 'We hebben een 6-cijferige code naar je e-mail gestuurd';
 
   @override
   String get enterOTP => 'Voer OTP in';

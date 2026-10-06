@@ -45,7 +45,7 @@ class _ConfirmCodeForgotScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AppTopSection(
-                  // EN: confirmEmail = "Confirm Email", weSend6digitCode = "We send a 4 digit verification code to your email."
+                  // EN: confirmEmail = "Confirm Email", weSend6digitCode = "We send a 6 digit verification code to your email."
                   title: loc.confirmEmail,
                   subtitle: loc.weSend6digitCode,
                 ),
@@ -68,9 +68,11 @@ class _ConfirmCodeForgotScreenState
                   enabledBorderColor: AppColors.border,
                   showFieldAsBox: true,
                   borderRadius: BorderRadius.circular(12.r),
-                  fieldWidth: 62.w,
+                  fieldWidth: 50.w,
+                  margin: EdgeInsets.zero,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   borderWidth: 1.5,
-                  fieldHeight: 60.w,
+                  fieldHeight: 56.w,
                   textStyle: TextStyle(
                     color: AppColors.text,
                     fontSize: 16.sp,
@@ -95,7 +97,7 @@ class _ConfirmCodeForgotScreenState
                     ),
                     TextButton(
                       onPressed: () =>
-                          ref.read(authorNotifierProvider.notifier).resendOtp(),
+                          ref.read(authorNotifierProvider.notifier).resendResetOtp(),
                       child: Text(
                         // EN: "Resend code"
                         loc.resendCode,

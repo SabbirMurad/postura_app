@@ -122,7 +122,9 @@ class _EmployeeVerifyEmailScreenState
                   enabledBorderColor: AppColors.border,
                   showFieldAsBox: true,
                   borderRadius: BorderRadius.circular(12.r),
-                  fieldWidth: 52.w,
+                  fieldWidth: 50.w,
+                  margin: EdgeInsets.zero,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   borderWidth: 1.5,
                   fieldHeight: 56.w,
                   textStyle: TextStyle(

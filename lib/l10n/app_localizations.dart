@@ -1092,7 +1092,7 @@ abstract class AppLocalizations {
   /// No description provided for @weSend6digitCode.
   ///
   /// In en, this message translates to:
-  /// **'We send a 4 digit verification code to your email.'**
+  /// **'We send a 6 digit verification code to your email.'**
   String get weSend6digitCode;
 
   /// No description provided for @enterOTP.

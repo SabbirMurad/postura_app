@@ -186,7 +186,7 @@
 
   "verifyEmail": "Verifica tu correo electrónico",
   "confirmEmail": "Confirma correo electrónico",
-  "weSend6digitCode": "Enviamos un código de 4 dígitos a tu correo",
+  "weSend6digitCode": "Enviamos un código de 6 dígitos a tu correo",
   "enterOTP": "Introduce OTP",
   "donGetCode": "¿No recibiste el código?",
   "resendCode": "Reenviar código",

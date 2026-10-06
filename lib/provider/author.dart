@@ -200,6 +200,29 @@ class AuthorNotifier extends _$AuthorNotifier {
     return true;
   }
 
+  /// Re-requests a password-reset code for the email stored by [verifyEmail].
+  /// The server ignores repeats within its 60s cooldown and answers every case
+  /// with the same generic message, so we show that message as-is.
+  Future<void> resendResetOtp() async {
+    final email = await AppHelper.instance.getResetEmail();
+    if (email == null) return;
+
+    final response = await CustomHttp.post(
+      endpoint: 'auth/forgot-password',
+      body: {'email_address': email},
+      needAuth: false,
+    );
+
+    if (response.ok) {
+      showCustomToast(
+        text: response.data?['message'] ?? 'OTP sent to your email',
+        toastType: ToastTypesInfo(ToastTypes.success),
+      );
+    } else {
+      showCustomToast(text: response.error ?? 'Something went wrong');
+    }
+  }
+
   Future<bool> verifyOtp(String otp) async {
     final email = await AppHelper.instance.getResetEmail();
     if (email == null) return false;

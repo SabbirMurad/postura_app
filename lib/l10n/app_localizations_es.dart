@@ -504,7 +504,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get confirmEmail => 'Confirma correo electrónico';
 
   @override
-  String get weSend6digitCode => 'Enviamos un código de 4 dígitos a tu correo';
+  String get weSend6digitCode => 'Enviamos un código de 6 dígitos a tu correo';
 
   @override
   String get enterOTP => 'Introduce OTP';

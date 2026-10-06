@@ -186,7 +186,7 @@
 
   "verifyEmail": "Verifieer je e-mail",
   "confirmEmail": "Bevestig e-mail",
-  "weSend6digitCode": "We hebben een 4-cijferige code naar je e-mail gestuurd",
+  "weSend6digitCode": "We hebben een 6-cijferige code naar je e-mail gestuurd",
   "enterOTP": "Voer OTP in",
   "donGetCode": "Code niet ontvangen?",
   "resendCode": "Code opnieuw verzenden",
