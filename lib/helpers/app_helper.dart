@@ -38,6 +38,9 @@ class AppHelper {
   /// Call once at app startup (e.g. in main()) to warm the caches.
   static Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
+    // Older builds persisted the server's Set-Cookie (which carries the refresh
+    // token) in plain prefs. Purge it from existing installs.
+    await _prefs!.remove('cookie');
     _accessTokenCache = await _secure.read(key: 'access_token');
   }
 
@@ -161,16 +164,6 @@ class AppHelper {
   Future<bool> setPhoneOnboard(bool phoneOnboard) async {
     final pref = await _pref;
     return pref.setBool('phone_onboard', phoneOnboard);
-  }
-
-  Future<bool> setCookie(String cookie) async {
-    final pref = await _pref;
-    return pref.setString('cookie', cookie);
-  }
-
-  Future<String?> getCookie() async {
-    final pref = await _pref;
-    return pref.getString('cookie');
   }
 
   Future<bool> clearAllPrefValue() async {

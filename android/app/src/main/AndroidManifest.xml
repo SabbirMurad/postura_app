@@ -6,16 +6,20 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
 
     <!-- Cleartext (HTTP) traffic is NOT allowed in release builds. Local dev over
          http:// is re-enabled only for debug builds via
-         android/app/src/debug/AndroidManifest.xml. -->
+         android/app/src/debug/AndroidManifest.xml.
+         Backups are disabled so health data, the local DB and the encrypted
+         token store can't be pulled via adb backup / cloud / device transfer. -->
     <application
         android:label="Postura"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true">
 
     <provider

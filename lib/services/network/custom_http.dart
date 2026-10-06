@@ -61,22 +61,22 @@ class CustomHttp {
         );
       }
 
-      var url = '${AppCredentials.domain}/api/$endpoint';
-      if (queries != null) {
-        final queryParts = <String>[];
-        queries.forEach((key, value) {
-          if (value is List) {
-            for (var item in value) {
-              queryParts.add('$key=$item');
-            }
-          } else {
-            queryParts.add('$key=$value');
-          }
-        });
-        url += '?${queryParts.join('&')}';
-      }
-
-      final uri = Uri.parse(url);
+      final url = '${AppCredentials.domain}/api/$endpoint';
+      final base = Uri.parse(url);
+      // Let Uri encode values so user input (e.g. search) can't inject extra
+      // query parameters with '&' / '='.
+      final uri = queries == null
+          ? base
+          : base.replace(
+              queryParameters: queries.map(
+                (key, value) => MapEntry(
+                  key,
+                  value is List
+                      ? value.map((e) => '$e').toList()
+                      : '$value',
+                ),
+              ),
+            );
       debugPrint('<===== GET =====> $url');
 
       final response = await http
@@ -92,7 +92,11 @@ class CustomHttp {
       );
     } catch (e) {
       debugPrint('GET ERROR [$endpoint]: $e');
-      return CustomHttpResult(ok: false, status_code: -2, error: e.toString());
+      return const CustomHttpResult(
+        ok: false,
+        status_code: -2,
+        error: 'Something went wrong. Please try again.',
+      );
     }
   }
 
@@ -195,12 +199,15 @@ class CustomHttp {
         );
       } else {
         final body = await response.stream.bytesToString();
-        final json = jsonDecode(body);
+        String message = 'Something went wrong.';
+        try {
+          message = jsonDecode(body)['message'] as String? ?? message;
+        } catch (_) {}
 
         return CustomHttpResult(
           ok: false,
           status_code: response.statusCode,
-          error: json["message"],
+          error: message,
         );
       }
     } on TimeoutException {
@@ -211,7 +218,11 @@ class CustomHttp {
       );
     } catch (e) {
       debugPrint('MULTIPART ERROR: $e');
-      return CustomHttpResult(ok: false, status_code: -2, error: e.toString());
+      return const CustomHttpResult(
+        ok: false,
+        status_code: -2,
+        error: 'Something went wrong. Please try again.',
+      );
     }
   }
 
@@ -291,12 +302,6 @@ class CustomHttp {
               .timeout(_requestTimeout);
       }
 
-      // Save cookie if returned
-      final setCookie = response.headers['set-cookie'];
-      if (setCookie != null) {
-        await AppHelper.instance.setCookie(setCookie);
-      }
-
       // Auto retry on 401
       if (response.statusCode == 401 && retry) {
         bool refreshed = await _refreshTokenSafe();
@@ -322,7 +327,11 @@ class CustomHttp {
       );
     } catch (e) {
       debugPrint('${method.name} ERROR [$endpoint]: $e');
-      return CustomHttpResult(ok: false, status_code: -2, error: e.toString());
+      return const CustomHttpResult(
+        ok: false,
+        status_code: -2,
+        error: 'Something went wrong. Please try again.',
+      );
     }
   }
 
@@ -346,11 +355,6 @@ class CustomHttp {
       final accessToken = await AppHelper.instance.getAccessToken();
       if (accessToken != null) {
         headers['Authorization'] = 'Bearer $accessToken';
-      }
-
-      final cookie = await AppHelper.instance.getCookie();
-      if (cookie != null) {
-        headers['Cookie'] = cookie;
       }
     }
 
@@ -448,7 +452,6 @@ class CustomHttp {
       return body['message'] as String? ?? 'Something went wrong.';
     } catch (_) {
       if (response.statusCode == 404) return 'Endpoint not found!';
-      if (response.statusCode == 400) return response.body;
       debugPrint(
         'Unhandled HTTP error: ${response.statusCode}\n${response.body}',
       );

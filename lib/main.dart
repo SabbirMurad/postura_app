@@ -30,8 +30,12 @@ class DevHttpOverrides extends HttpOverrides {
   }
 }
 
-
 void main() async {
+  // debugPrint still writes to the device log in release builds, which would
+  // leak request URLs, error details and IDs. Silence it outside debug.
+  if (!kDebugMode) {
+    debugPrint = (String? message, {int? wrapWidth}) {};
+  }
   // Only relax certificate validation in debug builds; release enforces TLS.
   if (kDebugMode) {
     HttpOverrides.global = DevHttpOverrides();
