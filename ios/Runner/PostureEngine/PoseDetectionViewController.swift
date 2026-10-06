@@ -18,14 +18,19 @@ import MediaPipeTasksVision
 final class PoseDetectionViewController: UIViewController {
 
     /// Result is `["side_captures": [[String: Any]], "front_capture": [String: Any]]`
-    /// (see finishWithCaptures), or `nil` if the user cancelled — matching what the
+    /// (see finishWithCaptures; `front_capture` is omitted when no front photo can
+    /// be taken), or `nil` if the user cancelled — matching what the
     /// Android MainActivity returns.
     var onComplete: (([String: Any]?) -> Void)?
 
     private let workstationModifiers: RosaScorer.WorkstationModifiers
+    /// False when the user said a front-view photo can't be taken: the front phase
+    /// is skipped and armrestTooWide / keyboardDeviation come from the answers.
+    private let frontPhotoAvailable: Bool
 
-    init(workstationModifiers: RosaScorer.WorkstationModifiers) {
+    init(workstationModifiers: RosaScorer.WorkstationModifiers, frontPhotoAvailable: Bool = true) {
         self.workstationModifiers = workstationModifiers
+        self.frontPhotoAvailable = frontPhotoAvailable
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .fullScreen
         // Let this screen drive the status bar (light icons over the black view)
@@ -630,7 +635,20 @@ final class PoseDetectionViewController: UIViewController {
                     capturedAngles.append(angles)
                     nextCaptureEarliestAtMs = nowMs + CAPTURE_COOLDOWN_MS
                     let shotNumber = capturedPhotos.count
-                    if shotNumber >= TOTAL_SHOTS_NEEDED {
+                    if shotNumber >= TOTAL_SHOTS_NEEDED && !frontPhotoAvailable {
+                        // No front photo possible — finish now, scoring with the
+                        // questionnaire's armrest-width / wrist-deviation answers
+                        // (already in workstationModifiers).
+                        let scores = capturedAngles.map {
+                            $0 != nil ? RosaScorer.score($0!, mods: workstationModifiers) : nil
+                        }
+                        let sidePhotos = capturedPhotos
+                        pauseCameraPipeline()
+                        DispatchQueue.main.async {
+                            self.triggerCaptureFlash()
+                            self.finishWithCaptures(sidePhotos, scores: scores)
+                        }
+                    } else if shotNumber >= TOTAL_SHOTS_NEEDED {
                         // Side shots done — switch to the front-view phase instead
                         // of finishing. (handlePoseResult runs on captureQueue, so
                         // the smoother/leg-estimator resets in enterFrontPhase are
@@ -917,10 +935,11 @@ final class PoseDetectionViewController: UIViewController {
             frontCapture["image_path"] = path
         }
 
-        finish(with: [
-            "side_captures": sideCaptures,
-            "front_capture": frontCapture,
-        ])
+        // No front photo (skipped) → omit front_capture entirely; Flutter and the
+        // backend both treat it as optional.
+        var result: [String: Any] = ["side_captures": sideCaptures]
+        if frontPhoto != nil { result["front_capture"] = frontCapture }
+        finish(with: result)
     }
 
     private func finish(with result: [String: Any]?) {

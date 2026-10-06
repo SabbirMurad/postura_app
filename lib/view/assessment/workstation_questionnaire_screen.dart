@@ -12,7 +12,8 @@ import 'package:posture_detector_app/provider/assessment.dart';
 import 'package:posture_detector_app/routes.dart';
 
 /// Pre-camera ROSA checklist covering the items the camera can't see
-/// (adjustability, glare, phone use, duration). Writes a [WorkstationAnswers]
+/// (adjustability, glare, phone use, duration). Armrest width and wrist
+/// deviation are asked only when a front-view photo can't be taken. Writes a [WorkstationAnswers]
 /// to the assessment provider, then continues to the optional-symptom step.
 ///
 /// Positive phrasing in the UI ("Chair height is adjustable") is inverted into
@@ -27,6 +28,12 @@ class WorkstationQuestionnaireScreen extends ConsumerStatefulWidget {
 
 class _WorkstationQuestionnaireScreenState
     extends ConsumerState<WorkstationQuestionnaireScreen> {
+  // Front photo — when it can't be taken, the two front-view measurements
+  // (armrests too wide, wrist deviation) are asked as questions instead.
+  bool _frontPhotoAvailable = true;
+  bool _armrestTooWide = false;
+  bool _wristDeviation = false;
+
   // Section A — Chair
   bool _chairHeightAdjustable = true;
   bool _enoughUnderDeskSpace = true;
@@ -39,6 +46,7 @@ class _WorkstationQuestionnaireScreenState
   bool _lumbarSupport = true;
   bool _usableBackrest = true;
   bool _feetSupported = true;
+  bool _elbowsSupported = true;
 
   // Section B — Monitor & Telephone
   bool _monitorAdjustable = true;
@@ -76,6 +84,11 @@ class _WorkstationQuestionnaireScreenState
         .read(assessmentNotifierProvider.notifier)
         .setWorkstationAnswers(
           WorkstationAnswers(
+            frontPhotoAvailable: _frontPhotoAvailable,
+            // Only answered when there's no front photo; otherwise the camera
+            // measures these and the native scorer overrides them.
+            armrestTooWide: !_frontPhotoAvailable && _armrestTooWide,
+            keyboardDeviation: !_frontPhotoAvailable && _wristDeviation,
             chairHeightNonAdjustable: !_chairHeightAdjustable,
             insufficientUnderDeskSpace: !_enoughUnderDeskSpace,
             seatDepthFit: _seatDepthFit,
@@ -87,6 +100,7 @@ class _WorkstationQuestionnaireScreenState
             lumbarSupport: _lumbarSupport,
             feetSupported: _feetSupported,
             usableBackrest: _usableBackrest,
+            elbowsSupported: _elbowsSupported,
             monitorNonAdjustable: !_monitorAdjustable,
             neckTwistOver30: _neckTwistOver30,
             monitorTooFar: _monitorTooFar,
@@ -137,6 +151,14 @@ class _WorkstationQuestionnaireScreenState
               ),
               SizedBox(height: 24.h),
 
+              _SectionHeader('Front Photo'),
+              _BoolQuestion(
+                ++q,
+                'Can a photo be taken from the front view?',
+                _frontPhotoAvailable,
+                (v) => setState(() => _frontPhotoAvailable = v),
+              ),
+
               _SectionHeader('Chair'),
               _BoolQuestion(
                 ++q,
@@ -178,6 +200,20 @@ class _WorkstationQuestionnaireScreenState
                 _armrestHardDamaged,
                 (v) => setState(() => _armrestHardDamaged = v),
               ),
+              _BoolQuestion(
+                ++q,
+                'Your elbows/forearms are supported by the armrests or work '
+                'surface',
+                _elbowsSupported,
+                (v) => setState(() => _elbowsSupported = v),
+              ),
+              if (!_frontPhotoAvailable)
+                _BoolQuestion(
+                  ++q,
+                  'Armrests are too wide apart',
+                  _armrestTooWide,
+                  (v) => setState(() => _armrestTooWide = v),
+                ),
               _BoolQuestion(
                 ++q,
                 'Backrest is adjustable',
@@ -324,6 +360,13 @@ class _WorkstationQuestionnaireScreenState
                 _mouseTooFar,
                 (v) => setState(() => _mouseTooFar = v),
               ),
+              if (!_frontPhotoAvailable)
+                _BoolQuestion(
+                  ++q,
+                  'Wrists deviate sideways while typing',
+                  _wristDeviation,
+                  (v) => setState(() => _wristDeviation = v),
+                ),
               _BoolQuestion(
                 ++q,
                 'Keyboard is too high (shoulders shrug)',

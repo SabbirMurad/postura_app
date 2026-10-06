@@ -24,7 +24,9 @@ import UIKit
           }
           let answers = call.arguments as? [String: Any]
           let mods = RosaScorer.WorkstationModifiers.fromMap(answers)
-          let vc = PoseDetectionViewController(workstationModifiers: mods)
+          let frontPhotoAvailable = answers?["front_photo_available"] as? Bool ?? true
+          let vc = PoseDetectionViewController(
+            workstationModifiers: mods, frontPhotoAvailable: frontPhotoAvailable)
           vc.onComplete = { detectionResult in
             // nil on cancel, else ["photo_paths": [String],
             // "rosa_scores": [[String: Any]], "body_angles": [[String: Any]]]

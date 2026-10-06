@@ -57,6 +57,9 @@ enum RosaScorer {
         var armrestTooWide = false
         var backrestNonAdjustable = false
         var usableBackrest = true
+        var lumbarSupport = true
+        var feetSupported = true
+        var elbowsSupported = true
         var workSurfaceTooHigh = false
         // Section B — Monitor & Telephone
         var monitorNonAdjustable = false
@@ -97,6 +100,9 @@ enum RosaScorer {
             w.armrestTooWide = b("armrest_too_wide")
             w.backrestNonAdjustable = b("backrest_non_adjustable")
             w.usableBackrest = (m["usable_backrest"] as? Bool) ?? true
+            w.lumbarSupport = (m["lumbar_support"] as? Bool) ?? true
+            w.feetSupported = (m["feet_supported"] as? Bool) ?? true
+            w.elbowsSupported = (m["elbows_supported"] as? Bool) ?? true
             w.workSurfaceTooHigh = b("work_surface_too_high")
             w.monitorNonAdjustable = b("monitor_non_adjustable")
             w.neckTwistOver30 = b("neck_twist_over_30")
@@ -162,22 +168,26 @@ enum RosaScorer {
     static func score(_ angles: RosaAnglesCalculator.Angles,
                       mods: WorkstationModifiers = WorkstationModifiers()) -> Result {
         // ── CHAIR ─────────────────────────────────────────────────────────────────
-        let seatHeightScore: Int
+        // Each questionnaire answer below can only raise the camera-derived base
+        // score (official ROSA tiers), never lower it — no double counting.
+        let cameraSeatHeight: Int
         if angles.kneeAngle < 80 {
-            seatHeightScore = 2       // chair too low
+            cameraSeatHeight = 2      // chair too low
         } else if angles.kneeAngle > 130 {
-            seatHeightScore = 3       // legs nearly extended — feet off floor
+            cameraSeatHeight = 3      // legs nearly extended — feet off floor
         } else if angles.kneeAngle > 100 {
-            seatHeightScore = 2       // chair too high
+            cameraSeatHeight = 2      // chair too high
         } else {
-            seatHeightScore = 1       // neutral
+            cameraSeatHeight = 1      // neutral
         }
-        // Official ROSA scores "not using the backrest" the same as excessive trunk
-        // lean (score 2) — a worker sitting within 28° of vertical but not actually
-        // resting against the backrest is still unsupported.
-        let backrestScore = (!mods.usableBackrest || angles.trunkAngle > 28) ? 2 : 1
-        // shrugGap = ear.y − shoulder.y; > −0.06 means shoulder hiked toward ear
-        let armrestScore = angles.shrugGap > -0.06 ? 2 : 1
+        // Official ROSA: no foot contact with the floor = 3.
+        let seatHeightScore = mods.feetSupported ? cameraSeatHeight : 3
+        // Official ROSA scores no lumbar support, not using the backrest and
+        // excessive trunk lean all as 2.
+        let backrestScore = (!mods.usableBackrest || !mods.lumbarSupport || angles.trunkAngle > 28) ? 2 : 1
+        // shrugGap = ear.y − shoulder.y; > −0.06 means shoulder hiked toward ear.
+        // Official ROSA: armrests too high (shrug) or elbows unsupported = 2.
+        let armrestScore = (angles.shrugGap > -0.06 || !mods.elbowsSupported) ? 2 : 1
 
         // Area scores = camera-derived base + manual checklist modifiers (per ROSA form)
         let chairHeightArea = seatHeightScore

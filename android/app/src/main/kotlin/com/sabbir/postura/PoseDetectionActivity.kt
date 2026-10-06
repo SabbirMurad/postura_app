@@ -50,6 +50,7 @@ class PoseDetectionActivity : AppCompatActivity() {
          * Activity-result extra: a JSON object string of the whole capture, grouped as
          *   { "side_captures": [ { image_path, rosa_score {…}, body_angles {…} }, … ],
          *     "front_capture": { image_path, abduction_angle, wrist_deviation_angle } }
+         * front_capture is omitted when the answers say no front photo can be taken.
          * All keys are snake_case — this is the Flutter-facing contract.
          */
         const val EXTRA_RESULT  = "result"
@@ -154,6 +155,9 @@ class PoseDetectionActivity : AppCompatActivity() {
 
     /** Manual checklist answers gathered by the Flutter questionnaire before launch. */
     private lateinit var workstationModifiers: RosaScorer.WorkstationModifiers
+    // False when the user said a front-view photo can't be taken: the front phase
+    // is skipped and armrestTooWide / keyboardDeviation come from the answers.
+    private var frontPhotoAvailable = true
     private val TOTAL_SHOTS_NEEDED = 3
 
     // Elbow abduction (front-view shoulder→elbow angle from vertical) at or above
@@ -239,6 +243,7 @@ class PoseDetectionActivity : AppCompatActivity() {
             val obj = org.json.JSONObject(answersJson)
             val map = mutableMapOf<String, Any>()
             obj.keys().forEach { key -> map[key] = obj.get(key) }
+            frontPhotoAvailable = obj.optBoolean("front_photo_available", true)
             RosaScorer.WorkstationModifiers.fromMap(map)
         } else {
             RosaScorer.WorkstationModifiers()
@@ -436,7 +441,19 @@ class PoseDetectionActivity : AppCompatActivity() {
                             }
                             nextCaptureEarliestAtMs = now + CAPTURE_COOLDOWN_MS
                             val shotNumber = capturedPhotos.size
-                            if (shotNumber >= TOTAL_SHOTS_NEEDED) {
+                            if (shotNumber >= TOTAL_SHOTS_NEEDED && !frontPhotoAvailable) {
+                                // No front photo possible — finish now, scoring with
+                                // the questionnaire's armrest-width / wrist-deviation
+                                // answers (already in workstationModifiers).
+                                val scores = capturedAngles.map {
+                                    if (it != null) RosaScorer.score(it, workstationModifiers) else null
+                                }
+                                runOnUiThread {
+                                    triggerCaptureFlash()
+                                    pauseCameraPipeline()
+                                    finishWithCaptures(capturedPhotos.toList(), scores)
+                                }
+                            } else if (shotNumber >= TOTAL_SHOTS_NEEDED) {
                                 // Side shots done — switch to the front-view phase
                                 // instead of finishing. enterFrontPhase resets the
                                 // smoother/leg estimator; it must run on this
@@ -967,9 +984,11 @@ class PoseDetectionActivity : AppCompatActivity() {
             obj.put("shrug_gap", shrugGapValue)
         }
 
+        // No front photo (skipped) → omit front_capture entirely; Flutter and the
+        // backend both treat it as optional.
         val result = org.json.JSONObject()
             .put("side_captures", sideCaptures)
-            .put("front_capture", frontCapture)
+        if (frontPhoto != null) result.put("front_capture", frontCapture)
 
         setResult(Activity.RESULT_OK, Intent().putExtra(EXTRA_RESULT, result.toString()))
         finish()

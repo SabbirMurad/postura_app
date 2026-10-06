@@ -55,6 +55,9 @@ object RosaScorer {
         val armrestTooWide: Boolean = false,
         val backrestNonAdjustable: Boolean = false,
         val usableBackrest: Boolean = true,
+        val lumbarSupport: Boolean = true,
+        val feetSupported: Boolean = true,
+        val elbowsSupported: Boolean = true,
         val workSurfaceTooHigh: Boolean = false,
         // Section B — Monitor & Telephone
         val monitorNonAdjustable: Boolean = false,
@@ -92,6 +95,9 @@ object RosaScorer {
                     armrestTooWide                = b("armrest_too_wide"),
                     backrestNonAdjustable         = b("backrest_non_adjustable"),
                     usableBackrest                = (m["usable_backrest"] as? Boolean) ?: true,
+                    lumbarSupport                 = (m["lumbar_support"] as? Boolean) ?: true,
+                    feetSupported                 = (m["feet_supported"] as? Boolean) ?: true,
+                    elbowsSupported               = (m["elbows_supported"] as? Boolean) ?: true,
                     workSurfaceTooHigh            = b("work_surface_too_high"),
                     monitorNonAdjustable          = b("monitor_non_adjustable"),
                     neckTwistOver30               = b("neck_twist_over_30"),
@@ -157,18 +163,22 @@ object RosaScorer {
         mods: WorkstationModifiers = WorkstationModifiers(),
     ): Result {
         // ── CHAIR ─────────────────────────────────────────────────────────────────
-        val seatHeightScore = when {
+        // Each questionnaire answer below can only raise the camera-derived base
+        // score (official ROSA tiers), never lower it — no double counting.
+        val cameraSeatHeight = when {
             angles.kneeAngle < 80f  -> 2  // chair too low
             angles.kneeAngle > 130f -> 3  // legs nearly extended — feet off floor
             angles.kneeAngle > 100f -> 2  // chair too high
             else                    -> 1  // neutral
         }
-        // Official ROSA scores "not using the backrest" the same as excessive trunk
-        // lean (score 2) — a worker sitting within 28° of vertical but not actually
-        // resting against the backrest is still unsupported.
-        val backrestScore = if (!mods.usableBackrest || angles.trunkAngle > 28f) 2 else 1
-        // shrugGap = ear.y − shoulder.y; > −0.06 means shoulder hiked toward ear
-        val armrestScore  = if (angles.shrugGap > -0.06f) 2 else 1
+        // Official ROSA: no foot contact with the floor = 3.
+        val seatHeightScore = if (!mods.feetSupported) 3 else cameraSeatHeight
+        // Official ROSA scores no lumbar support, not using the backrest and
+        // excessive trunk lean all as 2.
+        val backrestScore = if (!mods.usableBackrest || !mods.lumbarSupport || angles.trunkAngle > 28f) 2 else 1
+        // shrugGap = ear.y − shoulder.y; > −0.06 means shoulder hiked toward ear.
+        // Official ROSA: armrests too high (shrug) or elbows unsupported = 2.
+        val armrestScore  = if (angles.shrugGap > -0.06f || !mods.elbowsSupported) 2 else 1
 
         // Area scores = camera-derived base + manual checklist modifiers (per ROSA form)
         val chairHeightArea = seatHeightScore +

@@ -35,10 +35,12 @@ Everything below expands each of those steps to the individual-input level.
 
 ## Layer 1 — Base scores from the camera
 
-These six numbers come purely from the pose detected in the photo. Nothing in
-the questionnaire changes these — they are 100% camera-driven. (The other two
-base inputs — seat depth and phone usage — are questionnaire-only; see
-Layer 2.)
+These six numbers start from the pose detected in the photo. Four questionnaire
+answers can raise three of them to the official ROSA tier the camera can't see
+(no foot contact, no lumbar support, no usable backrest, elbows unsupported).
+An answer can only raise a base score, never lower it, so nothing is counted
+twice. (The other two base inputs — seat depth and phone usage — are
+questionnaire-only; see Layer 2.)
 
 ### Seat height score (from knee angle)
 
@@ -49,33 +51,44 @@ Layer 2.)
 | 100°–130° | **2** | Chair too high |
 | Over 130° | **3** | Legs almost straight — feet likely not flat on the floor |
 
+**Questionnaire override:** "Both feet are flat on the floor or a footrest
+while typing" answered **No** → score **3** (official ROSA: no foot contact),
+whatever the knee angle.
+
 *If the knee/ankle is hidden in the photo, the app estimates this from
 hip-vs-knee height instead of a true angle, and marks the reading as "low
 confidence" — the point values are the same, only the underlying measurement
 is a rougher proxy.*
 
-### Backrest score (from trunk lean angle and backrest use)
+### Backrest score (from trunk lean angle, backrest use and lumbar support)
 
-| Trunk lean from vertical | Backrest actually used? | Score |
+| Trunk lean from vertical | Usable backrest? | Lumbar support? | Score |
+|---|---|---|---|
+| 28° or less | Yes | Yes | **1** |
+| 28° or less | No | — | **2** |
+| 28° or less | Yes | No | **2** |
+| More than 28° | — | — | **2** |
+
+Official ROSA scores no lumbar support, not using the backrest and leaning
+too far all as 2. Backrest use comes from "Chair has a usable backrest that
+supports your back while working", and lumbar support from "Chair provides
+lumbar support that contacts your lower back while sitting normally" (see
+Section A).
+
+### Armrest score (from shoulder shrug and elbow support)
+
+Shrug is measured as how close the shoulder sits to the ear (vertically).
+
+| Shoulder position | Elbows/forearms supported? | Score |
 |---|---|---|
-| 28° or less | Yes | **1** |
-| 28° or less | No | **2** |
-| More than 28° | Yes or No | **2** |
+| Shoulder relaxed, clearly below ear | Yes | **1** |
+| Shoulder relaxed, clearly below ear | No | **2** |
+| Shoulder hiked up toward the ear | — | **2** |
 
-A worker sitting within 28° of vertical but not actually resting against the
-backrest is scored the same as one leaning too far forward — holding your own
-posture instead of using the chair's support is still elevated risk. Whether
-the backrest is used comes from the "Chair has a usable backrest that
-supports your back while working" questionnaire answer (see Section A).
-
-### Armrest score (from shoulder shrug)
-
-Measured as how close the shoulder sits to the ear (vertically).
-
-| Shoulder position | Score |
-|---|---|
-| Shoulder relaxed, clearly below ear | **1** |
-| Shoulder hiked up toward the ear | **2** |
+Official ROSA scores armrests too high (shoulders shrugged) and armrests too
+low / elbows unsupported both as 2. Elbow support comes from "Your
+elbows/forearms are supported by the armrests or work surface" (see
+Section A).
 
 ### Monitor/neck score (from neck posture)
 
@@ -138,7 +151,10 @@ below always tells you what a "Yes" answer on the actual screen does.
 | "Seat pan depth is adjustable" | **No** | +1 | Seat-pan-depth area |
 | "Armrests are adjustable" | **No** | +1 | Armrest area |
 | "Armrest surface is hard or damaged" | **Yes** | +1 | Armrest area |
+| "Your elbows/forearms are supported by the armrests or work surface" | **No** | base armrest score becomes 2 (see Layer 1) | Armrest score / Armrest area |
 | "Chair has a usable backrest that supports your back while working" | **No** | base backrest score becomes 2 (see Layer 1) | Backrest score / Back-support area |
+| "Chair provides lumbar support that contacts your lower back while sitting normally" | **No** | base backrest score becomes 2 (see Layer 1) | Backrest score / Back-support area |
+| "Both feet are flat on the floor or a footrest while typing" | **No** | base seat-height score becomes 3 (see Layer 1) | Seat-height score / Chair-height area |
 | "Backrest is adjustable" | **No** | +1 | Back-support area |
 | "Desk/work surface is too high (shoulders shrug)" | **Yes** | +1 | Back-support area |
 
@@ -147,17 +163,14 @@ below always tells you what a "Yes" answer on the actual screen does.
 - **Armrest area** = Armrest score (camera) + "adjustable? No" (+1) + "hard/damaged? Yes" (+1) + "armrests too wide?" (+1, see below).
 - **Back-support area** = Backrest score (camera + backrest-use, see Layer 1) + "adjustable? No" (+1) + "surface too high? Yes" (+1).
 
-**Asked in the app but do NOT affect the ROSA score** (they only feed the
-separate Action/Equipment Report's recommendations):
-- "Chair provides lumbar support that contacts your lower back while sitting normally"
-- "Both feet are flat on the floor or a footrest while typing"
-
-**Detected from the camera, not a checklist question:**
-- Armrests being "too wide apart" (`armrestTooWide`) is not set by any
-  on-screen question — it's measured automatically from the separate
-  front-facing photo taken at the end of the capture sequence. An
-  elbow-abduction angle of 20° or more from that photo scores +1 on the
-  armrest area.
+**From the front photo, or a question if there is no front photo:**
+- The checklist opens with "Can a photo be taken from the front view?".
+- **Yes** → armrests being "too wide apart" (`armrestTooWide`) is measured
+  from the front-facing photo taken after the side shots. An elbow-abduction
+  angle of 20° or more scores +1 on the armrest area. No question is shown.
+- **No** → the front photo is skipped and the question "Armrests are too wide
+  apart" is shown instead; **Yes** scores +1 on the armrest area.
+- Exactly one source is used per scan — never both.
 
 ### Section B — Monitor & Telephone
 
@@ -206,11 +219,13 @@ separate Action/Equipment Report's recommendations):
 - "Mouse is positioned far enough away that you have to reach for it"
   (`mouseTooFar`) — Action Report only.
 
-**Detected from the camera, not a checklist question:**
-- Keyboard "ulnar deviation" (`keyboardDeviation`) is not set by any
-  on-screen question — it's measured automatically from the same
-  front-facing photo used for the armrest check. A wrist-deviation angle of
-  15° or more from that photo scores +1 on the keyboard area.
+**From the front photo, or a question if there is no front photo:**
+- Same rule as armrest width. With a front photo, keyboard "ulnar deviation"
+  (`keyboardDeviation`) is measured from it: a wrist-deviation angle of 15° or
+  more scores +1 on the keyboard area.
+- Without a front photo, the question "Wrists deviate sideways while typing"
+  is shown instead; **Yes** scores +1 on the keyboard area.
+- Exactly one source is used per scan — never both.
 
 ### Duration — applies to all three sections
 

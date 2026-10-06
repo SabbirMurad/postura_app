@@ -17,6 +17,12 @@ enum MonitorHeightDirection { below, atEyeLevel, above }
 /// on both Android and iOS parses these exact snake_case keys. Do not rename
 /// them without changing both native sides.
 class WorkstationAnswers {
+  /// Whether the front-view photo can be taken. When true, the native camera
+  /// measures [armrestTooWide] and [keyboardDeviation] from the front shot and
+  /// ignores the values here. When false, the front shot is skipped and those
+  /// two come from the questionnaire instead.
+  final bool frontPhotoAvailable;
+
   // Section A — Chair
   final bool chairHeightNonAdjustable;
   final bool insufficientUnderDeskSpace;
@@ -28,12 +34,17 @@ class WorkstationAnswers {
   final bool backrestNonAdjustable;
   final bool workSurfaceTooHigh;
 
-  // A_LUMBAR / A_FEET / A_NO_BACK source fields (Action Report v1.3). These
-  // are separate from the ROSA-affecting adjustability booleans above and
-  // only feed FINDING_ID derivation — they never change the ROSA score.
+  // ROSA base-score inputs (official form), also the A_LUMBAR / A_FEET /
+  // A_NO_BACK / A_ARM_HILO sources for the Action Report. Each can only raise
+  // the camera-derived base score, never lower it:
+  //   lumbarSupport false   -> backrest score 2
+  //   feetSupported false   -> seat-height score 3 (no foot contact)
+  //   usableBackrest false  -> backrest score 2
+  //   elbowsSupported false -> armrest score 2 (elbows unsupported)
   final bool lumbarSupport;
   final bool feetSupported;
   final bool usableBackrest;
+  final bool elbowsSupported;
 
   // Section B — Monitor & Telephone
   final bool monitorNonAdjustable;
@@ -64,6 +75,7 @@ class WorkstationAnswers {
   final DeskDuration deskDuration;
 
   const WorkstationAnswers({
+    this.frontPhotoAvailable = true,
     this.chairHeightNonAdjustable = false,
     this.insufficientUnderDeskSpace = false,
     this.seatDepthFit = SeatDepthFit.ok,
@@ -76,6 +88,7 @@ class WorkstationAnswers {
     this.lumbarSupport = true,
     this.feetSupported = true,
     this.usableBackrest = true,
+    this.elbowsSupported = true,
     this.monitorNonAdjustable = false,
     this.neckTwistOver30 = false,
     this.monitorTooFar = false,
@@ -98,6 +111,7 @@ class WorkstationAnswers {
   });
 
   WorkstationAnswers copyWith({
+    bool? frontPhotoAvailable,
     bool? chairHeightNonAdjustable,
     bool? insufficientUnderDeskSpace,
     SeatDepthFit? seatDepthFit,
@@ -110,6 +124,7 @@ class WorkstationAnswers {
     bool? lumbarSupport,
     bool? feetSupported,
     bool? usableBackrest,
+    bool? elbowsSupported,
     bool? monitorNonAdjustable,
     bool? neckTwistOver30,
     bool? monitorTooFar,
@@ -131,6 +146,7 @@ class WorkstationAnswers {
     DeskDuration? deskDuration,
   }) {
     return WorkstationAnswers(
+      frontPhotoAvailable: frontPhotoAvailable ?? this.frontPhotoAvailable,
       chairHeightNonAdjustable:
           chairHeightNonAdjustable ?? this.chairHeightNonAdjustable,
       insufficientUnderDeskSpace:
@@ -146,6 +162,7 @@ class WorkstationAnswers {
       lumbarSupport: lumbarSupport ?? this.lumbarSupport,
       feetSupported: feetSupported ?? this.feetSupported,
       usableBackrest: usableBackrest ?? this.usableBackrest,
+      elbowsSupported: elbowsSupported ?? this.elbowsSupported,
       monitorNonAdjustable: monitorNonAdjustable ?? this.monitorNonAdjustable,
       neckTwistOver30: neckTwistOver30 ?? this.neckTwistOver30,
       monitorTooFar: monitorTooFar ?? this.monitorTooFar,
@@ -173,6 +190,7 @@ class WorkstationAnswers {
   }
 
   Map<String, dynamic> toMap() => {
+    'front_photo_available': frontPhotoAvailable,
     'chair_height_non_adjustable': chairHeightNonAdjustable,
     'insufficient_under_desk_space': insufficientUnderDeskSpace,
     'seat_depth_score': seatDepthFit == SeatDepthFit.ok ? 1 : 2,
@@ -192,6 +210,7 @@ class WorkstationAnswers {
     'lumbar_support': lumbarSupport,
     'feet_supported': feetSupported,
     'usable_backrest': usableBackrest,
+    'elbows_supported': elbowsSupported,
     'monitor_non_adjustable': monitorNonAdjustable,
     'neck_twist_over_30': neckTwistOver30,
     'monitor_too_far': monitorTooFar,
