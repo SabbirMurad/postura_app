@@ -6,7 +6,6 @@ class AnalysisReport {
   final List<Correction> corrections;
   final Exercises exercises;
   final List<Equipment> equipment;
-  final String pdfReportUrl;
   final String equipmentExcelUrl;
 
   final WorkPattern workPattern;
@@ -34,13 +33,16 @@ class AnalysisReport {
   /// AI-generated free-text guidance the backend still returns for now.
   final ActionReportV13? actionReportV13;
 
+  /// When the assessment was taken (null for reports cached before the
+  /// backend started sending it).
+  final DateTime? createdAt;
+
   AnalysisReport({
     required this.workPattern,
     required this.bodyRegionRisks,
     required this.corrections,
     required this.exercises,
     required this.equipment,
-    required this.pdfReportUrl,
     required this.equipmentExcelUrl,
     required this.rosaScore,
     required this.symptoms,
@@ -50,6 +52,7 @@ class AnalysisReport {
     this.heightCm,
     this.supplementalCpeFindings = const SupplementalCpeFindings(),
     this.actionReportV13,
+    this.createdAt,
   });
 
   bool get chronicityElevated => chronicityLevel == 'Elevated';
@@ -87,7 +90,6 @@ class AnalysisReport {
       equipment: (json['equipment'] as List<dynamic>? ?? [])
           .map((e) => Equipment.fromJson(e as Map<String, dynamic>))
           .toList(),
-      pdfReportUrl: json['pdf_report_url'] ?? '',
       equipmentExcelUrl: json['equipment_excel_url'] ?? '',
 
       rosaScore: RosaScore.fromJson(json['rosa_score'] ?? const {}),
@@ -103,6 +105,9 @@ class AnalysisReport {
               json['action_report_v1_3'] as Map<String, dynamic>,
             )
           : null,
+      createdAt: DateTime.tryParse(
+        json['created_at'] as String? ?? '',
+      )?.toLocal(),
     );
   }
 
@@ -111,7 +116,6 @@ class AnalysisReport {
     'corrections': corrections.map((e) => e.toJson()).toList(),
     'exercises': exercises.toJson(),
     'equipment': equipment.map((e) => e.toJson()).toList(),
-    'pdf_report_url': pdfReportUrl,
     'equipment_excel_url': equipmentExcelUrl,
     'rosa_score': rosaScore.toJson(),
     'symptoms': symptoms,
@@ -122,6 +126,7 @@ class AnalysisReport {
     'pain_duration': painDuration,
     'chronicity_level': chronicityLevel,
     'action_report_v1_3': actionReportV13?.toJson(),
+    'created_at': createdAt?.toUtc().toIso8601String(),
   };
 }
 
@@ -180,7 +185,9 @@ class ActionReportV13 {
           (json['supplemental_cpe_findings'] as List<dynamic>? ?? [])
               .map((e) => FindingV13.fromJson(e as Map<String, dynamic>))
               .toList(),
-      whatYouCanDoNow: List<String>.from(json['what_you_can_do_now'] ?? const []),
+      whatYouCanDoNow: List<String>.from(
+        json['what_you_can_do_now'] ?? const [],
+      ),
       equipmentHelpsText: json['equipment_helps_text'] as String?,
       equipmentCards: (json['equipment_cards'] as List<dynamic>? ?? [])
           .map((e) => EquipmentCardV13.fromJson(e as Map<String, dynamic>))
@@ -201,8 +208,9 @@ class ActionReportV13 {
     'priority_findings_intro': priorityFindingsIntro,
     'priority_findings': priorityFindings.map((e) => e.toJson()).toList(),
     'supplemental_cpe_intro': supplementalCpeIntro,
-    'supplemental_cpe_findings':
-        supplementalCpeFindings.map((e) => e.toJson()).toList(),
+    'supplemental_cpe_findings': supplementalCpeFindings
+        .map((e) => e.toJson())
+        .toList(),
     'what_you_can_do_now': whatYouCanDoNow,
     'equipment_helps_text': equipmentHelpsText,
     'equipment_cards': equipmentCards.map((e) => e.toJson()).toList(),
@@ -300,7 +308,9 @@ class EquipmentCardV13 {
     this.consolidationNote,
   });
 
-  factory EquipmentCardV13.fromJson(Map<String, dynamic> json) => EquipmentCardV13(
+  factory EquipmentCardV13.fromJson(
+    Map<String, dynamic> json,
+  ) => EquipmentCardV13(
     equipmentId: json['equipment_id'] ?? '',
     cardTitle: json['card_title'] ?? '',
     cardDescription: json['card_description'] ?? '',

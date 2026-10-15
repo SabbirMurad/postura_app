@@ -11,7 +11,6 @@ import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/provider/report.dart';
 import 'package:posture_detector_app/services/equipment_engine.dart';
-import 'package:posture_detector_app/models/equipment/equipment_output.dart';
 
 class EquipmentScreenBusiness extends ConsumerStatefulWidget {
   final bool canSendListToCompany;
@@ -36,53 +35,6 @@ class _EquipmentScreenBusinessState
   void initState() {
     super.initState();
     Future(() => ref.read(reportNotifierProvider.notifier).fetchMyReports());
-  }
-
-  /// Build engine input from report state, returns null if required data missing
-  EquipmentOutput? _buildEngineOutput(ReportState reportState) {
-    final data = reportState.analysisReport;
-    if (data == null) return null;
-
-    final painIntensities = data.painIntensities;
-
-    double? vasFor(List<String> regions) {
-      for (final pi in painIntensities) {
-        if (regions.any(
-          (r) => pi.bodyRegion.toLowerCase().contains(r.toLowerCase()),
-        )) {
-          return pi.intensity.toDouble();
-        }
-      }
-      return null;
-    }
-
-    final symptoms = data.symptoms;
-
-    final input = EquipmentEngineInput(
-      rosaScore: data.rosaScore,
-      workZoneType: 'desk',
-      hoursAtDesk: data.workPattern.hoursAtDesk,
-      breakHabit: data.workPattern.breakHabit,
-      deviceSetup: data.workPattern.deviceUsage,
-      mouseType: data.workPattern.mouseType,
-      painDuration: data.painDuration,
-      vasNeck: vasFor(['neck']),
-      vasUpperBack: vasFor(['upper back', 'upper_back']),
-      vasLowerBack: vasFor(['lower back', 'lower_back']),
-      vasShoulder: vasFor(['shoulder']),
-      vasWrist: vasFor(['wrist']),
-      vasElbow: vasFor(['elbow']),
-      vasKnee: vasFor(['knee']),
-      vasFeet: vasFor(['feet', 'foot', 'ankle']),
-      vasHip: vasFor(['hip']),
-      symTingling: symptoms.any((s) => s.toLowerCase().contains('tingling')),
-      symFatigue: symptoms.any((s) => s.toLowerCase().contains('fatigue')),
-      symEndOfDay: symptoms.any((s) => s.toLowerCase().contains('end')),
-      symStiffness: symptoms.any((s) => s.toLowerCase().contains('stiff')),
-      symMorningPain: symptoms.any((s) => s.toLowerCase().contains('morning')),
-    );
-
-    return EquipmentEngine.run(input);
   }
 
   Color _tierColor(String tier) {
@@ -110,7 +62,10 @@ class _EquipmentScreenBusinessState
     // list only cover scans that predate the v1.3 rollout.
     final v13Report = reportState.analysisReport?.actionReportV13;
     final v13Cards = v13Report?.equipmentCards ?? const [];
-    final engineOutput = v13Report == null ? _buildEngineOutput(reportState) : null;
+    final analysis = reportState.analysisReport;
+    final engineOutput = v13Report == null && analysis != null
+        ? EquipmentEngine.legacyOutputFor(analysis)
+        : null;
     final fallbackList = reportState.analysisReport?.equipment ?? [];
 
     return Scaffold(
@@ -148,10 +103,14 @@ class _EquipmentScreenBusinessState
                             vertical: 12.h,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.primaryColor.withValues(alpha: 0.06),
+                            color: AppColors.primaryColor.withValues(
+                              alpha: 0.06,
+                            ),
                             borderRadius: BorderRadius.circular(10.r),
                             border: Border.all(
-                              color: AppColors.primaryColor.withValues(alpha: 0.25),
+                              color: AppColors.primaryColor.withValues(
+                                alpha: 0.25,
+                              ),
                             ),
                           ),
                           child: Text(

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,7 +17,9 @@ import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/models/analysis/body_region_risk_model.dart';
 import 'package:posture_detector_app/provider/author.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:posture_detector_app/utils/assessment_report_pdf.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class HomeScreenBusiness extends ConsumerStatefulWidget {
   const HomeScreenBusiness({super.key});
@@ -44,6 +48,48 @@ class RosaItem {
 }
 
 class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
+  bool _exporting = false;
+
+  /// Re-fetches the latest report from the API, renders it to a PDF on-device
+  /// and opens the share sheet so the user can save, open or send it.
+  Future<void> _exportPdf(BuildContext buttonContext) async {
+    if (_exporting) return;
+    // iPad needs an anchor for the share popover; read it before any await.
+    final box = buttonContext.findRenderObject() as RenderBox?;
+    final shareOrigin = box == null
+        ? null
+        : box.localToGlobal(Offset.zero) & box.size;
+    setState(() => _exporting = true);
+    try {
+      await ref.read(reportNotifierProvider.notifier).fetchMyReports();
+      final report = ref.read(reportNotifierProvider).analysisReport;
+      if (report == null) return; // fetchMyReports already showed the error.
+
+      final bytes = await AssessmentReportPdf.build(
+        report: report,
+        profile: ref.read(authorNotifierProvider).value,
+      );
+
+      final date = report.createdAt ?? DateTime.now();
+      final stamp =
+          '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/postura_assessment_report_$stamp.pdf');
+      await file.writeAsBytes(bytes, flush: true);
+
+      await Share.shareXFiles(
+        [XFile(file.path, mimeType: 'application/pdf')],
+        subject: 'Postura Assessment Report',
+        sharePositionOrigin: shareOrigin,
+      );
+    } catch (e) {
+      debugPrint('Export PDF error: $e');
+      showCustomToast(text: 'Could not create the PDF. Please try again.');
+    } finally {
+      if (mounted) setState(() => _exporting = false);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -258,7 +304,9 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
       decoration: BoxDecoration(
         color: AppColors.secondaryText.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: AppColors.secondaryText.withValues(alpha: 0.15)),
+        border: Border.all(
+          color: AppColors.secondaryText.withValues(alpha: 0.15),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -454,43 +502,34 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                         ),
                         SizedBox(height: 12.h),
                         _bodyRegionRiskSection(bodyRegionRiskItems),
-                        if (analysisData.supplementalCpeFindings.hasFindings) ...[
+                        if (analysisData
+                            .supplementalCpeFindings
+                            .hasFindings) ...[
                           SizedBox(height: 24.h),
                           _supplementalCpeFindingsSection(
                             analysisData.supplementalCpeFindings,
                           ),
                         ],
                         SizedBox(height: 24.h),
-                        PrimaryButton(
-                          onTap: () {
-                            final pdfUrl =
-                                reportState.analysisReport?.pdfReportUrl;
-
-                            if (pdfUrl == null || pdfUrl.isEmpty) {
-                              // EN: "No PDF available"
-                              showCustomToast(text: loc.noPdfAvailable);
-                              return;
-                            }
-
-                            launchUrl(
-                              mode: LaunchMode.externalApplication,
-                              Uri.parse(pdfUrl),
-                            );
-                          },
-                          // EN: "Export ISO Report PDF"
-                          text: AppLocalizations.of(
-                            context,
-                          )!.exportRosaReportPdf,
-                          backgroundColor: AppColors.primaryColor,
-                          textStyle: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w700,
+                        Builder(
+                          builder: (buttonContext) => PrimaryButton(
+                            loading: _exporting,
+                            onTap: () => _exportPdf(buttonContext),
+                            // EN: "Export ISO Report PDF"
+                            text: AppLocalizations.of(
+                              context,
+                            )!.exportRosaReportPdf,
+                            backgroundColor: AppColors.primaryColor,
+                            textStyle: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            borderRadius: BorderRadius.circular(14.r),
+                            prefixIcon: Icons.download,
+                            prefixIconColor: AppColors.surface,
+                            prefixIconSize: 22.sp,
                           ),
-                          borderRadius: BorderRadius.circular(14.r),
-                          prefixIcon: Icons.download,
-                          prefixIconColor: AppColors.surface,
-                          prefixIconSize: 22.sp,
                         ),
 
                         SizedBox(height: 20.h),

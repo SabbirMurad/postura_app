@@ -16,7 +16,7 @@ class ExerciseBusinessScreen extends ConsumerWidget {
   /// the exact bug the client's audit flagged; GENTLE/GENTLE_MAINTENANCE
   /// both read as "Gentle" here, MODERATE as "Moderate" — there is no
   /// "Active"/higher-intensity tier).
-  String _sensitivityLabel(String readiness) {
+  static String sensitivityLabel(String readiness) {
     return readiness == 'MODERATE' ? 'Moderate' : 'Gentle';
   }
 
@@ -29,7 +29,7 @@ class ExerciseBusinessScreen extends ConsumerWidget {
     }
   }
 
-  String _tierMessage(String label) {
+  static String tierMessage(String label) {
     switch (label) {
       case 'Moderate':
         return 'Balanced programme to reduce discomfort and improve mobility.';
@@ -38,7 +38,7 @@ class ExerciseBusinessScreen extends ConsumerWidget {
     }
   }
 
-  String _frequency(String label) {
+  static String frequency(String label) {
     switch (label) {
       case 'Moderate':
         return '3× per week · 12 min sessions';
@@ -64,10 +64,7 @@ class ExerciseBusinessScreen extends ConsumerWidget {
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.w),
               child: Text(
                 loc.personalizedExerciseProgram,
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700),
               ),
             ),
 
@@ -86,7 +83,9 @@ class ExerciseBusinessScreen extends ConsumerWidget {
                   final filteredExercises = exercises?.where((e) {
                     final cp = exercisesData?.clinicalProjection;
                     if (cp?.text != null && cp!.text.isNotEmpty) {
-                      if (e.bodyRegion.toLowerCase().contains('clinical projection')) {
+                      if (e.bodyRegion.toLowerCase().contains(
+                        'clinical projection',
+                      )) {
                         return false;
                       }
                       if (e.description.trim() == cp.text.trim()) return false;
@@ -106,7 +105,9 @@ class ExerciseBusinessScreen extends ConsumerWidget {
                                   ? Icons.health_and_safety_rounded
                                   : Icons.fitness_center_rounded,
                               size: 80.sp,
-                              color: AppColors.secondaryText.withValues(alpha: 0.5),
+                              color: AppColors.secondaryText.withValues(
+                                alpha: 0.5,
+                              ),
                             ),
                             SizedBox(height: 20.h),
                             Text(
@@ -129,7 +130,9 @@ class ExerciseBusinessScreen extends ConsumerWidget {
                                   : 'Please complete your assessment first',
                               style: TextStyle(
                                 fontSize: 13.sp,
-                                color: AppColors.secondaryText.withValues(alpha: 0.7),
+                                color: AppColors.secondaryText.withValues(
+                                  alpha: 0.7,
+                                ),
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -139,8 +142,9 @@ class ExerciseBusinessScreen extends ConsumerWidget {
                     );
                   }
 
-                  final readiness = exercisesData?.readiness ?? 'GENTLE_MAINTENANCE';
-                  final tierLabel = _sensitivityLabel(readiness);
+                  final readiness =
+                      exercisesData?.readiness ?? 'GENTLE_MAINTENANCE';
+                  final tierLabel = sensitivityLabel(readiness);
                   final tierColor = _tierColor(tierLabel);
 
                   return ListView.builder(
@@ -186,7 +190,7 @@ class ExerciseBusinessScreen extends ConsumerWidget {
 
                               /// Tier message
                               Text(
-                                _tierMessage(tierLabel),
+                                tierMessage(tierLabel),
                                 style: TextStyle(
                                   fontSize: 13.sp,
                                   color: AppColors.secondaryText,
@@ -205,7 +209,7 @@ class ExerciseBusinessScreen extends ConsumerWidget {
                                   ),
                                   SizedBox(width: 4.w),
                                   Text(
-                                    _frequency(tierLabel),
+                                    frequency(tierLabel),
                                     style: TextStyle(
                                       fontSize: 12.sp,
                                       color: AppColors.secondaryText,
@@ -228,13 +232,14 @@ class ExerciseBusinessScreen extends ConsumerWidget {
                                     color: const Color(0xFFFFF3CD),
                                     borderRadius: BorderRadius.circular(10.r),
                                     border: Border.all(
-                                      color: const Color(0xFFDAA101).withValues(
-                                        alpha: 0.5,
-                                      ),
+                                      color: const Color(
+                                        0xFFDAA101,
+                                      ).withValues(alpha: 0.5),
                                     ),
                                   ),
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       const Icon(
                                         Icons.warning_amber_rounded,

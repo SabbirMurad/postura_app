@@ -54,6 +54,7 @@ dependencies:
   flutter_blurhash: ^0.9.1
   blurhash: ^1.2.0
   blurhash_ffi: ^1.2.7
+  pdf: ^3.12.0
   
 dev_dependencies:
   flutter_test:
@@ -103,6 +104,8 @@ flutter:
     - assets/icons/auth/
     - assets/icons/status/
     - assets/icons/rosa/
+    # Fonts embedded in the exported assessment PDF
+    - assets/fonts/pdf/
     - assets/icons/region/
     - assets/icons/workplace/
     - assets/icons/general/

@@ -1,4 +1,5 @@
 import 'package:posture_detector_app/models/equipment/equipment_output.dart';
+import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 
 // ── Input contract (§2.1) ─────────────────────────────────────────────────────
@@ -20,11 +21,12 @@ class EquipmentEngineInput {
 
   // Intake screen inputs
   final String workZoneType; // 'desk' | 'standingDesk' | 'hybrid' | 'other'
-  final String hoursAtDesk;  // 'h0_4' | 'h4_6' | 'h6_8' | 'h8plus'
-  final String breakHabit;   // 'every1h' | 'every2h' | 'every3h' | 'rarely'
-  final String deviceSetup;  // 'laptop' | 'singleScreen' | 'dualScreen'
-  final String mouseType;    // 'standard' | 'smallNotebook' | 'trackpadOrNone'
-  final String? painDuration; // 'ltOneWeek' | 'oneToSixWeeks' | 'gtSixWeeks' | 'onOffMonths'
+  final String hoursAtDesk; // 'h0_4' | 'h4_6' | 'h6_8' | 'h8plus'
+  final String breakHabit; // 'every1h' | 'every2h' | 'every3h' | 'rarely'
+  final String deviceSetup; // 'laptop' | 'singleScreen' | 'dualScreen'
+  final String mouseType; // 'standard' | 'smallNotebook' | 'trackpadOrNone'
+  final String?
+  painDuration; // 'ltOneWeek' | 'oneToSixWeeks' | 'gtSixWeeks' | 'onOffMonths'
 
   // Optional symptoms
   final bool symTingling;
@@ -218,8 +220,7 @@ class _WorkingCard {
     }
 
     final riskLabel = _riskLabelMap[rosaSourceKey];
-    final riskBadgeText =
-        riskLabel != null ? '$riskLabel: $rosaSubScore' : '';
+    final riskBadgeText = riskLabel != null ? '$riskLabel: $rosaSubScore' : '';
 
     return EquipmentCard(
       equipmentId: equipmentId,
@@ -245,6 +246,54 @@ class _WorkingCard {
 class EquipmentEngine {
   EquipmentEngine._();
 
+  /// Equipment output for a pre-v1.3 report (no `action_report_v1_3`), built
+  /// from its ROSA score, pain ratings and symptoms. Shared by the equipment
+  /// screen and the exported PDF so both show the same cards.
+  static EquipmentOutput legacyOutputFor(AnalysisReport data) {
+    final painIntensities = data.painIntensities;
+
+    double? vasFor(List<String> regions) {
+      for (final pi in painIntensities) {
+        if (regions.any(
+          (r) => pi.bodyRegion.toLowerCase().contains(r.toLowerCase()),
+        )) {
+          return pi.intensity.toDouble();
+        }
+      }
+      return null;
+    }
+
+    final symptoms = data.symptoms;
+
+    return run(
+      EquipmentEngineInput(
+        rosaScore: data.rosaScore,
+        workZoneType: 'desk',
+        hoursAtDesk: data.workPattern.hoursAtDesk,
+        breakHabit: data.workPattern.breakHabit,
+        deviceSetup: data.workPattern.deviceUsage,
+        mouseType: data.workPattern.mouseType,
+        painDuration: data.painDuration,
+        vasNeck: vasFor(['neck']),
+        vasUpperBack: vasFor(['upper back', 'upper_back']),
+        vasLowerBack: vasFor(['lower back', 'lower_back']),
+        vasShoulder: vasFor(['shoulder']),
+        vasWrist: vasFor(['wrist']),
+        vasElbow: vasFor(['elbow']),
+        vasKnee: vasFor(['knee']),
+        vasFeet: vasFor(['feet', 'foot', 'ankle']),
+        vasHip: vasFor(['hip']),
+        symTingling: symptoms.any((s) => s.toLowerCase().contains('tingling')),
+        symFatigue: symptoms.any((s) => s.toLowerCase().contains('fatigue')),
+        symEndOfDay: symptoms.any((s) => s.toLowerCase().contains('end')),
+        symStiffness: symptoms.any((s) => s.toLowerCase().contains('stiff')),
+        symMorningPain: symptoms.any(
+          (s) => s.toLowerCase().contains('morning'),
+        ),
+      ),
+    );
+  }
+
   static EquipmentOutput run(EquipmentEngineInput input) {
     // Build VAS and ROSA lookup maps for convenience
     final vasMap = _buildVasMap(input);
@@ -254,8 +303,8 @@ class EquipmentEngine {
     // symEndOfDay + no painDuration → treat as oneToSixWeeks
     final effectivePainDuration =
         (input.symEndOfDay && input.painDuration == null)
-            ? 'oneToSixWeeks'
-            : input.painDuration;
+        ? 'oneToSixWeeks'
+        : input.painDuration;
 
     // ── Step 1 — Which items to include (§2.4) ────────────────────────────
     final cards = <_WorkingCard>[];
@@ -296,8 +345,9 @@ class EquipmentEngine {
           category: item.category,
           rosaSourceKey: item.rosaSourceKey,
           rosaSubScore: subScore,
-          linkedVasRegion:
-              highestVas > 0 ? linkedRegion : item.vasRegions.firstOrNull,
+          linkedVasRegion: highestVas > 0
+              ? linkedRegion
+              : item.vasRegions.firstOrNull,
           linkedVasScore: highestVas > 0 ? highestVas : null,
           urgencyLevel: urgencyLevel,
         ),
@@ -429,9 +479,7 @@ class EquipmentEngine {
     } else if (input.breakHabit == 'every3h') {
       for (final card in cards) {
         if (!card.suppressed && card.urgencyLevel == 3) {
-          card.appendNote(
-            'Increase break frequency to reduce sustained load.',
-          );
+          card.appendNote('Increase break frequency to reduce sustained load.');
         }
       }
     }
