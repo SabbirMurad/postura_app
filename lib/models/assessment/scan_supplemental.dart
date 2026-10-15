@@ -39,9 +39,10 @@ class ScanSupplemental {
   }
 
   /// Contract: the backend's `ScanSupplementalInput` parses these exact
-  /// snake_case keys.
+  /// snake_case keys. A missing height is sent as null (never 0) so the
+  /// backend rejects it instead of storing a fake value.
   Map<String, dynamic> toMap() => {
-    'height_cm': heightCm ?? 0,
+    'height_cm': heightCm,
     'phone_cradle': phoneCradle,
     'hands_free_available': handsFreeAvailable,
   };

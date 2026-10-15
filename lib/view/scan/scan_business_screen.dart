@@ -38,6 +38,10 @@ class _ScanBusinessScreenState extends ConsumerState<ScanBusinessScreen> {
       showCustomToast(text: 'Please enter your height');
       return;
     }
+    if (_heightCm! < 50 || _heightCm! > 250) {
+      showCustomToast(text: 'Height must be between 50 and 250 cm');
+      return;
+    }
 
     _startScanShown = true;
     ref.read(assessmentNotifierProvider.notifier).setHeightCm(_heightCm!);

@@ -71,7 +71,10 @@ class CPEAssessmentScreen extends ConsumerWidget {
             Icon(Icons.height, size: 16.w, color: const Color(0xFF0078B5)),
             SizedBox(width: 4.w),
             Text(
-              heightCm != null ? '${heightCm.round()} cm' : 'Not provided',
+              // Older first-time scans stored 0 when height was never asked.
+              heightCm != null && heightCm > 0
+                  ? '${heightCm.round()} cm'
+                  : 'Not provided',
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
