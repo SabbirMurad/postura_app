@@ -52,6 +52,9 @@ enum RosaScorer {
         var insufficientUnderDeskSpace = false
         var seatDepthScore = 1            // 1 = ~3in clearance, 2 = too long/short
         var seatPanNonAdjustable = false
+        // False = the chair has no armrests: the armrest area is a flat 2 and
+        // the three armrest +1s (adjustable, hard/damaged, too wide) never apply.
+        var chairHasArmrests = true
         var armrestNonAdjustable = false
         var armrestHardDamaged = false
         var armrestTooWide = false
@@ -95,6 +98,7 @@ enum RosaScorer {
             w.insufficientUnderDeskSpace = b("insufficient_under_desk_space")
             w.seatDepthScore = i("seat_depth_score", 1)
             w.seatPanNonAdjustable = b("seat_pan_non_adjustable")
+            w.chairHasArmrests = (m["chair_has_armrests"] as? Bool) ?? true
             w.armrestNonAdjustable = b("armrest_non_adjustable")
             w.armrestHardDamaged = b("armrest_hard_damaged")
             w.armrestTooWide = b("armrest_too_wide")
@@ -187,7 +191,8 @@ enum RosaScorer {
         let backrestScore = (!mods.usableBackrest || !mods.lumbarSupport || angles.trunkAngle > 28) ? 2 : 1
         // shrugGap = ear.y − shoulder.y; > −0.06 means shoulder hiked toward ear.
         // Official ROSA: armrests too high (shrug) or elbows unsupported = 2.
-        let armrestScore = (angles.shrugGap > -0.06 || !mods.elbowsSupported) ? 2 : 1
+        // No armrests at all also scores 2.
+        let armrestScore = (!mods.chairHasArmrests || angles.shrugGap > -0.06 || !mods.elbowsSupported) ? 2 : 1
 
         // Area scores = camera-derived base + manual checklist modifiers (per ROSA form)
         let chairHeightArea = seatHeightScore
@@ -195,7 +200,10 @@ enum RosaScorer {
             + (mods.insufficientUnderDeskSpace ? 1 : 0)
         let panDepthArea = mods.seatDepthScore
             + (mods.seatPanNonAdjustable ? 1 : 0)
-        let armrestArea = armrestScore
+        // Without armrests there is nothing to adjust, pad or narrow, so the
+        // modifiers are skipped — including the camera's too-wide measurement,
+        // which the front shot sets regardless of the chair.
+        let armrestArea = !mods.chairHasArmrests ? armrestScore : armrestScore
             + (mods.armrestNonAdjustable ? 1 : 0)
             + (mods.armrestHardDamaged ? 1 : 0)
             + (mods.armrestTooWide ? 1 : 0)

@@ -39,8 +39,11 @@ class _WorkstationQuestionnaireScreenState
   bool _enoughUnderDeskSpace = true;
   SeatDepthFit _seatDepthFit = SeatDepthFit.ok;
   bool _seatPanAdjustable = true;
+  // When false, the armrest questions are hidden and not submitted.
+  bool _chairHasArmrests = true;
   bool _armrestAdjustable = true;
   bool _armrestHardDamaged = false;
+  bool _usesArmrests = true;
   bool _backrestAdjustable = true;
   bool _workSurfaceTooHigh = false;
   bool _lumbarSupport = true;
@@ -87,20 +90,25 @@ class _WorkstationQuestionnaireScreenState
             frontPhotoAvailable: _frontPhotoAvailable,
             // Only answered when there's no front photo; otherwise the camera
             // measures these and the native scorer overrides them.
-            armrestTooWide: !_frontPhotoAvailable && _armrestTooWide,
+            armrestTooWide:
+                _chairHasArmrests && !_frontPhotoAvailable && _armrestTooWide,
             keyboardDeviation: !_frontPhotoAvailable && _wristDeviation,
             chairHeightNonAdjustable: !_chairHeightAdjustable,
             insufficientUnderDeskSpace: !_enoughUnderDeskSpace,
             seatDepthFit: _seatDepthFit,
             seatPanNonAdjustable: !_seatPanAdjustable,
-            armrestNonAdjustable: !_armrestAdjustable,
-            armrestHardDamaged: _armrestHardDamaged,
+            chairHasArmrests: _chairHasArmrests,
+            armrestNonAdjustable: _chairHasArmrests && !_armrestAdjustable,
+            armrestHardDamaged: _chairHasArmrests && _armrestHardDamaged,
+            usesArmrests: _chairHasArmrests ? _usesArmrests : null,
             backrestNonAdjustable: !_backrestAdjustable,
             workSurfaceTooHigh: _workSurfaceTooHigh,
             lumbarSupport: _lumbarSupport,
             feetSupported: _feetSupported,
             usableBackrest: _usableBackrest,
-            elbowsSupported: _elbowsSupported,
+            // Without armrests the armrest score is already 2, so this answer
+            // can't change it; it isn't asked then.
+            elbowsSupported: !_chairHasArmrests || _elbowsSupported,
             monitorNonAdjustable: !_monitorAdjustable,
             neckTwistOver30: _neckTwistOver30,
             monitorTooFar: _monitorTooFar,
@@ -190,30 +198,45 @@ class _WorkstationQuestionnaireScreenState
               ),
               _BoolQuestion(
                 ++q,
-                'Armrests are adjustable',
-                _armrestAdjustable,
-                (v) => setState(() => _armrestAdjustable = v),
+                'Does your chair have armrests?',
+                _chairHasArmrests,
+                (v) => setState(() => _chairHasArmrests = v),
               ),
-              _BoolQuestion(
-                ++q,
-                'Armrest surface is hard or damaged',
-                _armrestHardDamaged,
-                (v) => setState(() => _armrestHardDamaged = v),
-              ),
-              _BoolQuestion(
-                ++q,
-                'Your elbows/forearms are supported by the armrests or work '
-                'surface',
-                _elbowsSupported,
-                (v) => setState(() => _elbowsSupported = v),
-              ),
-              if (!_frontPhotoAvailable)
+              if (_chairHasArmrests) ...[
                 _BoolQuestion(
                   ++q,
-                  'Armrests are too wide apart',
-                  _armrestTooWide,
-                  (v) => setState(() => _armrestTooWide = v),
+                  'Armrests are adjustable',
+                  _armrestAdjustable,
+                  (v) => setState(() => _armrestAdjustable = v),
                 ),
+                _BoolQuestion(
+                  ++q,
+                  'Armrest surface is hard or damaged',
+                  _armrestHardDamaged,
+                  (v) => setState(() => _armrestHardDamaged = v),
+                ),
+                // Action/Equipment Report only — does not affect ROSA.
+                _BoolQuestion(
+                  ++q,
+                  'Do you use the armrests while working (keyboard/mouse)?',
+                  _usesArmrests,
+                  (v) => setState(() => _usesArmrests = v),
+                ),
+                _BoolQuestion(
+                  ++q,
+                  'Your elbows/forearms are supported by the armrests or work '
+                  'surface',
+                  _elbowsSupported,
+                  (v) => setState(() => _elbowsSupported = v),
+                ),
+                if (!_frontPhotoAvailable)
+                  _BoolQuestion(
+                    ++q,
+                    'Armrests are too wide apart',
+                    _armrestTooWide,
+                    (v) => setState(() => _armrestTooWide = v),
+                  ),
+              ],
               _BoolQuestion(
                 ++q,
                 'Backrest is adjustable',

@@ -50,6 +50,9 @@ object RosaScorer {
         val insufficientUnderDeskSpace: Boolean = false,
         val seatDepthScore: Int = 1,           // 1 = ~3in clearance, 2 = too long/short
         val seatPanNonAdjustable: Boolean = false,
+        // False = the chair has no armrests: the armrest area is a flat 2 and
+        // the three armrest +1s (adjustable, hard/damaged, too wide) never apply.
+        val chairHasArmrests: Boolean = true,
         val armrestNonAdjustable: Boolean = false,
         val armrestHardDamaged: Boolean = false,
         val armrestTooWide: Boolean = false,
@@ -90,7 +93,8 @@ object RosaScorer {
                     insufficientUnderDeskSpace    = b("insufficient_under_desk_space"),
                     seatDepthScore                = i("seat_depth_score", 1),
                     seatPanNonAdjustable          = b("seat_pan_non_adjustable"),
-                    armrestNonAdjustable          = b("armrest_non_adjustable"),
+                    chairHasArmrests              = (m["chair_has_armrests"] as? Boolean) ?: true,
+                    armrestNonAdjustable         = b("armrest_non_adjustable"),
                     armrestHardDamaged            = b("armrest_hard_damaged"),
                     armrestTooWide                = b("armrest_too_wide"),
                     backrestNonAdjustable         = b("backrest_non_adjustable"),
@@ -178,7 +182,8 @@ object RosaScorer {
         val backrestScore = if (!mods.usableBackrest || !mods.lumbarSupport || angles.trunkAngle > 28f) 2 else 1
         // shrugGap = ear.y − shoulder.y; > −0.06 means shoulder hiked toward ear.
         // Official ROSA: armrests too high (shrug) or elbows unsupported = 2.
-        val armrestScore  = if (angles.shrugGap > -0.06f || !mods.elbowsSupported) 2 else 1
+        // No armrests at all also scores 2.
+        val armrestScore  = if (!mods.chairHasArmrests || angles.shrugGap > -0.06f || !mods.elbowsSupported) 2 else 1
 
         // Area scores = camera-derived base + manual checklist modifiers (per ROSA form)
         val chairHeightArea = seatHeightScore +
@@ -186,7 +191,10 @@ object RosaScorer {
             (if (mods.insufficientUnderDeskSpace) 1 else 0)
         val panDepthArea = mods.seatDepthScore +
             (if (mods.seatPanNonAdjustable) 1 else 0)
-        val armrestArea = armrestScore +
+        // Without armrests there is nothing to adjust, pad or narrow, so the
+        // modifiers are skipped — including the camera's too-wide measurement,
+        // which the front shot sets regardless of the chair.
+        val armrestArea = if (!mods.chairHasArmrests) armrestScore else armrestScore +
             (if (mods.armrestNonAdjustable) 1 else 0) +
             (if (mods.armrestHardDamaged) 1 else 0) +
             (if (mods.armrestTooWide) 1 else 0)

@@ -28,9 +28,15 @@ class WorkstationAnswers {
   final bool insufficientUnderDeskSpace;
   final SeatDepthFit seatDepthFit;
   final bool seatPanNonAdjustable;
+  // False = the chair has no armrests. The native scorer then gives the
+  // armrest area a flat 2 and ignores the three armrest modifiers below.
+  final bool chairHasArmrests;
   final bool armrestNonAdjustable;
   final bool armrestHardDamaged;
   final bool armrestTooWide;
+  // "Do you use the armrests while working?" — Action/Equipment Report only,
+  // never scored. Null when the chair has no armrests.
+  final bool? usesArmrests;
   final bool backrestNonAdjustable;
   final bool workSurfaceTooHigh;
 
@@ -80,9 +86,11 @@ class WorkstationAnswers {
     this.insufficientUnderDeskSpace = false,
     this.seatDepthFit = SeatDepthFit.ok,
     this.seatPanNonAdjustable = false,
+    this.chairHasArmrests = true,
     this.armrestNonAdjustable = false,
     this.armrestHardDamaged = false,
     this.armrestTooWide = false,
+    this.usesArmrests,
     this.backrestNonAdjustable = false,
     this.workSurfaceTooHigh = false,
     this.lumbarSupport = true,
@@ -116,9 +124,11 @@ class WorkstationAnswers {
     bool? insufficientUnderDeskSpace,
     SeatDepthFit? seatDepthFit,
     bool? seatPanNonAdjustable,
+    bool? chairHasArmrests,
     bool? armrestNonAdjustable,
     bool? armrestHardDamaged,
     bool? armrestTooWide,
+    bool? usesArmrests,
     bool? backrestNonAdjustable,
     bool? workSurfaceTooHigh,
     bool? lumbarSupport,
@@ -153,9 +163,11 @@ class WorkstationAnswers {
           insufficientUnderDeskSpace ?? this.insufficientUnderDeskSpace,
       seatDepthFit: seatDepthFit ?? this.seatDepthFit,
       seatPanNonAdjustable: seatPanNonAdjustable ?? this.seatPanNonAdjustable,
+      chairHasArmrests: chairHasArmrests ?? this.chairHasArmrests,
       armrestNonAdjustable: armrestNonAdjustable ?? this.armrestNonAdjustable,
       armrestHardDamaged: armrestHardDamaged ?? this.armrestHardDamaged,
       armrestTooWide: armrestTooWide ?? this.armrestTooWide,
+      usesArmrests: usesArmrests ?? this.usesArmrests,
       backrestNonAdjustable:
           backrestNonAdjustable ?? this.backrestNonAdjustable,
       workSurfaceTooHigh: workSurfaceTooHigh ?? this.workSurfaceTooHigh,
@@ -202,9 +214,11 @@ class WorkstationAnswers {
       SeatDepthFit.tooShort => 'too_short',
     },
     'seat_pan_non_adjustable': seatPanNonAdjustable,
+    'chair_has_armrests': chairHasArmrests,
     'armrest_non_adjustable': armrestNonAdjustable,
     'armrest_hard_damaged': armrestHardDamaged,
     'armrest_too_wide': armrestTooWide,
+    'uses_armrests': usesArmrests,
     'backrest_non_adjustable': backrestNonAdjustable,
     'work_surface_too_high': workSurfaceTooHigh,
     'lumbar_support': lumbarSupport,

@@ -84,6 +84,7 @@ Shrug is measured as how close the shoulder sits to the ear (vertically).
 | Shoulder relaxed, clearly below ear | Yes | **1** |
 | Shoulder relaxed, clearly below ear | No | **2** |
 | Shoulder hiked up toward the ear | — | **2** |
+| Chair has no armrests | — | **2** |
 
 Official ROSA scores armrests too high (shoulders shrugged) and armrests too
 low / elbows unsupported both as 2. Elbow support comes from "Your
@@ -149,9 +150,11 @@ below always tells you what a "Yes" answer on the actual screen does.
 | "Enough room under the desk to cross your legs" | **No** | +1 | Chair-height area |
 | "Seat pan depth (space behind your knees)" — pick one: ~3 in (OK) / Too long / Too short | **Too long or Too short** | base becomes 2 instead of 1 | Seat-pan-depth area |
 | "Seat pan depth is adjustable" | **No** | +1 | Seat-pan-depth area |
-| "Armrests are adjustable" | **No** | +1 | Armrest area |
-| "Armrest surface is hard or damaged" | **Yes** | +1 | Armrest area |
-| "Your elbows/forearms are supported by the armrests or work surface" | **No** | base armrest score becomes 2 (see Layer 1) | Armrest score / Armrest area |
+| "Does your chair have armrests?" | **No** | armrest score becomes 2 and the armrest area stays at 2 (no armrest +1s) | Armrest score / Armrest area |
+| "Armrests are adjustable" (only if the chair has armrests) | **No** | +1 | Armrest area |
+| "Armrest surface is hard or damaged" (only if the chair has armrests) | **Yes** | +1 | Armrest area |
+| "Do you use the armrests while working (keyboard/mouse)?" (only if the chair has armrests) | — | none (Action/Equipment Report only) | — |
+| "Your elbows/forearms are supported by the armrests or work surface" (only if the chair has armrests) | **No** | base armrest score becomes 2 (see Layer 1) | Armrest score / Armrest area |
 | "Chair has a usable backrest that supports your back while working" | **No** | base backrest score becomes 2 (see Layer 1) | Backrest score / Back-support area |
 | "Chair provides lumbar support that contacts your lower back while sitting normally" | **No** | base backrest score becomes 2 (see Layer 1) | Backrest score / Back-support area |
 | "Both feet are flat on the floor or a footrest while typing" | **No** | base seat-height score becomes 3 (see Layer 1) | Seat-height score / Chair-height area |
@@ -161,6 +164,7 @@ below always tells you what a "Yes" answer on the actual screen does.
 - **Chair-height area** = Seat-height score (camera) + the two "No" answers above.
 - **Seat-pan-depth area** = 1 (fit OK) or 2 (too long/short) + "adjustable? No" (+1).
 - **Armrest area** = Armrest score (camera) + "adjustable? No" (+1) + "hard/damaged? Yes" (+1) + "armrests too wide?" (+1, see below).
+  With no armrests it is a flat **2**: none of the three +1s apply, including the camera's too-wide measurement.
 - **Back-support area** = Backrest score (camera + backrest-use, see Layer 1) + "adjustable? No" (+1) + "surface too high? Yes" (+1).
 
 **From the front photo, or a question if there is no front photo:**
