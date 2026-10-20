@@ -11,6 +11,7 @@ import 'package:posture_detector_app/provider/cpe_home.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/main.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
+import 'package:posture_detector_app/models/assessment/screening_review.dart';
 import 'package:posture_detector_app/models/analysis/analysis_report.dart'
     show ActionReportV13;
 
@@ -150,6 +151,12 @@ class CpeAssessmentState {
   /// equipment cards) for this scan, when the backend has computed one.
   final ActionReportV13? actionReportV13;
 
+  /// The employee's health screening answers. Sent only on the ergonomist
+  /// detail endpoint; empty for scans recorded without them.
+  final List<ScreeningAnswer> redFlagAnswers;
+  final bool redFlagPositive;
+  final List<ScreeningAnswer> recoveryAnswers;
+
   const CpeAssessmentState({
     this.isLoading = true,
     this.isSubmitting = false,
@@ -173,6 +180,9 @@ class CpeAssessmentState {
     this.signatureRemoteUrl = '',
     required this.rosaScore,
     this.actionReportV13,
+    this.redFlagAnswers = const [],
+    this.redFlagPositive = false,
+    this.recoveryAnswers = const [],
   });
 
   double get compliancePercent => (compliance / 100.0).clamp(0.0, 1.0);
@@ -252,6 +262,9 @@ class CpeAssessmentState {
     // Not a copyWith param — only ever set once in _loadData, same as
     // sideCaptures/frontCapture above, so always preserved as-is.
     actionReportV13: actionReportV13,
+    redFlagAnswers: redFlagAnswers,
+    redFlagPositive: redFlagPositive,
+    recoveryAnswers: recoveryAnswers,
   );
 }
 
@@ -357,6 +370,14 @@ class CpeAssessmentNotifier
                 Map<String, dynamic>.from(d['action_report_v1_3'] as Map),
               )
             : null,
+        redFlagAnswers: redFlagAnswersFromJson(
+          (d['red_flag_screening'] as Map?)?.cast<String, dynamic>(),
+        ),
+        redFlagPositive:
+            (d['red_flag_screening'] as Map?)?['red_flag_positive'] == true,
+        recoveryAnswers: recoveryAnswersFromJson(
+          (d['yellow_flag_answers'] as Map?)?.cast<String, dynamic>(),
+        ),
       );
     } catch (e) {
       final loc = AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;
