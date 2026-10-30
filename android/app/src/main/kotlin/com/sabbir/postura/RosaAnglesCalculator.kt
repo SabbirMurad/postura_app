@@ -40,9 +40,10 @@ object RosaAnglesCalculator {
         val mouseReach: Float,      // |wrist.x − shoulder.x| — mouse
         val lowerBodyConfidence: LowerBodyConfidence, // reliability of kneeAngle
     ) {
-        /// Readable summary of the measured body angles, for the Flutter review
-        /// screen. Degree-valued angles are exposed; the raw normalized offsets
-        /// (shrugGap, wristExtension, …) are internal scoring inputs and omitted.
+        /// The measured body angles, for the Flutter review screen, plus the raw
+        /// normalized offsets the scorer uses (shrugGap, wristExtension,
+        /// mouseReach). Those are not shown; they are sent to the backend so it
+        /// can score a photos-only scan once the ergonomist answers the checklist.
         fun toMap(): Map<String, Any> = hashMapOf(
             "side"                  to if (isLeftSide) "Left" else "Right",
             "knee_angle"            to kneeAngle.toDouble(),
@@ -51,6 +52,9 @@ object RosaAnglesCalculator {
             "neck_angle"            to neckAngle.toDouble(),
             "neck_state"            to neckState.name,
             "lower_body_confidence" to lowerBodyConfidence.name,
+            "shrug_gap"             to shrugGap.toDouble(),
+            "wrist_extension"       to wristExtension.toDouble(),
+            "mouse_reach"           to mouseReach.toDouble(),
         )
     }
 

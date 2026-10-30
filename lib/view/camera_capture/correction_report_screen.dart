@@ -9,6 +9,7 @@ import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/provider/report.dart';
 
+import 'package:posture_detector_app/common/widgets/awaiting_ergonomist_card.dart';
 import 'package:posture_detector_app/common/widgets/bottom_button.dart';
 import 'package:posture_detector_app/common/widgets/expansion_container.dart';
 
@@ -24,6 +25,7 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
     final reportState = ref.watch(reportNotifierProvider);
     final loc = AppLocalizations.of(context)!;
     final report = reportState.analysisReport?.actionReportV13;
+    final awaiting = reportState.analysisReport?.isAwaitingErgonomist ?? false;
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -43,7 +45,9 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
                       'Directional adjustments to improve your ergonomic setup',
                 ),
                 SizedBox(height: 14.h),
-                if (report != null)
+                if (awaiting)
+                  const AwaitingErgonomistCard()
+                else if (report != null)
                   ..._buildActionReport(context, report)
                 else
                   _LegacyCorrections(
@@ -58,10 +62,15 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
       bottomSheet: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 20.h),
+          // A photos-only scan has no exercises yet; go home instead.
           child: BottomButton(
-            title: loc.viewExercise,
+            title: awaiting ? loc.backToHome : loc.viewExercise,
             onTap: () {
-              context.push(AppRoute.exerciseBusiness);
+              if (awaiting) {
+                context.go(AppRoute.bottomNavBusiness);
+              } else {
+                context.push(AppRoute.exerciseBusiness);
+              }
             },
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
@@ -87,6 +88,31 @@ class PatientComplianceCard extends StatelessWidget {
               ],
             ),
           ),
+          // A photos-only scan has no score until the ergonomist answers.
+          if (scan.awaitingErgonomist)
+            SizedBox(
+              width: 84.w,
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.assignment_outlined,
+                    size: 26.sp,
+                    color: AppColors.primaryColor,
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    AppLocalizations.of(context)!.needsYourAnswers,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,

@@ -386,6 +386,13 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
     final rosaScore = ref.watch(
       assessmentNotifierProvider.select((s) => s.rosaScore),
     );
+    // A photos-only scan has no checklist answers yet, so the on-device score
+    // (computed with defaults) isn't shown; the ergonomist's answers score it.
+    final photosOnly = ref.watch(
+      assessmentNotifierProvider.select(
+        (s) => s.assessmentMode == AssessmentMode.ergonomist,
+      ),
+    );
 
     return Scaffold(
       backgroundColor: const Color(0xFFF2F4F7),
@@ -396,18 +403,36 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 24.h),
-              ..._mainRosaScores(score: rosaScore!, loc: loc),
-              SizedBox(height: 20.h),
-              Text(
-                loc.rosaSubScores,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF202020),
+              if (photosOnly)
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(16.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor.withValues(alpha: 0.06),
+                    borderRadius: BorderRadius.circular(14.r),
+                    border: Border.all(
+                      color: AppColors.primaryColor.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Text(
+                    loc.photosOnlyReviewNote,
+                    style: TextStyle(fontSize: 13.sp, color: AppColors.text),
+                  ),
+                )
+              else ...[
+                ..._mainRosaScores(score: rosaScore!, loc: loc),
+                SizedBox(height: 20.h),
+                Text(
+                  loc.rosaSubScores,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF202020),
+                  ),
                 ),
-              ),
-              SizedBox(height: 12.h),
-              _rosaAssessmentSection(rosaScore),
+                SizedBox(height: 12.h),
+                _rosaAssessmentSection(rosaScore),
+              ],
               SizedBox(height: 20.h),
               ..._capturesSection(ref.watch(assessmentNotifierProvider)),
               SizedBox(height: 48.h),
@@ -428,7 +453,7 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
                   SizedBox(width: 12.w),
                   Expanded(
                     child: PrimaryButton(
-                      text: 'Submit Result',
+                      text: photosOnly ? loc.sendToErgonomist : 'Submit Result',
                       loading: _submitting,
                       backgroundColor: AppColors.primaryColor,
                       textStyle: TextStyle(

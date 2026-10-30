@@ -236,9 +236,6 @@ class AppText {
   static const String deskIdLocation = 'Desk ID / Location';
   static const String painAndSymptoms = 'Pain & Symptoms';
   static const String painIntensityLabel = 'Pain Intensity';
-  static const String howDidYouReview = 'How did you review this workstation?';
-  static const String remote = 'Remote';
-  static const String live = 'Live';
   static const String decision = 'Decision';
   static const String comment = 'Comment';
   static const String commentHint = 'e.g. this looks good I guess.';

@@ -5,6 +5,7 @@ import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/models/analysis/capture.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
+import 'package:posture_detector_app/models/assessment/assessment_mode.dart';
 import 'package:posture_detector_app/models/assessment/pain.dart';
 import 'package:posture_detector_app/models/assessment/red_flag_screening.dart';
 import 'package:posture_detector_app/models/assessment/scan_supplemental.dart';
@@ -20,6 +21,7 @@ import 'package:posture_detector_app/utils/media.dart' as media;
 
 // Re-exported so the many screens that import this provider keep naming the
 // pain enums (and the ROSA models) without a separate import.
+export 'package:posture_detector_app/models/assessment/assessment_mode.dart';
 export 'package:posture_detector_app/models/assessment/pain.dart';
 export 'package:posture_detector_app/models/assessment/red_flag_screening.dart';
 export 'package:posture_detector_app/models/assessment/scan_supplemental.dart';
@@ -46,6 +48,11 @@ class AssessmentState {
   /// Recovery Outlook, before the Workstation checklist.
   final RedFlagScreening redFlagScreening;
 
+  /// Who answers the workstation checklist. With [AssessmentMode.ergonomist]
+  /// only [WorkstationAnswers.frontPhotoAvailable] is set (it drives the
+  /// capture), and the scan is sent without answers or a ROSA score.
+  final AssessmentMode assessmentMode;
+
   /// Manual ROSA checklist answers, fed to the native PostureEngine.
   final WorkstationAnswers workstationAnswers;
 
@@ -66,6 +73,7 @@ class AssessmentState {
     this.selectedOptionalSymptoms = const {},
     this.yellowFlagAnswers = const YellowFlagAnswers(),
     this.redFlagScreening = const RedFlagScreening(),
+    this.assessmentMode = AssessmentMode.employee,
     this.workstationAnswers = const WorkstationAnswers(),
     this.scanSupplemental = const ScanSupplemental(),
     this.sideCaptures = const [],
@@ -124,6 +132,7 @@ class AssessmentState {
     Set<OptionalSymptom>? selectedOptionalSymptoms,
     YellowFlagAnswers? yellowFlagAnswers,
     RedFlagScreening? redFlagScreening,
+    AssessmentMode? assessmentMode,
     WorkstationAnswers? workstationAnswers,
     ScanSupplemental? scanSupplemental,
     List<SideViewCapture>? sideCaptures,
@@ -137,6 +146,7 @@ class AssessmentState {
           selectedOptionalSymptoms ?? this.selectedOptionalSymptoms,
       yellowFlagAnswers: yellowFlagAnswers ?? this.yellowFlagAnswers,
       redFlagScreening: redFlagScreening ?? this.redFlagScreening,
+      assessmentMode: assessmentMode ?? this.assessmentMode,
       workstationAnswers: workstationAnswers ?? this.workstationAnswers,
       scanSupplemental: scanSupplemental ?? this.scanSupplemental,
       sideCaptures: sideCaptures ?? this.sideCaptures,
@@ -211,6 +221,9 @@ class AssessmentNotifier extends _$AssessmentNotifier {
   void setWorkstationAnswers(WorkstationAnswers answers) =>
       state = state.copyWith(workstationAnswers: answers);
 
+  void setAssessmentMode(AssessmentMode mode) =>
+      state = state.copyWith(assessmentMode: mode);
+
   /// Height doesn't change scan-to-scan, so it's set independently of (and
   /// earlier than) the two supplemental phone answers below.
   void setHeightCm(double heightCm) => state = state.copyWith(
@@ -249,6 +262,7 @@ class AssessmentNotifier extends _$AssessmentNotifier {
       selectedOptionalSymptoms: state.selectedOptionalSymptoms,
       yellowFlagAnswers: state.yellowFlagAnswers,
       redFlagScreening: state.redFlagScreening,
+      assessmentMode: state.assessmentMode,
       workstationAnswers: state.workstationAnswers,
       scanSupplemental: state.scanSupplemental,
       sideCaptures: side,
@@ -298,10 +312,12 @@ class AssessmentNotifier extends _$AssessmentNotifier {
 
     final sideIds = imageIds.take(state.sideCaptures.length).toList();
     final frontId = front != null ? imageIds.last : null;
+    final employeeAnswered = state.assessmentMode == AssessmentMode.employee;
 
     final response = await CustomHttp.post(
       endpoint: 'assessments/scan-analyse',
       body: {
+        'assessment_mode': state.assessmentMode.apiValue,
         'symptoms': state.selectedOptionalSymptoms.map((s) => s.label).toList(),
         // One pain unit per selected region: { body_region, intensity, duration }.
         'pain_units': state.selectedBodyRegions
@@ -313,16 +329,19 @@ class AssessmentNotifier extends _$AssessmentNotifier {
               },
             )
             .toList(),
-        // Manual ROSA checklist answers (native scorer input contract).
-        'workstation_answers': state.workstationAnswers.toMap(),
+        // Manual ROSA checklist answers (native scorer input contract). Left
+        // out of a photos-only scan: the ergonomist answers them later.
+        if (employeeAnswered)
+          'workstation_answers': state.workstationAnswers.toMap(),
         // Yellow-flag / chronicity screen answers — backend computes the level.
         'yellow_flag_answers': state.yellowFlagAnswers.toMap(),
         // Medical red-flag safety screening — backend computes red_flag_positive.
         'red_flag_screening': state.redFlagScreening.toMap(),
         // Height + supplemental phone questions — never affects ROSA scoring.
         'scan_supplemental': state.scanSupplemental.toMap(),
-        // One ROSA score per scan (the side shots' scores averaged).
-        'rosa_score': state.rosaScore?.toJson() ?? {},
+        // One ROSA score per scan (the side shots' scores averaged). A
+        // photos-only scan is scored by the backend once the ergonomist answers.
+        if (employeeAnswered) 'rosa_score': state.rosaScore?.toJson() ?? {},
         // Grouped captures: one entry per side shot (image + measured angles),
         // plus the single front shot (image + abduction/wrist-deviation angles).
         'side_captures': [

@@ -35,7 +35,8 @@ class ScanItem {
   final String riskLevel; // "yellow" | "red" | "green"
   final double vasScore;
   final String reviewStatus; // "PENDING" | "FOLLOW_UP_REQUIRED" | "APPROVED" | "REJECTED"
-  final String? reviewType; // "LIVE" | "REMOTE" | null
+  /// A photos-only scan still waiting for the ergonomist's workstation answers.
+  final bool awaitingErgonomist;
   final String reviewComment;
   final String? reviewedBy;
   final String? reviewedAt;
@@ -53,7 +54,7 @@ class ScanItem {
     required this.riskLevel,
     required this.vasScore,
     required this.reviewStatus,
-    this.reviewType,
+    this.awaitingErgonomist = false,
     required this.reviewComment,
     this.reviewedBy,
     this.reviewedAt,
@@ -74,7 +75,7 @@ class ScanItem {
       riskLevel: json['risk_level'] ?? 'green',
       vasScore: (json['vas_score'] ?? 0).toDouble(),
       reviewStatus: json['review_status'] ?? 'PENDING',
-      reviewType: json['review_type'],
+      awaitingErgonomist: json['status'] == 'awaiting_ergonomist',
       reviewComment: json['review_comment'] ?? '',
       reviewedBy: json['reviewed_by'],
       reviewedAt: json['reviewed_at'],

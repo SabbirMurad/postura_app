@@ -594,15 +594,6 @@ class AppLocalizationsNl extends AppLocalizations {
   String get painIntensityLabel => 'Pijnintensiteit';
 
   @override
-  String get howDidYouReview => 'Hoe heeft u deze werkplek beoordeeld?';
-
-  @override
-  String get remote => 'Op afstand';
-
-  @override
-  String get live => 'Live';
-
-  @override
   String get decisionLabel => 'Beslissing';
 
   @override
@@ -1101,4 +1092,94 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get photo => 'Foto';
+
+  @override
+  String get workstationQuestions => 'Werkplekvragen';
+
+  @override
+  String get whoAnswersWorkstationQuestions => 'Wie beantwoordt de vragen over de werkplek?';
+
+  @override
+  String get illAnswerThem => 'Ik beantwoord ze zelf';
+
+  @override
+  String get myErgonomistWillAnswer => 'Mijn ergonoom';
+
+  @override
+  String get photosOnlyExplanation => 'U maakt alleen de foto\'s. Uw ergonoom beantwoordt aan de hand daarvan de vragen over de werkplek. Uw resultaat verschijnt zodra de beoordeling klaar is.';
+
+  @override
+  String get photosOnlyReviewNote => 'Deze foto\'s worden naar uw ergonoom gestuurd. Zodra de werkplekvragen zijn beantwoord, verschijnen uw score en aanbevelingen in de app.';
+
+  @override
+  String get sendToErgonomist => 'Naar ergonoom sturen';
+
+  @override
+  String get waitingForErgonomist => 'Wachten op uw ergonoom';
+
+  @override
+  String get waitingForErgonomistBody => 'Uw foto\'s zijn verstuurd. Uw score, rapport, hulpmiddelen en oefeningen verschijnen hier zodra uw ergonoom de werkplekvragen heeft beantwoord.';
+
+  @override
+  String get backToHome => 'Terug naar start';
+
+  @override
+  String get workstationReviewSubtitle => 'Beantwoord de vragen over de werkplek van de medewerker aan de hand van de foto\'s.';
+
+  @override
+  String get saveAnswers => 'Antwoorden opslaan';
+
+  @override
+  String get answerWorkstationQuestionsFirst => 'Beantwoord eerst de werkplekvragen voordat u verstuurt.';
+
+  @override
+  String get workstationAnswered => 'Werkplekvragen beantwoord';
+
+  @override
+  String get workstationNotAnswered => 'De medewerker heeft deze vragen aan u overgelaten';
+
+  @override
+  String get workstationErgonomistHint => 'Beantwoord ze aan de hand van de foto\'s. Bij het versturen van de beoordeling wordt de score berekend en ziet de medewerker het resultaat.';
+
+  @override
+  String get answerWorkstationQuestions => 'Vragen beantwoorden';
+
+  @override
+  String get editAnswers => 'Antwoorden bewerken';
+
+  @override
+  String get needsYourAnswers => 'Uw antwoorden nodig';
+
+  @override
+  String get originalRosaScore => 'Oorspronkelijke score';
+
+  @override
+  String get fromEmployeesAnswers => 'Op basis van de antwoorden van de medewerker';
+
+  @override
+  String get updatedRosaScore => 'Bijgewerkte score';
+
+  @override
+  String get updatedByErgonomist => 'Bijgewerkt door de ergonoom';
+
+  @override
+  String get rosaUpdatedNote => 'De ergonoom heeft de werkplekantwoorden tijdens de beoordeling bijgewerkt. De aanbevelingen zijn gebaseerd op de bijgewerkte score.';
+
+  @override
+  String get workstationAnsweredByEmployee => 'Beantwoord door de medewerker';
+
+  @override
+  String get workstationReviseHint => 'U kunt de antwoorden van de medewerker één keer bijwerken. Bij het versturen van de beoordeling wordt de score opnieuw berekend; de oorspronkelijke score blijft bewaard en wordt ernaast getoond.';
+
+  @override
+  String get updateAnswersOnce => 'Antwoorden bijwerken (eenmalig)';
+
+  @override
+  String get workstationRevisionPending => 'Bijgewerkte antwoorden klaar. De score wordt opnieuw berekend bij het versturen van de beoordeling.';
+
+  @override
+  String get discardChanges => 'Wijzigingen verwerpen';
+
+  @override
+  String get workstationAlreadyRevised => 'Deze antwoorden zijn al bijgewerkt door de ergonoom. Ze kunnen maar één keer worden bijgewerkt.';
 }

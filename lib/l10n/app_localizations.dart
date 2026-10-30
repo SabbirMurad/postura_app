@@ -1269,24 +1269,6 @@ abstract class AppLocalizations {
   /// **'Pain Intensity'**
   String get painIntensityLabel;
 
-  /// No description provided for @howDidYouReview.
-  ///
-  /// In en, this message translates to:
-  /// **'How did you review this workstation?'**
-  String get howDidYouReview;
-
-  /// No description provided for @remote.
-  ///
-  /// In en, this message translates to:
-  /// **'Remote'**
-  String get remote;
-
-  /// No description provided for @live.
-  ///
-  /// In en, this message translates to:
-  /// **'Live'**
-  String get live;
-
   /// No description provided for @decisionLabel.
   ///
   /// In en, this message translates to:
@@ -2282,6 +2264,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Photo'**
   String get photo;
+
+  /// No description provided for @workstationQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Workstation Questions'**
+  String get workstationQuestions;
+
+  /// No description provided for @whoAnswersWorkstationQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Who will answer the workstation questions?'**
+  String get whoAnswersWorkstationQuestions;
+
+  /// No description provided for @illAnswerThem.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ll answer them'**
+  String get illAnswerThem;
+
+  /// No description provided for @myErgonomistWillAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'My ergonomist will'**
+  String get myErgonomistWillAnswer;
+
+  /// No description provided for @photosOnlyExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll only take the photos. Your ergonomist will answer the workstation questions from them, and your result will appear once they\'ve finished.'**
+  String get photosOnlyExplanation;
+
+  /// No description provided for @photosOnlyReviewNote.
+  ///
+  /// In en, this message translates to:
+  /// **'These photos will be sent to your ergonomist. Once they\'ve answered the workstation questions, your score and recommendations will appear in the app.'**
+  String get photosOnlyReviewNote;
+
+  /// No description provided for @sendToErgonomist.
+  ///
+  /// In en, this message translates to:
+  /// **'Send to Ergonomist'**
+  String get sendToErgonomist;
+
+  /// No description provided for @waitingForErgonomist.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for your ergonomist'**
+  String get waitingForErgonomist;
+
+  /// No description provided for @waitingForErgonomistBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your photos have been sent. Your score, report, equipment and exercises will appear here once your ergonomist has answered the workstation questions.'**
+  String get waitingForErgonomistBody;
+
+  /// No description provided for @backToHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Home'**
+  String get backToHome;
+
+  /// No description provided for @workstationReviewSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer for the employee\'s workstation, using their photos.'**
+  String get workstationReviewSubtitle;
+
+  /// No description provided for @saveAnswers.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Answers'**
+  String get saveAnswers;
+
+  /// No description provided for @answerWorkstationQuestionsFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer the workstation questions before submitting.'**
+  String get answerWorkstationQuestionsFirst;
+
+  /// No description provided for @workstationAnswered.
+  ///
+  /// In en, this message translates to:
+  /// **'Workstation questions answered'**
+  String get workstationAnswered;
+
+  /// No description provided for @workstationNotAnswered.
+  ///
+  /// In en, this message translates to:
+  /// **'The employee left these questions to you'**
+  String get workstationNotAnswered;
+
+  /// No description provided for @workstationErgonomistHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer them from the photos. Submitting the review scores the assessment and shows the result to the employee.'**
+  String get workstationErgonomistHint;
+
+  /// No description provided for @answerWorkstationQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer Questions'**
+  String get answerWorkstationQuestions;
+
+  /// No description provided for @editAnswers.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Answers'**
+  String get editAnswers;
+
+  /// No description provided for @needsYourAnswers.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs your answers'**
+  String get needsYourAnswers;
+
+  /// No description provided for @originalRosaScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Original score'**
+  String get originalRosaScore;
+
+  /// No description provided for @fromEmployeesAnswers.
+  ///
+  /// In en, this message translates to:
+  /// **'From the employee\'s answers'**
+  String get fromEmployeesAnswers;
+
+  /// No description provided for @updatedRosaScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated score'**
+  String get updatedRosaScore;
+
+  /// No description provided for @updatedByErgonomist.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated by the ergonomist'**
+  String get updatedByErgonomist;
+
+  /// No description provided for @rosaUpdatedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The ergonomist updated the workstation answers during the review. Recommendations are based on the updated score.'**
+  String get rosaUpdatedNote;
+
+  /// No description provided for @workstationAnsweredByEmployee.
+  ///
+  /// In en, this message translates to:
+  /// **'Answered by the employee'**
+  String get workstationAnsweredByEmployee;
+
+  /// No description provided for @workstationReviseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can update the employee\'s answers once. Submitting the review re-calculates the score; the employee\'s original score is kept and shown next to it.'**
+  String get workstationReviseHint;
+
+  /// No description provided for @updateAnswersOnce.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Answers (once)'**
+  String get updateAnswersOnce;
+
+  /// No description provided for @workstationRevisionPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated answers ready. The score is re-calculated when you submit the review.'**
+  String get workstationRevisionPending;
+
+  /// No description provided for @discardChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard Changes'**
+  String get discardChanges;
+
+  /// No description provided for @workstationAlreadyRevised.
+  ///
+  /// In en, this message translates to:
+  /// **'These answers were already updated by the ergonomist. They can only be updated once.'**
+  String get workstationAlreadyRevised;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

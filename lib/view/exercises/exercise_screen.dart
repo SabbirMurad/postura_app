@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:posture_detector_app/common/widgets/awaiting_ergonomist_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/view/exercises/widgets/exercise_showcase_container.dart';
@@ -72,6 +73,16 @@ class ExerciseBusinessScreen extends ConsumerWidget {
             Expanded(
               child: Builder(
                 builder: (context) {
+                  if (reportState.analysisReport?.isAwaitingErgonomist ??
+                      false) {
+                    return Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: const Align(
+                        alignment: Alignment.topCenter,
+                        child: AwaitingErgonomistCard(),
+                      ),
+                    );
+                  }
                   final exercisesData = reportState.analysisReport?.exercises;
                   final exercises = exercisesData?.recommendedSession;
                   final needsCpeReview = exercisesData?.needsCpeReview ?? false;

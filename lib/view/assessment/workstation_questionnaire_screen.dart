@@ -16,10 +16,26 @@ import 'package:posture_detector_app/routes.dart';
 /// deviation are asked only when a front-view photo can't be taken. Writes a [WorkstationAnswers]
 /// to the assessment provider, then continues to the optional-symptom step.
 ///
+/// The employee can instead leave the checklist to their ergonomist: then only
+/// the front-photo question is asked and the scan is sent as photos only
+/// ([AssessmentMode.ergonomist]). The ergonomist answers the same checklist
+/// from their review: pass [reviewFrontPhotoAvailable] (whether the scan has a
+/// front photo) and the screen pops with a [ChecklistAnswers] instead.
+///
 /// Positive phrasing in the UI ("Chair height is adjustable") is inverted into
 /// the ROSA-style negative modifier stored on [WorkstationAnswers].
 class WorkstationQuestionnaireScreen extends ConsumerStatefulWidget {
-  const WorkstationQuestionnaireScreen({super.key});
+  const WorkstationQuestionnaireScreen({
+    super.key,
+    this.reviewFrontPhotoAvailable,
+    this.initialAnswers,
+  });
+
+  /// Non-null when an ergonomist is answering for a photos-only scan.
+  final bool? reviewFrontPhotoAvailable;
+
+  /// The ergonomist's earlier answers, when they reopen the checklist to edit.
+  final ChecklistAnswers? initialAnswers;
 
   @override
   ConsumerState<WorkstationQuestionnaireScreen> createState() =>
@@ -28,6 +44,62 @@ class WorkstationQuestionnaireScreen extends ConsumerStatefulWidget {
 
 class _WorkstationQuestionnaireScreenState
     extends ConsumerState<WorkstationQuestionnaireScreen> {
+  bool get _isReview => widget.reviewFrontPhotoAvailable != null;
+
+  // Who answers the checklist — asked of the employee only.
+  AssessmentMode _answeredBy = AssessmentMode.employee;
+  bool get _photosOnly => !_isReview && _answeredBy == AssessmentMode.ergonomist;
+
+  @override
+  void initState() {
+    super.initState();
+    final initial = widget.initialAnswers;
+    if (initial != null) _restore(initial);
+    if (_isReview) _frontPhotoAvailable = widget.reviewFrontPhotoAvailable!;
+  }
+
+  /// The inverse of [_answers]: puts saved answers back into the form.
+  void _restore(ChecklistAnswers c) {
+    final a = c.answers;
+    _frontPhotoAvailable = a.frontPhotoAvailable;
+    _armrestTooWide = a.armrestTooWide;
+    _wristDeviation = a.keyboardDeviation;
+    _chairHeightAdjustable = !a.chairHeightNonAdjustable;
+    _enoughUnderDeskSpace = !a.insufficientUnderDeskSpace;
+    _seatDepthFit = a.seatDepthFit;
+    _seatPanAdjustable = !a.seatPanNonAdjustable;
+    _chairHasArmrests = a.chairHasArmrests;
+    _armrestAdjustable = !a.armrestNonAdjustable;
+    _armrestHardDamaged = a.armrestHardDamaged;
+    _usesArmrests = a.usesArmrests ?? true;
+    _backrestAdjustable = !a.backrestNonAdjustable;
+    _workSurfaceTooHigh = a.workSurfaceTooHigh;
+    _lumbarSupport = a.lumbarSupport;
+    _usableBackrest = a.usableBackrest;
+    _feetSupported = a.feetSupported;
+    _elbowsSupported = a.elbowsSupported;
+    _monitorAdjustable = !a.monitorNonAdjustable;
+    _monitorHeightDirection = a.monitorHeightDirection;
+    _neckTwistOver30 = a.neckTwistOver30;
+    _monitorTooFar = a.monitorTooFar;
+    _screenGlare = a.screenGlare;
+    _hasDocumentHolder = !a.noDocumentHolder;
+    _phoneUsage = a.phoneUsage;
+    _phoneCradleNeckShoulder = a.phoneCradleNeckShoulder;
+    _hasHandsFreeOption = !a.noHandsFreeOption;
+    _phoneCradleSupplemental = c.phoneCradle;
+    _handsFreeAvailableSupplemental = c.handsFreeAvailable;
+    _mouseKeyboardDifferentSurfaces = a.mouseKeyboardDifferentSurfaces;
+    _mousePinchGrip = a.mousePinchGrip;
+    _mousePalmrest = a.mousePalmrest;
+    _mouseAdjustable = !a.mouseNonAdjustable;
+    _mouseTooFar = a.mouseTooFar;
+    _keyboardTooHigh = a.keyboardTooHigh;
+    _reachingOverhead = a.reachingOverhead;
+    _keyboardPlatformAdjustable = !a.keyboardPlatformNonAdjustable;
+    _deskDuration = a.deskDuration;
+  }
+
   // Front photo — when it can't be taken, the two front-view measurements
   // (armrests too wide, wrist deviation) are asked as questions instead.
   bool _frontPhotoAvailable = true;
@@ -82,11 +154,7 @@ class _WorkstationQuestionnaireScreenState
   // Duration
   DeskDuration _deskDuration = DeskDuration.medium;
 
-  void _continue() {
-    ref
-        .read(assessmentNotifierProvider.notifier)
-        .setWorkstationAnswers(
-          WorkstationAnswers(
+  WorkstationAnswers _answers() => WorkstationAnswers(
             frontPhotoAvailable: _frontPhotoAvailable,
             // Only answered when there's no front photo; otherwise the camera
             // measures these and the native scorer overrides them.
@@ -127,14 +195,35 @@ class _WorkstationQuestionnaireScreenState
             reachingOverhead: _reachingOverhead,
             keyboardPlatformNonAdjustable: !_keyboardPlatformAdjustable,
             deskDuration: _deskDuration,
-          ),
-        );
-    ref
-        .read(assessmentNotifierProvider.notifier)
-        .setSupplementalPhoneFindings(
+          );
+
+  void _continue() {
+    if (_isReview) {
+      Navigator.of(context).pop(
+        ChecklistAnswers(
+          answers: _answers(),
           phoneCradle: _phoneCradleSupplemental,
           handsFreeAvailable: _handsFreeAvailableSupplemental,
-        );
+        ),
+      );
+      return;
+    }
+
+    final notifier = ref.read(assessmentNotifierProvider.notifier);
+    notifier.setAssessmentMode(_answeredBy);
+    if (_photosOnly) {
+      // Only the front-photo answer is needed now: it decides whether the
+      // camera takes the front shot.
+      notifier.setWorkstationAnswers(
+        WorkstationAnswers(frontPhotoAvailable: _frontPhotoAvailable),
+      );
+    } else {
+      notifier.setWorkstationAnswers(_answers());
+      notifier.setSupplementalPhoneFindings(
+        phoneCradle: _phoneCradleSupplemental,
+        handsFreeAvailable: _handsFreeAvailableSupplemental,
+      );
+    }
     context.push(AppRoute.employeeOptionalSymptom);
   }
 
@@ -154,19 +243,44 @@ class _WorkstationQuestionnaireScreenState
             padding: EdgeInsets.only(top: 12.h, bottom: 96.h),
             children: [
               AppTopSection(
-                title: loc.yourWorkstation,
-                subtitle: loc.workstationSubtitle,
+                title: _isReview ? loc.workstationQuestions : loc.yourWorkstation,
+                subtitle: _isReview
+                    ? loc.workstationReviewSubtitle
+                    : loc.workstationSubtitle,
               ),
               SizedBox(height: 24.h),
 
-              _SectionHeader('Front Photo'),
-              _BoolQuestion(
-                ++q,
-                'Can a photo be taken from the front view?',
-                _frontPhotoAvailable,
-                (v) => setState(() => _frontPhotoAvailable = v),
-              ),
+              if (!_isReview) ...[
+                _SectionHeader(loc.workstationQuestions),
+                _SegmentLabel(++q, loc.whoAnswersWorkstationQuestions),
+                _Segments<AssessmentMode>(
+                  segments: {
+                    AssessmentMode.employee: loc.illAnswerThem,
+                    AssessmentMode.ergonomist: loc.myErgonomistWillAnswer,
+                  },
+                  selected: _answeredBy,
+                  onChanged: (v) => setState(() => _answeredBy = v),
+                ),
+                if (_photosOnly)
+                  Padding(
+                    padding: EdgeInsets.only(left: _kNumberGutter, top: 10.h),
+                    child: Text(
+                      loc.photosOnlyExplanation,
+                      style: TextStyle(fontSize: 13.sp, color: AppColors.secondaryText),
+                    ),
+                  ),
+                SizedBox(height: 8.h),
 
+                _SectionHeader('Front Photo'),
+                _BoolQuestion(
+                  ++q,
+                  'Can a photo be taken from the front view?',
+                  _frontPhotoAvailable,
+                  (v) => setState(() => _frontPhotoAvailable = v),
+                ),
+              ],
+
+              if (!_photosOnly) ...[
               _SectionHeader('Chair'),
               _BoolQuestion(
                 ++q,
@@ -423,6 +537,7 @@ class _WorkstationQuestionnaireScreenState
                 selected: _deskDuration,
                 onChanged: (v) => setState(() => _deskDuration = v),
               ),
+              ],
             ],
           ),
         ),
@@ -432,7 +547,7 @@ class _WorkstationQuestionnaireScreenState
           padding: EdgeInsets.only(bottom: 20.h, left: 20.w, right: 20.w),
           child: PrimaryButton(
             onTap: _continue,
-            text: loc.continueButton,
+            text: _isReview ? loc.saveAnswers : loc.continueButton,
             backgroundColor: AppColors.primaryColor,
             textStyle: TextStyle(
               color: AppColors.surface,

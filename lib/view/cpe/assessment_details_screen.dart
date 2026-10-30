@@ -11,6 +11,7 @@ import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/back_button.dart';
 import 'package:posture_detector_app/provider/cpe_assessment.dart';
 import 'package:posture_detector_app/view/home/home_screen.dart';
+import 'package:posture_detector_app/common/widgets/rosa_score_comparison.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
 import 'package:posture_detector_app/view/cpe/widgets/patient_info_card_cpe.dart';
@@ -21,6 +22,7 @@ import 'package:posture_detector_app/view/cpe/widgets/approvals_section_cpe.dart
 import 'package:posture_detector_app/view/cpe/widgets/decision_section_cpe.dart';
 import 'package:posture_detector_app/view/cpe/widgets/comment_section_cpe.dart';
 import 'package:posture_detector_app/view/cpe/widgets/signature_section_cpe.dart';
+import 'package:posture_detector_app/view/cpe/widgets/workstation_section_cpe.dart';
 
 class CPEAssessmentScreen extends ConsumerWidget {
   const CPEAssessmentScreen({super.key});
@@ -217,7 +219,10 @@ class CPEAssessmentScreen extends ConsumerWidget {
     required CpeAssessmentState state,
     required AppLocalizations loc,
   }) {
-    final finalRisk = _finalScoreRisk(state.rosaScore.finalScore);
+    // The updated score when the ergonomist revised the answers; both are
+    // shown in the comparison below the card.
+    final score = state.currentRosaScore;
+    final finalRisk = _finalScoreRisk(score.finalScore);
     final scoreColor = _riskColor(finalRisk);
 
     return [
@@ -251,7 +256,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
                 ),
                 SizedBox(height: 6.w),
                 Text(
-                  '${state.rosaScore.finalScore} / 10',
+                  '${score.finalScore} / 10',
                   style: TextStyle(
                     fontSize: 28.sp,
                     fontWeight: FontWeight.w700,
@@ -266,7 +271,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _finalLabel(state.rosaScore.finalScore),
+                    _finalLabel(score.finalScore),
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w600,
@@ -275,7 +280,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    _actionLevel(state.rosaScore.finalScore),
+                    _actionLevel(score.finalScore),
                     style: TextStyle(
                       fontSize: 11.sp,
                       color: AppColors.secondaryText,
@@ -287,6 +292,10 @@ class CPEAssessmentScreen extends ConsumerWidget {
           ],
         ),
       ),
+      if (state.rosaRevision != null) ...[
+        SizedBox(height: 12.h),
+        RosaScoreComparison(original: state.rosaScore, revision: state.rosaRevision!),
+      ],
     ];
   }
 
@@ -339,10 +348,14 @@ class CPEAssessmentScreen extends ConsumerWidget {
                       const RecoveryOutlookBanner(compact: true),
                     ],
                     SizedBox(height: 20.h),
-                    ..._mainRosaScores(state: state, loc: loc),
-                    SizedBox(height: 20.h),
-                    _rosaAssessmentSection(state.rosaScore),
-                    SizedBox(height: 20.h),
+                    // A photos-only scan has no score until the review is
+                    // submitted with the ergonomist's workstation answers.
+                    if (!state.awaitingErgonomist) ...[
+                      ..._mainRosaScores(state: state, loc: loc),
+                      SizedBox(height: 20.h),
+                      _rosaAssessmentSection(state.currentRosaScore),
+                      SizedBox(height: 20.h),
+                    ],
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -362,14 +375,18 @@ class CPEAssessmentScreen extends ConsumerWidget {
                     ScreeningSectionCPE(state: state),
                     SizedBox(height: 20.h),
                     PhotoSectionCPE(state: state),
+                    // Photos-only: the ergonomist answers the checklist.
+                    // Employee-answered: they may update the answers once.
+                    if (state.awaitingErgonomist || state.answeredByEmployee) ...[
+                      SizedBox(height: 20.h),
+                      WorkstationSectionCPE(state: state, notifier: notifier),
+                    ],
                     if (state.actionReportV13 != null) ...[
                       SizedBox(height: 20.h),
                       ActionReportSectionCPE(state: state),
                     ],
                     SizedBox(height: 20.h),
                     ApprovalsSectionCPE(state: state, notifier: notifier),
-                    SizedBox(height: 20.h),
-                    ReviewModeSectionCPE(state: state, notifier: notifier),
                     SizedBox(height: 20.h),
                     DecisionSectionCPE(state: state, notifier: notifier),
                     SizedBox(height: 20.h),

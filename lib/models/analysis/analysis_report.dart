@@ -1,4 +1,5 @@
 import 'package:posture_detector_app/constants/credential.dart';
+import 'package:posture_detector_app/models/analysis/rosa_revision.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 
 class AnalysisReport {
@@ -13,7 +14,17 @@ class AnalysisReport {
   final List<PainIntensity> painIntensities;
   final String painDuration;
 
+  /// The ROSA score from the employee's own answers (kept even when the
+  /// ergonomist updated them — see [rosaRevision]).
   final RosaScore rosaScore;
+
+  /// The ergonomist's one-time update of the answers and the re-calculated
+  /// score, or null. Recommendations follow it when present.
+  final RosaRevision? rosaRevision;
+
+  /// The score the recommendations are based on: the ergonomist's updated
+  /// one when there is one, otherwise the original.
+  RosaScore get currentRosaScore => rosaRevision?.rosaScore ?? rosaScore;
 
   final List<String> symptoms;
 
@@ -37,6 +48,11 @@ class AnalysisReport {
   /// backend started sending it).
   final DateTime? createdAt;
 
+  /// Backend scan status — `awaiting_ergonomist` while a photos-only scan
+  /// waits for the ergonomist's answers (no score, report, equipment or
+  /// exercises yet), otherwise `completed`.
+  final String status;
+
   AnalysisReport({
     required this.workPattern,
     required this.bodyRegionRisks,
@@ -45,6 +61,7 @@ class AnalysisReport {
     required this.equipment,
     required this.equipmentExcelUrl,
     required this.rosaScore,
+    this.rosaRevision,
     required this.symptoms,
     required this.painIntensities,
     required this.painDuration,
@@ -53,9 +70,12 @@ class AnalysisReport {
     this.supplementalCpeFindings = const SupplementalCpeFindings(),
     this.actionReportV13,
     this.createdAt,
+    this.status = 'completed',
   });
 
   bool get chronicityElevated => chronicityLevel == 'Elevated';
+
+  bool get isAwaitingErgonomist => status == 'awaiting_ergonomist';
 
   factory AnalysisReport.fromJson(Map<String, dynamic> json) {
     return AnalysisReport(
@@ -93,6 +113,7 @@ class AnalysisReport {
       equipmentExcelUrl: json['equipment_excel_url'] ?? '',
 
       rosaScore: RosaScore.fromJson(json['rosa_score'] ?? const {}),
+      rosaRevision: RosaRevision.fromJson(json['rosa_revision']),
 
       symptoms: List<String>.from(json['symptoms'] ?? const []),
       chronicityLevel: json['chronicity_level'] ?? 'Low',
@@ -108,6 +129,7 @@ class AnalysisReport {
       createdAt: DateTime.tryParse(
         json['created_at'] as String? ?? '',
       )?.toLocal(),
+      status: json['status'] as String? ?? 'completed',
     );
   }
 
@@ -118,6 +140,7 @@ class AnalysisReport {
     'equipment': equipment.map((e) => e.toJson()).toList(),
     'equipment_excel_url': equipmentExcelUrl,
     'rosa_score': rosaScore.toJson(),
+    'rosa_revision': rosaRevision?.toJson(),
     'symptoms': symptoms,
     'work_pattern': workPattern.toJson(),
     'height_cm': heightCm,
@@ -127,6 +150,7 @@ class AnalysisReport {
     'chronicity_level': chronicityLevel,
     'action_report_v1_3': actionReportV13?.toJson(),
     'created_at': createdAt?.toUtc().toIso8601String(),
+    'status': status,
   };
 }
 

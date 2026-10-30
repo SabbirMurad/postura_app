@@ -201,6 +201,66 @@ class WorkstationAnswers {
     );
   }
 
+  /// Inverse of [toMap], for answers read back from the API (missing keys
+  /// fall back to the constructor defaults).
+  factory WorkstationAnswers.fromMap(Map<String, dynamic> m) {
+    bool b(String key, bool fallback) => m[key] is bool ? m[key] as bool : fallback;
+    int n(String key, int fallback) => m[key] is num ? (m[key] as num).toInt() : fallback;
+    return WorkstationAnswers(
+      frontPhotoAvailable: b('front_photo_available', true),
+      chairHeightNonAdjustable: b('chair_height_non_adjustable', false),
+      insufficientUnderDeskSpace: b('insufficient_under_desk_space', false),
+      seatDepthFit: switch (m['seat_depth_direction']) {
+        'too_long' => SeatDepthFit.tooLong,
+        'too_short' => SeatDepthFit.tooShort,
+        _ => SeatDepthFit.ok,
+      },
+      seatPanNonAdjustable: b('seat_pan_non_adjustable', false),
+      chairHasArmrests: b('chair_has_armrests', true),
+      armrestNonAdjustable: b('armrest_non_adjustable', false),
+      armrestHardDamaged: b('armrest_hard_damaged', false),
+      armrestTooWide: b('armrest_too_wide', false),
+      usesArmrests: m['uses_armrests'] as bool?,
+      backrestNonAdjustable: b('backrest_non_adjustable', false),
+      workSurfaceTooHigh: b('work_surface_too_high', false),
+      lumbarSupport: b('lumbar_support', true),
+      feetSupported: b('feet_supported', true),
+      usableBackrest: b('usable_backrest', true),
+      elbowsSupported: b('elbows_supported', true),
+      monitorNonAdjustable: b('monitor_non_adjustable', false),
+      neckTwistOver30: b('neck_twist_over_30', false),
+      monitorTooFar: b('monitor_too_far', false),
+      screenGlare: b('screen_glare', false),
+      noDocumentHolder: b('no_document_holder', false),
+      phoneUsage: switch (n('phone_score', 0)) {
+        2 => PhoneUsage.reachFar,
+        1 => PhoneUsage.headsetOrOneHand,
+        _ => PhoneUsage.none,
+      },
+      phoneCradleNeckShoulder: b('phone_cradle_neck_shoulder', false),
+      noHandsFreeOption: b('no_hands_free_option', false),
+      monitorHeightDirection: switch (m['monitor_height_direction']) {
+        'below' => MonitorHeightDirection.below,
+        'above' => MonitorHeightDirection.above,
+        _ => MonitorHeightDirection.atEyeLevel,
+      },
+      mouseKeyboardDifferentSurfaces: b('mouse_keyboard_different_surfaces', false),
+      mousePinchGrip: b('mouse_pinch_grip', false),
+      mousePalmrest: b('mouse_palmrest', false),
+      mouseNonAdjustable: b('mouse_non_adjustable', false),
+      mouseTooFar: b('mouse_too_far', false),
+      keyboardDeviation: b('keyboard_deviation', false),
+      keyboardTooHigh: b('keyboard_too_high', false),
+      reachingOverhead: b('reaching_overhead', false),
+      keyboardPlatformNonAdjustable: b('keyboard_platform_non_adjustable', false),
+      deskDuration: switch (n('duration_modifier', 0)) {
+        -1 => DeskDuration.short,
+        1 => DeskDuration.long,
+        _ => DeskDuration.medium,
+      },
+    );
+  }
+
   Map<String, dynamic> toMap() => {
     'front_photo_available': frontPhotoAvailable,
     'chair_height_non_adjustable': chairHeightNonAdjustable,
@@ -256,5 +316,27 @@ class WorkstationAnswers {
       DeskDuration.medium => 0,
       DeskDuration.long => 1,
     },
+  };
+}
+
+/// An ergonomist's workstation answers: the checklist plus the two
+/// supplemental phone questions asked alongside it (never scored). Sent as
+/// `answers` with the review (submit-review), either to complete a photos-only
+/// scan or as the one-time update of the employee's own answers.
+class ChecklistAnswers {
+  const ChecklistAnswers({
+    required this.answers,
+    required this.phoneCradle,
+    required this.handsFreeAvailable,
+  });
+
+  final WorkstationAnswers answers;
+  final bool phoneCradle;
+  final bool handsFreeAvailable;
+
+  Map<String, dynamic> toJson() => {
+    'workstation_answers': answers.toMap(),
+    'phone_cradle': phoneCradle,
+    'hands_free_available': handsFreeAvailable,
   };
 }

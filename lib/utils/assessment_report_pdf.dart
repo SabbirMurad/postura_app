@@ -152,7 +152,10 @@ class AssessmentReportPdf {
 
   // ROSA thresholds match the home / analysis-result screens.
   List<pw.Widget> _rosaSection() {
-    final score = _report.rosaScore;
+    // The ergonomist's updated score when they revised the answers; the
+    // employee's original is listed under it.
+    final score = _report.currentRosaScore;
+    final revision = _report.rosaRevision;
     final color = _finalScoreColor(score.finalScore);
     return [
       _heading('ROSA Ergonomic Analysis'),
@@ -190,6 +193,15 @@ class AssessmentReportPdf {
                     _actionLevel(score.finalScore),
                     style: const pw.TextStyle(fontSize: 9, color: _muted),
                   ),
+                  if (revision != null) ...[
+                    pw.SizedBox(height: 4),
+                    pw.Text(
+                      'Updated by the ergonomist${revision.revisedBy?.isNotEmpty == true ? ' (${revision.revisedBy})' : ''}. '
+                      "Original score from the employee's answers: "
+                      '${_report.rosaScore.isValid ? '${_report.rosaScore.finalScore} / 10' : 'N/A'}',
+                      style: const pw.TextStyle(fontSize: 9, color: _muted),
+                    ),
+                  ],
                 ],
               ),
             ),

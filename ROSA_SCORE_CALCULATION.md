@@ -161,11 +161,11 @@ below always tells you what a "Yes" answer on the actual screen does.
 | "Backrest is adjustable" | **No** | +1 | Back-support area |
 | "Desk/work surface is too high (shoulders shrug)" | **Yes** | +1 | Back-support area |
 
-- **Chair-height area** = Seat-height score (camera) + the two "No" answers above.
+- **Chair-height area** = Seat-height score (camera, or 3 if feet are not supported) + the two "No" answers above.
 - **Seat-pan-depth area** = 1 (fit OK) or 2 (too long/short) + "adjustable? No" (+1).
 - **Armrest area** = Armrest score (camera) + "adjustable? No" (+1) + "hard/damaged? Yes" (+1) + "armrests too wide?" (+1, see below).
   With no armrests it is a flat **2**: none of the three +1s apply, including the camera's too-wide measurement.
-- **Back-support area** = Backrest score (camera + backrest-use, see Layer 1) + "adjustable? No" (+1) + "surface too high? Yes" (+1).
+- **Back-support area** = Backrest score (camera + backrest use + lumbar support, see Layer 1) + "adjustable? No" (+1) + "surface too high? Yes" (+1).
 
 **From the front photo, or a question if there is no front photo:**
 - The checklist opens with "Can a photo be taken from the front view?".

@@ -10,8 +10,11 @@ import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/provider/cpe_home.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/main.dart';
+import 'package:posture_detector_app/models/analysis/rosa_revision.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
+import 'package:posture_detector_app/models/assessment/assessment_mode.dart';
 import 'package:posture_detector_app/models/assessment/screening_review.dart';
+import 'package:posture_detector_app/models/assessment/workstation_answers.dart';
 import 'package:posture_detector_app/models/analysis/analysis_report.dart'
     show ActionReportV13;
 
@@ -95,16 +98,10 @@ class FrontCaptureView {
   );
 }
 
-enum ReviewMode { remote, live }
-
-extension ReviewModeApi on ReviewMode {
-  String get apiValue => this == ReviewMode.remote ? 'REMOTE' : 'LIVE';
-}
-
 enum ReviewDecision {
   approved('Approved', 'APPROVED'),
   followUpRequired('Follow Up Required', 'FOLLOW_UP_REQUIRED'),
-  needChanges('Need Changes', 'NEED_CHANGES'),
+  needChanges('Need Changes', 'NEED_CHANGE'),
   pending('Pending', 'PENDING');
 
   final String label;
@@ -137,7 +134,6 @@ class CpeAssessmentState {
   final List<SideCaptureView> sideCaptures;
   final FrontCaptureView? frontCapture;
   final List<ApprovalItem> approvalItems;
-  final ReviewMode reviewMode;
   final ReviewDecision decision;
   final String comment;
   final int maxCommentLength;
@@ -150,6 +146,34 @@ class CpeAssessmentState {
   /// The deterministic Action Report v1.3 (tier-limited priority findings +
   /// equipment cards) for this scan, when the backend has computed one.
   final ActionReportV13? actionReportV13;
+
+  /// True for a photos-only scan the employee left to the ergonomist: it has
+  /// no ROSA score or report until [checklistAnswers] are submitted with the
+  /// review.
+  final bool awaitingErgonomist;
+
+  /// The ergonomist's workstation answers, sent with the review: required for
+  /// a photos-only scan, or the one-time update of the employee's answers
+  /// (null until they fill in the checklist).
+  final ChecklistAnswers? checklistAnswers;
+
+  /// True when the employee answered the workstation questions themselves.
+  final bool answeredByEmployee;
+
+  /// The employee's own answers, used to pre-fill the checklist when the
+  /// ergonomist updates them. Null for photos-only scans.
+  final ChecklistAnswers? employeeAnswers;
+
+  /// The ergonomist's one-time update of the employee's answers, once
+  /// submitted. [rosaScore] stays the employee's original score.
+  final RosaRevision? rosaRevision;
+
+  /// The ergonomist may update the employee's answers once per assessment.
+  bool get canReviseAnswers =>
+      answeredByEmployee && !awaitingErgonomist && rosaRevision == null;
+
+  /// The score the recommendations follow: the updated one when there is one.
+  RosaScore get currentRosaScore => rosaRevision?.rosaScore ?? rosaScore;
 
   /// The employee's health screening answers. Sent only on the ergonomist
   /// detail endpoint; empty for scans recorded without them.
@@ -172,7 +196,6 @@ class CpeAssessmentState {
     this.sideCaptures = const [],
     this.frontCapture,
     this.approvalItems = const [],
-    this.reviewMode = ReviewMode.remote,
     this.decision = ReviewDecision.pending,
     this.comment = '',
     this.maxCommentLength = 500,
@@ -180,6 +203,11 @@ class CpeAssessmentState {
     this.signatureRemoteUrl = '',
     required this.rosaScore,
     this.actionReportV13,
+    this.awaitingErgonomist = false,
+    this.checklistAnswers,
+    this.answeredByEmployee = true,
+    this.employeeAnswers,
+    this.rosaRevision,
     this.redFlagAnswers = const [],
     this.redFlagPositive = false,
     this.recoveryAnswers = const [],
@@ -231,12 +259,13 @@ class CpeAssessmentState {
     List<PainSymptom>? painSymptoms,
     List<PhotoItem>? photoItems,
     List<ApprovalItem>? approvalItems,
-    ReviewMode? reviewMode,
     ReviewDecision? decision,
     String? comment,
     String? signaturePath,
     String? signatureRemoteUrl,
     RosaScore? rosaScore,
+    ChecklistAnswers? checklistAnswers,
+    bool clearChecklistAnswers = false,
   }) => CpeAssessmentState(
     isLoading: isLoading ?? this.isLoading,
     isSubmitting: isSubmitting ?? this.isSubmitting,
@@ -252,7 +281,6 @@ class CpeAssessmentState {
     sideCaptures: sideCaptures,
     frontCapture: frontCapture,
     approvalItems: approvalItems ?? this.approvalItems,
-    reviewMode: reviewMode ?? this.reviewMode,
     decision: decision ?? this.decision,
     comment: comment ?? this.comment,
     maxCommentLength: maxCommentLength,
@@ -262,6 +290,13 @@ class CpeAssessmentState {
     // Not a copyWith param — only ever set once in _loadData, same as
     // sideCaptures/frontCapture above, so always preserved as-is.
     actionReportV13: actionReportV13,
+    awaitingErgonomist: awaitingErgonomist,
+    checklistAnswers: clearChecklistAnswers
+        ? null
+        : checklistAnswers ?? this.checklistAnswers,
+    answeredByEmployee: answeredByEmployee,
+    employeeAnswers: employeeAnswers,
+    rosaRevision: rosaRevision,
     redFlagAnswers: redFlagAnswers,
     redFlagPositive: redFlagPositive,
     recoveryAnswers: recoveryAnswers,
@@ -336,8 +371,6 @@ class CpeAssessmentNotifier
         ),
       ];
 
-      final reviewType = d['review_type'] as String?;
-
       state = CpeAssessmentState(
         isLoading: false,
         patientName: d['employee_name'] ?? '',
@@ -360,7 +393,6 @@ class CpeAssessmentNotifier
         decision: ReviewDecision.fromApi(d['review_status']),
         initialReviewStatus: d['review_status'] ?? '',
         comment: d['review_comment'] ?? '',
-        reviewMode: reviewType == 'LIVE' ? ReviewMode.live : ReviewMode.remote,
         signatureRemoteUrl: d['review_signature_url'] as String? ?? '',
         rosaScore: RosaScore.fromJson(
           (d['rosa_score'] as Map?)?.cast<String, dynamic>() ?? const <String, dynamic>{},
@@ -370,6 +402,23 @@ class CpeAssessmentNotifier
                 Map<String, dynamic>.from(d['action_report_v1_3'] as Map),
               )
             : null,
+        awaitingErgonomist: d['status'] == scanStatusAwaitingErgonomist,
+        answeredByEmployee: AssessmentMode.fromApi(d['assessment_mode'] as String?) ==
+            AssessmentMode.employee,
+        employeeAnswers: d['workstation_answers'] is Map &&
+                (d['workstation_answers'] as Map).isNotEmpty
+            ? ChecklistAnswers(
+                answers: WorkstationAnswers.fromMap(
+                  Map<String, dynamic>.from(d['workstation_answers'] as Map),
+                ),
+                phoneCradle:
+                    (d['supplemental_cpe_findings'] as Map?)?['phone_cradle'] == true,
+                handsFreeAvailable:
+                    (d['supplemental_cpe_findings'] as Map?)?['hands_free_available'] !=
+                        false,
+              )
+            : null,
+        rosaRevision: RosaRevision.fromJson(d['rosa_revision']),
         redFlagAnswers: redFlagAnswersFromJson(
           (d['red_flag_screening'] as Map?)?.cast<String, dynamic>(),
         ),
@@ -419,8 +468,12 @@ class CpeAssessmentNotifier
   // ─────────────────────────────────────
   // Setters
   // ─────────────────────────────────────
-  void setReviewMode(ReviewMode mode) =>
-      state = state?.copyWith(reviewMode: mode);
+  void setChecklistAnswers(ChecklistAnswers answers) =>
+      state = state?.copyWith(checklistAnswers: answers);
+
+  /// Drop an unsent update of the employee's answers.
+  void clearChecklistAnswers() =>
+      state = state?.copyWith(clearChecklistAnswers: true);
   void setDecision(ReviewDecision d) => state = state?.copyWith(decision: d);
 
   void setComment(String value) {
@@ -437,6 +490,14 @@ class CpeAssessmentNotifier
   Future<bool> submitReview() async {
     final s = state;
     if (s == null) return false;
+
+    // A photos-only scan is scored from the ergonomist's answers, so they're
+    // required with its review.
+    if (s.awaitingErgonomist && s.checklistAnswers == null) {
+      final loc = AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;
+      showCustomToast(text: loc.answerWorkstationQuestionsFirst);
+      return false;
+    }
 
     // A signature image is required (the backend rejects a submission without one).
     if (s.signaturePath.isEmpty) {
@@ -465,10 +526,14 @@ class CpeAssessmentNotifier
 
       final body = <String, dynamic>{
         for (final item in s.approvalItems) item.apiKey: item.isChecked,
-        'review_type': s.reviewMode.apiValue,
         'review_status': s.decision.apiValue,
         'review_comment': s.comment,
         'review_signature': ids.first,
+        // Completes a photos-only scan, or is the one-time update of the
+        // employee's answers.
+        if (s.checklistAnswers != null &&
+            (s.awaitingErgonomist || s.canReviseAnswers))
+          'answers': s.checklistAnswers!.toJson(),
       };
 
       final result = await CustomHttp.post(

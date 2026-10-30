@@ -594,15 +594,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get painIntensityLabel => 'Pain Intensity';
 
   @override
-  String get howDidYouReview => 'How did you review this workstation?';
-
-  @override
-  String get remote => 'Remote';
-
-  @override
-  String get live => 'Live';
-
-  @override
   String get decisionLabel => 'Decision';
 
   @override
@@ -1101,4 +1092,94 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get photo => 'Photo';
+
+  @override
+  String get workstationQuestions => 'Workstation Questions';
+
+  @override
+  String get whoAnswersWorkstationQuestions => 'Who will answer the workstation questions?';
+
+  @override
+  String get illAnswerThem => 'I\'ll answer them';
+
+  @override
+  String get myErgonomistWillAnswer => 'My ergonomist will';
+
+  @override
+  String get photosOnlyExplanation => 'You\'ll only take the photos. Your ergonomist will answer the workstation questions from them, and your result will appear once they\'ve finished.';
+
+  @override
+  String get photosOnlyReviewNote => 'These photos will be sent to your ergonomist. Once they\'ve answered the workstation questions, your score and recommendations will appear in the app.';
+
+  @override
+  String get sendToErgonomist => 'Send to Ergonomist';
+
+  @override
+  String get waitingForErgonomist => 'Waiting for your ergonomist';
+
+  @override
+  String get waitingForErgonomistBody => 'Your photos have been sent. Your score, report, equipment and exercises will appear here once your ergonomist has answered the workstation questions.';
+
+  @override
+  String get backToHome => 'Back to Home';
+
+  @override
+  String get workstationReviewSubtitle => 'Answer for the employee\'s workstation, using their photos.';
+
+  @override
+  String get saveAnswers => 'Save Answers';
+
+  @override
+  String get answerWorkstationQuestionsFirst => 'Answer the workstation questions before submitting.';
+
+  @override
+  String get workstationAnswered => 'Workstation questions answered';
+
+  @override
+  String get workstationNotAnswered => 'The employee left these questions to you';
+
+  @override
+  String get workstationErgonomistHint => 'Answer them from the photos. Submitting the review scores the assessment and shows the result to the employee.';
+
+  @override
+  String get answerWorkstationQuestions => 'Answer Questions';
+
+  @override
+  String get editAnswers => 'Edit Answers';
+
+  @override
+  String get needsYourAnswers => 'Needs your answers';
+
+  @override
+  String get originalRosaScore => 'Original score';
+
+  @override
+  String get fromEmployeesAnswers => 'From the employee\'s answers';
+
+  @override
+  String get updatedRosaScore => 'Updated score';
+
+  @override
+  String get updatedByErgonomist => 'Updated by the ergonomist';
+
+  @override
+  String get rosaUpdatedNote => 'The ergonomist updated the workstation answers during the review. Recommendations are based on the updated score.';
+
+  @override
+  String get workstationAnsweredByEmployee => 'Answered by the employee';
+
+  @override
+  String get workstationReviseHint => 'You can update the employee\'s answers once. Submitting the review re-calculates the score; the employee\'s original score is kept and shown next to it.';
+
+  @override
+  String get updateAnswersOnce => 'Update Answers (once)';
+
+  @override
+  String get workstationRevisionPending => 'Updated answers ready. The score is re-calculated when you submit the review.';
+
+  @override
+  String get discardChanges => 'Discard Changes';
+
+  @override
+  String get workstationAlreadyRevised => 'These answers were already updated by the ergonomist. They can only be updated once.';
 }

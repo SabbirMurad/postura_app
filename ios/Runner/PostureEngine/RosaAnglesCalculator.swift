@@ -46,9 +46,10 @@ enum RosaAnglesCalculator {
         let mouseReach: Float
         let lowerBodyConfidence: LowerBodyConfidence
 
-        /// Readable summary of the measured body angles, for the Flutter review
-        /// screen. Only the degree-valued angles are exposed; the raw normalized
-        /// offsets (shrugGap, wristExtension, …) are internal scoring inputs.
+        /// The measured body angles, for the Flutter review screen, plus the raw
+        /// normalized offsets the scorer uses (shrugGap, wristExtension,
+        /// mouseReach). Those are not shown; they are sent to the backend so it
+        /// can score a photos-only scan once the ergonomist answers the checklist.
         func toMap() -> [String: Any] {
             return [
                 "side": isLeftSide ? "Left" : "Right",
@@ -58,6 +59,9 @@ enum RosaAnglesCalculator {
                 "neck_angle": Double(neckAngle),
                 "neck_state": neckState.rawValue,
                 "lower_body_confidence": lowerBodyConfidence.rawValue,
+                "shrug_gap": Double(shrugGap),
+                "wrist_extension": Double(wristExtension),
+                "mouse_reach": Double(mouseReach),
             ]
         }
     }

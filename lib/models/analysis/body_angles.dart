@@ -3,9 +3,10 @@
 /// These are the raw ROSA geometry readings, returned alongside `rosa_scores`
 /// on the `posture_detection` MethodChannel.
 ///
-/// Note: the engine also computes `shrugGap`, `wristExtension` and `mouseReach`
-/// internally, but treats them as private scoring inputs and does not surface
-/// them here — see the native RosaAnglesCalculator on either platform.
+/// The engine also surfaces its raw scoring offsets ([shrugGap],
+/// [wristExtension], [mouseReach]). They aren't shown; they're sent to the
+/// backend, which scores a photos-only scan once the ergonomist answers the
+/// workstation checklist.
 class BodyAngles {
   const BodyAngles({
     required this.side,
@@ -15,6 +16,9 @@ class BodyAngles {
     required this.neckAngle,
     required this.neckState,
     required this.lowerBodyConfidence,
+    this.shrugGap,
+    this.wristExtension,
+    this.mouseReach,
   });
 
   /// "Left" / "Right" — which side's landmarks were used. Empty when this entry
@@ -40,6 +44,12 @@ class BodyAngles {
   /// [kneeAngle] (and the seat-height score) is a best-effort estimate.
   final String lowerBodyConfidence;
 
+  /// Raw normalized offsets (ear.y − shoulder.y, elbow.y − wrist.y,
+  /// |wrist.x − shoulder.x|). Null on captures from before they were surfaced.
+  final double? shrugGap;
+  final double? wristExtension;
+  final double? mouseReach;
+
   /// True when this entry actually holds a measurement. Null/empty native
   /// entries deserialize with a blank [side] and NaN angles.
   bool get hasData => side.isNotEmpty && !kneeAngle.isNaN;
@@ -54,6 +64,9 @@ class BodyAngles {
     neckAngle: _d(m['neck_angle']),
     neckState: m['neck_state'] as String? ?? '',
     lowerBodyConfidence: m['lower_body_confidence'] as String? ?? '',
+    shrugGap: (m['shrug_gap'] as num?)?.toDouble(),
+    wristExtension: (m['wrist_extension'] as num?)?.toDouble(),
+    mouseReach: (m['mouse_reach'] as num?)?.toDouble(),
   );
 
   Map<String, dynamic> toJson() => {
@@ -64,6 +77,9 @@ class BodyAngles {
     'neck_angle': neckAngle,
     'neck_state': neckState,
     'lower_body_confidence': lowerBodyConfidence,
+    if (shrugGap != null) 'shrug_gap': shrugGap,
+    if (wristExtension != null) 'wrist_extension': wristExtension,
+    if (mouseReach != null) 'mouse_reach': mouseReach,
   };
 
   /// Human-readable neck posture, mapping the native enum names to labels.

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:posture_detector_app/common/widgets/awaiting_ergonomist_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -63,7 +64,9 @@ class _EquipmentScreenBusinessState
     final v13Report = reportState.analysisReport?.actionReportV13;
     final v13Cards = v13Report?.equipmentCards ?? const [];
     final analysis = reportState.analysisReport;
-    final engineOutput = v13Report == null && analysis != null
+    // A photos-only scan has nothing to recommend until the ergonomist answers.
+    final awaiting = analysis?.isAwaitingErgonomist ?? false;
+    final engineOutput = v13Report == null && analysis != null && !awaiting
         ? EquipmentEngine.legacyOutputFor(analysis)
         : null;
     final fallbackList = reportState.analysisReport?.equipment ?? [];
@@ -243,6 +246,11 @@ class _EquipmentScreenBusinessState
                           ),
                         );
                       })
+                    else if (awaiting)
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: const AwaitingErgonomistCard(),
+                      )
                     else if (engineOutput == null && fallbackList.isEmpty)
                       Padding(
                         padding: EdgeInsets.only(top: 72.w),

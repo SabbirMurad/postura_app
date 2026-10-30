@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:posture_detector_app/common/widgets/awaiting_ergonomist_card.dart';
+import 'package:posture_detector_app/common/widgets/rosa_score_comparison.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -430,6 +432,20 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                       );
                     }
 
+                    if (analysisData.isAwaitingErgonomist) {
+                      return Column(
+                        children: [
+                          HomeTopSection(
+                            name: profileData?.fullName ?? 'User',
+                            image: profileData?.avatar,
+                          ),
+                          SizedBox(height: 24.h),
+                          const AwaitingErgonomistCard(),
+                          SizedBox(height: 20.h),
+                        ],
+                      );
+                    }
+
                     final risks = reportState.analysisReport!.bodyRegionRisks;
                     final bodyRegionRiskItems = [
                       BodyRegionRiskModel(region: 'Elbows', risk: risks.elbows),
@@ -467,7 +483,16 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                           ],
                         ),
                         SizedBox(height: 12.h),
-                        _rosaScoreCard(analysisData.rosaScore),
+                        _rosaScoreCard(analysisData.currentRosaScore),
+                        // The ergonomist updated the answers: the original
+                        // score is kept and shown next to the updated one.
+                        if (analysisData.rosaRevision != null) ...[
+                          SizedBox(height: 12.h),
+                          RosaScoreComparison(
+                            original: analysisData.rosaScore,
+                            revision: analysisData.rosaRevision!,
+                          ),
+                        ],
                         if (analysisData.chronicityElevated) ...[
                           SizedBox(height: 12.h),
                           const RecoveryOutlookBanner(),
@@ -487,7 +512,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                           ],
                         ),
                         SizedBox(height: 12.h),
-                        _rosaAssessmentSection(analysisData.rosaScore),
+                        _rosaAssessmentSection(analysisData.currentRosaScore),
                         SizedBox(height: 24.h),
                         Align(
                           alignment: Alignment.centerLeft,

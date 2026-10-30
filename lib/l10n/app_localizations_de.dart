@@ -594,15 +594,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get painIntensityLabel => 'Schmerzintensität';
 
   @override
-  String get howDidYouReview => 'Wie haben Sie diesen Arbeitsplatz bewertet?';
-
-  @override
-  String get remote => 'Fernzugriff';
-
-  @override
-  String get live => 'Live';
-
-  @override
   String get decisionLabel => 'Entscheidung';
 
   @override
@@ -1101,4 +1092,94 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get photo => 'Foto';
+
+  @override
+  String get workstationQuestions => 'Arbeitsplatzfragen';
+
+  @override
+  String get whoAnswersWorkstationQuestions => 'Wer beantwortet die Fragen zum Arbeitsplatz?';
+
+  @override
+  String get illAnswerThem => 'Ich beantworte sie';
+
+  @override
+  String get myErgonomistWillAnswer => 'Mein Ergonom';
+
+  @override
+  String get photosOnlyExplanation => 'Sie machen nur die Fotos. Ihr Ergonom beantwortet anhand der Fotos die Fragen zum Arbeitsplatz. Ihr Ergebnis erscheint, sobald die Bewertung abgeschlossen ist.';
+
+  @override
+  String get photosOnlyReviewNote => 'Diese Fotos werden an Ihren Ergonomen gesendet. Sobald die Arbeitsplatzfragen beantwortet sind, erscheinen Ihre Bewertung und Empfehlungen in der App.';
+
+  @override
+  String get sendToErgonomist => 'An Ergonomen senden';
+
+  @override
+  String get waitingForErgonomist => 'Warten auf Ihren Ergonomen';
+
+  @override
+  String get waitingForErgonomistBody => 'Ihre Fotos wurden gesendet. Ihre Bewertung, Ihr Bericht, Ihre Ausstattung und Ihre Übungen erscheinen hier, sobald Ihr Ergonom die Arbeitsplatzfragen beantwortet hat.';
+
+  @override
+  String get backToHome => 'Zur Startseite';
+
+  @override
+  String get workstationReviewSubtitle => 'Beantworten Sie die Fragen zum Arbeitsplatz anhand der Fotos.';
+
+  @override
+  String get saveAnswers => 'Antworten speichern';
+
+  @override
+  String get answerWorkstationQuestionsFirst => 'Beantworten Sie vor dem Absenden die Arbeitsplatzfragen.';
+
+  @override
+  String get workstationAnswered => 'Arbeitsplatzfragen beantwortet';
+
+  @override
+  String get workstationNotAnswered => 'Diese Fragen wurden Ihnen überlassen';
+
+  @override
+  String get workstationErgonomistHint => 'Beantworten Sie sie anhand der Fotos. Mit dem Absenden der Prüfung wird die Bewertung berechnet und das Ergebnis freigegeben.';
+
+  @override
+  String get answerWorkstationQuestions => 'Fragen beantworten';
+
+  @override
+  String get editAnswers => 'Antworten bearbeiten';
+
+  @override
+  String get needsYourAnswers => 'Ihre Antworten nötig';
+
+  @override
+  String get originalRosaScore => 'Ursprüngliche Bewertung';
+
+  @override
+  String get fromEmployeesAnswers => 'Aus den Antworten des Mitarbeiters';
+
+  @override
+  String get updatedRosaScore => 'Aktualisierte Bewertung';
+
+  @override
+  String get updatedByErgonomist => 'Vom Ergonomen aktualisiert';
+
+  @override
+  String get rosaUpdatedNote => 'Der Ergonom hat die Arbeitsplatzantworten bei der Prüfung aktualisiert. Die Empfehlungen basieren auf der aktualisierten Bewertung.';
+
+  @override
+  String get workstationAnsweredByEmployee => 'Vom Mitarbeiter beantwortet';
+
+  @override
+  String get workstationReviseHint => 'Sie können die Antworten des Mitarbeiters einmal aktualisieren. Beim Absenden der Prüfung wird die Bewertung neu berechnet; die ursprüngliche Bewertung bleibt erhalten und wird daneben angezeigt.';
+
+  @override
+  String get updateAnswersOnce => 'Antworten aktualisieren (einmalig)';
+
+  @override
+  String get workstationRevisionPending => 'Aktualisierte Antworten bereit. Die Bewertung wird beim Absenden der Prüfung neu berechnet.';
+
+  @override
+  String get discardChanges => 'Änderungen verwerfen';
+
+  @override
+  String get workstationAlreadyRevised => 'Diese Antworten wurden bereits vom Ergonomen aktualisiert. Sie können nur einmal aktualisiert werden.';
 }
