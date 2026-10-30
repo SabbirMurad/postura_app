@@ -121,11 +121,13 @@ class PatientComplianceCard extends StatelessWidget {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: '${scan.rosaFinal}',
+                      text: scan.rosaFinal?.toString() ?? '–',
                       style: TextStyle(
                         fontSize: 28.sp,
                         fontWeight: FontWeight.w700,
-                        color: _rosaScoreColor(scan.rosaFinal),
+                        color: scan.rosaFinal == null
+                            ? const Color(0xFF6B6B6B)
+                            : _rosaScoreColor(scan.rosaFinal!),
                         height: 1,
                       ),
                     ),

@@ -41,7 +41,9 @@ class ScanItem {
   final String? reviewedBy;
   final String? reviewedAt;
   final String createdAt;
-  final int rosaFinal;
+  /// ROSA final score (the ergonomist's updated one if revised); null when
+  /// the scan has none yet.
+  final int? rosaFinal;
 
   const ScanItem({
     required this.scanId,
@@ -59,7 +61,7 @@ class ScanItem {
     this.reviewedBy,
     this.reviewedAt,
     required this.createdAt,
-    this.rosaFinal = 0,
+    this.rosaFinal,
   });
 
   factory ScanItem.fromJson(Map<String, dynamic> json) {
@@ -80,9 +82,7 @@ class ScanItem {
       reviewedBy: json['reviewed_by'],
       reviewedAt: json['reviewed_at'],
       createdAt: json['created_at'] ?? '',
-      rosaFinal: json['rosa_final'] != null
-          ? (json['rosa_final'] as num).toInt()
-          : (riskScore / 10).round(),
+      rosaFinal: (json['rosa_final'] as num?)?.toInt(),
     );
   }
 
