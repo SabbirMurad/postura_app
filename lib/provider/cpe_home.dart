@@ -34,13 +34,15 @@ class ScanItem {
   final double riskScore;
   final String riskLevel; // "yellow" | "red" | "green"
   final double vasScore;
-  final String reviewStatus; // "PENDING" | "FOLLOW_UP_REQUIRED" | "APPROVED" | "REJECTED"
+  final String
+  reviewStatus; // "PENDING" | "FOLLOW_UP_REQUIRED" | "APPROVED" | "REJECTED"
   /// A photos-only scan still waiting for the ergonomist's workstation answers.
   final bool awaitingErgonomist;
   final String reviewComment;
   final String? reviewedBy;
   final String? reviewedAt;
   final String createdAt;
+
   /// ROSA final score (the ergonomist's updated one if revised); null when
   /// the scan has none yet.
   final int? rosaFinal;
@@ -100,6 +102,9 @@ class CpeHomeState {
   final int totalPages;
   final int currentPage;
   final bool isLoading;
+
+  /// Fetching the next page (the list stays on screen meanwhile).
+  final bool isLoadingMore;
   final String? error;
 
   const CpeHomeState({
@@ -109,8 +114,11 @@ class CpeHomeState {
     this.totalPages = 1,
     this.currentPage = 1,
     this.isLoading = false,
+    this.isLoadingMore = false,
     this.error,
   });
+
+  bool get hasMore => currentPage < totalPages;
 }
 
 // ─────────────────────────────────────────
@@ -131,7 +139,7 @@ class CpeHomeNotifier extends Notifier<CpeHomeState> {
     );
 
     final result = await CustomHttp.get(
-      endpoint: 'cpe/ergonomist/company/assessment-list',
+      endpoint: 'cpe/ergonomist/company/assessment-list?page=1',
       needAuth: true,
       showFloatingError: false,
     );
@@ -160,7 +168,9 @@ class CpeHomeNotifier extends Notifier<CpeHomeState> {
     try {
       CpeCompany? company;
       if (data['company'] != null) {
-        company = CpeCompany.fromJson(Map<String, dynamic>.from(data['company']));
+        company = CpeCompany.fromJson(
+          Map<String, dynamic>.from(data['company']),
+        );
       }
 
       final List<dynamic> list = data['scan_list'] ?? [];
@@ -185,6 +195,55 @@ class CpeHomeNotifier extends Notifier<CpeHomeState> {
       );
     }
   }
+
+  /// Load the next page and append it. A failure keeps what's already shown;
+  /// scrolling to the end again retries.
+  Future<void> fetchNextPage() async {
+    final s = state;
+    if (s.isLoading || s.isLoadingMore || !s.hasMore) return;
+    state = _with(s, isLoadingMore: true);
+
+    final result = await CustomHttp.get(
+      endpoint:
+          'cpe/ergonomist/company/assessment-list?page=${s.currentPage + 1}',
+      needAuth: true,
+      showFloatingError: false,
+    );
+    // A refresh started meanwhile replaced the list; drop this stale page.
+    if (!state.isLoadingMore) return;
+    final data = result.data;
+    if (result.error != null || data == null) {
+      state = _with(state, isLoadingMore: false);
+      return;
+    }
+    try {
+      final List<dynamic> list = data['scan_list'] ?? [];
+      final known = state.scanList.map((e) => e.scanId).toSet();
+      // Skip rows already shown (a new scan can shift the pages).
+      final more = list
+          .map((e) => ScanItem.fromJson(Map<String, dynamic>.from(e)))
+          .where((e) => !known.contains(e.scanId));
+      state = CpeHomeState(
+        company: state.company,
+        scanList: [...state.scanList, ...more],
+        totalCount: data['count'] ?? state.totalCount,
+        totalPages: data['total_pages'] ?? state.totalPages,
+        currentPage: data['current_page'] ?? s.currentPage + 1,
+      );
+    } catch (_) {
+      state = _with(state, isLoadingMore: false);
+    }
+  }
+
+  static CpeHomeState _with(CpeHomeState s, {required bool isLoadingMore}) =>
+      CpeHomeState(
+        company: s.company,
+        scanList: s.scanList,
+        totalCount: s.totalCount,
+        totalPages: s.totalPages,
+        currentPage: s.currentPage,
+        isLoadingMore: isLoadingMore,
+      );
 }
 
 final cpeHomeNotifierProvider = NotifierProvider<CpeHomeNotifier, CpeHomeState>(

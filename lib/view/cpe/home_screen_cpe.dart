@@ -89,30 +89,45 @@ class HomeScreenCPE extends ConsumerWidget {
     return RefreshIndicator(
       onRefresh: () =>
           ref.read(cpeHomeNotifierProvider.notifier).fetchAssessmentList(),
-      child: ListView.separated(
-        physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: state.scanList.length,
-        separatorBuilder: (_, __) => SizedBox(height: 12.h),
-        itemBuilder: (context, index) {
-          final scan = state.scanList[index];
-          return GestureDetector(
-            onTap: () => context.push(
-              AppRoute.cpeAssessment,
-              extra: {
-                'scan_id': scan.scanId,
-                'assessment_id': scan.assessmentId,
-                'name': scan.employeeName,
-                'id': scan.employeeId,
-                'compliance': scan.compliance,
-                'desk_location': scan.deskLocation,
-                'risk_level': scan.riskLevel,
-                'vas_score': scan.vasScore,
-                'review_status': scan.reviewStatus,
-              },
-            ),
-            child: PatientComplianceCard(scan: scan),
-          );
+      child: NotificationListener<ScrollNotification>(
+        // Load the next page when the list is scrolled near its end.
+        onNotification: (n) {
+          if (n.metrics.extentAfter < 300) {
+            ref.read(cpeHomeNotifierProvider.notifier).fetchNextPage();
+          }
+          return false;
         },
+        child: ListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemCount: state.scanList.length + (state.hasMore ? 1 : 0),
+          separatorBuilder: (_, __) => SizedBox(height: 12.h),
+          itemBuilder: (context, index) {
+            if (index >= state.scanList.length) {
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+                child: const Center(child: CircularProgressIndicator()),
+              );
+            }
+            final scan = state.scanList[index];
+            return GestureDetector(
+              onTap: () => context.push(
+                AppRoute.cpeAssessment,
+                extra: {
+                  'scan_id': scan.scanId,
+                  'assessment_id': scan.assessmentId,
+                  'name': scan.employeeName,
+                  'id': scan.employeeId,
+                  'compliance': scan.compliance,
+                  'desk_location': scan.deskLocation,
+                  'risk_level': scan.riskLevel,
+                  'vas_score': scan.vasScore,
+                  'review_status': scan.reviewStatus,
+                },
+              ),
+              child: PatientComplianceCard(scan: scan),
+            );
+          },
+        ),
       ),
     );
   }
