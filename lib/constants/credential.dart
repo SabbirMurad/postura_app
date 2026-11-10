@@ -6,7 +6,7 @@ class AppCredentials {
   // domain must be https://.
   static const String domain = String.fromEnvironment(
     'API_DOMAIN',
-    defaultValue: 'http://52.59.246.89',
+    defaultValue: 'https://postura.tech',
   );
   // static const String domain = 'http://10.10.29.65:8080';
   // static const String domain = 'http://10.10.29.65:8080'; // physical device (LAN)

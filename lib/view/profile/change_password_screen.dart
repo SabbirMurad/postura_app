@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:posture_detector_app/utils/password_rules.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -111,12 +112,7 @@ class _ChangePasswordScreenState
                   hintText: loc.newPassword,
                   controller: _newPassController,
                   isPassword: true,
-                  validator: (value) {
-                    if (value.length < 8) {
-                      return 'password should be 8 character';
-                    }
-                    return null;
-                  },
+                  validator: (value) => passwordProblem(value),
                 ),
 
                 SizedBox(height: 24.h),

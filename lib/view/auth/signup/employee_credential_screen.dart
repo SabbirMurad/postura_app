@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:posture_detector_app/utils/password_rules.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -162,6 +163,9 @@ class _EmployeeCredentialScreenState
                     _passwordController.text.isEmpty) {
                   // EN: "All fields must be filled"
                   showCustomToast(text: loc.allFieldsMustBeFilled);
+                } else if (passwordProblem(_passwordController.text.trim())
+                    case final problem?) {
+                  showCustomToast(text: problem);
                 } else {
                   ref
                       .read(signupNotifierProvider.notifier)

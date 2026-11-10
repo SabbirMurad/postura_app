@@ -10,6 +10,7 @@ class MainActivity : FlutterActivity() {
 
     private companion object {
         const val CHANNEL      = "posture_detection"
+        const val INTEGRITY_CHANNEL = "device_integrity"
         const val REQUEST_CODE = 1001
     }
 
@@ -17,6 +18,11 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, INTEGRITY_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                if (call.method == "check") result.success(DeviceIntegrity.check(this))
+                else result.notImplemented()
+            }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
                 when (call.method) {

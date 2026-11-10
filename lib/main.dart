@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:posture_detector_app/common/widgets/device_integrity_gate.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +57,7 @@ void main() async {
           (ref) => savedLocale ?? const Locale('en'),
         ),
       ],
-      child: const MyApp(),
+      child: const DeviceIntegrityGate(child: MyApp()),
     ),
   );
 }

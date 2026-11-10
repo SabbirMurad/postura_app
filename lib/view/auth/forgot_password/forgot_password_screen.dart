@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:posture_detector_app/utils/password_rules.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -40,6 +41,11 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         _confirmPasswordController.text.trim()) {
       // EN: "Passwords do not match"
       showCustomToast(text: loc.passwordNotMatched);
+      return;
+    }
+    final problem = passwordProblem(_passwordController.text.trim());
+    if (problem != null) {
+      showCustomToast(text: problem);
       return;
     }
     setState(() => _loading = true);

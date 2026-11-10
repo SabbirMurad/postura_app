@@ -93,8 +93,11 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:1.5.3")
     implementation("androidx.camera:camera-view:1.5.3")
     implementation("com.google.mediapipe:tasks-vision:0.10.35")
-    implementation("org.tensorflow:tensorflow-lite:2.17.0")
-    implementation("org.tensorflow:tensorflow-lite-gpu:2.17.0")
+    // LiteRT is TensorFlow Lite's new name (same org.tensorflow.lite classes).
+    // Its native libraries are 16 KB page-aligned on every ABI; TFLite 2.17's
+    // x86_64 ones weren't, which made Android 15+ show a compatibility warning.
+    implementation("com.google.ai.edge.litert:litert:1.4.0")
+    implementation("com.google.ai.edge.litert:litert-gpu:1.4.0")
 }
 
 flutter {
