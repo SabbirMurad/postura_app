@@ -39,16 +39,12 @@ class ExerciseShowCaseContainer extends StatelessWidget {
     return Colors.green;
   }
 
-  /// Sets recommendation per sensitivity level
-  String _setsForLevel() {
-    switch (sensitivityLabel) {
-      case 'Active':
-        return '4 sets × 12 reps';
-      case 'Moderate':
-        return '3 sets × 10 reps';
-      default:
-        return '2 sets × 8 reps';
-    }
+  /// The dose the backend recommended for this exercise, e.g. "2 sets, hold
+  /// 10–15 seconds". Null on old cached reports that don't carry one.
+  String? get _programme {
+    final sets = recommendedSets ?? 0;
+    if (sets <= 0 || duration.isEmpty) return null;
+    return '$sets ${sets == 1 ? 'set' : 'sets'}, hold $duration';
   }
 
   void _showDetailsModal(BuildContext context) {
@@ -151,12 +147,13 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                     ),
                     SizedBox(height: 24.h),
 
-                    /// Your Programme (sets per sensitivity level)
-                    _buildDetailSection(
-                      title: 'Your programme',
-                      content: _setsForLevel(),
-                      icon: Icons.fitness_center_rounded,
-                    ),
+                    /// Your Programme (the recommended dose)
+                    if (_programme != null)
+                      _buildDetailSection(
+                        title: 'Your programme',
+                        content: _programme!,
+                        icon: Icons.fitness_center_rounded,
+                      ),
 
                     /// Why this helps (muscles addressed)
                     if (musclesAddressed != null && musclesAddressed!.isNotEmpty)

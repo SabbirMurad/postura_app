@@ -19,6 +19,7 @@ class BodyAngles {
     this.shrugGap,
     this.wristExtension,
     this.mouseReach,
+    this.trunkRecline,
   });
 
   /// "Left" / "Right" — which side's landmarks were used. Empty when this entry
@@ -50,6 +51,11 @@ class BodyAngles {
   final double? wristExtension;
   final double? mouseReach;
 
+  /// [trunkAngle] signed: positive leaning back, negative leaning forward.
+  /// Null on older captures, or when the photo didn't show which way the
+  /// person faces. The backend uses it for the backrest-angle recommendation.
+  final double? trunkRecline;
+
   /// True when this entry actually holds a measurement. Null/empty native
   /// entries deserialize with a blank [side] and NaN angles.
   bool get hasData => side.isNotEmpty && !kneeAngle.isNaN;
@@ -67,6 +73,7 @@ class BodyAngles {
     shrugGap: (m['shrug_gap'] as num?)?.toDouble(),
     wristExtension: (m['wrist_extension'] as num?)?.toDouble(),
     mouseReach: (m['mouse_reach'] as num?)?.toDouble(),
+    trunkRecline: (m['trunk_recline'] as num?)?.toDouble(),
   );
 
   Map<String, dynamic> toJson() => {
@@ -80,6 +87,7 @@ class BodyAngles {
     if (shrugGap != null) 'shrug_gap': shrugGap,
     if (wristExtension != null) 'wrist_extension': wristExtension,
     if (mouseReach != null) 'mouse_reach': mouseReach,
+    if (trunkRecline != null) 'trunk_recline': trunkRecline,
   };
 
   /// Human-readable neck posture, mapping the native enum names to labels.

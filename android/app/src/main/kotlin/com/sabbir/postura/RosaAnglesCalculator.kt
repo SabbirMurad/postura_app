@@ -39,12 +39,16 @@ object RosaAnglesCalculator {
         val wristExtension: Float,  // elbow.y − wrist.y — keyboard
         val mouseReach: Float,      // |wrist.x − shoulder.x| — mouse
         val lowerBodyConfidence: LowerBodyConfidence, // reliability of kneeAngle
+        // trunkAngle signed: + leaning back, − leaning forward. Null when the
+        // knee doesn't show which way the person faces. Recommendation only;
+        // the ROSA backrest score keeps using trunkAngle.
+        val trunkRecline: Float? = null,
     ) {
         /// The measured body angles, for the Flutter review screen, plus the raw
         /// normalized offsets the scorer uses (shrugGap, wristExtension,
         /// mouseReach). Those are not shown; they are sent to the backend so it
         /// can score a photos-only scan once the ergonomist answers the checklist.
-        fun toMap(): Map<String, Any> = hashMapOf(
+        fun toMap(): Map<String, Any> = hashMapOf<String, Any>(
             "side"                  to if (isLeftSide) "Left" else "Right",
             "knee_angle"            to kneeAngle.toDouble(),
             "trunk_angle"           to trunkAngle.toDouble(),
@@ -55,7 +59,7 @@ object RosaAnglesCalculator {
             "shrug_gap"             to shrugGap.toDouble(),
             "wrist_extension"       to wristExtension.toDouble(),
             "mouse_reach"           to mouseReach.toDouble(),
-        )
+        ).apply { trunkRecline?.let { put("trunk_recline", it.toDouble()) } }
     }
 
     fun compute(lm: List<LandmarkPoint>): Angles? {
@@ -114,6 +118,11 @@ object RosaAnglesCalculator {
         val dx = abs(hip.x - shoulder.x).toDouble()
         val dy = abs(hip.y - shoulder.y).toDouble()
         val trunkAngle = if (dy < 1e-6) 90f else (atan2(dx, dy) * (180.0 / PI)).toFloat()
+        // Seated in profile, the knee is in front of the hip, which gives the
+        // facing direction. A shoulder behind the hip is a recline.
+        val facing = knee.x - hip.x
+        val trunkRecline = if (abs(facing) < 0.02f) null
+            else if ((shoulder.x - hip.x) * facing <= 0f) trunkAngle else -trunkAngle
 
         val neckDx    = abs(ear.x - shoulder.x).toDouble()
         val neckDy    = abs(shoulder.y - ear.y).toDouble()
@@ -136,7 +145,7 @@ object RosaAnglesCalculator {
         val wristExtension = elbow.y - wrist.y
         val mouseReach     = abs(wrist.x - shoulder.x)
 
-        return Angles(useLeft, kneeAngle, trunkAngle, elbowAngle, neckAngle, shrugGap, neckFlexY, neckState, wristExtension, mouseReach, lowerBodyConfidence)
+        return Angles(useLeft, kneeAngle, trunkAngle, elbowAngle, neckAngle, shrugGap, neckFlexY, neckState, wristExtension, mouseReach, lowerBodyConfidence, trunkRecline)
     }
 
     private fun angleBetween(p1: LandmarkPoint, vertex: LandmarkPoint, p2: LandmarkPoint): Float {

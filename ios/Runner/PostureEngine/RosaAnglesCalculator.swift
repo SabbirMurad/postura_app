@@ -45,13 +45,17 @@ enum RosaAnglesCalculator {
         let wristExtension: Float
         let mouseReach: Float
         let lowerBodyConfidence: LowerBodyConfidence
+        /// trunkAngle signed: + leaning back, − leaning forward. Nil when the
+        /// knee doesn't show which way the person faces. Recommendation only;
+        /// the ROSA backrest score keeps using trunkAngle.
+        var trunkRecline: Float? = nil
 
         /// The measured body angles, for the Flutter review screen, plus the raw
         /// normalized offsets the scorer uses (shrugGap, wristExtension,
         /// mouseReach). Those are not shown; they are sent to the backend so it
         /// can score a photos-only scan once the ergonomist answers the checklist.
         func toMap() -> [String: Any] {
-            return [
+            var map: [String: Any] = [
                 "side": isLeftSide ? "Left" : "Right",
                 "knee_angle": Double(kneeAngle),
                 "trunk_angle": Double(trunkAngle),
@@ -63,6 +67,8 @@ enum RosaAnglesCalculator {
                 "wrist_extension": Double(wristExtension),
                 "mouse_reach": Double(mouseReach),
             ]
+            if let r = trunkRecline { map["trunk_recline"] = Double(r) }
+            return map
         }
     }
 
@@ -137,6 +143,11 @@ enum RosaAnglesCalculator {
         let dx = Double(abs(hip.x - shoulder.x))
         let dy = Double(abs(hip.y - shoulder.y))
         let trunkAngle: Float = dy < 1e-6 ? 90 : Float(atan2(dx, dy) * (180.0 / .pi))
+        // Seated in profile, the knee is in front of the hip, which gives the
+        // facing direction. A shoulder behind the hip is a recline.
+        let facing = knee.x - hip.x
+        let trunkRecline: Float? = abs(facing) < 0.02 ? nil
+            : ((shoulder.x - hip.x) * facing <= 0 ? trunkAngle : -trunkAngle)
 
         let neckDx = Double(abs(ear.x - shoulder.x))
         let neckDy = Double(abs(shoulder.y - ear.y))
@@ -175,7 +186,8 @@ enum RosaAnglesCalculator {
             neckState: neckState,
             wristExtension: wristExtension,
             mouseReach: mouseReach,
-            lowerBodyConfidence: lowerBodyConfidence
+            lowerBodyConfidence: lowerBodyConfidence,
+            trunkRecline: trunkRecline
         )
     }
 
