@@ -306,6 +306,25 @@ enum PoseRenderer {
         if landmarks.count < 29 { return }
         let left = angles.isLeftSide
 
+        // Eye-level line (side view only — the front shot never draws these
+        // angles). A thin horizontal line across the whole image through the eye
+        // on the photographed side, so a reviewer can judge whether the top of the
+        // monitor is at eye level. Drawn first so the arcs sit on top.
+        let eyeY = sy(landmarks[left ? 2 : 5].y)
+        let eyeColor = UIColor(red: 0, green: 229 / 255, blue: 1, alpha: 1)
+        let bounds = ctx.boundingBoxOfClipPath
+        ctx.setStrokeColor(eyeColor.cgColor)
+        ctx.setLineWidth(2 * scale)
+        ctx.setLineDash(phase: 0, lengths: [])
+        ctx.move(to: CGPoint(x: bounds.minX, y: eyeY))
+        ctx.addLine(to: CGPoint(x: bounds.maxX, y: eyeY))
+        ctx.strokePath()
+        let eyeTextSize = 22 * scale
+        drawCenteredOutlinedText(ctx, text: "Eye level",
+                                 center: CGPoint(x: bounds.minX + eyeTextSize * 2.8,
+                                                 y: eyeY - eyeTextSize * 0.8),
+                                 textSize: eyeTextSize, color: eyeColor)
+
         let ear = landmarks[left ? 7 : 8]
         let shoulder = landmarks[left ? 11 : 12]
         let elbow = landmarks[left ? 13 : 14]

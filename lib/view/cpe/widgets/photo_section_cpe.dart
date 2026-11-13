@@ -52,8 +52,12 @@ class PhotoSectionCPE extends StatelessWidget {
       'Neck': '${a.neckAngle.toStringAsFixed(1)}°',
       'Neck state': a.neckStateLabel,
       'Lower body': a.lowerBodyConfidence,
+      'Monitor detected': _yesNo(c.monitorDetected),
     };
   }
+
+  // Older scans were recorded before the check existed.
+  String _yesNo(bool? v) => v == null ? '—' : (v ? 'Yes' : 'No');
 }
 
 class _CaptureCard extends StatelessWidget {

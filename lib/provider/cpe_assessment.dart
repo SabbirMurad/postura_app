@@ -69,12 +69,18 @@ class PhotoItem {
 class SideCaptureView {
   final String image;
   final BodyAngles angles;
+  final bool? monitorDetected;
 
-  const SideCaptureView({required this.image, required this.angles});
+  const SideCaptureView({
+    required this.image,
+    required this.angles,
+    this.monitorDetected,
+  });
 
   factory SideCaptureView.fromJson(Map<String, dynamic> m) => SideCaptureView(
     image: m['image'] as String? ?? '',
     angles: BodyAngles.fromJson(m),
+    monitorDetected: m['monitor_detected'] as bool?,
   );
 }
 

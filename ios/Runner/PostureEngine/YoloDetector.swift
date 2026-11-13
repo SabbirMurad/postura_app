@@ -1,5 +1,6 @@
 import Foundation
 import CoreVideo
+import UIKit
 
 private let TAG = "YoloDetector"
 private let INPUT_SIZE = 320
@@ -82,6 +83,45 @@ final class YoloDetector {
         TfLiteInterpreterDelete(interpreter)
         TfLiteInterpreterOptionsDelete(options)
         TfLiteModelDelete(model)
+    }
+
+    /// Detects on an upright still (e.g. a `thumbnail` of a captured photo).
+    /// Nil when the image can't be converted.
+    func detect(image: UIImage) -> YoloResult? {
+        guard let pb = YoloDetector.pixelBuffer(from: image) else { return nil }
+        return detect(pixelBuffer: pb)
+    }
+
+    /// A model-sized copy of a frame, cheap to keep until the photos are
+    /// checked for a monitor after the last shot.
+    static func thumbnail(_ image: UIImage) -> UIImage {
+        let size = CGSize(width: INPUT_SIZE, height: INPUT_SIZE)
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        return UIGraphicsImageRenderer(size: size, format: format).image { _ in
+            image.draw(in: CGRect(origin: .zero, size: size))
+        }
+    }
+
+    // Stretches the image into a 320x320 BGRA buffer, like the live path.
+    private static func pixelBuffer(from image: UIImage) -> CVPixelBuffer? {
+        guard let cg = image.cgImage else { return nil }
+        var pb: CVPixelBuffer?
+        let attrs = [kCVPixelBufferCGImageCompatibilityKey: true,
+                     kCVPixelBufferCGBitmapContextCompatibilityKey: true] as CFDictionary
+        guard CVPixelBufferCreate(kCFAllocatorDefault, INPUT_SIZE, INPUT_SIZE,
+                                  kCVPixelFormatType_32BGRA, attrs, &pb) == kCVReturnSuccess,
+              let buffer = pb else { return nil }
+        CVPixelBufferLockBaseAddress(buffer, [])
+        defer { CVPixelBufferUnlockBaseAddress(buffer, []) }
+        guard let ctx = CGContext(
+            data: CVPixelBufferGetBaseAddress(buffer), width: INPUT_SIZE, height: INPUT_SIZE,
+            bitsPerComponent: 8, bytesPerRow: CVPixelBufferGetBytesPerRow(buffer),
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue
+                | CGBitmapInfo.byteOrder32Little.rawValue) else { return nil }
+        ctx.draw(cg, in: CGRect(x: 0, y: 0, width: INPUT_SIZE, height: INPUT_SIZE))
+        return buffer
     }
 
     func detect(pixelBuffer: CVPixelBuffer) -> YoloResult {

@@ -99,6 +99,9 @@ final class PoseDetectionViewController: UIViewController {
     // The front (4th) shot and its two raw measured angles (degrees). These feed the
     // armrest-too-wide / keyboard-deviation modifiers and are also surfaced to Flutter.
     private var frontPhoto: UIImage?
+    // Clean (un-blurred, un-annotated) model-sized copies of the side shots,
+    // checked for a monitor once all photos are taken (see finishWithCaptures).
+    private var sideMonitorFrames: [UIImage] = []
     private var frontAbductionAngle: Double = 0
     private var frontWristDeviationAngle: Double = 0
 
@@ -345,6 +348,7 @@ final class PoseDetectionViewController: UIViewController {
             self.capturedPhotos.removeAll()
             self.capturedAngles.removeAll()
             self.frontPhoto = nil
+            self.sideMonitorFrames.removeAll()
             self.frontAbductionAngle = 0
             self.frontWristDeviationAngle = 0
             self.nextCaptureEarliestAtMs = 0
@@ -626,6 +630,7 @@ final class PoseDetectionViewController: UIViewController {
                 successCount = 0
                 if let frame = lastFrameImage {
                     let captured = smoothed
+                    sideMonitorFrames.append(YoloDetector.thumbnail(frame))
                     let blurred = FaceBlurrer.blurFace(frame, landmarks: captured)
                     let angles = RosaAnglesCalculator.compute(captured)
                     let photo = bakeSkeletonOntoPhoto(blurred, landmarks: captured, angles: angles)
@@ -896,6 +901,28 @@ final class PoseDetectionViewController: UIViewController {
     /// as `side_captures` (image + score + angles per side shot) and one `front_capture`
     /// (image + the two raw front-view angles). All keys snake_case.
     private func finishWithCaptures(_ sidePhotos: [UIImage], scores: [RosaScorer.Result?]) {
+        // Before the review screen, run the monitor detector again on each side
+        // photo and record whether it finds a monitor in it. The live
+        // detector was released after the detection phase, so load it once
+        // here, off the main thread. A failed check leaves the value out.
+        tvCaptureStatus.isHidden = false
+        tvCaptureStatus.text = "Checking photos…"
+        let sideFrames = sideMonitorFrames
+        DispatchQueue.global(qos: .userInitiated).async {
+            let detector = YoloDetector()
+            func check(_ frame: UIImage) -> Bool? {
+                guard let detector = detector else { return nil }
+                return detector.detect(image: frame)?.monitorDetected
+            }
+            let sideMonitor = sideFrames.map { check($0) }
+            DispatchQueue.main.async {
+                self.writeCaptures(sidePhotos, scores: scores, sideMonitor: sideMonitor)
+            }
+        }
+    }
+
+    private func writeCaptures(_ sidePhotos: [UIImage], scores: [RosaScorer.Result?],
+                               sideMonitor: [Bool?]) {
         let dir = (NSTemporaryDirectory() as NSString).appendingPathComponent("posture_photos")
         try? FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
 
@@ -913,6 +940,7 @@ final class PoseDetectionViewController: UIViewController {
                 "body_angles": capturedAngles.indices.contains(i) ? (capturedAngles[i]?.toMap() ?? [:]) : [:],
             ]
             if let path = write(photo, "side_\(i + 1).jpg") { obj["image_path"] = path }
+            if i < sideMonitor.count, let seen = sideMonitor[i] { obj["monitor_detected"] = seen }
             sideCaptures.append(obj)
         }
 

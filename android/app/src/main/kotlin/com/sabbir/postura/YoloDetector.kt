@@ -1,6 +1,7 @@
 package com.sabbir.postura
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.media.Image
 import android.util.Log
 import org.tensorflow.lite.Interpreter
@@ -62,11 +63,34 @@ class YoloDetector(context: Context) {
         }
     }
 
-    fun detect(image: Image, rotationDegrees: Int): YoloResult {
-        val input = buildInputTensor(image, rotationDegrees)
+    fun detect(image: Image, rotationDegrees: Int): YoloResult =
+        run(buildInputTensor(image, rotationDegrees))
+
+    /** Detects on an upright still (e.g. a [thumbnail] of a captured photo). */
+    fun detect(bitmap: Bitmap): YoloResult = run(buildInputTensor(bitmap))
+
+    private fun run(input: ByteBuffer): YoloResult {
         val output = Array(1) { Array(84) { FloatArray(NUM_CANDIDATES) } }
         interpreter.run(input, output)
         return buildResult(parseAndNms(output[0]))
+    }
+
+    // Stretches the bitmap to 320x320, like the live YUV path does.
+    private fun buildInputTensor(bitmap: Bitmap): ByteBuffer {
+        val scaled = if (bitmap.width == INPUT_SIZE && bitmap.height == INPUT_SIZE) bitmap
+            else Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, true)
+        val pixels = IntArray(INPUT_SIZE * INPUT_SIZE)
+        scaled.getPixels(pixels, 0, INPUT_SIZE, 0, 0, INPUT_SIZE, INPUT_SIZE)
+        val buf = ByteBuffer
+            .allocateDirect(4 * INPUT_SIZE * INPUT_SIZE * 3)
+            .order(ByteOrder.nativeOrder())
+        for (p in pixels) {
+            buf.putFloat(((p shr 16) and 0xFF) / 255f)
+            buf.putFloat(((p shr 8) and 0xFF) / 255f)
+            buf.putFloat((p and 0xFF) / 255f)
+        }
+        buf.rewind()
+        return buf
     }
 
     private fun buildInputTensor(image: Image, rotationDegrees: Int): ByteBuffer {
@@ -199,4 +223,11 @@ class YoloDetector(context: Context) {
     }
 
     fun dispose() = interpreter.close()
+
+    companion object {
+        /** A model-sized copy of a frame, cheap to keep until the photos are
+         *  checked for a monitor after the last shot. */
+        fun thumbnail(bitmap: Bitmap): Bitmap =
+            Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, true)
+    }
 }

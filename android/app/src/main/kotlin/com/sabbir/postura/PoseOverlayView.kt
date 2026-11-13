@@ -292,6 +292,24 @@ class PoseOverlayView @JvmOverloads constructor(
             if (landmarks.size < 29) return
             val left = angles.isLeftSide
 
+            // Eye-level line (side view only — the front shot never draws these
+            // angles). A thin horizontal line across the whole image through the
+            // eye on the photographed side, so a reviewer can judge whether the
+            // top of the monitor is at eye level. Drawn first so the arcs sit on top.
+            val eyeY = sy(landmarks[if (left) 2 else 5].y)
+            val eyeColor = Color.parseColor("#00E5FF")
+            val eyeLinePaint = Paint().apply {
+                color = eyeColor; style = Paint.Style.STROKE; isAntiAlias = true
+                strokeWidth = vertRefPaint.strokeWidth * 0.67f
+            }
+            canvas.drawLine(0f, eyeY, canvas.width.toFloat(), eyeY, eyeLinePaint)
+            val eyeLabelPaint = Paint(labelPaint).apply {
+                color = eyeColor; textSize = labelPaint.textSize * 0.6f
+                textAlign = Paint.Align.LEFT
+            }
+            canvas.drawText("Eye level", eyeLabelPaint.textSize * 0.4f,
+                eyeY - eyeLabelPaint.textSize * 0.3f, eyeLabelPaint)
+
             val ear      = landmarks[if (left) 7 else 8]
             val shoulder = landmarks[if (left) 11 else 12]
             val elbow    = landmarks[if (left) 13 else 14]

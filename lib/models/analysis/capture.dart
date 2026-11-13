@@ -10,11 +10,16 @@ class SideViewCapture {
     required this.image,
     required this.rosaScore,
     required this.bodyAngles,
+    this.monitorDetected,
   });
 
   final File image;
   final RosaScore rosaScore;
   final BodyAngles bodyAngles;
+
+  /// Whether the monitor detector found a monitor in this photo (checked once
+  /// all photos are taken). Null if the check couldn't run.
+  final bool? monitorDetected;
 
   factory SideViewCapture.fromChannel(Map<String, dynamic> m) =>
       SideViewCapture(
@@ -25,6 +30,7 @@ class SideViewCapture {
         bodyAngles: BodyAngles.fromJson(
           Map<String, dynamic>.from(m['body_angles'] as Map? ?? const {}),
         ),
+        monitorDetected: m['monitor_detected'] as bool?,
       );
 
   /// Backend payload for this capture (the SideViewCaptureInput contract): the
@@ -33,6 +39,7 @@ class SideViewCapture {
   Map<String, dynamic> toJson(String imageId) => {
     'image_id': imageId,
     ...bodyAngles.toJson(),
+    if (monitorDetected != null) 'monitor_detected': monitorDetected,
   };
 }
 

@@ -150,6 +150,9 @@ class PoseDetectionActivity : AppCompatActivity() {
     // The front (4th) shot and its two raw measured angles (degrees). These feed the
     // armrest-too-wide / keyboard-deviation modifiers and are also surfaced to Flutter.
     private var frontPhoto: Bitmap? = null
+    // Clean (un-blurred, un-annotated) model-sized copies of the side shots,
+    // checked for a monitor once all photos are taken (see finishWithCaptures).
+    private val sideMonitorFrames = mutableListOf<Bitmap>()
     private var frontAbductionAngle: Double = 0.0
     private var frontWristDeviationAngle: Double = 0.0
 
@@ -307,6 +310,7 @@ class PoseDetectionActivity : AppCompatActivity() {
         appState = AppState.LIGHT_CHECK
         confirmationCount = 0
         capturedPhotos.clear()
+        sideMonitorFrames.clear()
         capturedAngles.clear()
         frontPhoto = null
         frontAbductionAngle = 0.0
@@ -429,6 +433,7 @@ class PoseDetectionActivity : AppCompatActivity() {
                         val captured  = smoothed.toList()
                         val frameCopy = lastFrameBitmap?.copy(Bitmap.Config.ARGB_8888, true)
                         if (frameCopy != null) {
+                            sideMonitorFrames.add(YoloDetector.thumbnail(frameCopy))
                             val blurred  = FaceBlurrer.blurFace(frameCopy, captured)
                             val angles   = RosaAnglesCalculator.compute(captured)
                             val photo    = bakeSkeletonOntoPhoto(blurred, captured, angles)
@@ -947,6 +952,39 @@ class PoseDetectionActivity : AppCompatActivity() {
      * angles) — to a single JSON object, handed back to MainActivity for Flutter.
      */
     private fun finishWithCaptures(sidePhotos: List<Bitmap>, scores: List<RosaScorer.Result?>) {
+        // Before the review screen, run the monitor detector again on each side
+        // photo and record whether it finds a monitor in it. The live
+        // detector was released after the detection phase, so load it once
+        // here, off the UI thread. A failed check leaves the value out.
+        tvCaptureStatus.text = "Checking photos…"
+        val sideFrames = sideMonitorFrames.toList()
+        Thread {
+            val detector = try {
+                YoloDetector(this)
+            } catch (t: Throwable) {
+                Log.e("YoloDetector", "monitor check unavailable", t)
+                null
+            }
+            fun check(frame: Bitmap): Boolean? {
+                if (detector == null) return null
+                return try {
+                    detector.detect(frame).monitorDetected
+                } catch (t: Throwable) {
+                    Log.e("YoloDetector", "monitor check failed", t)
+                    null
+                }
+            }
+            val sideMonitor = sideFrames.map { check(it) }
+            detector?.dispose()
+            runOnUiThread { writeCaptures(sidePhotos, scores, sideMonitor) }
+        }.start()
+    }
+
+    private fun writeCaptures(
+        sidePhotos: List<Bitmap>,
+        scores: List<RosaScorer.Result?>,
+        sideMonitor: List<Boolean?>,
+    ) {
         val dir = File(cacheDir, "posture_photos").apply { mkdirs() }
 
         fun write(bitmap: Bitmap, name: String): String {
@@ -963,6 +1001,7 @@ class PoseDetectionActivity : AppCompatActivity() {
                     ?: org.json.JSONObject())
                 obj.put("body_angles", capturedAngles.getOrNull(i)?.let { org.json.JSONObject(it.toMap()) }
                     ?: org.json.JSONObject())
+                sideMonitor.getOrNull(i)?.let { obj.put("monitor_detected", it) }
                 arr.put(obj)
             }
         }
