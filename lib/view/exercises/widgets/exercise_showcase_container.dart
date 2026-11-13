@@ -19,6 +19,12 @@ class ExerciseShowCaseContainer extends StatelessWidget {
   final int? recommendedSets;
   final String? safetyNote;
 
+  // Employee card copy. Empty on reports from before it existed, in which case
+  // the card falls back to the older fields.
+  final String musclesText;
+  final String whyThisHelps;
+  final String whenToStop;
+
   const ExerciseShowCaseContainer({
     super.key,
     required this.title,
@@ -31,7 +37,14 @@ class ExerciseShowCaseContainer extends StatelessWidget {
     this.regionVas,
     this.recommendedSets,
     this.safetyNote,
+    this.musclesText = '',
+    this.whyThisHelps = '',
+    this.whenToStop = '',
   });
+
+  static const _programmeNote =
+      'Follow the sets, repetitions or hold time shown in your personalised '
+      'programme.';
 
   Color _getVasColor(int vas) {
     if (vas >= 7) return Colors.red;
@@ -136,7 +149,7 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                     ),
                     SizedBox(height: 12.h),
 
-                    /// Description
+                    /// Body area
                     Text(
                       subtitle,
                       style: TextStyle(
@@ -147,29 +160,42 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                     ),
                     SizedBox(height: 24.h),
 
-                    /// Your Programme (the recommended dose)
-                    if (_programme != null)
+                    /// Muscles / body area
+                    if (musclesText.isNotEmpty)
                       _buildDetailSection(
-                        title: 'Your programme',
-                        content: _programme!,
-                        icon: Icons.fitness_center_rounded,
+                        title: 'Muscles / body area',
+                        content: musclesText,
+                        icon: Icons.accessibility_new_rounded,
                       ),
 
-                    /// Why this helps (muscles addressed)
-                    if (musclesAddressed != null && musclesAddressed!.isNotEmpty)
-                      _buildDetailSection(
-                        title: 'Why this helps',
-                        content: musclesAddressed!,
-                        icon: Icons.info_outline_rounded,
-                      ),
-
-                    /// Purpose / How to do it
+                    /// How to do it
                     if (purpose != null && purpose!.isNotEmpty)
                       _buildDetailSection(
                         title: 'How to do it',
                         content: purpose!,
                         icon: Icons.play_circle_outline_rounded,
                       ),
+
+                    /// Why this helps (older reports: the muscles addressed)
+                    if (whyThisHelps.isNotEmpty ||
+                        (musclesAddressed?.isNotEmpty ?? false))
+                      _buildDetailSection(
+                        title: 'Why this helps',
+                        content: whyThisHelps.isNotEmpty
+                            ? whyThisHelps
+                            : musclesAddressed!,
+                        icon: Icons.info_outline_rounded,
+                      ),
+
+                    /// Your programme: the selected amount, shown as-is; none
+                    /// is invented when the report doesn't carry one.
+                    _buildDetailSection(
+                      title: 'Your programme',
+                      content: _programme == null
+                          ? _programmeNote
+                          : '${_programme!}\n$_programmeNote',
+                      icon: Icons.fitness_center_rounded,
+                    ),
 
                     /// VAS indicator
                     if (regionVas != null)
@@ -202,11 +228,18 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                         ),
                       ),
 
-                    /// When to stop (safety note)
-                    if (safetyNote != null && safetyNote!.isNotEmpty)
+                    /// This exercise's own advice; the shared stop advice is
+                    /// shown once above the list. Older reports: the
+                    /// readiness safety note.
+                    if (whenToStop.isNotEmpty ||
+                        (safetyNote?.isNotEmpty ?? false))
                       _buildDetailSection(
-                        title: 'When to stop',
-                        content: safetyNote!,
+                        title: whenToStop.isNotEmpty
+                            ? 'When not to use / when to stop'
+                            : 'When to stop',
+                        content: whenToStop.isNotEmpty
+                            ? whenToStop
+                            : safetyNote!,
                         icon: Icons.stop_circle_outlined,
                         backgroundColor: const Color(0xFFFFF3CD),
                         iconColor: Colors.orange,

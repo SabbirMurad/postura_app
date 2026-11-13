@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:posture_detector_app/view/exercises/widgets/exercise_intro.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -162,9 +163,20 @@ class ExerciseScreenBusiness extends ConsumerWidget {
                           top: 16.h,
                           bottom: clinicalFooterHeight + 16.h + 80.h,
                         ),
+                        // Intro first, then the CPE banner when needed, then
+                        // the exercises.
                         itemCount:
-                            filteredExercises.length + (needsCpeReview ? 1 : 0),
+                            filteredExercises.length +
+                            1 +
+                            (needsCpeReview ? 1 : 0),
                         itemBuilder: (context, index) {
+                          if (index == 0) {
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: const ExerciseIntro(),
+                            );
+                          }
+                          index -= 1;
                           if (needsCpeReview && index == 0) {
                             return Padding(
                               padding: EdgeInsets.only(bottom: 12.h),
@@ -220,14 +232,17 @@ class ExerciseScreenBusiness extends ConsumerWidget {
                             child: ExerciseShowCaseContainer(
                               videoUrl: exercise.video,
                               title: exercise.title,
-                              subtitle: exercise.bodyRegion,
+                              subtitle: exercise.cardBodyArea,
                               duration: exercise.recommendedDuration,
                               sensitivityLabel: 'Gentle',
-                              purpose: (exercise.purpose ?? "").isNotEmpty ? exercise.purpose : exercise.description,
+                              purpose: exercise.howToDoIt,
                               musclesAddressed: exercise.musclesAddressed,
                               regionVas: exercise.regionVas,
                               recommendedSets: exercise.recommendedSets,
                               safetyNote: exercise.safetyNote,
+                              musclesText: exercise.musclesText,
+                              whyThisHelps: exercise.whyThisHelps,
+                              whenToStop: exercise.contraindications ?? '',
                             ),
                           );
                         },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:posture_detector_app/view/exercises/widgets/exercise_intro.dart';
 import 'package:posture_detector_app/common/widgets/awaiting_ergonomist_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -276,6 +277,8 @@ class ExerciseBusinessScreen extends ConsumerWidget {
                                 ),
                               ],
 
+                              SizedBox(height: 12.h),
+                              const ExerciseIntro(),
                               SizedBox(height: 8.h),
                             ],
                           ),
@@ -288,14 +291,17 @@ class ExerciseBusinessScreen extends ConsumerWidget {
                         child: ExerciseShowCaseContainer(
                           videoUrl: exercise.video,
                           title: exercise.title,
-                          subtitle: exercise.bodyRegion,
+                          subtitle: exercise.cardBodyArea,
                           duration: exercise.recommendedDuration,
                           sensitivityLabel: tierLabel,
-                          purpose: (exercise.purpose ?? "").isNotEmpty ? exercise.purpose : exercise.description,
+                          purpose: exercise.howToDoIt,
                           musclesAddressed: exercise.musclesAddressed,
                           regionVas: exercise.regionVas,
                           recommendedSets: exercise.recommendedSets,
                           safetyNote: exercise.safetyNote,
+                          musclesText: exercise.musclesText,
+                          whyThisHelps: exercise.whyThisHelps,
+                          whenToStop: exercise.contraindications ?? '',
                         ),
                       );
                     },

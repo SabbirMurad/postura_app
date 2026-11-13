@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:posture_detector_app/view/exercises/widgets/exercise_intro.dart';
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:pdf/pdf.dart';
@@ -416,19 +417,28 @@ class AssessmentReportPdf {
         ),
       ],
       pw.SizedBox(height: 8),
+      for (final (lead, text) in ExerciseIntro.paragraphs)
+        pw.Text(lead == null ? text : '$lead: $text'),
+      pw.SizedBox(height: 8),
       for (final e in exercises)
-        ..._item(e.bodyRegion, [
-          e.description,
+        ..._item(e.title.isNotEmpty ? e.title : e.bodyRegion, [
+          'Body area: ${e.cardBodyArea}',
+          if (e.musclesText.isNotEmpty) 'Muscles / body area: ${e.musclesText}',
+          if (e.howToDoIt.isNotEmpty) 'How to do it: ${e.howToDoIt}',
+          if (e.whyThisHelps.isNotEmpty)
+            'Why this helps: ${e.whyThisHelps}'
+          else if (e.musclesAddressed?.isNotEmpty ?? false)
+            'Why this helps: ${e.musclesAddressed}',
           _join([
             if (e.recommendedSets > 0) 'Sets: ${e.recommendedSets}',
             if (e.recommendedDuration.isNotEmpty)
               'Duration: ${e.recommendedDuration}',
             if (e.regionVas != null) 'Pain level (VAS): ${e.regionVas} / 10',
           ]),
-          if (e.musclesAddressed?.isNotEmpty ?? false)
-            'Why this helps: ${e.musclesAddressed}',
-          if (e.purpose?.isNotEmpty ?? false) 'How to do it: ${e.purpose}',
-          if (e.safetyNote.isNotEmpty) 'When to stop: ${e.safetyNote}',
+          if (e.contraindications?.isNotEmpty ?? false)
+            'When not to use / when to stop: ${e.contraindications}'
+          else if (e.safetyNote.isNotEmpty)
+            'When to stop: ${e.safetyNote}',
         ]),
       pw.SizedBox(height: 8),
     ];

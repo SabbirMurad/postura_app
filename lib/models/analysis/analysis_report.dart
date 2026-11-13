@@ -676,6 +676,13 @@ class RecommendedSession {
   final String video;
   final String description;
   final String? contraindications;
+
+  /// Employee card copy (empty on reports from before it existed): the area
+  /// shown on the card, the "Muscles / body area" line and "Why this helps".
+  /// [bodyRegion] stays the selection region.
+  final String bodyArea;
+  final String musclesText;
+  final String whyThisHelps;
   final int recommendedSets;
   final String recommendedDuration;
   final String safetyNote;
@@ -700,6 +707,9 @@ class RecommendedSession {
     required this.video,
     required this.description,
     this.contraindications,
+    this.bodyArea = '',
+    this.musclesText = '',
+    this.whyThisHelps = '',
     required this.recommendedSets,
     required this.recommendedDuration,
     required this.safetyNote,
@@ -708,6 +718,13 @@ class RecommendedSession {
     this.improvementPercentage,
     this.source,
   });
+
+  /// Card subtitle: the employee body area, else the selection region.
+  String get cardBodyArea => bodyArea.isNotEmpty ? bodyArea : bodyRegion;
+
+  /// "How to do it": the description, else the older `Purpose` field.
+  String get howToDoIt =>
+      description.isNotEmpty ? description : (purpose ?? '');
 
   factory RecommendedSession.fromJson(Map<String, dynamic> json) {
     return RecommendedSession(
@@ -721,6 +738,9 @@ class RecommendedSession {
       video: '${AppCredentials.domain}/assets/exercise/${json['image']}',
       description: json['description'] ?? '',
       contraindications: json['Contraindications'] ?? json['contraindications'],
+      bodyArea: json['body_area'] as String? ?? '',
+      musclesText: json['muscles_text'] as String? ?? '',
+      whyThisHelps: json['why_this_helps'] as String? ?? '',
       recommendedSets: json['recommended_sets'] ?? 0,
       recommendedDuration: json['recommended_duration'] ?? '',
       safetyNote: json['safety_note'] ?? '',
@@ -740,6 +760,9 @@ class RecommendedSession {
     'video': video,
     'description': description,
     'Contraindications': contraindications,
+    'body_area': bodyArea,
+    'muscles_text': musclesText,
+    'why_this_helps': whyThisHelps,
     'recommended_sets': recommendedSets,
     'recommended_duration': recommendedDuration,
     'safety_note': safetyNote,
