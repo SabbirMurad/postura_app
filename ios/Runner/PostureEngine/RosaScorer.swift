@@ -169,14 +169,19 @@ enum RosaScorer {
 
     // ── Scoring ───────────────────────────────────────────────────────────────────
 
+    private static let TUCKED_FEET_MIN_THIGH_SLOPE_DEG: Float = -5
+
     static func score(_ angles: RosaAnglesCalculator.Angles,
                       mods: WorkstationModifiers = WorkstationModifiers()) -> Result {
         // ── CHAIR ─────────────────────────────────────────────────────────────────
         // Each questionnaire answer below can only raise the camera-derived base
         // score (official ROSA tiers), never lower it — no double counting.
+        // A sharp knee angle with the thigh level or sloping down is feet tucked
+        // under the chair, not a chair that is too low. Same cutoff as the backend.
+        let feetTucked = angles.thighSlope.map { $0 > TUCKED_FEET_MIN_THIGH_SLOPE_DEG } ?? false
         let cameraSeatHeight: Int
         if angles.kneeAngle < 80 {
-            cameraSeatHeight = 2      // chair too low
+            cameraSeatHeight = feetTucked ? 1 : 2      // chair too low
         } else if angles.kneeAngle > 130 {
             cameraSeatHeight = 3      // legs nearly extended — feet off floor
         } else if angles.kneeAngle > 100 {

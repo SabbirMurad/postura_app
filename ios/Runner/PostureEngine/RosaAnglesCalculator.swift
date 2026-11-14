@@ -49,14 +49,22 @@ enum RosaAnglesCalculator {
         /// knee doesn't show which way the person faces. Recommendation only;
         /// the ROSA backrest score keeps using trunkAngle.
         var trunkRecline: Float? = nil
+        /// Degrees the knee sits below the hip along the thigh (− = knee above
+        /// hip). Tells feet tucked under the chair (sharp knee angle, level
+        /// thigh) from a chair that is too low. Nil when the knee was hidden.
+        var thighSlope: Float? = nil
 
         /// The measured body angles, for the Flutter review screen, plus the raw
         /// normalized offsets the scorer uses (shrugGap, wristExtension,
         /// mouseReach). Those are not shown; they are sent to the backend so it
         /// can score a photos-only scan once the ergonomist answers the checklist.
-        func toMap() -> [String: Any] {
+        ///
+        /// `mirrored`: the frame was mirrored before pose detection (front
+        /// camera), so the model's left/right labels are swapped relative to the
+        /// person's real body side.
+        func toMap(mirrored: Bool = false) -> [String: Any] {
             var map: [String: Any] = [
-                "side": isLeftSide ? "Left" : "Right",
+                "side": (isLeftSide != mirrored) ? "Left" : "Right",
                 "knee_angle": Double(kneeAngle),
                 "trunk_angle": Double(trunkAngle),
                 "elbow_angle": Double(elbowAngle),
@@ -68,12 +76,39 @@ enum RosaAnglesCalculator {
                 "mouse_reach": Double(mouseReach),
             ]
             if let r = trunkRecline { map["trunk_recline"] = Double(r) }
+            if let t = thighSlope { map["thigh_slope"] = Double(t) }
             return map
         }
     }
 
-    static func compute(_ lm: [LandmarkPoint]) -> Angles? {
-        if lm.count < 29 { return nil }
+    // The scorer's offset cutoffs (shrug −0.06, wrist 0.03, mouse reach 0.18) were
+    // tuned as fractions of a 480×640 frame with the person 1.7–2.1 m away, where
+    // the shoulder→hip length is about 0.19 of the frame height. Offsets are now
+    // measured in torso lengths and scaled by these reference sizes, so the same
+    // cutoffs (here and on the backend) hold for any lens, resolution or distance.
+    private static let REF_TORSO_H: Float = 0.19             // torso / frame height
+    private static let REF_TORSO_W: Float = 0.19 * 4 / 3     // torso / frame width (3:4 frame)
+
+    // Neck posture cutoffs, in true degrees. Head pitch is the ear→nose line below
+    // horizontal; it sits around 12° (6–17°) when looking at an eye-level monitor
+    // and about 22° looking down at a laptop in the reference scans.
+    private static let HEAD_BACK_MAX_PITCH_DEG: Float = -5
+    private static let MILD_FLEXION_MIN_PITCH_DEG: Float = 20
+    private static let SEVERE_FLEXION_MIN_PITCH_DEG: Float = 35
+    private static let FORWARD_HEAD_MIN_NECK_DEG: Float = 20
+
+    /// `landmarks` are normalised (0–1); `imageWidth`×`imageHeight` is the frame
+    /// they were detected on. Everything is measured in pixels: normalised x and y
+    /// use different scales on a non-square frame, which skews every angle.
+    ///
+    /// `forceLeft` pins which body side is measured (true = left landmarks), so
+    /// the shots of one scan all measure the same side; nil picks it here.
+    static func compute(_ landmarks: [LandmarkPoint], imageWidth: Int, imageHeight: Int,
+                        forceLeft: Bool? = nil) -> Angles? {
+        if landmarks.count < 29 || imageWidth <= 0 || imageHeight <= 0 { return nil }
+        let lm = landmarks.map {
+            LandmarkPoint(x: $0.x * Float(imageWidth), y: $0.y * Float(imageHeight), estimated: $0.estimated)
+        }
 
         let nose = lm[NOSE]
 
@@ -89,7 +124,9 @@ enum RosaAnglesCalculator {
         let leftLegVisible = !lm[LEFT_KNEE].estimated
         let rightLegVisible = !lm[RIGHT_KNEE].estimated
         let useLeft: Bool
-        if leftLegVisible && !rightLegVisible {
+        if let forced = forceLeft {
+            useLeft = forced
+        } else if leftLegVisible && !rightLegVisible {
             useLeft = true
         } else if rightLegVisible && !leftLegVisible {
             useLeft = false
@@ -108,10 +145,15 @@ enum RosaAnglesCalculator {
         // Knee/ankle may be reconstructed (LegEstimator) when occluded. A fabricated
         // ankle straight below the knee distorts angleBetween(), so when only the
         // ankle is estimated, fall back to a hip-knee vertical-gap proxy.
+        // Shoulder→hip length in pixels: the body-size unit for every offset below.
+        let torso = hypotf(shoulder.x - hip.x, shoulder.y - hip.y)
+        if torso < 1 { return nil }
+
+        let kneeDrop = (knee.y - hip.y) / torso
         let gapProxyAngle: Float
-        if (knee.y - hip.y) < -0.02 {
+        if kneeDrop < -0.1 {
             gapProxyAngle = 70
-        } else if (knee.y - hip.y) > 0.15 {
+        } else if kneeDrop > 0.8 {
             gapProxyAngle = 115
         } else {
             gapProxyAngle = 92
@@ -123,8 +165,9 @@ enum RosaAnglesCalculator {
             kneeAngle = gapProxyAngle
             lowerBodyConfidence = .low
         } else if ankle.estimated {
+            // A proxy is one of three fixed values, not a measurement.
             kneeAngle = gapProxyAngle
-            lowerBodyConfidence = .high
+            lowerBodyConfidence = .low
         } else {
             let measured = angleBetween(hip, knee, ankle)
             // >160° is essentially a straight leg — implausible while seated and
@@ -138,6 +181,8 @@ enum RosaAnglesCalculator {
             }
         }
 
+        let thighSlope: Float? = knee.estimated ? nil
+            : Float(atan2(Double(knee.y - hip.y), Double(abs(knee.x - hip.x))) * (180.0 / .pi))
         let elbowAngle = angleBetween(shoulder, elbow, wrist)
 
         let dx = Double(abs(hip.x - shoulder.x))
@@ -145,35 +190,41 @@ enum RosaAnglesCalculator {
         let trunkAngle: Float = dy < 1e-6 ? 90 : Float(atan2(dx, dy) * (180.0 / .pi))
         // Seated in profile, the knee is in front of the hip, which gives the
         // facing direction. A shoulder behind the hip is a recline.
-        let facing = knee.x - hip.x
-        let trunkRecline: Float? = abs(facing) < 0.02 ? nil
+        let facing = (knee.x - hip.x) / torso
+        let trunkRecline: Float? = abs(facing) < 0.08 ? nil
             : ((shoulder.x - hip.x) * facing <= 0 ? trunkAngle : -trunkAngle)
 
         let neckDx = Double(abs(ear.x - shoulder.x))
         let neckDy = Double(abs(shoulder.y - ear.y))
         let neckAngle: Float = neckDy < 1e-6 ? 90 : Float(atan2(neckDx, neckDy) * (180.0 / .pi))
 
-        let shrugGap = ear.y - shoulder.y
-        let neckFlexY = ear.y - nose.y
-        let noseAboveEar = nose.y - ear.y
-        let earForward = shoulder.x - ear.x
-        let earShoulderVert = abs(ear.y - shoulder.y)
+        let shrugGap = (ear.y - shoulder.y) / torso * REF_TORSO_H
+        let neckFlexY = (ear.y - nose.y) / torso * REF_TORSO_H
+
+        // The nose is in front of the ear, which gives the way the head faces —
+        // so the rules below work whichever way the person sits.
+        let headFacing: Float = nose.x >= ear.x ? 1 : -1
+        // Ear→nose line below horizontal (image y grows downward): + looking
+        // down, − looking up.
+        let headPitch = Float(atan2(Double(nose.y - ear.y), Double(abs(nose.x - ear.x))) * (180.0 / .pi))
+        // Neck angle signed: + when the ear is ahead of the shoulder.
+        let forwardNeck = (ear.x - shoulder.x) * headFacing > 0 ? neckAngle : -neckAngle
 
         let neckState: NeckState
-        if noseAboveEar > 0.03 {
+        if headPitch <= HEAD_BACK_MAX_PITCH_DEG {
             neckState = .headBack
-        } else if earShoulderVert < 0.06 && neckFlexY > 0 {
+        } else if headPitch >= SEVERE_FLEXION_MIN_PITCH_DEG {
             neckState = .severeFlexion
-        } else if neckFlexY > 0.04 {
+        } else if headPitch >= MILD_FLEXION_MIN_PITCH_DEG {
             neckState = .mildFlexion
-        } else if earForward > 0.04 {
+        } else if forwardNeck >= FORWARD_HEAD_MIN_NECK_DEG {
             neckState = .forwardHead
         } else {
             neckState = .neutral
         }
 
-        let wristExtension = elbow.y - wrist.y
-        let mouseReach = abs(wrist.x - shoulder.x)
+        let wristExtension = (elbow.y - wrist.y) / torso * REF_TORSO_H
+        let mouseReach = abs(wrist.x - shoulder.x) / torso * REF_TORSO_W
 
         return Angles(
             isLeftSide: useLeft,
@@ -187,7 +238,8 @@ enum RosaAnglesCalculator {
             wristExtension: wristExtension,
             mouseReach: mouseReach,
             lowerBodyConfidence: lowerBodyConfidence,
-            trunkRecline: trunkRecline
+            trunkRecline: trunkRecline,
+            thighSlope: thighSlope
         )
     }
 

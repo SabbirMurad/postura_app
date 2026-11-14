@@ -29,8 +29,11 @@ class LegEstimator {
     fun estimate(
         raw:      List<NormalizedLandmark>,
         smoothed: List<LandmarkPoint>,
+        /** Frame width / height. Normalised x and y use different scales on a
+         *  non-square frame, so lengths are measured in frame heights. */
+        aspect: Float,
     ): List<LandmarkPoint> {
-        if (raw.size < 33 || smoothed.size < 33) return smoothed
+        if (raw.size < 33 || smoothed.size < 33 || aspect <= 0f) return smoothed
 
         val out = smoothed.toMutableList()
 
@@ -39,10 +42,12 @@ class LegEstimator {
         val shoulderMidY = (smoothed[L_SHOULDER].y + smoothed[R_SHOULDER].y) / 2f
         val hipMidX      = (smoothed[L_HIP].x      + smoothed[R_HIP].x)      / 2f
         val hipMidY      = (smoothed[L_HIP].y       + smoothed[R_HIP].y)      / 2f
-        val torsoLen     = dist(shoulderMidX, shoulderMidY, hipMidX, hipMidY)
+        // In frame heights.
+        val torsoLen     = dist(shoulderMidX * aspect, shoulderMidY, hipMidX * aspect, hipMidY)
         if (torsoLen < 0.01f) return smoothed
 
-        val thighLen = torsoLen * THIGH_RATIO
+        // The thigh runs horizontally, so it is converted back to normalised x.
+        val thighLen = torsoLen * THIGH_RATIO / aspect
         val shinLen  = torsoLen * SHIN_RATIO
 
         // ── Standing guard ────────────────────────────────────────────────────

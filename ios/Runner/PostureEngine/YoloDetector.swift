@@ -146,7 +146,9 @@ final class YoloDetector {
         let outputCopyStatus = floats.withUnsafeMutableBufferPointer { buf in
             TfLiteTensorCopyToBuffer(outputTensor, buf.baseAddress, byteSize)
         }
-        guard outputCopyStatus == 0 else {
+        // parseAndNms indexes the output as [84][2100]; a differently shaped
+        // model must not read out of bounds.
+        guard outputCopyStatus == 0, floats.count >= (4 + NUM_CLASSES) * NUM_CANDIDATES else {
             NSLog("\(TAG): failed to read output tensor")
             return failResult
         }

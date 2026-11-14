@@ -20,6 +20,7 @@ class BodyAngles {
     this.wristExtension,
     this.mouseReach,
     this.trunkRecline,
+    this.thighSlope,
   });
 
   /// "Left" / "Right" — which side's landmarks were used. Empty when this entry
@@ -56,6 +57,11 @@ class BodyAngles {
   /// person faces. The backend uses it for the backrest-angle recommendation.
   final double? trunkRecline;
 
+  /// Degrees the knee sits below the hip along the thigh (negative = knee
+  /// above hip). The backend uses it to tell tucked feet from a low chair.
+  /// Null on older captures or when the knee was hidden.
+  final double? thighSlope;
+
   /// True when this entry actually holds a measurement. Null/empty native
   /// entries deserialize with a blank [side] and NaN angles.
   bool get hasData => side.isNotEmpty && !kneeAngle.isNaN;
@@ -74,6 +80,7 @@ class BodyAngles {
     wristExtension: (m['wrist_extension'] as num?)?.toDouble(),
     mouseReach: (m['mouse_reach'] as num?)?.toDouble(),
     trunkRecline: (m['trunk_recline'] as num?)?.toDouble(),
+    thighSlope: (m['thigh_slope'] as num?)?.toDouble(),
   );
 
   Map<String, dynamic> toJson() => {
@@ -88,6 +95,7 @@ class BodyAngles {
     if (wristExtension != null) 'wrist_extension': wristExtension,
     if (mouseReach != null) 'mouse_reach': mouseReach,
     if (trunkRecline != null) 'trunk_recline': trunkRecline,
+    if (thighSlope != null) 'thigh_slope': thighSlope,
   };
 
   /// Human-readable neck posture, mapping the native enum names to labels.

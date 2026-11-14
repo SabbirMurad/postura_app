@@ -11,6 +11,7 @@ import android.hardware.camera2.CameraManager
 import android.media.Image
 import android.os.Bundle
 import android.util.Log
+import android.util.Size
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -21,6 +22,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -28,6 +32,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.mediapipe.framework.image.BitmapExtractor
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.framework.image.MPImage
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
@@ -37,9 +42,9 @@ import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarkerResult
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -123,6 +128,12 @@ class PoseDetectionActivity : AppCompatActivity() {
     @Volatile private var sensorHeightMm: Float = 4.8f   // landscape sensor height
     private var frameCounter = 0
     private val processEveryNFrames = 1
+    // Last timestamp handed to the pose landmarker (ms). MediaPipe needs strictly
+    // increasing millisecond timestamps. Only touched on cameraExecutor.
+    private var lastPoseTimestampMs = 0L
+    // Set when the pose landmarker can't be created on either delegate, so the
+    // detection phase stops retrying on every frame.
+    @Volatile private var poseInitFailed = false
 
     // -------------------------------------------------------------------------
     // Smoother + leg estimator
@@ -141,20 +152,24 @@ class PoseDetectionActivity : AppCompatActivity() {
     // Once conditions are met, captures TOTAL_SHOTS_NEEDED photos, each at least
     // CAPTURE_COOLDOWN_MS apart and only while every condition is currently OK.
     // The 3 side shots only. The front shot is held separately (frontPhoto).
-    private val capturedPhotos = mutableListOf<Bitmap>()
+    // The capture lists are written on the pose result-listener thread and read on
+    // the UI thread, hence the copy-on-write lists (at most 3 entries each).
+    private val capturedPhotos = CopyOnWriteArrayList<Bitmap>()
     // Per-side-shot ROSA angles, kept so the shots can be scored *after* the front
     // shot — the front view supplies the armrest-too-wide modifier (elbow abduction),
     // which isn't known until then.
-    private val capturedAngles = mutableListOf<RosaAnglesCalculator.Angles?>()
+    private val capturedAngles = CopyOnWriteArrayList<RosaAnglesCalculator.Angles?>()
 
     // The front (4th) shot and its two raw measured angles (degrees). These feed the
     // armrest-too-wide / keyboard-deviation modifiers and are also surfaced to Flutter.
-    private var frontPhoto: Bitmap? = null
+    @Volatile private var frontPhoto: Bitmap? = null
     // Clean (un-blurred, un-annotated) model-sized copies of the side shots,
     // checked for a monitor once all photos are taken (see finishWithCaptures).
-    private val sideMonitorFrames = mutableListOf<Bitmap>()
-    private var frontAbductionAngle: Double = 0.0
-    private var frontWristDeviationAngle: Double = 0.0
+    private val sideMonitorFrames = CopyOnWriteArrayList<Bitmap>()
+    // Null = could not be measured on the front photo (e.g. no hand found). That is
+    // not the same as 0° and must never be scored or reported as "no problem".
+    @Volatile private var frontAbductionAngle: Double? = null
+    @Volatile private var frontWristDeviationAngle: Double? = null
 
     /** Manual checklist answers gathered by the Flutter questionnaire before launch. */
     private lateinit var workstationModifiers: RosaScorer.WorkstationModifiers
@@ -193,10 +208,11 @@ class PoseDetectionActivity : AppCompatActivity() {
     // premature capture while the holder is still walking the phone to the front.
     private val FRONT_VISIBILITY_THRESHOLD = 0.5f
     private val FRONT_READY_DELAY_MS = 1500L
-    // After the entry settle, the face/shoulders/hands must stay visible for this
-    // many *consecutive* frames before the front photo is taken — any drop in
-    // visibility resets the count, so the holder must hold steady once in position.
-    private val FRONT_FRAMES_NEEDED = 30
+    // The front photo is only taken when the person actually faces the camera:
+    // shoulder width must be at least this multiple of the nose→shoulder height
+    // (both in pixels). Face-on it is roughly 1.4; in the side view the holder
+    // starts from it is well under 0.5, so the shot can't fire before they move.
+    private val FRONT_FACING_MIN_RATIO = 0.9f
     @Volatile private var frontReadyEarliestAtMs = 0L
 
     // Phone-steadiness gate for the front shot: dynamic acceleration (m/s²) above
@@ -208,18 +224,29 @@ class PoseDetectionActivity : AppCompatActivity() {
 
     // Hip spread / torso height ratio threshold for side-view detection.
     // Accepts camera within ~30° of true side view; unaffected by torso lean.
-    private val SIDE_VIEW_THRESHOLD = 0.35f
+    // Measured in pixels. 0.26 is the old 0.35 (normalised units) on the 3:4
+    // frames it was tuned on, so Android behaves as before and iOS now matches.
+    private val SIDE_VIEW_THRESHOLD = 0.26f
 
     // ── All-green success detection ───────────────────────────────────────────
     // Shows confirmation overlay when every condition holds for ~1.5 s (~45 frames)
     @Volatile private var tiltIsOk         = false
     @Volatile private var rotationIsOk     = false
+    // Stricter roll gate for the front shot: its angles are measured against the
+    // image's vertical, so every degree of phone roll is a degree of error.
+    @Volatile private var frontRotationIsOk = false
+    private val FRONT_MAX_ROLL_DEG = 5.0
     @Volatile private var sideIsOk         = false
     @Volatile private var heightIsOk       = false
     @Volatile private var distanceIsOk     = false
     @Volatile private var lastFrameBitmap: Bitmap? = null
-    private val successCount           = java.util.concurrent.atomic.AtomicInteger(0)
-    private val SUCCESS_FRAMES_NEEDED  = 20
+    // The hold-steady gates are timed, not counted in frames, so a slow phone
+    // (few frames per second) doesn't wait several times longer than a fast one.
+    private val SIDE_STEADY_MS  = 700L
+    private val FRONT_STEADY_MS = 1000L
+    // When every capture condition last became true (0 = not currently true).
+    // Only touched on the pose result-listener thread and in resets.
+    @Volatile private var okSinceMs = 0L
 
     // Light thresholds (same as live_guidence project)
     private val MIN_LUMINANCE = 0.25
@@ -273,6 +300,7 @@ class PoseDetectionActivity : AppCompatActivity() {
             val rOk = TiltMonitor.isRollAcceptable(rollAngle)
             tiltIsOk     = tOk
             rotationIsOk = rOk
+            frontRotationIsOk = kotlin.math.abs(rollAngle) <= FRONT_MAX_ROLL_DEG
             // Latch the last time the phone was shaken/moved; the front capture waits
             // for a quiet window after this before firing.
             if (motion > PHONE_MOTION_MAX) lastShakeAtMs = android.os.SystemClock.elapsedRealtime()
@@ -299,77 +327,128 @@ class PoseDetectionActivity : AppCompatActivity() {
         findViewById<View>(R.id.btnSwitchCamera).setOnClickListener {
             cameraSelector = if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA)
                 CameraSelector.DEFAULT_FRONT_CAMERA else CameraSelector.DEFAULT_BACK_CAMERA
+            // fullReset restarts the camera itself once the teardown is done.
             fullReset()
-            setupCamera()
         }
 
         requestCameraPermission()
     }
 
+    /**
+     * Resets the whole capture (used when switching camera) and restarts the camera.
+     *
+     * The camera is unbound first so no new frames arrive, then everything is torn
+     * down on cameraExecutor — the thread that calls detectAsync — so closing the
+     * landmarkers can't race a frame in flight (closing mid-detect crashes
+     * MediaPipe). close() also waits for pending results, so the result listener
+     * is finished before the capture state is cleared.
+     */
     private fun fullReset() {
-        appState = AppState.LIGHT_CHECK
-        confirmationCount = 0
-        capturedPhotos.clear()
-        sideMonitorFrames.clear()
-        capturedAngles.clear()
-        frontPhoto = null
-        frontAbductionAngle = 0.0
-        frontWristDeviationAngle = 0.0
-        nextCaptureEarliestAtMs = 0L
-        frontReadyEarliestAtMs = 0L
-        lastFrameBitmap = null
-        successCount.set(0)
-        distanceIsOk = false
-        poseLandmarker?.close()
-        poseLandmarker = null
-        handLandmarker?.close()
-        handLandmarker = null
-        landmarkSmoother.reset()
-        legEstimator.reset()
+        cameraProvider?.unbindAll()
         cameraExecutor.execute {
+            poseLandmarker?.close()
+            poseLandmarker = null
+            handLandmarker?.close()
+            handLandmarker = null
             yoloDetector?.dispose()
+            yoloDetector = null
+
+            appState = AppState.LIGHT_CHECK
+            confirmationCount = 0
+            poseInitFailed = false
+            capturedPhotos.clear()
+            sideMonitorFrames.clear()
+            capturedAngles.clear()
+            frontPhoto = null
+            frontAbductionAngle = null
+            frontWristDeviationAngle = null
+            nextCaptureEarliestAtMs = 0L
+            frontReadyEarliestAtMs = 0L
+            lastFrameBitmap = null
+            okSinceMs = 0L
+            distanceIsOk = false
+            landmarkSmoother.reset()
+            legEstimator.reset()
             yoloDetector = YoloDetector(this)
+
+            runOnUiThread {
+                resetUi()
+                setupCamera()
+            }
         }
-        runOnUiThread {
-            tvCaptureStatus.visibility = View.GONE
-            flashOverlay.visibility = View.GONE
-            flashOverlay.alpha = 0f
-            // Restore the condition chips the front phase hides, in case we reset
-            // (e.g. camera switch) while in that phase.
-            tvLightStatus.visibility    = View.VISIBLE
-            tvPersonStatus.visibility   = View.VISIBLE
-            tvMonitorStatus.visibility  = View.VISIBLE
-            tvRotationStatus.visibility = View.VISIBLE
-            tvTiltStatus.visibility     = View.VISIBLE
-            tvDistanceStatus.visibility = View.VISIBLE
-            poseOverlayView.updateLandmarks(emptyList(), 1, 1)
-            poseOverlayView.setHeightGuide(PoseOverlayView.HeightGuideState.HIDDEN)
-            poseOverlayView.setExcludedIndices(emptySet())
-            poseOverlayView.setShowShoulderAngles(false)
-            updatePanel(lightOk = null)
-            poseOverlayView.updateRosaAngles(null)
-        }
+    }
+
+    private fun resetUi() {
+        tvCaptureStatus.visibility = View.GONE
+        flashOverlay.visibility = View.GONE
+        flashOverlay.alpha = 0f
+        // Restore the condition chips the front phase hides, in case we reset
+        // (e.g. camera switch) while in that phase.
+        tvLightStatus.visibility    = View.VISIBLE
+        tvPersonStatus.visibility   = View.VISIBLE
+        tvMonitorStatus.visibility  = View.VISIBLE
+        tvRotationStatus.visibility = View.VISIBLE
+        tvTiltStatus.visibility     = View.VISIBLE
+        tvDistanceStatus.visibility = View.VISIBLE
+        poseOverlayView.updateLandmarks(emptyList(), 1, 1)
+        poseOverlayView.setHeightGuide(PoseOverlayView.HeightGuideState.HIDDEN)
+        poseOverlayView.setExcludedIndices(emptySet())
+        poseOverlayView.setShowShoulderAngles(false)
+        updatePanel(lightOk = null)
+        poseOverlayView.updateRosaAngles(null)
     }
 
     // =========================================================================
     // Pose landmarker — created only after detection confirms both targets
     // =========================================================================
 
-    private fun initializePoseLandmarker() {
+    /** Creates the pose landmarker on the GPU, falling back to the CPU on devices
+     *  where the GPU delegate isn't supported. Returns false if neither works. */
+    private fun initializePoseLandmarker(): Boolean {
+        poseLandmarker = try {
+            createPoseLandmarker(Delegate.GPU)
+        } catch (t: Throwable) {
+            Log.w("PoseLandmarker", "GPU delegate unavailable (${t.message}), falling back to CPU")
+            try {
+                createPoseLandmarker(Delegate.CPU)
+            } catch (t2: Throwable) {
+                Log.e("PoseLandmarker", "Failed to create pose landmarker", t2)
+                null
+            }
+        }
+        return poseLandmarker != null
+    }
+
+    /** The exact frame a pose result was computed from, so the baked skeleton and
+     *  the face blur line up with the pixels they were measured on. The live
+     *  stream is asynchronous, so the latest camera frame can already be a newer
+     *  one; it is only the fallback. */
+    private fun frameFor(input: MPImage): Bitmap? =
+        try {
+            BitmapExtractor.extract(input)
+        } catch (e: Exception) {
+            Log.w("PoseLandmarker", "Result frame unavailable, using latest frame", e)
+            lastFrameBitmap
+        }
+
+    private fun createPoseLandmarker(delegate: Delegate): PoseLandmarker {
         val options = PoseLandmarker.PoseLandmarkerOptions.builder()
                 .setBaseOptions(
                     BaseOptions.builder()
                         .setModelAssetPath("pose_landmarker_full.task")
-                        .setDelegate(Delegate.GPU)
+                        .setDelegate(delegate)
                         .build()
                 )
                 .setRunningMode(RunningMode.LIVE_STREAM)
-                .setResultListener { result, _ ->
+                .setErrorListener { e -> Log.e("PoseLandmarker", "Pose detection error", e) }
+                .setResultListener { result, input ->
                 val currentState = appState
                 val landmarks = result.landmarks()
-                val w = lastImageWidth
-                val h = lastImageHeight
-                val tSec = android.os.SystemClock.elapsedRealtime() / 1000.0
+                val w = input.width
+                val h = input.height
+                // Frame time (not callback-arrival time) so the smoother's velocity
+                // estimate isn't skewed by inference jitter.
+                val tSec = result.timestampMs() / 1000.0
                 val sm = if (landmarks.isNotEmpty()) {
                     landmarkSmoother.smooth(landmarks[0], tSec)
                 } else {
@@ -379,14 +458,14 @@ class PoseDetectionActivity : AppCompatActivity() {
                 // Check side view on the raw-smoothed landmarks (before estimation)
                 val sideOk = sm != null &&
                              currentState == AppState.POSE &&
-                             checkSideView(sm)
+                             checkSideView(sm, w, h)
                 sideIsOk = sideOk
 
                 // Only apply leg estimation in a confirmed seated side view —
                 // prevents bogus leg lines when the person faces the camera
                 val smoothed = when {
                     sm == null -> emptyList()
-                    sideOk     -> legEstimator.estimate(landmarks[0], sm)
+                    sideOk     -> legEstimator.estimate(landmarks[0], sm, w.toFloat() / h)
                     else       -> sm
                 }
 
@@ -418,24 +497,30 @@ class PoseDetectionActivity : AppCompatActivity() {
 
                 // ── Multi-shot capture sequence ───────────────────────────────
                 // Captures TOTAL_SHOTS_NEEDED photos: each requires every condition
-                // to hold steady for SUCCESS_FRAMES_NEEDED frames AND at least
+                // to hold steady for SIDE_STEADY_MS AND at least
                 // CAPTURE_COOLDOWN_MS to have passed since the previous shot. If
                 // conditions drop, the steady-frame count simply resets and we wait
                 // for them to come back — the cooldown clock keeps running regardless.
-                val allOk     = sideOk && tiltIsOk && rotationIsOk && heightIsOk && distanceIsOk
+                // The phone must also be still, so the shot isn't motion-blurred.
+                val sidePhoneSteady = android.os.SystemClock.elapsedRealtime() - lastShakeAtMs >= PHONE_STEADY_SETTLE_MS
+                val allOk     = sideOk && tiltIsOk && rotationIsOk && heightIsOk && distanceIsOk && sidePhoneSteady
                 val capturing = currentState == AppState.POSE && capturedPhotos.size < TOTAL_SHOTS_NEEDED
                 if (capturing) runOnUiThread { updateCaptureCue(allOk) }
 
                 if (capturing && allOk) {
                     val now = android.os.SystemClock.elapsedRealtime()
-                    if (successCount.incrementAndGet() >= SUCCESS_FRAMES_NEEDED && now >= nextCaptureEarliestAtMs) {
-                        successCount.set(0)
+                    if (okSinceMs == 0L) okSinceMs = now
+                    if (now - okSinceMs >= SIDE_STEADY_MS && now >= nextCaptureEarliestAtMs) {
+                        okSinceMs = 0L
                         val captured  = smoothed.toList()
-                        val frameCopy = lastFrameBitmap?.copy(Bitmap.Config.ARGB_8888, true)
+                        val frameCopy = frameFor(input)?.copy(Bitmap.Config.ARGB_8888, true)
                         if (frameCopy != null) {
                             sideMonitorFrames.add(YoloDetector.thumbnail(frameCopy))
                             val blurred  = FaceBlurrer.blurFace(frameCopy, captured)
-                            val angles   = RosaAnglesCalculator.compute(captured)
+                            val angles   = RosaAnglesCalculator.compute(
+                                captured, frameCopy.width, frameCopy.height,
+                                // Every shot of a scan measures the same body side.
+                                forceLeft = capturedAngles.firstOrNull { it != null }?.isLeftSide)
                             val photo    = bakeSkeletonOntoPhoto(blurred, captured, angles)
                             capturedPhotos.add(photo)
                             // Score is computed later (at the front shot) once the
@@ -474,7 +559,7 @@ class PoseDetectionActivity : AppCompatActivity() {
                         }
                     }
                 } else if (capturing) {
-                    successCount.set(0)
+                    okSinceMs = 0L
                 }
 
                 // ── Front-view capture (4th shot, after the 3 side shots) ─────
@@ -489,15 +574,18 @@ class PoseDetectionActivity : AppCompatActivity() {
                     val frontVisible = raw != null && frontLandmarksVisible(raw)
                     val nowF = android.os.SystemClock.elapsedRealtime()
                     val phoneSteady = nowF - lastShakeAtMs >= PHONE_STEADY_SETTLE_MS
-                    val frontOk = frontVisible && rotationIsOk && phoneSteady
-                    runOnUiThread { updateFrontCue(frontVisible, rotationIsOk, phoneSteady) }
+                    val frontFacing = sm != null && isFacingCamera(sm, w, h)
+                    val frontRotOk = frontRotationIsOk
+                    val frontOk = frontVisible && frontFacing && frontRotOk && phoneSteady
+                    runOnUiThread { updateFrontCue(frontVisible, frontFacing, frontRotOk, phoneSteady) }
                     if (frontOk && nowF >= frontReadyEarliestAtMs) {
-                        // Capture once the condition has held for FRONT_FRAMES_NEEDED
+                        // Capture once the condition has held for FRONT_STEADY_MS
                         // consecutive frames past the entry settle.
-                        if (successCount.incrementAndGet() >= FRONT_FRAMES_NEEDED) {
-                            successCount.set(0)
+                        if (okSinceMs == 0L) okSinceMs = nowF
+                        if (nowF - okSinceMs >= FRONT_STEADY_MS) {
+                            okSinceMs = 0L
                             val captured  = (sm ?: emptyList()).toList()
-                            val frameCopy = lastFrameBitmap?.copy(Bitmap.Config.ARGB_8888, true)
+                            val frameCopy = frameFor(input)?.copy(Bitmap.Config.ARGB_8888, true)
                             if (frameCopy != null) {
                                 // Detect hands on the CLEAN frame first (before face
                                 // blur / skeleton bake mutate it), then draw the
@@ -523,12 +611,19 @@ class PoseDetectionActivity : AppCompatActivity() {
                                 // here (front view) and applied to every side shot's
                                 // score, replacing the old questionnaire questions. The
                                 // raw angles are also surfaced to Flutter.
-                                frontAbductionAngle = frontAbductionAngleDeg(
+                                val abduction = frontAbductionAngleDeg(
                                     captured, frameCopy.width, frameCopy.height)
-                                frontWristDeviationAngle = frontWristDeviationDeg(
+                                val wristDeviation = frontWristDeviationDeg(
                                     handsToPoints(handResult), captured, frameCopy.width, frameCopy.height)
-                                val tooWide  = frontAbductionAngle >= ARMREST_ABDUCTION_MAX_DEG
-                                val deviated = frontWristDeviationAngle >= WRIST_DEVIATION_MAX_DEG
+                                frontAbductionAngle = abduction
+                                frontWristDeviationAngle = wristDeviation
+                                // A measurement that couldn't be taken (e.g. no hand
+                                // found) keeps the questionnaire answer instead of
+                                // being scored as "no problem".
+                                val tooWide = abduction?.let { it >= ARMREST_ABDUCTION_MAX_DEG }
+                                    ?: workstationModifiers.armrestTooWide
+                                val deviated = wristDeviation?.let { it >= WRIST_DEVIATION_MAX_DEG }
+                                    ?: workstationModifiers.keyboardDeviation
                                 val mods = workstationModifiers.copy(
                                     armrestTooWide = tooWide, keyboardDeviation = deviated)
                                 val scores = capturedAngles.map {
@@ -542,8 +637,8 @@ class PoseDetectionActivity : AppCompatActivity() {
                             }
                         }
                     } else {
-                        // Visibility dropped (or still in the entry settle) — reset the count.
-                        successCount.set(0)
+                        // Visibility dropped (or still in the entry settle) — restart the hold.
+                        okSinceMs = 0L
                     }
                 }
 
@@ -561,7 +656,7 @@ class PoseDetectionActivity : AppCompatActivity() {
                 } else null
 
                 val rosaAngles = if (currentState == AppState.POSE && smoothed.size >= 29)
-                    RosaAnglesCalculator.compute(smoothed) else null
+                    RosaAnglesCalculator.compute(smoothed, w, h) else null
 
                 distanceIsOk = distanceM != null && distanceM in 1.7f..2.1f
 
@@ -585,7 +680,7 @@ class PoseDetectionActivity : AppCompatActivity() {
                 }
             }.build()
 
-        poseLandmarker = PoseLandmarker.createFromOptions(this, options)
+        return PoseLandmarker.createFromOptions(this, options)
     }
 
     /** Creates the IMAGE-mode hand landmarker if not already created. Runs CPU
@@ -657,7 +752,22 @@ class PoseDetectionActivity : AppCompatActivity() {
             val provider = future.get()
             cameraProvider = provider
             val preview  = Preview.Builder().build().apply { setSurfaceProvider(previewView.surfaceProvider) }
+            // Without this CameraX analyses at 640×480, so the saved photos were
+            // 480×640 and hands were too small for the hand landmarker. 1440×1080
+            // (sensor orientation) gives 1080×1440 portrait frames, in line with
+            // iOS, and keeps the 4:3 shape the preview uses so the overlay stays
+            // aligned.
+            val analysisResolution = ResolutionSelector.Builder()
+                .setAspectRatioStrategy(AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY)
+                .setResolutionStrategy(
+                    ResolutionStrategy(
+                        Size(1440, 1080),
+                        ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER,
+                    )
+                )
+                .build()
             val analyzer = ImageAnalysis.Builder()
+                .setResolutionSelector(analysisResolution)
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build().apply { setAnalyzer(cameraExecutor, ::analyzeImage) }
             try {
@@ -714,7 +824,7 @@ class PoseDetectionActivity : AppCompatActivity() {
             AppState.LIGHT_CHECK    -> runLightCheckPhase(mediaImage, imageProxy)
             AppState.DETECTING      -> runDetectionPhase(mediaImage, imageProxy)
             // FRONT also needs live pose frames, so it shares the pose pipeline.
-            AppState.POSE, AppState.FRONT -> runPosePhase(mediaImage, imageProxy)
+            AppState.POSE, AppState.FRONT -> runPosePhase(imageProxy)
         }
     }
 
@@ -768,6 +878,7 @@ class PoseDetectionActivity : AppCompatActivity() {
     // -------------------------------------------------------------------------
 
     private fun runDetectionPhase(mediaImage: Image, imageProxy: ImageProxy) {
+        if (poseInitFailed) { imageProxy.close(); return }
         val result = yoloDetector?.detect(mediaImage, imageProxy.imageInfo.rotationDegrees)
             ?: run { imageProxy.close(); return }
 
@@ -784,7 +895,19 @@ class PoseDetectionActivity : AppCompatActivity() {
                         message         = "Loading…"
                     )
                 }
-                initializePoseLandmarker()
+                if (!initializePoseLandmarker()) {
+                    poseInitFailed = true
+                    runOnUiThread {
+                        updatePanel(
+                            lightOk         = true,
+                            personDetected  = true,
+                            monitorDetected = true,
+                            message         = "Pose detection couldn't start on this device"
+                        )
+                    }
+                    imageProxy.close()
+                    return
+                }
                 appState = AppState.POSE
                 yoloDetector?.dispose()
                 yoloDetector = null
@@ -823,8 +946,10 @@ class PoseDetectionActivity : AppCompatActivity() {
     // Phase 3: Pose detection
     // -------------------------------------------------------------------------
 
-    private fun runPosePhase(mediaImage: Image, imageProxy: ImageProxy) {
-        val bitmap = yuvToRgb(mediaImage, imageProxy)
+    private fun runPosePhase(imageProxy: ImageProxy) {
+        // CameraX's own converter: handles any row/pixel stride layout and avoids
+        // the lossy JPEG round-trip of a hand-rolled NV21 copy.
+        val bitmap = imageProxy.toBitmap()
         val matrix = Matrix().apply {
             postRotate(imageProxy.imageInfo.rotationDegrees.toFloat())
             if (cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA)
@@ -834,7 +959,15 @@ class PoseDetectionActivity : AppCompatActivity() {
         lastImageWidth  = rotated.width
         lastImageHeight = rotated.height
         lastFrameBitmap = rotated
-        poseLandmarker?.detectAsync(BitmapImageBuilder(rotated).build(), imageProxy.imageInfo.timestamp)
+        // CameraX timestamps are nanoseconds; MediaPipe wants strictly increasing
+        // milliseconds.
+        val timestampMs = maxOf(imageProxy.imageInfo.timestamp / 1_000_000L, lastPoseTimestampMs + 1)
+        lastPoseTimestampMs = timestampMs
+        try {
+            poseLandmarker?.detectAsync(BitmapImageBuilder(rotated).build(), timestampMs)
+        } catch (e: Exception) {
+            Log.e("PoseLandmarker", "detectAsync failed", e)
+        }
         imageProxy.close()
     }
 
@@ -858,15 +991,15 @@ class PoseDetectionActivity : AppCompatActivity() {
      * With typical proportions (hip width ≈ 70 % of torso height) a threshold
      * of 0.35 accepts angles within ~30° of true side view.
      */
-    private fun checkSideView(smoothed: List<LandmarkPoint>): Boolean {
+    private fun checkSideView(smoothed: List<LandmarkPoint>, w: Int, h: Int): Boolean {
         if (smoothed.size < 25) return false
         val lHip = smoothed[23]; val rHip = smoothed[24]
         val lShoulder = smoothed[11]; val rShoulder = smoothed[12]
         val torsoH = kotlin.math.abs(
             (lShoulder.y + rShoulder.y) / 2f - (lHip.y + rHip.y) / 2f
-        )
-        if (torsoH < 0.01f) return false
-        return kotlin.math.abs(lHip.x - rHip.x) / torsoH < SIDE_VIEW_THRESHOLD
+        ) * h
+        if (torsoH < 1f) return false
+        return kotlin.math.abs(lHip.x - rHip.x) * w / torsoH < SIDE_VIEW_THRESHOLD
     }
 
     // =========================================================================
@@ -924,27 +1057,6 @@ class PoseDetectionActivity : AppCompatActivity() {
         }
     }
 
-    // =========================================================================
-    // YUV → Bitmap
-    // =========================================================================
-
-    private fun yuvToRgb(image: Image, imageProxy: ImageProxy): Bitmap {
-        val yBuffer = image.planes[0].buffer
-        val uBuffer = image.planes[1].buffer
-        val vBuffer = image.planes[2].buffer
-        val ySize = yBuffer.remaining()
-        val uSize = uBuffer.remaining()
-        val vSize = vBuffer.remaining()
-        val nv21 = ByteArray(ySize + uSize + vSize)
-        yBuffer.get(nv21, 0, ySize)
-        vBuffer.get(nv21, ySize, vSize)
-        uBuffer.get(nv21, ySize + vSize, uSize)
-        val yuvImage = YuvImage(nv21, ImageFormat.NV21, imageProxy.width, imageProxy.height, null)
-        val out = ByteArrayOutputStream()
-        yuvImage.compressToJpeg(Rect(0, 0, imageProxy.width, imageProxy.height), 100, out)
-        return BitmapFactory.decodeByteArray(out.toByteArray(), 0, out.size())
-    }
-
     /**
      * Writes the captured photos (skeleton already baked in) to the cache dir as JPEGs
      * and serialises the whole capture — grouped as `side_captures` (image + score +
@@ -993,13 +1105,17 @@ class PoseDetectionActivity : AppCompatActivity() {
             return file.absolutePath
         }
 
+        // The front camera's frames are mirrored before pose detection, which swaps
+        // the model's left/right labels relative to the person's real body side.
+        val mirrored = cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA
+
         val sideCaptures = org.json.JSONArray().also { arr ->
             sidePhotos.forEachIndexed { i, bitmap ->
                 val obj = org.json.JSONObject()
                 obj.put("image_path", write(bitmap, "side_${i + 1}.jpg"))
                 obj.put("rosa_score", scores.getOrNull(i)?.let { org.json.JSONObject(it.toMap()) }
                     ?: org.json.JSONObject())
-                obj.put("body_angles", capturedAngles.getOrNull(i)?.let { org.json.JSONObject(it.toMap()) }
+                obj.put("body_angles", capturedAngles.getOrNull(i)?.let { org.json.JSONObject(it.toMap(mirrored)) }
                     ?: org.json.JSONObject())
                 sideMonitor.getOrNull(i)?.let { obj.put("monitor_detected", it) }
                 arr.put(obj)
@@ -1010,15 +1126,22 @@ class PoseDetectionActivity : AppCompatActivity() {
         // view) but were never surfaced (RosaAnglesCalculator.Angles doc comment).
         // Use the first valid side-shot's reading, same "first with data" choice
         // Flutter already makes for body_angles (BodyAngles.firstWithData).
-        val repAngles = capturedAngles.firstOrNull { it != null }
+        // The median of the side shots, so one odd frame doesn't decide it.
+        fun median(values: List<Float>): Float {
+            if (values.isEmpty()) return 0f
+            val s = values.sorted()
+            return if (s.size % 2 == 1) s[s.size / 2] else (s[s.size / 2 - 1] + s[s.size / 2]) / 2f
+        }
+        val measured = capturedAngles.filterNotNull()
         val wristExtensionFinding =
-            (repAngles?.wristExtension ?: 0f) >= WRIST_EXTENSION_FINDING_THRESHOLD
-        val shrugGapValue = (repAngles?.shrugGap ?: 0f).toDouble()
+            median(measured.map { it.wristExtension }) >= WRIST_EXTENSION_FINDING_THRESHOLD
+        val shrugGapValue = median(measured.map { it.shrugGap }).toDouble()
 
         val frontCapture = org.json.JSONObject().also { obj ->
             frontPhoto?.let { obj.put("image_path", write(it, "front.jpg")) }
-            obj.put("abduction_angle", frontAbductionAngle)
-            obj.put("wrist_deviation_angle", frontWristDeviationAngle)
+            // Left out when it couldn't be measured — never reported as 0°.
+            frontAbductionAngle?.let { obj.put("abduction_angle", it) }
+            frontWristDeviationAngle?.let { obj.put("wrist_deviation_angle", it) }
             obj.put("wrist_extension", wristExtensionFinding)
             obj.put("shrug_gap", shrugGapValue)
         }
@@ -1226,7 +1349,7 @@ class PoseDetectionActivity : AppCompatActivity() {
      *  reads the smoother — so the resets don't race a frame in flight. */
     private fun enterFrontPhase() {
         appState = AppState.FRONT
-        successCount.set(0)
+        okSinceMs = 0L
         frontReadyEarliestAtMs = android.os.SystemClock.elapsedRealtime() + FRONT_READY_DELAY_MS
         landmarkSmoother.reset()
         legEstimator.reset()
@@ -1256,8 +1379,8 @@ class PoseDetectionActivity : AppCompatActivity() {
      *  ARMREST_ABDUCTION_MAX_DEG at the call site; the raw angle is also surfaced to
      *  Flutter. Uses the same angle drawn on the photo, in the image's pixel aspect
      *  ([w]×[h]). */
-    private fun frontAbductionAngleDeg(landmarks: List<LandmarkPoint>, w: Int, h: Int): Double {
-        var maxAngle = 0.0
+    private fun frontAbductionAngleDeg(landmarks: List<LandmarkPoint>, w: Int, h: Int): Double? {
+        var maxAngle: Double? = null
         for ((shIdx, elIdx) in listOf(11 to 13, 12 to 14)) {
             if (shIdx >= landmarks.size || elIdx >= landmarks.size) continue
             val dx = (landmarks[elIdx].x - landmarks[shIdx].x) * w
@@ -1265,7 +1388,7 @@ class PoseDetectionActivity : AppCompatActivity() {
             val len = kotlin.math.hypot(dx.toDouble(), dy.toDouble())
             if (len < 1.0) continue
             val angle = Math.toDegrees(kotlin.math.acos(dy / len))
-            if (angle > maxAngle) maxAngle = angle
+            if (maxAngle == null || angle > maxAngle) maxAngle = angle
         }
         return maxAngle
     }
@@ -1275,16 +1398,16 @@ class PoseDetectionActivity : AppCompatActivity() {
      *  Compared against WRIST_DEVIATION_MAX_DEG at the call site; the raw angle is also
      *  surfaced to Flutter. Uses the forearm (elbow→wrist) vs hand axis (wrist→
      *  middle-finger MCP) angle drawn on the photo. [hands] are the hand-landmarker
-     *  points; [poseLandmarks] supply the elbows (13/14). Returns 0.0 when no hand is
-     *  usable (straight = no deviation). */
+     *  points; [poseLandmarks] supply the elbows (13/14). Returns null when no hand is
+     *  usable — "not measured", which is not the same as a straight wrist. */
     private fun frontWristDeviationDeg(
         hands: List<List<LandmarkPoint>>,
         poseLandmarks: List<LandmarkPoint>,
         w: Int, h: Int,
-    ): Double {
+    ): Double? {
         val elbows = listOfNotNull(poseLandmarks.getOrNull(13), poseLandmarks.getOrNull(14))
-        if (elbows.isEmpty()) return 0.0
-        var maxDeviation = 0.0
+        if (elbows.isEmpty()) return null
+        var maxDeviation: Double? = null
         for (hand in hands) {
             if (hand.size <= 9) continue
             val wrist = hand[0]; val mcp = hand[9]
@@ -1298,7 +1421,7 @@ class PoseDetectionActivity : AppCompatActivity() {
             if (m1 < 1.0 || m2 < 1.0) continue
             val cosA = ((v1x * v2x + v1y * v2y) / (m1 * m2)).coerceIn(-1.0, 1.0)
             val deviation = 180.0 - Math.toDegrees(kotlin.math.acos(cosA))
-            if (deviation > maxDeviation) maxDeviation = deviation
+            if (maxDeviation == null || deviation > maxDeviation) maxDeviation = deviation
         }
         return maxDeviation
     }
@@ -1313,21 +1436,37 @@ class PoseDetectionActivity : AppCompatActivity() {
         return face && shoulders && hands
     }
 
+    /** True when the person faces the camera: shoulders spread wide relative to
+     *  the nose→shoulder height, measured in pixels ([w]×[h]) so it doesn't depend
+     *  on the frame's aspect ratio. Hips are not used — from the front they are
+     *  usually hidden by the desk. */
+    private fun isFacingCamera(landmarks: List<LandmarkPoint>, w: Int, h: Int): Boolean {
+        if (landmarks.size < 13) return false
+        val shoulderWidth = kotlin.math.abs(landmarks[11].x - landmarks[12].x) * w
+        val neckHeight = kotlin.math.abs((landmarks[11].y + landmarks[12].y) / 2f - landmarks[0].y) * h
+        if (neckHeight < 1f) return false
+        return shoulderWidth / neckHeight >= FRONT_FACING_MIN_RATIO
+    }
+
     /** Drives the capture banner + (repurposed) side chip during the front phase. */
-    private fun updateFrontCue(frontVisible: Boolean, rotationOk: Boolean, phoneSteady: Boolean) {
+    private fun updateFrontCue(
+        frontVisible: Boolean, frontFacing: Boolean, rotationOk: Boolean, phoneSteady: Boolean,
+    ) {
         tvCaptureStatus.visibility = View.VISIBLE
         val settling = android.os.SystemClock.elapsedRealtime() < frontReadyEarliestAtMs
         tvCaptureStatus.text = when {
             settling         -> "Move to the FRONT of the person, behind the monitor"
             !frontVisible    -> "Show the person's face, shoulders and hands"
+            !frontFacing     -> "Move to the FRONT of the person, behind the monitor"
             !rotationOk      -> "Straighten the phone — it's rotated"
             !phoneSteady     -> "Hold the phone still"
             else             -> "Hold steady — capturing front photo…"
         }
-        val ok = frontVisible && rotationOk && phoneSteady
+        val ok = frontVisible && frontFacing && rotationOk && phoneSteady
         tvSideViewStatus.setTextColor(if (ok) COLOR_DETECTED else COLOR_NOT_DETECTED)
         tvSideViewStatus.text = when {
             !frontVisible -> "● Front  Face/shoulders/hands"
+            !frontFacing  -> "● Front  Move to the front"
             !rotationOk   -> "● Front  Straighten phone"
             !phoneSteady  -> "● Front  Hold still"
             else          -> "● Front  OK"

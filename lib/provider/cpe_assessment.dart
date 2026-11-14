@@ -88,19 +88,20 @@ class SideCaptureView {
 /// front-view angles.
 class FrontCaptureView {
   final String image;
-  final double abductionAngle;
-  final double wristDeviationAngle;
+  /// Null when the app couldn't measure the angle on the front photo.
+  final double? abductionAngle;
+  final double? wristDeviationAngle;
 
   const FrontCaptureView({
     required this.image,
-    required this.abductionAngle,
-    required this.wristDeviationAngle,
+    this.abductionAngle,
+    this.wristDeviationAngle,
   });
 
   factory FrontCaptureView.fromJson(Map<String, dynamic> m) => FrontCaptureView(
     image: m['image'] as String? ?? '',
-    abductionAngle: (m['abduction_angle'] as num?)?.toDouble() ?? 0,
-    wristDeviationAngle: (m['wrist_deviation_angle'] as num?)?.toDouble() ?? 0,
+    abductionAngle: (m['abduction_angle'] as num?)?.toDouble(),
+    wristDeviationAngle: (m['wrist_deviation_angle'] as num?)?.toDouble(),
   );
 }
 

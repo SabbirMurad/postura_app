@@ -41,6 +41,8 @@ data class YoloResult(
 
 class YoloDetector(context: Context) {
     private val interpreter: Interpreter
+    // Owned by this detector; a GPU delegate holds native memory until closed.
+    private var gpuDelegate: GpuDelegate? = null
 
     init {
         val afd = context.assets.openFd("yolov8n_float16.tflite")
@@ -54,9 +56,14 @@ class YoloDetector(context: Context) {
         afd.close()
 
         interpreter = try {
-            val gpuDelegate = GpuDelegate()
-            val opts = Interpreter.Options().apply { addDelegate(gpuDelegate) }
-            Interpreter(modelBuffer, opts).also { Log.d(TAG, "YOLO running on GPU delegate") }
+            val delegate = GpuDelegate()
+            try {
+                Interpreter(modelBuffer, Interpreter.Options().apply { addDelegate(delegate) })
+                    .also { gpuDelegate = delegate; Log.d(TAG, "YOLO running on GPU delegate") }
+            } catch (t: Throwable) {
+                delegate.close()
+                throw t
+            }
         } catch (t: Throwable) {
             Log.w(TAG, "GPU delegate unavailable (${t.message}), falling back to CPU")
             Interpreter(modelBuffer, Interpreter.Options().apply { numThreads = 4 })
@@ -222,7 +229,11 @@ class YoloDetector(context: Context) {
         return YoloResult(hasPerson, hasMonitor, personConf, monitorConf)
     }
 
-    fun dispose() = interpreter.close()
+    fun dispose() {
+        interpreter.close()
+        gpuDelegate?.close()
+        gpuDelegate = null
+    }
 
     companion object {
         /** A model-sized copy of a frame, cheap to keep until the photos are

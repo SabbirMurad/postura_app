@@ -79,7 +79,14 @@ final class PoseDetectionViewController: UIViewController {
     /// finger/palm points. Never runs on live frames. Created when the front phase begins.
     private var handLandmarker: HandLandmarker?
     private var yoloDetector: YoloDetector?
-    private var poseTimestampMs = 0
+    // Last timestamp handed to the pose landmarker (ms); MediaPipe needs them
+    // strictly increasing.
+    private var lastPoseTimestampMs = 0
+    // Frames handed to the (asynchronous) pose landmarker, keyed by the timestamp
+    // they were sent with, so a result can be paired with the exact frame it was
+    // computed from — the latest camera frame may already be a newer one.
+    private var pendingFrames: [Int: UIImage] = [:]
+    private let MAX_PENDING_FRAMES = 4
 
     private let landmarkSmoother = LandmarkSmoother(minCutoff: 0.5, beta: 0.5)
     private let legEstimator = LegEstimator()
@@ -102,8 +109,10 @@ final class PoseDetectionViewController: UIViewController {
     // Clean (un-blurred, un-annotated) model-sized copies of the side shots,
     // checked for a monitor once all photos are taken (see finishWithCaptures).
     private var sideMonitorFrames: [UIImage] = []
-    private var frontAbductionAngle: Double = 0
-    private var frontWristDeviationAngle: Double = 0
+    // Nil = could not be measured on the front photo (e.g. no hand found). That is
+    // not the same as 0° and must never be scored or reported as "no problem".
+    private var frontAbductionAngle: Double?
+    private var frontWristDeviationAngle: Double?
 
     private let TOTAL_SHOTS_NEEDED = 3
     private let CAPTURE_COOLDOWN_MS: Double = 2000
@@ -120,7 +129,9 @@ final class PoseDetectionViewController: UIViewController {
     private let WRIST_EXTENSION_FINDING_THRESHOLD: Double = 0.03
     private var nextCaptureEarliestAtMs: Double = 0
     private let SKELETON_REFERENCE_WIDTH: CGFloat = 1080
-    private let SIDE_VIEW_THRESHOLD: Float = 0.35
+    // Measured in pixels. 0.26 is the old 0.35 (normalised units) on the 3:4
+    // Android frames it was tuned on, so both platforms now accept the same angles.
+    private let SIDE_VIEW_THRESHOLD: Float = 0.26
 
     // ── Front-view (4th) shot ─────────────────────────────────────────────────
     // Captured once face (nose), both shoulders and both wrists clear this
@@ -128,10 +139,11 @@ final class PoseDetectionViewController: UIViewController {
     // premature capture while the holder is still walking the phone to the front.
     private let FRONT_VISIBILITY_THRESHOLD: Float = 0.5
     private let FRONT_READY_DELAY_MS: Double = 1500
-    // After the entry settle, face/shoulders/hands must stay visible for this many
-    // *consecutive* frames before the front photo is taken — any drop in visibility
-    // resets the count, so the holder must hold steady once in position.
-    private let FRONT_FRAMES_NEEDED = 30
+    // The front photo is only taken when the person actually faces the camera:
+    // shoulder width must be at least this multiple of the nose→shoulder height
+    // (both in pixels). Face-on it is roughly 1.4; in the side view the holder
+    // starts from it is well under 0.5, so the shot can't fire before they move.
+    private let FRONT_FACING_MIN_RATIO: Float = 0.9
     private var frontReadyEarliestAtMs: Double = 0
 
     // Phone-steadiness gate for the front shot: dynamic acceleration (m/s²) above
@@ -147,11 +159,19 @@ final class PoseDetectionViewController: UIViewController {
 
     private var tiltIsOk = false
     private var rotationIsOk = false
+    // Stricter roll gate for the front shot: its angles are measured against the
+    // image's vertical, so every degree of phone roll is a degree of error.
+    private var frontRotationIsOk = false
+    private let FRONT_MAX_ROLL_DEG = 5.0
     private var sideIsOk = false
     private var heightIsOk = false
     private var distanceIsOk = false
-    private var successCount = 0
-    private let SUCCESS_FRAMES_NEEDED = 20
+    // The hold-steady gates are timed, not counted in frames, so a slow phone
+    // (few frames per second) doesn't wait several times longer than a fast one.
+    private let SIDE_STEADY_MS: Double = 700
+    private let FRONT_STEADY_MS: Double = 1000
+    // When every capture condition last became true (0 = not currently true).
+    private var okSinceMs: Double = 0
 
     private let MIN_LUMINANCE = 0.25
     private let MAX_LUMINANCE = 0.85
@@ -349,12 +369,13 @@ final class PoseDetectionViewController: UIViewController {
             self.capturedAngles.removeAll()
             self.frontPhoto = nil
             self.sideMonitorFrames.removeAll()
-            self.frontAbductionAngle = 0
-            self.frontWristDeviationAngle = 0
+            self.frontAbductionAngle = nil
+            self.frontWristDeviationAngle = nil
             self.nextCaptureEarliestAtMs = 0
             self.frontReadyEarliestAtMs = 0
             self.lastFrameImage = nil
-            self.successCount = 0
+            self.pendingFrames.removeAll()
+            self.okSinceMs = 0
             self.distanceIsOk = false
             self.poseLandmarker = nil
             self.handLandmarker = nil
@@ -434,7 +455,8 @@ final class PoseDetectionViewController: UIViewController {
         case .lightCheck: runLightCheckPhase(pb)
         case .detecting: runDetectionPhase(pb)
         // FRONT also needs live pose frames, so it shares the pose pipeline.
-        case .pose, .front: runPosePhase(pb)
+        case .pose, .front:
+            runPosePhase(pb, presentationTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer))
         }
     }
 
@@ -544,7 +566,7 @@ final class PoseDetectionViewController: UIViewController {
     // Phase 3: Pose detection
     // -------------------------------------------------------------------------
 
-    private func runPosePhase(_ pb: CVPixelBuffer) {
+    private func runPosePhase(_ pb: CVPixelBuffer, presentationTime: CMTime) {
         // The buffer is already upright (portrait connection) and front-mirrored if
         // needed, so no rotation/flip is required here — unlike the Android path.
         guard let cg = ciContext.createCGImage(CIImage(cvPixelBuffer: pb),
@@ -557,20 +579,38 @@ final class PoseDetectionViewController: UIViewController {
         lastFrameImage = image
 
         guard let landmarker = poseLandmarker, let mpImage = try? MPImage(uiImage: image) else { return }
-        poseTimestampMs += 33
+        // The frame's real capture time, kept strictly increasing for MediaPipe.
+        let seconds = CMTimeGetSeconds(presentationTime)
+        let frameMs = seconds.isFinite ? Int((seconds * 1000).rounded()) : 0
+        let timestampMs = max(frameMs, lastPoseTimestampMs + 1)
+        lastPoseTimestampMs = timestampMs
+
+        // Results for dropped frames never arrive, so cap what is held.
+        if pendingFrames.count >= MAX_PENDING_FRAMES, let oldest = pendingFrames.keys.min() {
+            pendingFrames.removeValue(forKey: oldest)
+        }
+        pendingFrames[timestampMs] = image
         do {
-            try landmarker.detectAsync(image: mpImage, timestampInMilliseconds: poseTimestampMs)
+            try landmarker.detectAsync(image: mpImage, timestampInMilliseconds: timestampMs)
         } catch {
+            pendingFrames.removeValue(forKey: timestampMs)
             NSLog("detectAsync failed: \(error)")
         }
     }
 
     // Funnelled from the MediaPipe callback onto captureQueue.
-    private func handlePoseResult(_ result: PoseLandmarkerResult?) {
+    private func handlePoseResult(_ result: PoseLandmarkerResult?, timestampMs: Int) {
         let currentState = appState
-        let w = lastImageWidth
-        let h = lastImageHeight
+        // The frame this result was computed from, so the baked skeleton and the
+        // face blur line up with the pixels they were measured on.
+        let frameImage = pendingFrames[timestampMs] ?? lastFrameImage
+        pendingFrames = pendingFrames.filter { $0.key > timestampMs }
+        let w = frameImage?.cgImage?.width ?? lastImageWidth
+        let h = frameImage?.cgImage?.height ?? lastImageHeight
+        // Wall clock for the capture gates; frame time for the smoother, so its
+        // velocity estimate isn't skewed by inference jitter.
         let tSec = CACurrentMediaTime()
+        let frameSec = Double(timestampMs) / 1000
 
         let rawLandmarks: [RawLandmark]
         if let pose = result?.landmarks.first {
@@ -584,15 +624,15 @@ final class PoseDetectionViewController: UIViewController {
             landmarkSmoother.reset()
             sm = nil
         } else {
-            sm = landmarkSmoother.smooth(rawLandmarks, timestampSec: tSec)
+            sm = landmarkSmoother.smooth(rawLandmarks, timestampSec: frameSec)
         }
 
-        let sideOk = sm != nil && currentState == .pose && checkSideView(sm!)
+        let sideOk = sm != nil && currentState == .pose && checkSideView(sm!, width: w, height: h)
         sideIsOk = sideOk
 
         let smoothed: [LandmarkPoint]
         if let sm = sm {
-            smoothed = sideOk ? legEstimator.estimate(raw: rawLandmarks, smoothed: sm) : sm
+            smoothed = sideOk ? legEstimator.estimate(raw: rawLandmarks, smoothed: sm, aspect: Float(w) / Float(max(h, 1))) : sm
         } else {
             smoothed = []
         }
@@ -619,20 +659,25 @@ final class PoseDetectionViewController: UIViewController {
         }
 
         // ── Multi-shot capture sequence ───────────────────────────────────────
-        let allOk = sideOk && tiltIsOk && rotationIsOk && heightIsOk && distanceIsOk
+        // The phone must also be still, so the shot isn't motion-blurred.
+        let sidePhoneSteady = tSec * 1000 - lastShakeAtMs >= PHONE_STEADY_SETTLE_MS
+        let allOk = sideOk && tiltIsOk && rotationIsOk && heightIsOk && distanceIsOk && sidePhoneSteady
         let capturing = currentState == .pose && capturedPhotos.count < TOTAL_SHOTS_NEEDED
         if capturing { DispatchQueue.main.async { self.updateCaptureCue(allOk: allOk) } }
 
         if capturing && allOk {
             let nowMs = tSec * 1000
-            successCount += 1
-            if successCount >= SUCCESS_FRAMES_NEEDED && nowMs >= nextCaptureEarliestAtMs {
-                successCount = 0
-                if let frame = lastFrameImage {
+            if okSinceMs == 0 { okSinceMs = nowMs }
+            if nowMs - okSinceMs >= SIDE_STEADY_MS && nowMs >= nextCaptureEarliestAtMs {
+                okSinceMs = 0
+                if let frame = frameImage {
                     let captured = smoothed
                     sideMonitorFrames.append(YoloDetector.thumbnail(frame))
                     let blurred = FaceBlurrer.blurFace(frame, landmarks: captured)
-                    let angles = RosaAnglesCalculator.compute(captured)
+                    // Every shot of a scan measures the same body side.
+                    let lockedSide = capturedAngles.compactMap { $0 }.first?.isLeftSide
+                    let angles = RosaAnglesCalculator.compute(captured, imageWidth: w, imageHeight: h,
+                                                              forceLeft: lockedSide)
                     let photo = bakeSkeletonOntoPhoto(blurred, landmarks: captured, angles: angles)
                     capturedPhotos.append(photo)
                     // Score is computed later (at the front shot) once the
@@ -669,7 +714,7 @@ final class PoseDetectionViewController: UIViewController {
                 }
             }
         } else if capturing {
-            successCount = 0
+            okSinceMs = 0
         }
 
         // ── Front-view capture (4th shot, after the 3 side shots) ──────────────
@@ -681,18 +726,20 @@ final class PoseDetectionViewController: UIViewController {
             let frontVisible = frontLandmarksVisible(rawLandmarks)
             let nowMs = tSec * 1000
             let phoneSteady = nowMs - lastShakeAtMs >= PHONE_STEADY_SETTLE_MS
-            let frontOk = frontVisible && rotationIsOk && phoneSteady
+            let frontFacing = isFacingCamera(smoothed, width: w, height: h)
+            let rotationOk = frontRotationIsOk
+            let frontOk = frontVisible && frontFacing && rotationOk && phoneSteady
             DispatchQueue.main.async {
-                self.updateFrontCue(frontVisible: frontVisible, rotationOk: self.rotationIsOk,
-                                    phoneSteady: phoneSteady)
+                self.updateFrontCue(frontVisible: frontVisible, frontFacing: frontFacing,
+                                    rotationOk: rotationOk, phoneSteady: phoneSteady)
             }
             if frontOk && nowMs >= frontReadyEarliestAtMs {
-                // Capture once the condition has held for FRONT_FRAMES_NEEDED
-                // consecutive frames past the entry settle.
-                successCount += 1
-                if successCount >= FRONT_FRAMES_NEEDED {
-                    successCount = 0
-                    if let frame = lastFrameImage {
+                // Capture once the condition has held for FRONT_STEADY_MS past
+                // the entry settle.
+                if okSinceMs == 0 { okSinceMs = nowMs }
+                if nowMs - okSinceMs >= FRONT_STEADY_MS {
+                    okSinceMs = 0
+                    if let frame = frameImage {
                         let captured = smoothed
                         // Detect hands on the clean frame, then draw the finger/palm
                         // overlay on top of the baked (blurred + skeleton) photo.
@@ -718,12 +765,17 @@ final class PoseDetectionViewController: UIViewController {
                         // also surfaced to Flutter.
                         let w = CGFloat(frame.cgImage?.width ?? 1)
                         let h = CGFloat(frame.cgImage?.height ?? 1)
-                        frontAbductionAngle = frontAbductionAngleDeg(captured, width: w, height: h)
-                        frontWristDeviationAngle = frontWristDeviationDeg(
+                        let abduction = frontAbductionAngleDeg(captured, width: w, height: h)
+                        let wristDeviation = frontWristDeviationDeg(
                             handsToPoints(handResult), poseLandmarks: captured, width: w, height: h)
+                        frontAbductionAngle = abduction
+                        frontWristDeviationAngle = wristDeviation
+                        // A measurement that couldn't be taken (e.g. no hand found)
+                        // keeps the questionnaire answer instead of being scored as
+                        // "no problem".
                         var mods = workstationModifiers
-                        mods.armrestTooWide = frontAbductionAngle >= ARMREST_ABDUCTION_MAX_DEG
-                        mods.keyboardDeviation = frontWristDeviationAngle >= WRIST_DEVIATION_MAX_DEG
+                        if let a = abduction { mods.armrestTooWide = a >= ARMREST_ABDUCTION_MAX_DEG }
+                        if let d = wristDeviation { mods.keyboardDeviation = d >= WRIST_DEVIATION_MAX_DEG }
                         let scores = capturedAngles.map { $0 != nil ? RosaScorer.score($0!, mods: mods) : nil }
                         let sidePhotos = capturedPhotos
                         pauseCameraPipeline()
@@ -735,7 +787,7 @@ final class PoseDetectionViewController: UIViewController {
                 }
             } else {
                 // Visibility dropped (or still in the entry settle) — reset the count.
-                successCount = 0
+                okSinceMs = 0
             }
         }
 
@@ -750,7 +802,7 @@ final class PoseDetectionViewController: UIViewController {
         }
 
         let rosaAngles = (currentState == .pose && smoothed.count >= 29)
-            ? RosaAnglesCalculator.compute(smoothed) : nil
+            ? RosaAnglesCalculator.compute(smoothed, imageWidth: w, imageHeight: h) : nil
 
         distanceIsOk = distanceM != nil && distanceM! >= 1.7 && distanceM! <= 2.1
 
@@ -774,19 +826,20 @@ final class PoseDetectionViewController: UIViewController {
         session.stopRunning()
         poseLandmarker = nil
         handLandmarker = nil
+        pendingFrames.removeAll()
     }
 
     // =========================================================================
     // Side view check
     // =========================================================================
 
-    private func checkSideView(_ smoothed: [LandmarkPoint]) -> Bool {
+    private func checkSideView(_ smoothed: [LandmarkPoint], width: Int, height: Int) -> Bool {
         if smoothed.count < 25 { return false }
         let lHip = smoothed[23], rHip = smoothed[24]
         let lShoulder = smoothed[11], rShoulder = smoothed[12]
-        let torsoH = abs((lShoulder.y + rShoulder.y) / 2 - (lHip.y + rHip.y) / 2)
-        if torsoH < 0.01 { return false }
-        return abs(lHip.x - rHip.x) / torsoH < SIDE_VIEW_THRESHOLD
+        let torsoH = abs((lShoulder.y + rShoulder.y) / 2 - (lHip.y + rHip.y) / 2) * Float(height)
+        if torsoH < 1 { return false }
+        return abs(lHip.x - rHip.x) * Float(width) / torsoH < SIDE_VIEW_THRESHOLD
     }
 
     // =========================================================================
@@ -799,6 +852,7 @@ final class PoseDetectionViewController: UIViewController {
         captureQueue.async {
             self.tiltIsOk = tOk
             self.rotationIsOk = rOk
+            self.frontRotationIsOk = abs(rollAngle) <= self.FRONT_MAX_ROLL_DEG
             // Latch the last time the phone was moved/shaken; the front capture waits
             // for a quiet window after this before firing.
             if motion > self.PHONE_MOTION_MAX { self.lastShakeAtMs = CACurrentMediaTime() * 1000 }
@@ -933,11 +987,16 @@ final class PoseDetectionViewController: UIViewController {
             return path
         }
 
+        // The front camera's frames are mirrored before pose detection, which swaps
+        // the model's left/right labels relative to the person's real body side.
+        let mirrored = cameraPosition == .front
+
         var sideCaptures: [[String: Any]] = []
         for (i, photo) in sidePhotos.enumerated() {
             var obj: [String: Any] = [
                 "rosa_score": scores.indices.contains(i) ? (scores[i]?.toMap() ?? [:]) : [:],
-                "body_angles": capturedAngles.indices.contains(i) ? (capturedAngles[i]?.toMap() ?? [:]) : [:],
+                "body_angles": capturedAngles.indices.contains(i)
+                    ? (capturedAngles[i]?.toMap(mirrored: mirrored) ?? [:]) : [:],
             ]
             if let path = write(photo, "side_\(i + 1).jpg") { obj["image_path"] = path }
             if i < sideMonitor.count, let seen = sideMonitor[i] { obj["monitor_detected"] = seen }
@@ -948,17 +1007,24 @@ final class PoseDetectionViewController: UIViewController {
         // view) but were never surfaced (RosaAnglesCalculator.Angles doc comment).
         // Use the first valid side-shot's reading, same "first with data" choice
         // Flutter already makes for body_angles (BodyAngles.firstWithData).
-        let repAngles = capturedAngles.first { $0 != nil } ?? nil
+        // The median of the side shots, so one odd frame doesn't decide it.
+        func median(_ values: [Float]) -> Float {
+            if values.isEmpty { return 0 }
+            let s = values.sorted()
+            return s.count % 2 == 1 ? s[s.count / 2] : (s[s.count / 2 - 1] + s[s.count / 2]) / 2
+        }
+        let measured = capturedAngles.compactMap { $0 }
         let wristExtensionFinding =
-            (repAngles?.wristExtension ?? 0) >= Float(WRIST_EXTENSION_FINDING_THRESHOLD)
-        let shrugGapValue = Double(repAngles?.shrugGap ?? 0)
+            median(measured.map { $0.wristExtension }) >= Float(WRIST_EXTENSION_FINDING_THRESHOLD)
+        let shrugGapValue = Double(median(measured.map { $0.shrugGap }))
 
         var frontCapture: [String: Any] = [
-            "abduction_angle": frontAbductionAngle,
-            "wrist_deviation_angle": frontWristDeviationAngle,
             "wrist_extension": wristExtensionFinding,
             "shrug_gap": shrugGapValue,
         ]
+        // Left out when it couldn't be measured — never reported as 0°.
+        if let a = frontAbductionAngle { frontCapture["abduction_angle"] = a }
+        if let d = frontWristDeviationAngle { frontCapture["wrist_deviation_angle"] = d }
         if let front = frontPhoto, let path = write(front, "front.jpg") {
             frontCapture["image_path"] = path
         }
@@ -1012,7 +1078,7 @@ final class PoseDetectionViewController: UIViewController {
     /// delay. Called on captureQueue, so the resets are serialized with analysis.
     private func enterFrontPhase() {
         appState = .front
-        successCount = 0
+        okSinceMs = 0
         frontReadyEarliestAtMs = CACurrentMediaTime() * 1000 + FRONT_READY_DELAY_MS
         landmarkSmoother.reset()
         legEstimator.reset()
@@ -1049,8 +1115,8 @@ final class PoseDetectionViewController: UIViewController {
     /// arms — the front-view "armrests too wide" measurement. Compared against
     /// ARMREST_ABDUCTION_MAX_DEG at the call site; the raw angle is also surfaced to
     /// Flutter. Uses the same angle drawn on the photo, in the image's pixel aspect.
-    private func frontAbductionAngleDeg(_ landmarks: [LandmarkPoint], width: CGFloat, height: CGFloat) -> Double {
-        var maxAngle = 0.0
+    private func frontAbductionAngleDeg(_ landmarks: [LandmarkPoint], width: CGFloat, height: CGFloat) -> Double? {
+        var maxAngle: Double?
         for (shIdx, elIdx) in [(11, 13), (12, 14)] {
             guard shIdx < landmarks.count, elIdx < landmarks.count else { continue }
             let dx = Double(landmarks[elIdx].x - landmarks[shIdx].x) * Double(width)
@@ -1058,7 +1124,7 @@ final class PoseDetectionViewController: UIViewController {
             let len = (dx * dx + dy * dy).squareRoot()
             if len < 1 { continue }
             let angle = acos(dy / len) * 180 / .pi
-            if angle > maxAngle { maxAngle = angle }
+            if angle > (maxAngle ?? -Double.infinity) { maxAngle = angle }
         }
         return maxAngle
     }
@@ -1067,16 +1133,17 @@ final class PoseDetectionViewController: UIViewController {
     /// degrees) across both hands — the "wrists deviate while typing" measurement.
     /// Compared against WRIST_DEVIATION_MAX_DEG at the call site; the raw angle is also
     /// surfaced to Flutter. `hands` are the hand-landmarker points; `poseLandmarks`
-    /// supply the elbows (13/14). Returns 0 when no hand is usable (straight = none).
+    /// supply the elbows (13/14). Returns nil when no hand is usable — "not
+    /// measured", which is not the same as a straight wrist.
     private func frontWristDeviationDeg(_ hands: [[LandmarkPoint]], poseLandmarks: [LandmarkPoint],
-                                        width: CGFloat, height: CGFloat) -> Double {
+                                        width: CGFloat, height: CGFloat) -> Double? {
         var elbows: [LandmarkPoint] = []
         if poseLandmarks.count > 13 { elbows.append(poseLandmarks[13]) }
         if poseLandmarks.count > 14 { elbows.append(poseLandmarks[14]) }
-        if elbows.isEmpty { return 0 }
+        if elbows.isEmpty { return nil }
 
         let w = Double(width), h = Double(height)
-        var maxDeviation = 0.0
+        var maxDeviation: Double?
         for hand in hands {
             guard hand.count > 9 else { continue }
             let wrist = hand[0], mcp = hand[9]
@@ -1091,19 +1158,33 @@ final class PoseDetectionViewController: UIViewController {
             if m1 < 1 || m2 < 1 { continue }
             let cosA = max(-1, min(1, (v1x * v2x + v1y * v2y) / (m1 * m2)))
             let deviation = 180 - acos(cosA) * 180 / .pi
-            if deviation > maxDeviation { maxDeviation = deviation }
+            if deviation > (maxDeviation ?? -Double.infinity) { maxDeviation = deviation }
         }
         return maxDeviation
     }
 
+    /// True when the person faces the camera: shoulders spread wide relative to the
+    /// nose→shoulder height, measured in pixels so it doesn't depend on the frame's
+    /// aspect ratio. Hips are not used — from the front they are usually hidden by
+    /// the desk.
+    private func isFacingCamera(_ landmarks: [LandmarkPoint], width: Int, height: Int) -> Bool {
+        if landmarks.count < 13 { return false }
+        let shoulderWidth = abs(landmarks[11].x - landmarks[12].x) * Float(width)
+        let neckHeight = abs((landmarks[11].y + landmarks[12].y) / 2 - landmarks[0].y) * Float(height)
+        if neckHeight < 1 { return false }
+        return shoulderWidth / neckHeight >= FRONT_FACING_MIN_RATIO
+    }
+
     /// Drives the capture banner + (repurposed) side chip during the front phase.
-    private func updateFrontCue(frontVisible: Bool, rotationOk: Bool, phoneSteady: Bool) {
+    private func updateFrontCue(frontVisible: Bool, frontFacing: Bool, rotationOk: Bool, phoneSteady: Bool) {
         tvCaptureStatus.isHidden = false
         let settling = CACurrentMediaTime() * 1000 < frontReadyEarliestAtMs
         if settling {
             tvCaptureStatus.text = "Move to the FRONT of the person, behind the monitor"
         } else if !frontVisible {
             tvCaptureStatus.text = "Show the person's face, shoulders and hands"
+        } else if !frontFacing {
+            tvCaptureStatus.text = "Move to the FRONT of the person, behind the monitor"
         } else if !rotationOk {
             tvCaptureStatus.text = "Straighten the phone — it's rotated"
         } else if !phoneSteady {
@@ -1111,10 +1192,12 @@ final class PoseDetectionViewController: UIViewController {
         } else {
             tvCaptureStatus.text = "Hold steady — capturing front photo…"
         }
-        let ok = frontVisible && rotationOk && phoneSteady
+        let ok = frontVisible && frontFacing && rotationOk && phoneSteady
         tvSideViewStatus.textColor = ok ? colorDetected : colorNotDetected
         if !frontVisible {
             tvSideViewStatus.text = "● Front  Face/shoulders/hands"
+        } else if !frontFacing {
+            tvSideViewStatus.text = "● Front  Move to the front"
         } else if !rotationOk {
             tvSideViewStatus.text = "● Front  Straighten phone"
         } else if !phoneSteady {
@@ -1332,7 +1415,7 @@ extension PoseDetectionViewController: PoseLandmarkerLiveStreamDelegate {
                         error: Error?) {
         if let error = error { NSLog("pose detection error: \(error)"); return }
         captureQueue.async { [weak self] in
-            self?.handlePoseResult(result)
+            self?.handlePoseResult(result, timestampMs: timestampInMilliseconds)
         }
     }
 }

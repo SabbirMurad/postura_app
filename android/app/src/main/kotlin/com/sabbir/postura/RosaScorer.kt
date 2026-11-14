@@ -162,6 +162,8 @@ object RosaScorer {
 
     // ── Scoring ───────────────────────────────────────────────────────────────────
 
+    private const val TUCKED_FEET_MIN_THIGH_SLOPE_DEG = -5f
+
     fun score(
         angles: RosaAnglesCalculator.Angles,
         mods: WorkstationModifiers = WorkstationModifiers(),
@@ -169,8 +171,11 @@ object RosaScorer {
         // ── CHAIR ─────────────────────────────────────────────────────────────────
         // Each questionnaire answer below can only raise the camera-derived base
         // score (official ROSA tiers), never lower it — no double counting.
+        // A sharp knee angle with the thigh level or sloping down is feet tucked
+        // under the chair, not a chair that is too low. Same cutoff as the backend.
+        val feetTucked = angles.thighSlope?.let { it > TUCKED_FEET_MIN_THIGH_SLOPE_DEG } ?: false
         val cameraSeatHeight = when {
-            angles.kneeAngle < 80f  -> 2  // chair too low
+            angles.kneeAngle < 80f  -> if (feetTucked) 1 else 2  // chair too low
             angles.kneeAngle > 130f -> 3  // legs nearly extended — feet off floor
             angles.kneeAngle > 100f -> 2  // chair too high
             else                    -> 1  // neutral

@@ -17,8 +17,10 @@ final class LegEstimator {
         facingVotes.removeAll()
     }
 
-    func estimate(raw: [RawLandmark], smoothed: [LandmarkPoint]) -> [LandmarkPoint] {
-        if raw.count < 33 || smoothed.count < 33 { return smoothed }
+    /// `aspect` is frame width / height. Normalised x and y use different scales
+    /// on a non-square frame, so lengths are measured in frame heights.
+    func estimate(raw: [RawLandmark], smoothed: [LandmarkPoint], aspect: Float) -> [LandmarkPoint] {
+        if raw.count < 33 || smoothed.count < 33 || aspect <= 0 { return smoothed }
 
         var out = smoothed
 
@@ -27,10 +29,12 @@ final class LegEstimator {
         let shoulderMidY = (smoothed[Idx.lShoulder].y + smoothed[Idx.rShoulder].y) / 2
         let hipMidX = (smoothed[Idx.lHip].x + smoothed[Idx.rHip].x) / 2
         let hipMidY = (smoothed[Idx.lHip].y + smoothed[Idx.rHip].y) / 2
-        let torsoLen = dist(shoulderMidX, shoulderMidY, hipMidX, hipMidY)
+        // In frame heights.
+        let torsoLen = dist(shoulderMidX * aspect, shoulderMidY, hipMidX * aspect, hipMidY)
         if torsoLen < 0.01 { return smoothed }
 
-        let thighLen = torsoLen * Const.thighRatio
+        // The thigh runs horizontally, so it is converted back to normalised x.
+        let thighLen = torsoLen * Const.thighRatio / aspect
         let shinLen = torsoLen * Const.shinRatio
 
         // ── Standing guard ────────────────────────────────────────────────────

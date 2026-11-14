@@ -288,9 +288,12 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
           gallery: gallery,
           galleryIndex: galleryIndex++,
           metrics: {
-            'Elbow abduction': '${front.abductionAngle.toStringAsFixed(1)}°',
-            'Wrist deviation':
-                '${front.wristDeviationAngle.toStringAsFixed(1)}°',
+            'Elbow abduction': front.abductionAngle == null
+                ? 'Not measured'
+                : '${front.abductionAngle!.toStringAsFixed(1)}°',
+            'Wrist deviation': front.wristDeviationAngle == null
+                ? 'Not measured'
+                : '${front.wristDeviationAngle!.toStringAsFixed(1)}°',
           },
         ),
       );

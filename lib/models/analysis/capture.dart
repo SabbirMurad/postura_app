@@ -50,8 +50,8 @@ class SideViewCapture {
 class FrontViewCapture {
   const FrontViewCapture({
     required this.image,
-    required this.abductionAngle,
-    required this.wristDeviationAngle,
+    this.abductionAngle,
+    this.wristDeviationAngle,
     this.wristExtension = false,
     this.shrugGap = 0,
   });
@@ -59,11 +59,13 @@ class FrontViewCapture {
   final File image;
 
   /// Max elbow abduction across both arms (degrees) — "armrests too wide".
-  final double abductionAngle;
+  /// Null when the native engine couldn't measure it on the front photo.
+  final double? abductionAngle;
 
   /// Max wrist deviation from straight across both hands (degrees) —
-  /// "wrists deviate while typing".
-  final double wristDeviationAngle;
+  /// "wrists deviate while typing". Null when it couldn't be measured (no
+  /// hand found in the front photo), which is not the same as 0°.
+  final double? wristDeviationAngle;
 
   /// C_WRIST_EXT source: native wristExtension >= 0.03 (RosaScorer's own
   /// "elevated risk" cutoff). Previously computed but never surfaced.
@@ -77,17 +79,19 @@ class FrontViewCapture {
   factory FrontViewCapture.fromChannel(Map<String, dynamic> m) =>
       FrontViewCapture(
         image: File(m['image_path'] as String? ?? ''),
-        abductionAngle: (m['abduction_angle'] as num?)?.toDouble() ?? 0,
-        wristDeviationAngle:
-            (m['wrist_deviation_angle'] as num?)?.toDouble() ?? 0,
+        abductionAngle: (m['abduction_angle'] as num?)?.toDouble(),
+        wristDeviationAngle: (m['wrist_deviation_angle'] as num?)?.toDouble(),
         wristExtension: m['wrist_extension'] as bool? ?? false,
         shrugGap: (m['shrug_gap'] as num?)?.toDouble() ?? 0,
       );
 
+  /// An angle the engine couldn't measure is left out; the backend then keeps
+  /// the questionnaire answer instead of scoring it as 0°.
   Map<String, dynamic> toJson(String imageId) => {
     'image_id': imageId,
-    'abduction_angle': abductionAngle,
-    'wrist_deviation_angle': wristDeviationAngle,
+    if (abductionAngle != null) 'abduction_angle': abductionAngle,
+    if (wristDeviationAngle != null)
+      'wrist_deviation_angle': wristDeviationAngle,
     'wrist_extension': wristExtension,
     'shrug_gap': shrugGap,
   };
