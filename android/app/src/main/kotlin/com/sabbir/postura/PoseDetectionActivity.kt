@@ -71,7 +71,8 @@ class PoseDetectionActivity : AppCompatActivity() {
     // FRONT is a 4th phase entered after the 3 side shots: the holder moves to
     // the front of the person (behind the monitor) and a single extra photo is
     // taken once the face, shoulders and hands are visible.
-    private enum class AppState { LIGHT_CHECK, DETECTING, POSE, FRONT }
+    // DONE: every photo is taken; frames are ignored while the photos are processed.
+    private enum class AppState { LIGHT_CHECK, DETECTING, POSE, FRONT, DONE }
 
     // -------------------------------------------------------------------------
     // Views
@@ -107,6 +108,34 @@ class PoseDetectionActivity : AppCompatActivity() {
     // overlay finger/palm points. Never runs on live frames. Created lazily when
     // the front phase begins (the settle delay absorbs the one-time setup cost).
     @Volatile private var handLandmarker: HandLandmarker? = null
+
+    // Pose landmarker in IMAGE mode, run once on each captured still. The live
+    // landmarks are smoothed for a steady overlay, so they lag the body; the
+    // measurements come from this fresh, unsmoothed detection instead. Uses the
+    // heavy model when it is bundled, otherwise the full one. It runs after the
+    // live landmarker is closed, so it can have the GPU; it is created, used and
+    // closed on cameraExecutor (a GPU delegate is tied to the thread that made it).
+    @Volatile private var stillPoseLandmarker: PoseLandmarker? = null
+    private var stillPoseOnGpu = false
+    // A still detection whose shoulders sit further than this (normalised) from
+    // the live tracking is someone else in the frame; the live pose is used then.
+    private val STILL_POSE_MAX_SHIFT = 0.1f
+    // The model's raw landmarks for each side shot and the front shot (x, y, z,
+    // visibility per point), sent on with the scan so cutoffs can be re-fitted
+    // later from real data.
+    private val capturedRawPoses = CopyOnWriteArrayList<org.json.JSONObject?>()
+
+    /** A captured frame waiting to be processed once every photo is taken: the
+     *  clean frame plus the live pose it was captured with (the fallback when
+     *  the still detection finds nothing). */
+    private class PendingShot(
+        val frame: Bitmap,
+        val livePoints: List<LandmarkPoint>,
+        val liveRaw: List<NormalizedLandmark>?,
+    )
+    private val pendingSideShots = CopyOnWriteArrayList<PendingShot>()
+    @Volatile private var pendingFrontShot: PendingShot? = null
+    @Volatile private var frontRawPose: org.json.JSONObject? = null
     private var yoloDetector: YoloDetector? = null
 
     // -------------------------------------------------------------------------
@@ -350,6 +379,8 @@ class PoseDetectionActivity : AppCompatActivity() {
             poseLandmarker = null
             handLandmarker?.close()
             handLandmarker = null
+            stillPoseLandmarker?.close()
+            stillPoseLandmarker = null
             yoloDetector?.dispose()
             yoloDetector = null
 
@@ -359,6 +390,10 @@ class PoseDetectionActivity : AppCompatActivity() {
             capturedPhotos.clear()
             sideMonitorFrames.clear()
             capturedAngles.clear()
+            capturedRawPoses.clear()
+            frontRawPose = null
+            pendingSideShots.clear()
+            pendingFrontShot = null
             frontPhoto = null
             frontAbductionAngle = null
             frontWristDeviationAngle = null
@@ -417,6 +452,204 @@ class PoseDetectionActivity : AppCompatActivity() {
             }
         }
         return poseLandmarker != null
+    }
+
+    /** Creates the IMAGE-mode pose landmarker used on captured stills: the heavy
+     *  model if bundled, else the full one; on the GPU when [allowGpu] and the
+     *  device supports it, else the CPU. Without it, captures use the live pose. */
+    private fun initializeStillPoseLandmarker(allowGpu: Boolean = true) {
+        if (stillPoseLandmarker != null) return
+        val delegates = if (allowGpu) listOf(Delegate.GPU, Delegate.CPU) else listOf(Delegate.CPU)
+        for (model in listOf("pose_landmarker_heavy.task", "pose_landmarker_full.task")) {
+            for (delegate in delegates) {
+                try {
+                    val options = PoseLandmarker.PoseLandmarkerOptions.builder()
+                        .setBaseOptions(
+                            BaseOptions.builder()
+                                .setModelAssetPath(model)
+                                .setDelegate(delegate)
+                                .build()
+                        )
+                        .setRunningMode(RunningMode.IMAGE)
+                        .setNumPoses(1)
+                        .build()
+                    stillPoseLandmarker = PoseLandmarker.createFromOptions(this, options)
+                    stillPoseOnGpu = delegate == Delegate.GPU
+                    Log.d("PoseLandmarker", "Still-image pose model: $model on $delegate")
+                    return
+                } catch (t: Throwable) {
+                    Log.w("PoseLandmarker", "Still-image pose model $model on $delegate unavailable: ${t.message}")
+                }
+            }
+        }
+    }
+
+    /** Re-detects the pose on a captured still. Null when the landmarker isn't
+     *  available, finds nobody, or finds someone other than the person the live
+     *  tracking ([live]) is following. */
+    private fun detectStillPose(
+        frame: Bitmap,
+        live: List<NormalizedLandmark>?,
+    ): List<NormalizedLandmark>? {
+        fun run(): List<NormalizedLandmark>? =
+            stillPoseLandmarker?.detect(BitmapImageBuilder(frame).build())?.landmarks()?.firstOrNull()
+        val still = try {
+            run()
+        } catch (e: Exception) {
+            Log.e("PoseLandmarker", "Still-image detection failed", e)
+            if (!stillPoseOnGpu) null else {
+                // A GPU delegate can load and still fail at run time: retry on CPU.
+                try {
+                    stillPoseLandmarker?.close()
+                } catch (_: Exception) {}
+                stillPoseLandmarker = null
+                initializeStillPoseLandmarker(allowGpu = false)
+                try { run() } catch (e2: Exception) { null }
+            }
+        }
+        if (still == null || still.size < 33) return null
+        if (live != null && live.size >= 13) {
+            val dx = (still[11].x() + still[12].x() - live[11].x() - live[12].x()) / 2f
+            val dy = (still[11].y() + still[12].y() - live[11].y() - live[12].y()) / 2f
+            if (kotlin.math.hypot(dx, dy) > STILL_POSE_MAX_SHIFT) return null
+        }
+        return still
+    }
+
+    /** Every photo is taken: stop the camera and process the photos behind a
+     *  loading message. Called on the result-listener thread. */
+    private fun finishCapturing() {
+        appState = AppState.DONE
+        runOnUiThread {
+            triggerCaptureFlash()
+            tvCaptureStatus.visibility = View.VISIBLE
+            tvCaptureStatus.text = "Processing photos…"
+            // pauseCameraPipeline queues the live landmarker's close on
+            // cameraExecutor; the processing is queued behind it, so it starts
+            // only once the live pipeline (and its GPU context) is gone.
+            pauseCameraPipeline()
+            cameraExecutor.execute { processCaptures() }
+        }
+    }
+
+    /**
+     * Turns the captured frames into the final photos and measurements: re-detects
+     * the pose on each still, blurs the face, bakes the skeleton, measures the
+     * angles and scores the scan. Runs on cameraExecutor after the camera stops.
+     */
+    private fun processCaptures() {
+        try {
+            initializeStillPoseLandmarker()
+
+            for (shot in pendingSideShots) {
+                val frame = shot.frame
+                // Measure from a fresh detection on this exact still (before it is
+                // blurred or drawn on); the smoothed live pose is only the fallback.
+                val still = detectStillPose(frame, shot.liveRaw)
+                val captured = if (still != null) {
+                    legEstimator.estimate(
+                        still, still.map { LandmarkPoint(it.x(), it.y()) },
+                        frame.width.toFloat() / frame.height)
+                } else shot.livePoints
+                capturedRawPoses.add((still ?: shot.liveRaw)?.let {
+                    rawPoseRecord(it, frame.width, frame.height, still != null)
+                })
+                sideMonitorFrames.add(YoloDetector.thumbnail(frame))
+                val blurred = FaceBlurrer.blurFace(frame, captured)
+                val angles = RosaAnglesCalculator.compute(
+                    captured, frame.width, frame.height,
+                    // Every shot of a scan measures the same body side.
+                    forceLeft = capturedAngles.firstOrNull { it != null }?.isLeftSide)
+                capturedPhotos.add(bakeSkeletonOntoPhoto(blurred, captured, angles))
+                capturedAngles.add(angles)
+                if (angles != null && angles.lowerBodyConfidence == RosaAnglesCalculator.LowerBodyConfidence.LOW) {
+                    Log.d("RosaScorer", "Shot ${capturedPhotos.size}: knee occluded, seat-height score is a best-effort guess (kneeAngle=${angles.kneeAngle})")
+                }
+            }
+
+            // Armrest-too-wide and wrist-deviation are measured on the front photo
+            // and applied to every side shot's score. Without a front photo the
+            // questionnaire answers (already in workstationModifiers) stand.
+            var mods = workstationModifiers
+            pendingFrontShot?.let { shot ->
+                val frame = shot.frame
+                val still = detectStillPose(frame, shot.liveRaw)
+                val captured = still?.map { LandmarkPoint(it.x(), it.y()) } ?: shot.livePoints
+                (still ?: shot.liveRaw)?.let {
+                    frontRawPose = rawPoseRecord(it, frame.width, frame.height, still != null)
+                }
+                // Detect hands on the CLEAN frame first (before face blur /
+                // skeleton bake mutate it), then draw them on the baked photo.
+                val handResult = detectHands(frame)
+                val blurred = FaceBlurrer.blurFace(frame, captured)
+                // Front view is upper-body only: no legs (25+), no face/ear points
+                // (0..10, the face is blurred) and no pose wrist/palm points
+                // (15..22) — the hand landmarker supplies those, and the elbow is
+                // joined straight to the hand's point 0.
+                val photo = bakeSkeletonOntoPhoto(
+                    blurred, captured.take(25), null, excludeIndices = FRONT_SKELETON_EXCLUDE)
+                drawHandsOntoPhoto(photo, handResult, captured)
+                drawShoulderAnglesOntoPhoto(photo, captured)
+                frontPhoto = photo
+
+                val abduction = frontAbductionAngleDeg(captured, frame.width, frame.height)
+                val wristDeviation = frontWristDeviationDeg(
+                    handsToPoints(handResult), captured, frame.width, frame.height)
+                frontAbductionAngle = abduction
+                frontWristDeviationAngle = wristDeviation
+                // A measurement that couldn't be taken (e.g. no hand found) keeps
+                // the questionnaire answer instead of being scored as "no problem".
+                mods = workstationModifiers.copy(
+                    armrestTooWide = abduction?.let { it >= ARMREST_ABDUCTION_MAX_DEG }
+                        ?: workstationModifiers.armrestTooWide,
+                    keyboardDeviation = wristDeviation?.let { it >= WRIST_DEVIATION_MAX_DEG }
+                        ?: workstationModifiers.keyboardDeviation,
+                )
+            }
+
+            val scores = capturedAngles.map { if (it != null) RosaScorer.score(it, mods) else null }
+            val photos = capturedPhotos.toList()
+            runOnUiThread {
+                if (!isFinishing && !isDestroyed) finishWithCaptures(photos, scores)
+            }
+        } catch (t: Throwable) {
+            Log.e("PoseDetection", "Processing the captured photos failed", t)
+            runOnUiThread {
+                if (isFinishing || isDestroyed) return@runOnUiThread
+                Toast.makeText(this, "Couldn't process the photos. Please try again.", Toast.LENGTH_LONG).show()
+                setResult(Activity.RESULT_CANCELED)
+                finish()
+            }
+        } finally {
+            try {
+                stillPoseLandmarker?.close()
+            } catch (_: Exception) {}
+            stillPoseLandmarker = null
+            pendingSideShots.clear()
+            pendingFrontShot = null
+        }
+    }
+
+    /** The raw landmarks of one shot, in the shape sent on to Flutter. */
+    private fun rawPoseRecord(
+        landmarks: List<NormalizedLandmark>,
+        width: Int, height: Int, fromStill: Boolean,
+    ): org.json.JSONObject {
+        val points = org.json.JSONArray()
+        for (lm in landmarks) {
+            points.put(
+                org.json.JSONArray()
+                    .put(lm.x().toDouble())
+                    .put(lm.y().toDouble())
+                    .put(lm.z().toDouble())
+                    .put(lm.visibility().orElse(0f).toDouble())
+            )
+        }
+        return org.json.JSONObject()
+            .put("landmarks", points)
+            .put("image_width", width)
+            .put("image_height", height)
+            .put("source", if (fromStill) "still" else "live")
     }
 
     /** The exact frame a pose result was computed from, so the baked skeleton and
@@ -504,7 +737,7 @@ class PoseDetectionActivity : AppCompatActivity() {
                 // The phone must also be still, so the shot isn't motion-blurred.
                 val sidePhoneSteady = android.os.SystemClock.elapsedRealtime() - lastShakeAtMs >= PHONE_STEADY_SETTLE_MS
                 val allOk     = sideOk && tiltIsOk && rotationIsOk && heightIsOk && distanceIsOk && sidePhoneSteady
-                val capturing = currentState == AppState.POSE && capturedPhotos.size < TOTAL_SHOTS_NEEDED
+                val capturing = currentState == AppState.POSE && pendingSideShots.size < TOTAL_SHOTS_NEEDED
                 if (capturing) runOnUiThread { updateCaptureCue(allOk) }
 
                 if (capturing && allOk) {
@@ -512,37 +745,20 @@ class PoseDetectionActivity : AppCompatActivity() {
                     if (okSinceMs == 0L) okSinceMs = now
                     if (now - okSinceMs >= SIDE_STEADY_MS && now >= nextCaptureEarliestAtMs) {
                         okSinceMs = 0L
-                        val captured  = smoothed.toList()
                         val frameCopy = frameFor(input)?.copy(Bitmap.Config.ARGB_8888, true)
                         if (frameCopy != null) {
-                            sideMonitorFrames.add(YoloDetector.thumbnail(frameCopy))
-                            val blurred  = FaceBlurrer.blurFace(frameCopy, captured)
-                            val angles   = RosaAnglesCalculator.compute(
-                                captured, frameCopy.width, frameCopy.height,
-                                // Every shot of a scan measures the same body side.
-                                forceLeft = capturedAngles.firstOrNull { it != null }?.isLeftSide)
-                            val photo    = bakeSkeletonOntoPhoto(blurred, captured, angles)
-                            capturedPhotos.add(photo)
-                            // Score is computed later (at the front shot) once the
-                            // armrest-too-wide modifier is known — store the angles.
-                            capturedAngles.add(angles)
-                            if (angles != null && angles.lowerBodyConfidence == RosaAnglesCalculator.LowerBodyConfidence.LOW) {
-                                Log.d("RosaScorer", "Shot ${capturedPhotos.size}: knee occluded, seat-height score is a best-effort guess (kneeAngle=${angles.kneeAngle})")
-                            }
+                            // Only the clean frame and the live pose are kept here.
+                            // The photos are measured and drawn after the last shot
+                            // (processCaptures), so the camera never stalls between
+                            // shots.
+                            pendingSideShots.add(PendingShot(frameCopy, smoothed.toList(), landmarks[0]))
                             nextCaptureEarliestAtMs = now + CAPTURE_COOLDOWN_MS
-                            val shotNumber = capturedPhotos.size
+                            val shotNumber = pendingSideShots.size
                             if (shotNumber >= TOTAL_SHOTS_NEEDED && !frontPhotoAvailable) {
-                                // No front photo possible — finish now, scoring with
+                                // No front photo possible — finish now; scoring uses
                                 // the questionnaire's armrest-width / wrist-deviation
                                 // answers (already in workstationModifiers).
-                                val scores = capturedAngles.map {
-                                    if (it != null) RosaScorer.score(it, workstationModifiers) else null
-                                }
-                                runOnUiThread {
-                                    triggerCaptureFlash()
-                                    pauseCameraPipeline()
-                                    finishWithCaptures(capturedPhotos.toList(), scores)
-                                }
+                                finishCapturing()
                             } else if (shotNumber >= TOTAL_SHOTS_NEEDED) {
                                 // Side shots done — switch to the front-view phase
                                 // instead of finishing. enterFrontPhase resets the
@@ -584,56 +800,11 @@ class PoseDetectionActivity : AppCompatActivity() {
                         if (okSinceMs == 0L) okSinceMs = nowF
                         if (nowF - okSinceMs >= FRONT_STEADY_MS) {
                             okSinceMs = 0L
-                            val captured  = (sm ?: emptyList()).toList()
                             val frameCopy = frameFor(input)?.copy(Bitmap.Config.ARGB_8888, true)
                             if (frameCopy != null) {
-                                // Detect hands on the CLEAN frame first (before face
-                                // blur / skeleton bake mutate it), then draw the
-                                // finger/palm overlay on top of the baked photo.
-                                val handResult = detectHands(frameCopy)
-                                val blurred = FaceBlurrer.blurFace(frameCopy, captured)
-                                // Front view is upper-body only — drop the leg
-                                // landmarks (knees/ankles/feet, indices 25+). Also
-                                // drop the face/ear points (0..10) — the face is
-                                // blurred, so no face dots or lines — and the pose
-                                // wrist/palm points (15..22): the hand landmarker
-                                // supplies the wrist/finger detail, and we connect the
-                                // elbow straight to the hand's point 0 so the arm
-                                // flows seamlessly into the detected hand.
-                                val upperBody = captured.take(25)
-                                val photo   = bakeSkeletonOntoPhoto(
-                                    blurred, upperBody, null, excludeIndices = FRONT_SKELETON_EXCLUDE)
-                                drawHandsOntoPhoto(photo, handResult, captured)
-                                drawShoulderAnglesOntoPhoto(photo, captured)
-                                frontPhoto = photo   // held separately from the side shots
-
-                                // Armrest-too-wide and wrist-deviation are measured
-                                // here (front view) and applied to every side shot's
-                                // score, replacing the old questionnaire questions. The
-                                // raw angles are also surfaced to Flutter.
-                                val abduction = frontAbductionAngleDeg(
-                                    captured, frameCopy.width, frameCopy.height)
-                                val wristDeviation = frontWristDeviationDeg(
-                                    handsToPoints(handResult), captured, frameCopy.width, frameCopy.height)
-                                frontAbductionAngle = abduction
-                                frontWristDeviationAngle = wristDeviation
-                                // A measurement that couldn't be taken (e.g. no hand
-                                // found) keeps the questionnaire answer instead of
-                                // being scored as "no problem".
-                                val tooWide = abduction?.let { it >= ARMREST_ABDUCTION_MAX_DEG }
-                                    ?: workstationModifiers.armrestTooWide
-                                val deviated = wristDeviation?.let { it >= WRIST_DEVIATION_MAX_DEG }
-                                    ?: workstationModifiers.keyboardDeviation
-                                val mods = workstationModifiers.copy(
-                                    armrestTooWide = tooWide, keyboardDeviation = deviated)
-                                val scores = capturedAngles.map {
-                                    if (it != null) RosaScorer.score(it, mods) else null
-                                }
-                                runOnUiThread {
-                                    triggerCaptureFlash()
-                                    pauseCameraPipeline()
-                                    finishWithCaptures(capturedPhotos.toList(), scores)
-                                }
+                                pendingFrontShot = PendingShot(
+                                    frameCopy, (sm ?: emptyList()).toList(), raw)
+                                finishCapturing()
                             }
                         }
                     } else {
@@ -825,6 +996,7 @@ class PoseDetectionActivity : AppCompatActivity() {
             AppState.DETECTING      -> runDetectionPhase(mediaImage, imageProxy)
             // FRONT also needs live pose frames, so it shares the pose pipeline.
             AppState.POSE, AppState.FRONT -> runPosePhase(imageProxy)
+            AppState.DONE -> imageProxy.close()
         }
     }
 
@@ -1113,6 +1285,7 @@ class PoseDetectionActivity : AppCompatActivity() {
             sidePhotos.forEachIndexed { i, bitmap ->
                 val obj = org.json.JSONObject()
                 obj.put("image_path", write(bitmap, "side_${i + 1}.jpg"))
+                capturedRawPoses.getOrNull(i)?.let { obj.put("raw_pose", it) }
                 obj.put("rosa_score", scores.getOrNull(i)?.let { org.json.JSONObject(it.toMap()) }
                     ?: org.json.JSONObject())
                 obj.put("body_angles", capturedAngles.getOrNull(i)?.let { org.json.JSONObject(it.toMap(mirrored)) }
@@ -1139,6 +1312,7 @@ class PoseDetectionActivity : AppCompatActivity() {
 
         val frontCapture = org.json.JSONObject().also { obj ->
             frontPhoto?.let { obj.put("image_path", write(it, "front.jpg")) }
+            frontRawPose?.let { obj.put("raw_pose", it) }
             // Left out when it couldn't be measured — never reported as 0°.
             frontAbductionAngle?.let { obj.put("abduction_angle", it) }
             frontWristDeviationAngle?.let { obj.put("wrist_deviation_angle", it) }
@@ -1321,7 +1495,7 @@ class PoseDetectionActivity : AppCompatActivity() {
     /** Drives tvCaptureStatus through the multi-shot sequence so the phone holder always
      *  knows: how many shots are done, whether to hold steady, or to adjust position. */
     private fun updateCaptureCue(allOk: Boolean) {
-        val done = capturedPhotos.size
+        val done = pendingSideShots.size
         if (done == 0 && !allOk) {
             tvCaptureStatus.visibility = View.GONE
             return
@@ -1541,6 +1715,8 @@ class PoseDetectionActivity : AppCompatActivity() {
             poseLandmarker = null
             handLandmarker?.close()
             handLandmarker = null
+            stillPoseLandmarker?.close()
+            stillPoseLandmarker = null
             yoloDetector?.dispose()
             yoloDetector = null
         }

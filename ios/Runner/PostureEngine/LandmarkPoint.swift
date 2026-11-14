@@ -22,4 +22,5 @@ struct RawLandmark {
     let x: Float
     let y: Float
     let visibility: Float?   // 0–1, nil when MediaPipe didn't report it
+    var z: Float = 0         // depth relative to the hips; smaller = nearer the camera
 }

@@ -46,7 +46,8 @@ final class PoseDetectionViewController: UIViewController {
     // `front` is a 4th phase entered after the 3 side shots: the holder moves to
     // the front of the person (behind the monitor) and a single extra photo is
     // taken once the face, shoulders and hands are visible.
-    private enum AppState { case lightCheck, detecting, pose, front }
+    // `done`: every photo is taken; frames are ignored while the photos are processed.
+    private enum AppState { case lightCheck, detecting, pose, front, done }
     private var appState: AppState = .lightCheck
 
     private var confirmationCount = 0
@@ -79,6 +80,33 @@ final class PoseDetectionViewController: UIViewController {
     /// finger/palm points. Never runs on live frames. Created when the front phase begins.
     private var handLandmarker: HandLandmarker?
     private var yoloDetector: YoloDetector?
+
+    /// Pose landmarker in IMAGE mode, run once on each captured still. The live
+    /// landmarks are smoothed for a steady overlay, so they lag the body; the
+    /// measurements come from this fresh, unsmoothed detection instead. Uses the
+    /// heavy model when it is bundled, otherwise the full one. It runs after the
+    /// live landmarker is released, so it can have the GPU.
+    private var stillPoseLandmarker: PoseLandmarker?
+    private var stillPoseOnGpu = false
+    /// A still detection whose shoulders sit further than this (normalised) from
+    /// the live tracking is someone else in the frame; the live pose is used then.
+    private let STILL_POSE_MAX_SHIFT: Float = 0.1
+    /// The model's raw landmarks for each side shot and the front shot (x, y, z,
+    /// visibility per point), sent on with the scan so cutoffs can be re-fitted
+    /// later from real data.
+    private var capturedRawPoses: [[String: Any]] = []
+
+    /// A captured frame waiting to be processed once every photo is taken: the
+    /// clean frame plus the live pose it was captured with (the fallback when the
+    /// still detection finds nothing).
+    private struct PendingShot {
+        let frame: UIImage
+        let livePoints: [LandmarkPoint]
+        let liveRaw: [RawLandmark]
+    }
+    private var pendingSideShots: [PendingShot] = []
+    private var pendingFrontShot: PendingShot?
+    private var frontRawPose: [String: Any]?
     // Last timestamp handed to the pose landmarker (ms); MediaPipe needs them
     // strictly increasing.
     private var lastPoseTimestampMs = 0
@@ -367,6 +395,11 @@ final class PoseDetectionViewController: UIViewController {
             self.confirmationCount = 0
             self.capturedPhotos.removeAll()
             self.capturedAngles.removeAll()
+            self.capturedRawPoses.removeAll()
+            self.pendingSideShots.removeAll()
+            self.pendingFrontShot = nil
+            self.frontRawPose = nil
+            self.stillPoseLandmarker = nil
             self.frontPhoto = nil
             self.sideMonitorFrames.removeAll()
             self.frontAbductionAngle = nil
@@ -424,6 +457,163 @@ final class PoseDetectionViewController: UIViewController {
         }
     }
 
+    /// Creates the IMAGE-mode pose landmarker used on captured stills: the heavy
+    /// model if bundled, else the full one; on the GPU when `allowGpu` and it is
+    /// supported, else the CPU. Without it, captures use the live pose.
+    private func initializeStillPoseLandmarker(allowGpu: Bool = true) {
+        if stillPoseLandmarker != nil { return }
+        let delegates: [Delegate] = allowGpu ? [.GPU, .CPU] : [.CPU]
+        for model in ["pose_landmarker_heavy", "pose_landmarker_full"] {
+            guard let path = Bundle.main.path(forResource: model, ofType: "task") else { continue }
+            for delegate in delegates {
+                let options = PoseLandmarkerOptions()
+                options.baseOptions.modelAssetPath = path
+                options.baseOptions.delegate = delegate
+                options.runningMode = .image
+                options.numPoses = 1
+                do {
+                    stillPoseLandmarker = try PoseLandmarker(options: options)
+                    stillPoseOnGpu = delegate == .GPU
+                    NSLog("Still-image pose model: \(model), GPU: \(stillPoseOnGpu)")
+                    return
+                } catch {
+                    NSLog("Still-image pose model \(model) unavailable: \(error)")
+                }
+            }
+        }
+    }
+
+    /// Re-detects the pose on a captured still. Nil when the landmarker isn't
+    /// available, finds nobody, or finds someone other than the person the live
+    /// tracking (`live`) is following.
+    private func detectStillPose(_ frame: UIImage, live: [RawLandmark]) -> [RawLandmark]? {
+        guard let mpImage = try? MPImage(uiImage: frame) else { return nil }
+        var result = try? stillPoseLandmarker?.detect(image: mpImage)
+        if result == nil && stillPoseOnGpu {
+            // A GPU delegate can load and still fail at run time: retry on CPU.
+            stillPoseLandmarker = nil
+            initializeStillPoseLandmarker(allowGpu: false)
+            result = try? stillPoseLandmarker?.detect(image: mpImage)
+        }
+        guard let pose = result?.landmarks.first, pose.count >= 33 else { return nil }
+        let still = pose.map {
+            RawLandmark(x: $0.x, y: $0.y, visibility: $0.visibility?.floatValue, z: $0.z)
+        }
+        if live.count >= 13 {
+            let dx = (still[11].x + still[12].x - live[11].x - live[12].x) / 2
+            let dy = (still[11].y + still[12].y - live[11].y - live[12].y) / 2
+            if hypotf(dx, dy) > STILL_POSE_MAX_SHIFT { return nil }
+        }
+        return still
+    }
+
+    /// Every photo is taken: stop the camera and process the photos behind a
+    /// loading message. Called on captureQueue.
+    private func finishCapturing() {
+        appState = .done
+        pauseCameraPipeline()
+        DispatchQueue.main.async {
+            self.triggerCaptureFlash()
+            self.tvCaptureStatus.isHidden = false
+            self.tvCaptureStatus.text = "Processing photos…"
+        }
+        // Queued behind this callback, after the live landmarker is released.
+        captureQueue.async { [weak self] in self?.processCaptures() }
+    }
+
+    /// Turns the captured frames into the final photos and measurements: re-detects
+    /// the pose on each still, blurs the face, bakes the skeleton, measures the
+    /// angles and scores the scan. Runs on captureQueue after the camera stops.
+    private func processCaptures() {
+        initializeStillPoseLandmarker()
+
+        for shot in pendingSideShots {
+            let frame = shot.frame
+            let w = frame.cgImage?.width ?? 1
+            let h = frame.cgImage?.height ?? 1
+            // Measure from a fresh detection on this exact still; the smoothed
+            // live pose is only the fallback.
+            let still = detectStillPose(frame, live: shot.liveRaw)
+            let captured: [LandmarkPoint]
+            if let still = still {
+                captured = legEstimator.estimate(
+                    raw: still, smoothed: still.map { LandmarkPoint(x: $0.x, y: $0.y) },
+                    aspect: Float(w) / Float(max(h, 1)))
+            } else {
+                captured = shot.livePoints
+            }
+            capturedRawPoses.append(rawPoseRecord(
+                still ?? shot.liveRaw, width: w, height: h, fromStill: still != nil))
+            sideMonitorFrames.append(YoloDetector.thumbnail(frame))
+            let blurred = FaceBlurrer.blurFace(frame, landmarks: captured)
+            // Every shot of a scan measures the same body side.
+            let lockedSide = capturedAngles.compactMap { $0 }.first?.isLeftSide
+            let angles = RosaAnglesCalculator.compute(captured, imageWidth: w, imageHeight: h,
+                                                      forceLeft: lockedSide)
+            capturedPhotos.append(bakeSkeletonOntoPhoto(blurred, landmarks: captured, angles: angles))
+            capturedAngles.append(angles)
+        }
+
+        // Armrest-too-wide and wrist-deviation are measured on the front photo and
+        // applied to every side shot's score. Without a front photo the
+        // questionnaire answers (already in workstationModifiers) stand.
+        var mods = workstationModifiers
+        if let shot = pendingFrontShot {
+            let frame = shot.frame
+            let wPx = frame.cgImage?.width ?? 1
+            let hPx = frame.cgImage?.height ?? 1
+            let still = detectStillPose(frame, live: shot.liveRaw)
+            let captured = still?.map { LandmarkPoint(x: $0.x, y: $0.y) } ?? shot.livePoints
+            frontRawPose = rawPoseRecord(still ?? shot.liveRaw, width: wPx, height: hPx,
+                                         fromStill: still != nil)
+            // Detect hands on the clean frame, then draw them on the baked photo.
+            let handResult = detectHands(frame)
+            let blurred = FaceBlurrer.blurFace(frame, landmarks: captured)
+            // Front view is upper-body only: no legs (25+), no face/ear points
+            // (0...10, the face is blurred) and no pose wrist/palm points
+            // (15...22) — the hand landmarker supplies those, and the elbow is
+            // joined straight to the hand's point 0.
+            let baked = bakeSkeletonOntoPhoto(blurred, landmarks: Array(captured.prefix(25)),
+                                              angles: nil, excludeIndices: FRONT_SKELETON_EXCLUDE)
+            let withHands = drawHandsOntoPhoto(baked, handResult, poseLandmarks: captured)
+            frontPhoto = drawShoulderAnglesOntoPhoto(withHands, poseLandmarks: captured)
+
+            let w = CGFloat(wPx), h = CGFloat(hPx)
+            let abduction = frontAbductionAngleDeg(captured, width: w, height: h)
+            let wristDeviation = frontWristDeviationDeg(
+                handsToPoints(handResult), poseLandmarks: captured, width: w, height: h)
+            frontAbductionAngle = abduction
+            frontWristDeviationAngle = wristDeviation
+            // A measurement that couldn't be taken (e.g. no hand found) keeps the
+            // questionnaire answer instead of being scored as "no problem".
+            if let a = abduction { mods.armrestTooWide = a >= ARMREST_ABDUCTION_MAX_DEG }
+            if let d = wristDeviation { mods.keyboardDeviation = d >= WRIST_DEVIATION_MAX_DEG }
+        }
+
+        let scores = capturedAngles.map { $0 != nil ? RosaScorer.score($0!, mods: mods) : nil }
+        let sidePhotos = capturedPhotos
+        stillPoseLandmarker = nil
+        handLandmarker = nil
+        pendingSideShots.removeAll()
+        pendingFrontShot = nil
+        DispatchQueue.main.async {
+            self.finishWithCaptures(sidePhotos, scores: scores)
+        }
+    }
+
+    /// The raw landmarks of one shot, in the shape sent on to Flutter.
+    private func rawPoseRecord(_ landmarks: [RawLandmark], width: Int, height: Int,
+                               fromStill: Bool) -> [String: Any] {
+        [
+            "landmarks": landmarks.map {
+                [Double($0.x), Double($0.y), Double($0.z), Double($0.visibility ?? 0)]
+            },
+            "image_width": width,
+            "image_height": height,
+            "source": fromStill ? "still" : "live",
+        ]
+    }
+
     /// Creates the IMAGE-mode hand landmarker if not already created. Only ever runs
     /// once, on a single still, so it stays on CPU to avoid GPU contention with pose.
     private func initializeHandLandmarker() {
@@ -457,6 +647,8 @@ final class PoseDetectionViewController: UIViewController {
         // FRONT also needs live pose frames, so it shares the pose pipeline.
         case .pose, .front:
             runPosePhase(pb, presentationTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer))
+        case .done:
+            break
         }
     }
 
@@ -614,7 +806,7 @@ final class PoseDetectionViewController: UIViewController {
 
         let rawLandmarks: [RawLandmark]
         if let pose = result?.landmarks.first {
-            rawLandmarks = pose.map { RawLandmark(x: $0.x, y: $0.y, visibility: $0.visibility?.floatValue) }
+            rawLandmarks = pose.map { RawLandmark(x: $0.x, y: $0.y, visibility: $0.visibility?.floatValue, z: $0.z) }
         } else {
             rawLandmarks = []
         }
@@ -662,7 +854,7 @@ final class PoseDetectionViewController: UIViewController {
         // The phone must also be still, so the shot isn't motion-blurred.
         let sidePhoneSteady = tSec * 1000 - lastShakeAtMs >= PHONE_STEADY_SETTLE_MS
         let allOk = sideOk && tiltIsOk && rotationIsOk && heightIsOk && distanceIsOk && sidePhoneSteady
-        let capturing = currentState == .pose && capturedPhotos.count < TOTAL_SHOTS_NEEDED
+        let capturing = currentState == .pose && pendingSideShots.count < TOTAL_SHOTS_NEEDED
         if capturing { DispatchQueue.main.async { self.updateCaptureCue(allOk: allOk) } }
 
         if capturing && allOk {
@@ -671,33 +863,18 @@ final class PoseDetectionViewController: UIViewController {
             if nowMs - okSinceMs >= SIDE_STEADY_MS && nowMs >= nextCaptureEarliestAtMs {
                 okSinceMs = 0
                 if let frame = frameImage {
-                    let captured = smoothed
-                    sideMonitorFrames.append(YoloDetector.thumbnail(frame))
-                    let blurred = FaceBlurrer.blurFace(frame, landmarks: captured)
-                    // Every shot of a scan measures the same body side.
-                    let lockedSide = capturedAngles.compactMap { $0 }.first?.isLeftSide
-                    let angles = RosaAnglesCalculator.compute(captured, imageWidth: w, imageHeight: h,
-                                                              forceLeft: lockedSide)
-                    let photo = bakeSkeletonOntoPhoto(blurred, landmarks: captured, angles: angles)
-                    capturedPhotos.append(photo)
-                    // Score is computed later (at the front shot) once the
-                    // armrest-too-wide modifier is known — store the angles.
-                    capturedAngles.append(angles)
+                    // Only the clean frame and the live pose are kept here. The
+                    // photos are measured and drawn after the last shot
+                    // (processCaptures), so the camera never stalls between shots.
+                    pendingSideShots.append(PendingShot(frame: frame, livePoints: smoothed,
+                                                        liveRaw: rawLandmarks))
                     nextCaptureEarliestAtMs = nowMs + CAPTURE_COOLDOWN_MS
-                    let shotNumber = capturedPhotos.count
+                    let shotNumber = pendingSideShots.count
                     if shotNumber >= TOTAL_SHOTS_NEEDED && !frontPhotoAvailable {
-                        // No front photo possible — finish now, scoring with the
+                        // No front photo possible — finish now; scoring uses the
                         // questionnaire's armrest-width / wrist-deviation answers
                         // (already in workstationModifiers).
-                        let scores = capturedAngles.map {
-                            $0 != nil ? RosaScorer.score($0!, mods: workstationModifiers) : nil
-                        }
-                        let sidePhotos = capturedPhotos
-                        pauseCameraPipeline()
-                        DispatchQueue.main.async {
-                            self.triggerCaptureFlash()
-                            self.finishWithCaptures(sidePhotos, scores: scores)
-                        }
+                        finishCapturing()
                     } else if shotNumber >= TOTAL_SHOTS_NEEDED {
                         // Side shots done — switch to the front-view phase instead
                         // of finishing. (handlePoseResult runs on captureQueue, so
@@ -740,49 +917,9 @@ final class PoseDetectionViewController: UIViewController {
                 if nowMs - okSinceMs >= FRONT_STEADY_MS {
                     okSinceMs = 0
                     if let frame = frameImage {
-                        let captured = smoothed
-                        // Detect hands on the clean frame, then draw the finger/palm
-                        // overlay on top of the baked (blurred + skeleton) photo.
-                        let handResult = detectHands(frame)
-                        let blurred = FaceBlurrer.blurFace(frame, landmarks: captured)
-                        // Front view is upper-body only — drop the leg landmarks
-                        // (knees/ankles/feet, indices 25+). Also drop the face/ear
-                        // points (0...10) — the face is blurred, so no face dots or
-                        // lines — and the pose wrist/palm points (15...22): the hand
-                        // landmarker supplies the wrist/finger detail, and we connect
-                        // the elbow straight to the hand's point 0 so the arm flows
-                        // seamlessly into it.
-                        let upperBody = Array(captured.prefix(25))
-                        let baked = bakeSkeletonOntoPhoto(blurred, landmarks: upperBody, angles: nil,
-                                                          excludeIndices: FRONT_SKELETON_EXCLUDE)
-                        let withHands = drawHandsOntoPhoto(baked, handResult, poseLandmarks: captured)
-                        let photo = drawShoulderAnglesOntoPhoto(withHands, poseLandmarks: captured)
-                        frontPhoto = photo   // held separately from the side shots
-
-                        // Armrest-too-wide and wrist-deviation are measured here
-                        // (front view) and applied to every side shot's score,
-                        // replacing the old questionnaire questions. The raw angles are
-                        // also surfaced to Flutter.
-                        let w = CGFloat(frame.cgImage?.width ?? 1)
-                        let h = CGFloat(frame.cgImage?.height ?? 1)
-                        let abduction = frontAbductionAngleDeg(captured, width: w, height: h)
-                        let wristDeviation = frontWristDeviationDeg(
-                            handsToPoints(handResult), poseLandmarks: captured, width: w, height: h)
-                        frontAbductionAngle = abduction
-                        frontWristDeviationAngle = wristDeviation
-                        // A measurement that couldn't be taken (e.g. no hand found)
-                        // keeps the questionnaire answer instead of being scored as
-                        // "no problem".
-                        var mods = workstationModifiers
-                        if let a = abduction { mods.armrestTooWide = a >= ARMREST_ABDUCTION_MAX_DEG }
-                        if let d = wristDeviation { mods.keyboardDeviation = d >= WRIST_DEVIATION_MAX_DEG }
-                        let scores = capturedAngles.map { $0 != nil ? RosaScorer.score($0!, mods: mods) : nil }
-                        let sidePhotos = capturedPhotos
-                        pauseCameraPipeline()
-                        DispatchQueue.main.async {
-                            self.triggerCaptureFlash()
-                            self.finishWithCaptures(sidePhotos, scores: scores)
-                        }
+                        pendingFrontShot = PendingShot(frame: frame, livePoints: smoothed,
+                                                       liveRaw: rawLandmarks)
+                        finishCapturing()
                     }
                 }
             } else {
@@ -825,7 +962,6 @@ final class PoseDetectionViewController: UIViewController {
     private func pauseCameraPipeline() {
         session.stopRunning()
         poseLandmarker = nil
-        handLandmarker = nil
         pendingFrames.removeAll()
     }
 
@@ -999,6 +1135,7 @@ final class PoseDetectionViewController: UIViewController {
                     ? (capturedAngles[i]?.toMap(mirrored: mirrored) ?? [:]) : [:],
             ]
             if let path = write(photo, "side_\(i + 1).jpg") { obj["image_path"] = path }
+            if capturedRawPoses.indices.contains(i) { obj["raw_pose"] = capturedRawPoses[i] }
             if i < sideMonitor.count, let seen = sideMonitor[i] { obj["monitor_detected"] = seen }
             sideCaptures.append(obj)
         }
@@ -1025,6 +1162,7 @@ final class PoseDetectionViewController: UIViewController {
         // Left out when it couldn't be measured — never reported as 0°.
         if let a = frontAbductionAngle { frontCapture["abduction_angle"] = a }
         if let d = frontWristDeviationAngle { frontCapture["wrist_deviation_angle"] = d }
+        if let raw = frontRawPose { frontCapture["raw_pose"] = raw }
         if let front = frontPhoto, let path = write(front, "front.jpg") {
             frontCapture["image_path"] = path
         }
@@ -1054,7 +1192,7 @@ final class PoseDetectionViewController: UIViewController {
     }
 
     private func updateCaptureCue(allOk: Bool) {
-        let done = capturedPhotos.count
+        let done = pendingSideShots.count
         if done == 0 && !allOk { tvCaptureStatus.isHidden = true; return }
         tvCaptureStatus.isHidden = false
         let nowMs = CACurrentMediaTime() * 1000

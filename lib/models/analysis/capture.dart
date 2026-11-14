@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:posture_detector_app/models/analysis/body_angles.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 
+Map<String, dynamic>? _rawPoseFrom(Object? v) =>
+    v is Map ? Map<String, dynamic>.from(v) : null;
+
 /// One side-view shot from the native PostureEngine: the captured image plus the
 /// ROSA score and raw body angles measured from it.
 class SideViewCapture {
@@ -11,6 +14,7 @@ class SideViewCapture {
     required this.rosaScore,
     required this.bodyAngles,
     this.monitorDetected,
+    this.rawPose,
   });
 
   final File image;
@@ -20,6 +24,11 @@ class SideViewCapture {
   /// Whether the monitor detector found a monitor in this photo (checked once
   /// all photos are taken). Null if the check couldn't run.
   final bool? monitorDetected;
+
+  /// The pose model's raw landmarks for this photo (`landmarks`: x, y, z,
+  /// visibility per point; `image_width`, `image_height`, `source`). Not shown;
+  /// stored by the backend so scoring cutoffs can be re-fitted from real scans.
+  final Map<String, dynamic>? rawPose;
 
   factory SideViewCapture.fromChannel(Map<String, dynamic> m) =>
       SideViewCapture(
@@ -31,6 +40,7 @@ class SideViewCapture {
           Map<String, dynamic>.from(m['body_angles'] as Map? ?? const {}),
         ),
         monitorDetected: m['monitor_detected'] as bool?,
+        rawPose: _rawPoseFrom(m['raw_pose']),
       );
 
   /// Backend payload for this capture (the SideViewCaptureInput contract): the
@@ -40,6 +50,7 @@ class SideViewCapture {
     'image_id': imageId,
     ...bodyAngles.toJson(),
     if (monitorDetected != null) 'monitor_detected': monitorDetected,
+    if (rawPose != null) 'raw_pose': rawPose,
   };
 }
 
@@ -54,6 +65,7 @@ class FrontViewCapture {
     this.wristDeviationAngle,
     this.wristExtension = false,
     this.shrugGap = 0,
+    this.rawPose,
   });
 
   final File image;
@@ -76,6 +88,9 @@ class FrontViewCapture {
   /// applies (RosaScorer's own armrestScore cutoff, shrugGap > -0.06).
   final double shrugGap;
 
+  /// Raw pose landmarks for this photo; see [SideViewCapture.rawPose].
+  final Map<String, dynamic>? rawPose;
+
   factory FrontViewCapture.fromChannel(Map<String, dynamic> m) =>
       FrontViewCapture(
         image: File(m['image_path'] as String? ?? ''),
@@ -83,6 +98,7 @@ class FrontViewCapture {
         wristDeviationAngle: (m['wrist_deviation_angle'] as num?)?.toDouble(),
         wristExtension: m['wrist_extension'] as bool? ?? false,
         shrugGap: (m['shrug_gap'] as num?)?.toDouble() ?? 0,
+        rawPose: _rawPoseFrom(m['raw_pose']),
       );
 
   /// An angle the engine couldn't measure is left out; the backend then keeps
@@ -94,5 +110,6 @@ class FrontViewCapture {
       'wrist_deviation_angle': wristDeviationAngle,
     'wrist_extension': wristExtension,
     'shrug_gap': shrugGap,
+    if (rawPose != null) 'raw_pose': rawPose,
   };
 }
