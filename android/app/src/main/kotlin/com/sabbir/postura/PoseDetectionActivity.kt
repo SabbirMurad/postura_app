@@ -195,6 +195,11 @@ class PoseDetectionActivity : AppCompatActivity() {
     // Clean (un-blurred, un-annotated) model-sized copies of the side shots,
     // checked for a monitor once all photos are taken (see finishWithCaptures).
     private val sideMonitorFrames = CopyOnWriteArrayList<Bitmap>()
+    // Height of the eye-level line in each side photo, as a fraction of the
+    // photo's height from the top (the same line that is drawn on the photo).
+    // Null when the eye wasn't found. Sent with the monitor's box so the backend
+    // can read where the top of the monitor sits relative to eye level.
+    private val capturedEyeLevelY = CopyOnWriteArrayList<Float?>()
     // Null = could not be measured on the front photo (e.g. no hand found). That is
     // not the same as 0° and must never be scored or reported as "no problem".
     @Volatile private var frontAbductionAngle: Double? = null
@@ -389,6 +394,7 @@ class PoseDetectionActivity : AppCompatActivity() {
             poseInitFailed = false
             capturedPhotos.clear()
             sideMonitorFrames.clear()
+            capturedEyeLevelY.clear()
             capturedAngles.clear()
             capturedRawPoses.clear()
             frontRawPose = null
@@ -562,6 +568,10 @@ class PoseDetectionActivity : AppCompatActivity() {
                     forceLeft = capturedAngles.firstOrNull { it != null }?.isLeftSide)
                 capturedPhotos.add(bakeSkeletonOntoPhoto(blurred, captured, angles))
                 capturedAngles.add(angles)
+                // Same landmark the eye-level line is drawn through (drawAngles).
+                capturedEyeLevelY.add(angles?.let {
+                    captured.getOrNull(if (it.isLeftSide) 2 else 5)?.y?.takeIf { y -> y in 0f..1f }
+                })
                 if (angles != null && angles.lowerBodyConfidence == RosaAnglesCalculator.LowerBodyConfidence.LOW) {
                     Log.d("RosaScorer", "Shot ${capturedPhotos.size}: knee occluded, seat-height score is a best-effort guess (kneeAngle=${angles.kneeAngle})")
                 }
@@ -1249,25 +1259,81 @@ class PoseDetectionActivity : AppCompatActivity() {
                 Log.e("YoloDetector", "monitor check unavailable", t)
                 null
             }
-            fun check(frame: Bitmap): Boolean? {
+            fun check(frame: Bitmap): YoloResult? {
                 if (detector == null) return null
                 return try {
-                    detector.detect(frame).monitorDetected
+                    detector.detect(frame)
                 } catch (t: Throwable) {
                     Log.e("YoloDetector", "monitor check failed", t)
                     null
                 }
             }
-            val sideMonitor = sideFrames.map { check(it) }
+            val results = sideFrames.map { check(it) }
             detector?.dispose()
-            runOnUiThread { writeCaptures(sidePhotos, scores, sideMonitor) }
+            val sideMonitor = results.map { it?.monitorDetected }
+            val sideBoxes = results.map { it?.monitorBox }
+            // Draw the monitor's box (split into three bands) on each side photo,
+            // next to the eye-level line already on it.
+            sidePhotos.forEachIndexed { i, photo ->
+                sideBoxes.getOrNull(i)?.let { box ->
+                    try {
+                        drawMonitorBoxOntoPhoto(photo, box)
+                    } catch (t: Throwable) {
+                        Log.e("YoloDetector", "could not draw the monitor box", t)
+                    }
+                }
+            }
+            runOnUiThread { writeCaptures(sidePhotos, scores, sideMonitor, sideBoxes) }
         }.start()
+    }
+
+    /**
+     * Draws the detected monitor's bounding box on a side photo, split into
+     * three equal horizontal bands. Together with the eye-level line this shows
+     * where the top of the monitor sits relative to the eyes: the line over the
+     * box (monitor below eye level), in the top band (at eye level), or lower
+     * (monitor above eye level).
+     */
+    private fun drawMonitorBoxOntoPhoto(photo: Bitmap, box: MonitorBox) {
+        if (!photo.isMutable) return
+        val canvas = Canvas(photo)
+        val w = photo.width.toFloat()
+        val h = photo.height.toFloat()
+        val scale = w / SKELETON_REFERENCE_WIDTH
+
+        val left = box.left * w; val right = box.right * w
+        val top = box.top * h; val bottom = box.bottom * h
+        if (right - left < 2f || bottom - top < 2f) return
+
+        val color = Color.parseColor("#FFD600")
+        val boxPaint = Paint().apply {
+            this.color = color; style = Paint.Style.STROKE
+            strokeWidth = 4f * scale; isAntiAlias = true
+        }
+        val bandPaint = Paint(boxPaint).apply {
+            strokeWidth = 2.5f * scale
+            pathEffect = android.graphics.DashPathEffect(floatArrayOf(14f * scale, 10f * scale), 0f)
+        }
+        canvas.drawRect(left, top, right, bottom, boxPaint)
+        val third = (bottom - top) / 3f
+        canvas.drawLine(left, top + third, right, top + third, bandPaint)
+        canvas.drawLine(left, top + 2 * third, right, top + 2 * third, bandPaint)
+
+        val labelPaint = Paint().apply {
+            this.color = color; textSize = 30f * scale; isAntiAlias = true
+            setShadowLayer(4f * scale, 0f, 0f, Color.BLACK)
+        }
+        // Above the box when there is room, otherwise just inside its top edge.
+        val labelY = if (top > labelPaint.textSize * 1.4f) top - labelPaint.textSize * 0.4f
+            else top + labelPaint.textSize * 1.1f
+        canvas.drawText("Monitor", left + 6f * scale, labelY, labelPaint)
     }
 
     private fun writeCaptures(
         sidePhotos: List<Bitmap>,
         scores: List<RosaScorer.Result?>,
         sideMonitor: List<Boolean?>,
+        sideBoxes: List<MonitorBox?>,
     ) {
         val dir = File(cacheDir, "posture_photos").apply { mkdirs() }
 
@@ -1291,6 +1357,16 @@ class PoseDetectionActivity : AppCompatActivity() {
                 obj.put("body_angles", capturedAngles.getOrNull(i)?.let { org.json.JSONObject(it.toMap(mirrored)) }
                     ?: org.json.JSONObject())
                 sideMonitor.getOrNull(i)?.let { obj.put("monitor_detected", it) }
+                // Fractions of the photo. The backend derives "top of the monitor
+                // relative to eye level" from these two, so the rule lives in
+                // one place for both platforms.
+                sideBoxes.getOrNull(i)?.let { box ->
+                    obj.put("monitor_box", org.json.JSONObject().apply {
+                        put("left", box.left.toDouble()); put("top", box.top.toDouble())
+                        put("right", box.right.toDouble()); put("bottom", box.bottom.toDouble())
+                    })
+                }
+                capturedEyeLevelY.getOrNull(i)?.let { obj.put("eye_level_y", it.toDouble()) }
                 arr.put(obj)
             }
         }

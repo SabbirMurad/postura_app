@@ -6,6 +6,18 @@ import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 Map<String, dynamic>? _rawPoseFrom(Object? v) =>
     v is Map ? Map<String, dynamic>.from(v) : null;
 
+/// The four edges of the monitor's box, or null unless all four are numbers.
+Map<String, double>? _monitorBoxFrom(Object? v) {
+  if (v is! Map) return null;
+  final box = <String, double>{};
+  for (final edge in const ['left', 'top', 'right', 'bottom']) {
+    final value = v[edge];
+    if (value is! num) return null;
+    box[edge] = value.toDouble();
+  }
+  return box;
+}
+
 /// One side-view shot from the native PostureEngine: the captured image plus the
 /// ROSA score and raw body angles measured from it.
 class SideViewCapture {
@@ -14,6 +26,8 @@ class SideViewCapture {
     required this.rosaScore,
     required this.bodyAngles,
     this.monitorDetected,
+    this.monitorBox,
+    this.eyeLevelY,
     this.rawPose,
   });
 
@@ -24,6 +38,17 @@ class SideViewCapture {
   /// Whether the monitor detector found a monitor in this photo (checked once
   /// all photos are taken). Null if the check couldn't run.
   final bool? monitorDetected;
+
+  /// The detected monitor's bounding box in this photo (`left`, `top`, `right`,
+  /// `bottom`, each a 0-1 fraction of the photo). Null if no monitor was found.
+  final Map<String, double>? monitorBox;
+
+  /// Height of the eye-level line in this photo, as a 0-1 fraction of the
+  /// photo's height from the top. Null if the eye wasn't found.
+  ///
+  /// Sent with [monitorBox]; the backend reads "top of the monitor relative to
+  /// eye level" from the two and stores it next to the questionnaire answer.
+  final double? eyeLevelY;
 
   /// The pose model's raw landmarks for this photo (`landmarks`: x, y, z,
   /// visibility per point; `image_width`, `image_height`, `source`). Not shown;
@@ -40,6 +65,8 @@ class SideViewCapture {
           Map<String, dynamic>.from(m['body_angles'] as Map? ?? const {}),
         ),
         monitorDetected: m['monitor_detected'] as bool?,
+        monitorBox: _monitorBoxFrom(m['monitor_box']),
+        eyeLevelY: (m['eye_level_y'] as num?)?.toDouble(),
         rawPose: _rawPoseFrom(m['raw_pose']),
       );
 
@@ -50,6 +77,8 @@ class SideViewCapture {
     'image_id': imageId,
     ...bodyAngles.toJson(),
     if (monitorDetected != null) 'monitor_detected': monitorDetected,
+    if (monitorBox != null) 'monitor_box': monitorBox,
+    if (eyeLevelY != null) 'eye_level_y': eyeLevelY,
     if (rawPose != null) 'raw_pose': rawPose,
   };
 }

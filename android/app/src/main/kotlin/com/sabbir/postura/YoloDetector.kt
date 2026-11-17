@@ -32,11 +32,23 @@ private data class RawDetection(
     val bottom: Float,
 )
 
+/** A monitor's bounding box, as fractions of the frame (0 = left / top edge,
+ *  1 = right / bottom edge). The detector stretches the frame to a square, so
+ *  these fractions apply directly to the original frame. */
+data class MonitorBox(
+    val left: Float,
+    val top: Float,
+    val right: Float,
+    val bottom: Float,
+)
+
 data class YoloResult(
     val personDetected: Boolean,
     val monitorDetected: Boolean,
     val personConfidence: Float?,
     val monitorConfidence: Float?,
+    /** Box of the most confident monitor / laptop found, or null if none. */
+    val monitorBox: MonitorBox? = null,
 )
 
 class YoloDetector(context: Context) {
@@ -216,6 +228,7 @@ class YoloDetector(context: Context) {
     private fun buildResult(detections: List<RawDetection>): YoloResult {
         var hasPerson = false; var hasMonitor = false
         var personConf: Float? = null; var monitorConf: Float? = null
+        var monitorBox: MonitorBox? = null
         for (d in detections) {
             if (d.classId == PERSON_CLASS) {
                 hasPerson = true
@@ -223,10 +236,13 @@ class YoloDetector(context: Context) {
             }
             if (d.classId == TV_CLASS || d.classId == LAPTOP_CLASS) {
                 hasMonitor = true
-                if (monitorConf == null || d.confidence > monitorConf!!) monitorConf = d.confidence
+                if (monitorConf == null || d.confidence > monitorConf!!) {
+                    monitorConf = d.confidence
+                    monitorBox = MonitorBox(d.left, d.top, d.right, d.bottom)
+                }
             }
         }
-        return YoloResult(hasPerson, hasMonitor, personConf, monitorConf)
+        return YoloResult(hasPerson, hasMonitor, personConf, monitorConf, monitorBox)
     }
 
     fun dispose() {

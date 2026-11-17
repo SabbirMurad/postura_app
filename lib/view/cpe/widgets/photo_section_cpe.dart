@@ -57,11 +57,20 @@ class PhotoSectionCPE extends StatelessWidget {
       'Neck state': a.neckStateLabel,
       'Lower body': a.lowerBodyConfidence,
       'Monitor detected': _yesNo(c.monitorDetected),
+      'Monitor top vs eye level': _monitorHeight(c.monitorHeightFromPhoto),
     };
   }
 
   // Older scans were recorded before the check existed.
   String _yesNo(bool? v) => v == null ? '—' : (v ? 'Yes' : 'No');
+
+  // Same wording as the questionnaire's answers.
+  String _monitorHeight(String? v) => switch (v) {
+    'below' => 'Below',
+    'at' => 'At eye level',
+    'above' => 'Above',
+    _ => '—',
+  };
 }
 
 class _CaptureCard extends StatelessWidget {

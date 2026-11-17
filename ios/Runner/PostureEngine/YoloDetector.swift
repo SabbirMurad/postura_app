@@ -22,11 +22,23 @@ private struct RawDetection {
     let bottom: Float
 }
 
+/// A monitor's bounding box, as fractions of the frame (0 = left / top edge,
+/// 1 = right / bottom edge). The detector stretches the frame to a square, so
+/// these fractions apply directly to the original frame.
+struct MonitorBox {
+    let left: Float
+    let top: Float
+    let right: Float
+    let bottom: Float
+}
+
 struct YoloResult {
     let personDetected: Bool
     let monitorDetected: Bool
     let personConfidence: Float?
     let monitorConfidence: Float?
+    /// Box of the most confident monitor / laptop found, or nil if none.
+    var monitorBox: MonitorBox? = nil
 }
 
 /// YOLOv8n person/monitor detector. Port of the Kotlin `YoloDetector`, running the
@@ -253,6 +265,7 @@ final class YoloDetector {
         var hasPerson = false, hasMonitor = false
         var personConf: Float?
         var monitorConf: Float?
+        var monitorBox: MonitorBox?
         for d in detections {
             if d.classId == PERSON_CLASS {
                 hasPerson = true
@@ -260,11 +273,15 @@ final class YoloDetector {
             }
             if d.classId == TV_CLASS || d.classId == LAPTOP_CLASS {
                 hasMonitor = true
-                if monitorConf == nil || d.confidence > monitorConf! { monitorConf = d.confidence }
+                if monitorConf == nil || d.confidence > monitorConf! {
+                    monitorConf = d.confidence
+                    monitorBox = MonitorBox(left: d.left, top: d.top, right: d.right, bottom: d.bottom)
+                }
             }
         }
         return YoloResult(personDetected: hasPerson, monitorDetected: hasMonitor,
-                          personConfidence: personConf, monitorConfidence: monitorConf)
+                          personConfidence: personConf, monitorConfidence: monitorConf,
+                          monitorBox: monitorBox)
     }
 
     private func clamp01(_ v: Float) -> Float { min(max(v, 0), 1) }

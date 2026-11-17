@@ -71,16 +71,23 @@ class SideCaptureView {
   final BodyAngles angles;
   final bool? monitorDetected;
 
+  /// Top of the monitor relative to eye level as read from this photo:
+  /// 'below', 'at' or 'above' (the questionnaire's values). Null on older
+  /// scans, or when the photo had no monitor box or eye-level line.
+  final String? monitorHeightFromPhoto;
+
   const SideCaptureView({
     required this.image,
     required this.angles,
     this.monitorDetected,
+    this.monitorHeightFromPhoto,
   });
 
   factory SideCaptureView.fromJson(Map<String, dynamic> m) => SideCaptureView(
     image: m['image'] as String? ?? '',
     angles: BodyAngles.fromJson(m),
     monitorDetected: m['monitor_detected'] as bool?,
+    monitorHeightFromPhoto: m['monitor_height_from_photo'] as String?,
   );
 }
 

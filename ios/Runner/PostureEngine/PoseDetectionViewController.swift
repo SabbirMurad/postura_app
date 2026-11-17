@@ -137,6 +137,11 @@ final class PoseDetectionViewController: UIViewController {
     // Clean (un-blurred, un-annotated) model-sized copies of the side shots,
     // checked for a monitor once all photos are taken (see finishWithCaptures).
     private var sideMonitorFrames: [UIImage] = []
+    // Height of the eye-level line in each side photo, as a fraction of the
+    // photo's height from the top (the same line that is drawn on the photo).
+    // nil when the eye wasn't found. Sent with the monitor's box so the backend
+    // can read where the top of the monitor sits relative to eye level.
+    private var capturedEyeLevelY: [Float?] = []
     // Nil = could not be measured on the front photo (e.g. no hand found). That is
     // not the same as 0° and must never be scored or reported as "no problem".
     private var frontAbductionAngle: Double?
@@ -402,6 +407,7 @@ final class PoseDetectionViewController: UIViewController {
             self.stillPoseLandmarker = nil
             self.frontPhoto = nil
             self.sideMonitorFrames.removeAll()
+            self.capturedEyeLevelY.removeAll()
             self.frontAbductionAngle = nil
             self.frontWristDeviationAngle = nil
             self.nextCaptureEarliestAtMs = 0
@@ -552,6 +558,16 @@ final class PoseDetectionViewController: UIViewController {
                                                       forceLeft: lockedSide)
             capturedPhotos.append(bakeSkeletonOntoPhoto(blurred, landmarks: captured, angles: angles))
             capturedAngles.append(angles)
+            // Same landmark the eye-level line is drawn through (drawAngles).
+            var eyeLevelY: Float? = nil
+            if let angles = angles {
+                let eyeIndex = angles.isLeftSide ? 2 : 5
+                if captured.indices.contains(eyeIndex) {
+                    let y = captured[eyeIndex].y
+                    if y >= 0 && y <= 1 { eyeLevelY = y }
+                }
+            }
+            capturedEyeLevelY.append(eyeLevelY)
         }
 
         // Armrest-too-wide and wrist-deviation are measured on the front photo and
@@ -1100,19 +1116,87 @@ final class PoseDetectionViewController: UIViewController {
         let sideFrames = sideMonitorFrames
         DispatchQueue.global(qos: .userInitiated).async {
             let detector = YoloDetector()
-            func check(_ frame: UIImage) -> Bool? {
+            func check(_ frame: UIImage) -> YoloResult? {
                 guard let detector = detector else { return nil }
-                return detector.detect(image: frame)?.monitorDetected
+                return detector.detect(image: frame)
             }
-            let sideMonitor = sideFrames.map { check($0) }
+            let results = sideFrames.map { check($0) }
+            let sideMonitor: [Bool?] = results.map { $0?.monitorDetected }
+            let sideBoxes: [MonitorBox?] = results.map { $0?.monitorBox }
+            // Draw the monitor's box (split into three bands) on each side photo,
+            // next to the eye-level line already on it.
+            var photos = sidePhotos
+            for i in photos.indices {
+                if i < sideBoxes.count, let box = sideBoxes[i] {
+                    photos[i] = self.drawMonitorBoxOntoPhoto(photos[i], box: box)
+                }
+            }
             DispatchQueue.main.async {
-                self.writeCaptures(sidePhotos, scores: scores, sideMonitor: sideMonitor)
+                self.writeCaptures(photos, scores: scores, sideMonitor: sideMonitor,
+                                   sideBoxes: sideBoxes)
             }
         }
     }
 
+    /// Draws the detected monitor's bounding box on a side photo, split into
+    /// three equal horizontal bands. Together with the eye-level line this shows
+    /// where the top of the monitor sits relative to the eyes: the line over the
+    /// box (monitor below eye level), in the top band (at eye level), or lower
+    /// (monitor above eye level).
+    private func drawMonitorBoxOntoPhoto(_ photo: UIImage, box: MonitorBox) -> UIImage {
+        guard let cg = photo.cgImage else { return photo }
+        let w = CGFloat(cg.width)
+        let h = CGFloat(cg.height)
+        let scale = w / SKELETON_REFERENCE_WIDTH
+
+        let rect = CGRect(x: CGFloat(box.left) * w, y: CGFloat(box.top) * h,
+                          width: CGFloat(box.right - box.left) * w,
+                          height: CGFloat(box.bottom - box.top) * h)
+        guard rect.width >= 2, rect.height >= 2 else { return photo }
+
+        let color = UIColor(red: 1.0, green: 0.84, blue: 0.0, alpha: 1.0)
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: w, height: h), format: format)
+        return renderer.image { rctx in
+            let ctx = rctx.cgContext
+            photo.draw(in: CGRect(x: 0, y: 0, width: w, height: h))
+
+            ctx.setStrokeColor(color.cgColor)
+            ctx.setLineWidth(4 * scale)
+            ctx.stroke(rect)
+
+            ctx.setLineWidth(2.5 * scale)
+            ctx.setLineDash(phase: 0, lengths: [14 * scale, 10 * scale])
+            let third = rect.height / 3
+            for k in 1...2 {
+                let y = rect.minY + third * CGFloat(k)
+                ctx.move(to: CGPoint(x: rect.minX, y: y))
+                ctx.addLine(to: CGPoint(x: rect.maxX, y: y))
+            }
+            ctx.strokePath()
+            ctx.setLineDash(phase: 0, lengths: [])
+
+            let fontSize = 30 * scale
+            let shadow = NSShadow()
+            shadow.shadowColor = UIColor.black
+            shadow.shadowBlurRadius = 4 * scale
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.systemFont(ofSize: fontSize, weight: .semibold),
+                .foregroundColor: color,
+                .shadow: shadow,
+            ]
+            // Above the box when there is room, otherwise just inside its top edge.
+            let labelY = rect.minY > fontSize * 1.4
+                ? rect.minY - fontSize * 1.3
+                : rect.minY + fontSize * 0.2
+            ("Monitor" as NSString).draw(at: CGPoint(x: rect.minX + 6 * scale, y: labelY),
+                                         withAttributes: attributes)
+        }
+    }
+
     private func writeCaptures(_ sidePhotos: [UIImage], scores: [RosaScorer.Result?],
-                               sideMonitor: [Bool?]) {
+                               sideMonitor: [Bool?], sideBoxes: [MonitorBox?]) {
         let dir = (NSTemporaryDirectory() as NSString).appendingPathComponent("posture_photos")
         try? FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
 
@@ -1137,6 +1221,18 @@ final class PoseDetectionViewController: UIViewController {
             if let path = write(photo, "side_\(i + 1).jpg") { obj["image_path"] = path }
             if capturedRawPoses.indices.contains(i) { obj["raw_pose"] = capturedRawPoses[i] }
             if i < sideMonitor.count, let seen = sideMonitor[i] { obj["monitor_detected"] = seen }
+            // Fractions of the photo. The backend derives "top of the monitor
+            // relative to eye level" from these two, so the rule lives in one
+            // place for both platforms.
+            if i < sideBoxes.count, let box = sideBoxes[i] {
+                obj["monitor_box"] = [
+                    "left": Double(box.left), "top": Double(box.top),
+                    "right": Double(box.right), "bottom": Double(box.bottom),
+                ]
+            }
+            if i < capturedEyeLevelY.count, let eyeY = capturedEyeLevelY[i] {
+                obj["eye_level_y"] = Double(eyeY)
+            }
             sideCaptures.append(obj)
         }
 
