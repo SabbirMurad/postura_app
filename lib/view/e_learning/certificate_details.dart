@@ -4,6 +4,7 @@ import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/utils/date_helper.dart';
+import 'package:posture_detector_app/utils/safe_url.dart';
 import 'package:posture_detector_app/view/e_learning/data/e_learning_module_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -296,9 +297,15 @@ class _CertificateDetailsScreenState extends State<CertificateDetailsScreen> {
                         children: [
                           GestureDetector(
                             onTap: () {
+                              // The link comes from the server; open it only
+                              // if it is https on our own host.
+                              final uri = SafeUrl.trusted(
+                                certificate!['pdf_url'],
+                              );
+                              if (uri == null) return;
                               launchUrl(
+                                uri,
                                 mode: LaunchMode.externalApplication,
-                                Uri.parse(certificate!['pdf_url']),
                               );
                             },
                             behavior: HitTestBehavior.translucent,

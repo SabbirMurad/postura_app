@@ -41,7 +41,33 @@ class AppHelper {
     // Older builds persisted the server's Set-Cookie (which carries the refresh
     // token) in plain prefs. Purge it from existing installs.
     await _prefs!.remove('cookie');
+    await _migrateIdentityToSecureStore();
     _accessTokenCache = await _secure.read(key: 'access_token');
+  }
+
+  /// Identity fields that used to sit in plain SharedPreferences. They say who
+  /// is signed in (account id, role, email, name), so they belong in the
+  /// encrypted store alongside the tokens.
+  static const _identityKeys = ['user_id', 'role', 'email', 'name', 'reset_email'];
+
+  /// One-time move for existing installs: copy each identity value found in
+  /// plain prefs into the encrypted store, then delete the plain copy. Safe to
+  /// run on every start; after the first run there is nothing left to move.
+  static Future<void> _migrateIdentityToSecureStore() async {
+    for (final key in _identityKeys) {
+      final plain = _prefs!.getString(key);
+      if (plain == null) continue;
+      try {
+        // Never overwrite a newer value already in the encrypted store.
+        if (await _secure.read(key: key) == null) {
+          await _secure.write(key: key, value: plain);
+        }
+        await _prefs!.remove(key);
+      } catch (_) {
+        // Leave the plain copy in place and retry on the next start rather
+        // than lose the value (which would sign the user out).
+      }
+    }
   }
 
   Future<String?> getRole() async {
@@ -67,23 +93,20 @@ class AppHelper {
   }
 
   Future<String> getEmail() async {
-    final pref = await _pref;
-    return pref.getString('email') ?? '';
+    return await _secure.read(key: 'email') ?? '';
   }
 
   Future<String> getName() async {
-    final pref = await _pref;
-    return pref.getString('name') ?? '';
+    return await _secure.read(key: 'name') ?? '';
   }
 
   Future<bool> setUserId(String id) async {
-    final pref = await _pref;
-    return pref.setString('user_id', id);
+    await _secure.write(key: 'user_id', value: id);
+    return true;
   }
 
   Future<String?> getUserId() async {
-    final pref = await _pref;
-    return pref.getString('user_id');
+    return _secure.read(key: 'user_id');
   }
 
   Future<bool> setAccessToken(String token) async {
@@ -105,16 +128,16 @@ class AppHelper {
     return _secure.read(key: 'refresh_token');
   }
 
-  // The email carried through the password-reset flow (not sensitive; the user
-  // typed it). Replaces passing the server's user_id back to the client.
+  // The email carried through the password-reset flow. Replaces passing the
+  // server's user_id back to the client. Kept in the encrypted store with the
+  // other identity fields.
   Future<bool> setResetEmail(String email) async {
-    final pref = await _pref;
-    return pref.setString('reset_email', email);
+    await _secure.write(key: 'reset_email', value: email);
+    return true;
   }
 
   Future<String?> getResetEmail() async {
-    final pref = await _pref;
-    return pref.getString('reset_email');
+    return _secure.read(key: 'reset_email');
   }
 
   Future<bool> setSecretKey(String secretKey) async {
@@ -137,13 +160,12 @@ class AppHelper {
   }
 
   Future<String?> getAuthRole() async {
-    final pref = await _pref;
-    return pref.getString('role');
+    return _secure.read(key: 'role');
   }
 
   Future<bool> setAuthRole(String role) async {
-    final pref = await _pref;
-    return pref.setString('role', role);
+    await _secure.write(key: 'role', value: role);
+    return true;
   }
 
   Future<bool?> getIsonBoarding() async {

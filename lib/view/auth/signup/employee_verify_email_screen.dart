@@ -9,6 +9,7 @@ import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/provider/author.dart';
+import 'package:posture_detector_app/provider/signup.dart';
 import 'package:posture_detector_app/view/auth/signup/waiting_company_response.dart';
 
 /// Confirms the OTP sent to a new employee's email right after sign-up
@@ -72,6 +73,8 @@ class _EmployeeVerifyEmailScreenState
     if (!mounted) return;
     setState(() => _loading = false);
     if (ok) {
+      // Sign-up is complete: drop everything the flow collected.
+      ref.read(signupNotifierProvider.notifier).reset();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const WaitingCompanyResponse()),
       );

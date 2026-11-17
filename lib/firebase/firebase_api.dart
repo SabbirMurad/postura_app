@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/utils/print_helper.dart';
+import 'package:posture_detector_app/utils/safe_url.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -227,9 +228,15 @@ Future<StyleInformation?> _build_style(
 
 // ── Image Download ────────────────────────────────────────────────────────────
 
-Future<String?> _download_and_save_image(String url, String file_name) async {
+Future<String?> _download_and_save_image(Object? url, String file_name) async {
   try {
-    final response = await http.get(Uri.parse(url));
+    // The URL arrives in a push payload. Fetch it only if it is https on our
+    // own host; anything else is ignored and the notification shows no image.
+    final uri = SafeUrl.trusted(url);
+    if (uri == null) return null;
+
+    final response = await http.get(uri);
+    if (response.statusCode != 200) return null;
     final directory = await getTemporaryDirectory();
     final file_path = '${directory.path}/$file_name';
     final file = File(file_path);

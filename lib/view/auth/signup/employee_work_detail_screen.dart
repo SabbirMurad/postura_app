@@ -45,7 +45,9 @@ class _EmployeeWorkDetailScreenState
     final signup = ref.read(signupNotifierProvider);
     final id = signup.employeeId;
 
-    if (id.isEmpty) {
+    // The password is cleared once sign-up succeeds, so it is also empty if the
+    // user comes back to this screen afterwards; they re-enter it one step back.
+    if (id.isEmpty || signup.password.isEmpty) {
       showCustomToast(text: loc.pleaseFillAllRequirements);
       return;
     }
@@ -69,6 +71,8 @@ class _EmployeeWorkDetailScreenState
     setState(() => _loading = false);
 
     if (res == true) {
+      // The account exists now; the password is not needed again.
+      ref.read(signupNotifierProvider.notifier).clearPassword();
       if (mounted) {
         // Confirm the OTP that was just emailed before sending them off to wait
         // for company approval — this account can't sign in until both this and

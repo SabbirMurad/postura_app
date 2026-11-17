@@ -88,5 +88,10 @@ class SignupNotifier extends _$SignupNotifier {
     deskRole: deskRole,
   );
 
+  /// Forget the password. Called as soon as the sign-up request has succeeded:
+  /// nothing after that point needs it, and this provider is keep-alive, so it
+  /// would otherwise stay in memory for as long as the app runs.
+  void clearPassword() => state = state.copyWith(password: '');
+
   void reset() => state = const SignupState();
 }

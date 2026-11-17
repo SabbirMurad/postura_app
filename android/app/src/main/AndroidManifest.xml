@@ -5,7 +5,9 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!-- Only for Android 12L and below. From Android 13 the system photo picker
+         needs no storage permission, so it is not requested there. -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
     <uses-permission android:name="android.permission.CAMERA"/>
 
     <!-- Cleartext (HTTP) traffic is NOT allowed in release builds. Local dev over

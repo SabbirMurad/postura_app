@@ -54,8 +54,16 @@ class _LogoutModalState extends State<LogoutModal> {
   /// the user out locally.
   Future<void> _signOut() async {
     try {
+      // Sending this device's refresh token ends this session only; other
+      // devices signed in to the same account stay signed in. Without it the
+      // server cannot tell which session this is and ends all of them.
+      final refreshToken = await AppHelper.instance.getRefToken();
       await CustomHttp.post(
         endpoint: 'auth/sign-out',
+        body: {
+          if (refreshToken != null && refreshToken.isNotEmpty)
+            'refresh_token': refreshToken,
+        },
         needAuth: true,
         showFloatingError: false,
       );

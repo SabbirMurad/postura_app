@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:posture_detector_app/common/widgets/device_integrity_gate.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,6 +14,7 @@ import 'package:posture_detector_app/routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
+import 'package:posture_detector_app/helpers/cache_cleaner.dart';
 import 'package:posture_detector_app/provider/locale_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -45,6 +47,10 @@ void main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await AppHelper.init();
+
+  // Remove cached files (posture photos, upload copies, shared reports) older
+  // than a month. Deliberately not awaited: it must not delay startup.
+  unawaited(CacheCleaner.purgeOldFiles());
   await Sqlite.instance.init();
 
   final savedLang = await AppHelper.instance.getLanguage();

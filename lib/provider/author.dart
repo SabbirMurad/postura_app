@@ -278,7 +278,21 @@ class AuthorNotifier extends _$AuthorNotifier {
       showFloatingError: false,
     );
 
-    return response.ok;
+    if (!response.ok) return false;
+
+    // Changing the password signs every other device out: the server issues a
+    // new token pair and the old refresh token stops working. Store the new
+    // pair, or this device would be signed out too at its next refresh.
+    final data = response.data;
+    if (data is Map && data['access_token'] is String && data['refresh_token'] is String) {
+      await AppHelper.instance.setAccessToken(data['access_token']);
+      await AppHelper.instance.setRefToken(data['refresh_token']);
+      if (data['expires_at'] is int) {
+        await AppHelper.instance.setTokenValidity(data['expires_at']);
+      }
+    }
+
+    return true;
   }
 
   /// Enterprise SSO sign-in via Okta (OIDC). Discovers the company's Okta config
