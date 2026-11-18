@@ -196,7 +196,10 @@ class _EquipmentScreenBusinessState
                             left: 20.w,
                             right: 20.w,
                           ),
-                          child: EquipmentRecommendationCardV13(card: card),
+                          child: EquipmentRecommendationCardV13(
+                            card: card,
+                            findingLabels: v13Report.findingLabels,
+                          ),
                         ),
                       )
                     else if (v13Report != null && v13Cards.isEmpty)

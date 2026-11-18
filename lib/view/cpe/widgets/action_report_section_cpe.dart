@@ -97,7 +97,10 @@ class ActionReportSectionCPE extends StatelessWidget {
           ...report.equipmentCards.map(
             (card) => Padding(
               padding: EdgeInsets.only(bottom: 10.h),
-              child: EquipmentRecommendationCardV13(card: card),
+              child: EquipmentRecommendationCardV13(
+                card: card,
+                findingLabels: report.findingLabels,
+              ),
             ),
           ),
         ],

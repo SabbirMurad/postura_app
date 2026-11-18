@@ -457,11 +457,14 @@ class AssessmentReportPdf {
             c.priorityText,
             c.cardDescription,
             c.consolidationNote ?? '',
+            if (_relatedLabels(c, v13).isNotEmpty)
+              'Related findings: ${_relatedLabels(c, v13).join('; ')}',
             if (c.whyText.isNotEmpty)
               'Why this appears: ${c.whyText.join(' ')}',
+            if (c.targetText.isNotEmpty) 'Target: ${c.targetText}',
             if (c.requiredFeatures.isNotEmpty)
               'Required features: ${c.requiredFeatures.join(', ')}',
-            c.nextStepText,
+            if (c.nextStepText.isNotEmpty) 'Next step: ${c.nextStepText}',
           ]),
       ];
     }
@@ -530,6 +533,15 @@ class AssessmentReportPdf {
 
   /// A titled entry with its paragraphs. Emitted as separate flow widgets
   /// (not one box) so a long entry can break across pages.
+  /// Same names the equipment screen shows for a card's related findings.
+  List<String> _relatedLabels(EquipmentCardV13 c, ActionReportV13 report) =>
+      c.relatedFindingLabels.isNotEmpty
+          ? c.relatedFindingLabels
+          : c.relatedFindings
+                .map((id) => report.findingLabels[id])
+                .whereType<String>()
+                .toList();
+
   List<pw.Widget> _item(String title, List<String> paragraphs) => [
     pw.Padding(
       padding: const pw.EdgeInsets.only(top: 4, bottom: 2),

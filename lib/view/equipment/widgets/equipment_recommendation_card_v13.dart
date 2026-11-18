@@ -10,7 +10,38 @@ import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 class EquipmentRecommendationCardV13 extends StatelessWidget {
   final EquipmentCardV13 card;
 
-  const EquipmentRecommendationCardV13({super.key, required this.card});
+  /// FINDING_ID -> employee-facing name, from the Action Report. Only used when
+  /// the card itself carries no names (servers older than that field).
+  final Map<String, String> findingLabels;
+
+  const EquipmentRecommendationCardV13({
+    super.key,
+    required this.card,
+    this.findingLabels = const {},
+  });
+
+  List<String> get _relatedLabels => card.relatedFindingLabels.isNotEmpty
+      ? card.relatedFindingLabels
+      : card.relatedFindings
+            .map((id) => findingLabels[id])
+            .whereType<String>()
+            .toList();
+
+  Widget _sectionLabel(String text) => Padding(
+    padding: EdgeInsets.only(top: 10.h, bottom: 4.h),
+    child: Text(
+      text,
+      style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.text),
+    ),
+  );
+
+  Widget _bullet(String text) => Padding(
+    padding: EdgeInsets.only(bottom: 4.h),
+    child: Text(
+      '• $text',
+      style: TextStyle(fontSize: 12.sp, color: AppColors.secondaryText, height: 1.4),
+    ),
+  );
 
   Color get _priorityColor {
     switch (card.priorityLabel) {
@@ -93,21 +124,21 @@ class EquipmentRecommendationCardV13 extends StatelessWidget {
             ),
           ],
 
+          if (_relatedLabels.isNotEmpty) ...[
+            _sectionLabel('Related findings'),
+            ..._relatedLabels.map(_bullet),
+          ],
+
           if (card.whyText.isNotEmpty) ...[
-            SizedBox(height: 10.h),
+            _sectionLabel('Why this appears'),
+            ...card.whyText.map(_bullet),
+          ],
+
+          if (card.targetText.isNotEmpty) ...[
+            _sectionLabel('Target'),
             Text(
-              'Why this appears',
-              style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.text),
-            ),
-            SizedBox(height: 4.h),
-            ...card.whyText.map(
-              (w) => Padding(
-                padding: EdgeInsets.only(bottom: 4.h),
-                child: Text(
-                  '• $w',
-                  style: TextStyle(fontSize: 12.sp, color: AppColors.secondaryText, height: 1.4),
-                ),
-              ),
+              card.targetText,
+              style: TextStyle(fontSize: 12.sp, color: AppColors.secondaryText, height: 1.4),
             ),
           ],
 
@@ -139,11 +170,13 @@ class EquipmentRecommendationCardV13 extends StatelessWidget {
             ),
           ],
 
-          SizedBox(height: 10.h),
-          Text(
-            card.nextStepText,
-            style: TextStyle(fontSize: 12.sp, color: AppColors.text, height: 1.4),
-          ),
+          if (card.nextStepText.isNotEmpty) ...[
+            _sectionLabel('Next step'),
+            Text(
+              card.nextStepText,
+              style: TextStyle(fontSize: 12.sp, color: AppColors.text, height: 1.4),
+            ),
+          ],
         ],
       ),
     );

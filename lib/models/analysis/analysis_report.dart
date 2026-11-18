@@ -160,6 +160,11 @@ class AnalysisReport {
 // copy from the backend — no free-form text is generated for this section.
 
 class ActionReportV13 {
+  /// FINDING_ID -> employee-facing name for every finding this report lists.
+  Map<String, String> get findingLabels => {
+    for (final f in priorityFindings) f.findingId: f.employeeLabel,
+  };
+
   final int tierNumber;
   final String tierName;
   final int rosaScore;
@@ -310,6 +315,10 @@ class EquipmentCardV13 {
   final String priorityLabel;
   final String priorityText;
   final List<String> relatedFindings;
+
+  /// [relatedFindings] by their employee-facing names. Empty from servers
+  /// older than this field; the card then looks them up in the Action Report.
+  final List<String> relatedFindingLabels;
   final List<String> whyText;
   final String targetText;
   final List<String> requiredFeatures;
@@ -324,6 +333,7 @@ class EquipmentCardV13 {
     required this.priorityLabel,
     required this.priorityText,
     required this.relatedFindings,
+    this.relatedFindingLabels = const [],
     required this.whyText,
     required this.targetText,
     required this.requiredFeatures,
@@ -341,6 +351,8 @@ class EquipmentCardV13 {
     priorityLabel: json['priority_label'] ?? '',
     priorityText: json['priority_text'] ?? '',
     relatedFindings: List<String>.from(json['related_findings'] ?? const []),
+    relatedFindingLabels:
+        List<String>.from(json['related_finding_labels'] ?? const []),
     whyText: List<String>.from(json['why_text'] ?? const []),
     targetText: json['target_text'] ?? '',
     requiredFeatures: List<String>.from(json['required_features'] ?? const []),
@@ -356,6 +368,7 @@ class EquipmentCardV13 {
     'priority_label': priorityLabel,
     'priority_text': priorityText,
     'related_findings': relatedFindings,
+    'related_finding_labels': relatedFindingLabels,
     'why_text': whyText,
     'target_text': targetText,
     'required_features': requiredFeatures,
