@@ -169,8 +169,28 @@ class YoloDetector(context: Context) {
         return buf
     }
 
+    /**
+     * What the model's box coordinates must be divided by to become fractions
+     * of the frame. Some exports of this model give boxes in input pixels
+     * (0..320); others, including the TFLite export, give them already as
+     * fractions (0..1). Dividing a fraction by 320 again collapses every box
+     * into a dot in the top-left corner. That went unnoticed while boxes were
+     * only compared with each other, and broke as soon as a box was drawn and
+     * stored. The scale is read off the output itself: box centres span the
+     * whole frame, so the largest one is near 1 for fractions and near 320 for
+     * pixels.
+     */
+    private fun coordinateDivisor(output84x2100: Array<FloatArray>): Float {
+        var largest = 0f
+        for (row in 0..1) {
+            for (v in output84x2100[row]) if (v > largest) largest = v
+        }
+        return if (largest <= 2f) 1f else INPUT_SIZE.toFloat()
+    }
+
     private fun parseAndNms(output84x2100: Array<FloatArray>): List<RawDetection> {
         val candidates = mutableListOf<RawDetection>()
+        val divisor = coordinateDivisor(output84x2100)
         for (i in 0 until NUM_CANDIDATES) {
             var bestId = 0; var bestScore = 0f
             for (c in 0 until NUM_CLASSES) {
@@ -187,10 +207,10 @@ class YoloDetector(context: Context) {
                 RawDetection(
                     classId    = bestId,
                     confidence = bestScore,
-                    left   = ((cx - w / 2) / INPUT_SIZE).coerceIn(0f, 1f),
-                    top    = ((cy - h / 2) / INPUT_SIZE).coerceIn(0f, 1f),
-                    right  = ((cx + w / 2) / INPUT_SIZE).coerceIn(0f, 1f),
-                    bottom = ((cy + h / 2) / INPUT_SIZE).coerceIn(0f, 1f),
+                    left   = ((cx - w / 2) / divisor).coerceIn(0f, 1f),
+                    top    = ((cy - h / 2) / divisor).coerceIn(0f, 1f),
+                    right  = ((cx + w / 2) / divisor).coerceIn(0f, 1f),
+                    bottom = ((cy + h / 2) / divisor).coerceIn(0f, 1f),
                 ),
             )
         }

@@ -199,9 +199,24 @@ final class YoloDetector {
         return buf
     }
 
+    /// What the model's box coordinates must be divided by to become fractions
+    /// of the frame. Some exports of this model give boxes in input pixels
+    /// (0..320); others give them already as fractions (0..1). Dividing a
+    /// fraction by 320 again collapses every box into a dot in the top-left
+    /// corner. That went unnoticed while boxes were only compared with each
+    /// other, and broke as soon as a box was drawn and stored. The scale is read
+    /// off the output itself: box centres span the whole frame, so the largest
+    /// one is near 1 for fractions and near 320 for pixels.
+    private func coordinateDivisor(_ out: [Float]) -> Float {
+        var largest: Float = 0
+        for k in 0..<(2 * NUM_CANDIDATES) where out[k] > largest { largest = out[k] }
+        return largest <= 2 ? 1 : Float(INPUT_SIZE)
+    }
+
     private func parseAndNms(_ out: [Float]) -> [RawDetection] {
         // out is flat [1,84,2100]; value at logical [c][i] == out[c * NUM_CANDIDATES + i]
         var candidates: [RawDetection] = []
+        let divisor = coordinateDivisor(out)
         candidates.reserveCapacity(64)
         for i in 0..<NUM_CANDIDATES {
             var bestId = 0
@@ -221,10 +236,10 @@ final class YoloDetector {
             candidates.append(RawDetection(
                 classId: bestId,
                 confidence: bestScore,
-                left: clamp01((cx - bw / 2) / Float(INPUT_SIZE)),
-                top: clamp01((cy - bh / 2) / Float(INPUT_SIZE)),
-                right: clamp01((cx + bw / 2) / Float(INPUT_SIZE)),
-                bottom: clamp01((cy + bh / 2) / Float(INPUT_SIZE))
+                left: clamp01((cx - bw / 2) / divisor),
+                top: clamp01((cy - bh / 2) / divisor),
+                right: clamp01((cx + bw / 2) / divisor),
+                bottom: clamp01((cy + bh / 2) / divisor)
             ))
         }
         return nms(candidates)
