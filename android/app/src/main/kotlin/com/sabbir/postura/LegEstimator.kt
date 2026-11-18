@@ -64,13 +64,35 @@ class LegEstimator {
         val facingSign = lockedFacingSign
             ?: if (smoothed[NOSE].x > shoulderMidX) 1f else -1f
 
+        // A knee the pose model reports as visible is still not trusted when the
+        // thigh ending at it is too short for this body. The model's visibility
+        // score is reliable for joints outside the frame or behind the person's own
+        // body, but often stays high when a desk, cloth or bag covers the legs. It
+        // then puts the "knee" where the thigh disappears behind the object, and
+        // invents a shin and foot below it, which get scored as a real knee angle.
+        // A seated thigh seen from the side is about as long as the torso
+        // (shoulder to hip): 0.91-1.02 on scans with visible legs, 0.69-0.74 on two
+        // with the lower legs behind a cloth-covered desk. Below MIN_THIGH_RATIO the
+        // knee is treated as hidden: estimated, drawn dashed, and scored through the
+        // low-confidence fallback. A thigh angled towards the camera also reads
+        // short; that errs the same safe way (no measurement rather than a wrong one).
+        // Lengths in frame heights, so x and y count the same on a non-square frame.
+        fun kneeTrusted(hipIdx: Int, kneeIdx: Int): Boolean {
+            if (!isHighConf(raw[kneeIdx])) return false
+            val thigh = dist(smoothed[hipIdx].x * aspect, smoothed[hipIdx].y,
+                             smoothed[kneeIdx].x * aspect, smoothed[kneeIdx].y)
+            return thigh >= torsoLen * MIN_THIGH_RATIO
+        }
+        val lKneeTrusted = kneeTrusted(L_HIP, L_KNEE)
+        val rKneeTrusted = kneeTrusted(R_HIP, R_KNEE)
+
         // ── Left leg (anchored to L_HIP) ──────────────────────────────────────
         // Trust MediaPipe's knee position if it is highly confident.
         // isKneeForward is intentionally removed — it rejected valid standing
         // positions and is not needed now that standing is caught above.
         val lKneeX: Float
         val lKneeY: Float
-        if (isHighConf(raw[L_KNEE])) {
+        if (lKneeTrusted) {
             lKneeX = smoothed[L_KNEE].x
             lKneeY = smoothed[L_KNEE].y
         } else {
@@ -79,14 +101,15 @@ class LegEstimator {
             out[L_KNEE] = LandmarkPoint(lKneeX, lKneeY, estimated = true)
         }
 
-        if (!isHighConf(raw[L_ANKLE])) {
+        // An ankle hanging off an untrusted knee is not trusted either.
+        if (!isHighConf(raw[L_ANKLE]) || !lKneeTrusted) {
             out[L_ANKLE] = LandmarkPoint(lKneeX, lKneeY + shinLen, estimated = true)
         }
 
         // ── Right leg (anchored to R_HIP) ─────────────────────────────────────
         val rKneeX: Float
         val rKneeY: Float
-        if (isHighConf(raw[R_KNEE])) {
+        if (rKneeTrusted) {
             rKneeX = smoothed[R_KNEE].x
             rKneeY = smoothed[R_KNEE].y
         } else {
@@ -95,7 +118,7 @@ class LegEstimator {
             out[R_KNEE] = LandmarkPoint(rKneeX, rKneeY, estimated = true)
         }
 
-        if (!isHighConf(raw[R_ANKLE])) {
+        if (!isHighConf(raw[R_ANKLE]) || !rKneeTrusted) {
             out[R_ANKLE] = LandmarkPoint(rKneeX, rKneeY + shinLen, estimated = true)
         }
 
@@ -103,7 +126,8 @@ class LegEstimator {
         listOf(L_HEEL to L_ANKLE, R_HEEL to R_ANKLE,
                L_FOOT to L_ANKLE, R_FOOT to R_ANKLE)
             .forEach { (footIdx, ankleIdx) ->
-                if (!isHighConf(raw[footIdx]))
+                val kneeOk = if (ankleIdx == L_ANKLE) lKneeTrusted else rKneeTrusted
+                if (!isHighConf(raw[footIdx]) || !kneeOk)
                     out[footIdx] = LandmarkPoint(out[ankleIdx].x, out[ankleIdx].y, estimated = true)
             }
 
@@ -137,6 +161,8 @@ class LegEstimator {
         private const val THIGH_RATIO       = 0.90f
         private const val SHIN_RATIO        = 0.90f
         private const val SEATED_THIGH_DROP = 0.08f
+        /** Shortest believable thigh (hip to knee) as a fraction of the torso. */
+        private const val MIN_THIGH_RATIO   = 0.82f
         private const val VOTE_WINDOW       = 20
         private const val LOCK_FRACTION     = 0.70f
 
