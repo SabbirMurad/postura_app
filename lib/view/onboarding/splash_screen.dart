@@ -6,7 +6,6 @@ import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/routes.dart';
-import 'package:posture_detector_app/constants/app_text.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/models/user_type.dart';
@@ -136,7 +135,7 @@ class _SplashScreenState extends State<SplashScreen>
     } else if (mounted) {
       // EN: "Login first"
       showCustomToast(
-        text: AppLocalizations.of(context)?.loginFirst ?? 'Login first',
+        text: AppLocalizations.of(context)!.loginFirst,
       );
     }
   }
@@ -180,7 +179,7 @@ class _SplashScreenState extends State<SplashScreen>
 
                       /// Tagline
                       Text(
-                        AppText.splashTitle,
+                        AppLocalizations.of(context)!.genSplashTagline,
                         style: TextStyle(
                           fontSize: 22.sp,
                           color: Colors.white,
@@ -205,7 +204,7 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
                   child: Text(
-                    AppText.splashSubtitle,
+                    AppLocalizations.of(context)!.splashSubtitle,
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: Colors.white.withValues(alpha: 0.45),

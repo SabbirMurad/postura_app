@@ -69,60 +69,51 @@ class _WorkAbilityRecoveryOutlookScreenState
               SizedBox(height: 24.h),
 
               _SliderQuestion(
-                label:
-                    'How large is the risk that your current pain may become '
-                    'persistent or long-term?',
-                lowLabel: 'No risk',
-                highLabel: 'Very large risk',
+                label: loc.asmOutlookChronicityRisk,
+                lowLabel: loc.asmOutlookNoRisk,
+                highLabel: loc.asmOutlookVeryLargeRisk,
                 value: _chronicityRisk,
                 onChanged: (v) => setState(() => _chronicityRisk = v),
               ),
               _SliderQuestion(
-                label:
-                    'What are the chances you will be working your normal '
-                    'duties in 3 months?',
-                lowLabel: 'No chance',
-                highLabel: 'Very large chance',
+                label: loc.asmOutlookReturnToWork,
+                lowLabel: loc.asmOutlookNoChance,
+                highLabel: loc.asmOutlookVeryLargeChance,
                 value: _rtwExpectancy,
                 onChanged: (v) => setState(() => _rtwExpectancy = v),
               ),
               _SliderQuestion(
-                label:
-                    'An increase in pain is an indication that I should stop '
-                    'what I am doing until the pain decreases.',
-                lowLabel: 'Completely disagree',
-                highLabel: 'Completely agree',
+                label: loc.asmOutlookFearAvoidance,
+                lowLabel: loc.asmOutlookCompletelyDisagree,
+                highLabel: loc.asmOutlookCompletelyAgree,
                 value: _fearAvoidance,
                 onChanged: (v) => setState(() => _fearAvoidance = v),
               ),
               _SliderQuestion(
-                label: 'I can do light work (or normal light duties) for an hour.',
-                lowLabel: 'Cannot do it because of the pain',
-                highLabel: 'Can do it without the pain being a problem',
+                label: loc.asmOutlookLightWork,
+                lowLabel: loc.asmOutlookCannotBecauseOfPain,
+                highLabel: loc.asmOutlookCanWithoutPainProblem,
                 value: _lightWorkCapacity,
                 onChanged: (v) => setState(() => _lightWorkCapacity = v),
               ),
               _SliderQuestion(
-                label: 'I can sleep at night.',
-                lowLabel: 'Cannot do it because of the pain',
-                highLabel: 'Can do it without the pain being a problem',
+                label: loc.asmOutlookSleep,
+                lowLabel: loc.asmOutlookCannotBecauseOfPain,
+                highLabel: loc.asmOutlookCanWithoutPainProblem,
                 value: _sleepInterference,
                 onChanged: (v) => setState(() => _sleepInterference = v),
               ),
               _SliderQuestion(
-                label:
-                    'How much has your pain reduced your productivity or '
-                    'ability to work at full capacity in the past week?',
-                lowLabel: 'Not at all',
-                highLabel: 'Extremely (unable to work normally)',
+                label: loc.asmOutlookPresenteeism,
+                lowLabel: loc.asmOutlookNotAtAll,
+                highLabel: loc.asmOutlookExtremely,
                 value: _presenteeism,
                 onChanged: (v) => setState(() => _presenteeism = v),
               ),
 
               SizedBox(height: 4.h),
               Text(
-                'In the last 12 months, how many work days have you missed '
-                'because of similar pain or musculoskeletal problems?',
+                loc.asmOutlookPreviousAbsence,
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
@@ -146,11 +137,9 @@ class _WorkAbilityRecoveryOutlookScreenState
               SizedBox(height: 22.h),
 
               _SliderQuestion(
-                label:
-                    'I feel I can get support or make reasonable adjustments '
-                    'at work if needed because of this pain.',
-                lowLabel: 'Strongly disagree',
-                highLabel: 'Strongly agree',
+                label: loc.asmOutlookWorkplaceSupport,
+                lowLabel: loc.asmOutlookStronglyDisagree,
+                highLabel: loc.asmOutlookStronglyAgree,
                 value: _workplaceSupport,
                 onChanged: (v) => setState(() => _workplaceSupport = v),
               ),

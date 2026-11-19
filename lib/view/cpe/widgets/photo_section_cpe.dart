@@ -13,18 +13,19 @@ class PhotoSectionCPE extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final front = state.frontCapture;
+    final loc = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SectionTitle(AppLocalizations.of(context)!.photos),
+        SectionTitle(loc.photos),
         SizedBox(height: 10.h),
 
         // Side-view shots — one card each with its measured angles.
         for (var i = 0; i < state.sideCaptures.length; i++) ...[
           _CaptureCard(
-            title: 'Side view ${i + 1}',
+            title: loc.rvwSideViewNumber(i + 1),
             imageUrl: state.sideCaptures[i].image,
-            metrics: _sideMetrics(state.sideCaptures[i]),
+            metrics: _sideMetrics(state.sideCaptures[i], loc),
           ),
           SizedBox(height: 12.h),
         ],
@@ -32,14 +33,14 @@ class PhotoSectionCPE extends StatelessWidget {
         // Front-view shot — image + abduction / wrist-deviation angles.
         if (front != null)
           _CaptureCard(
-            title: 'Front view',
+            title: loc.rvwFrontView,
             imageUrl: front.image,
             metrics: {
-              'Elbow abduction': front.abductionAngle == null
-                  ? 'Not measured'
+              loc.rvwElbowAbduction: front.abductionAngle == null
+                  ? loc.rvwNotMeasured
                   : '${front.abductionAngle!.toStringAsFixed(1)}°',
-              'Wrist deviation': front.wristDeviationAngle == null
-                  ? 'Not measured'
+              loc.wristDeviation: front.wristDeviationAngle == null
+                  ? loc.rvwNotMeasured
                   : '${front.wristDeviationAngle!.toStringAsFixed(1)}°',
             },
           ),
@@ -47,28 +48,32 @@ class PhotoSectionCPE extends StatelessWidget {
     );
   }
 
-  Map<String, String> _sideMetrics(SideCaptureView c) {
+  // The labels are only shown (map keys of the chip list, never sent).
+  Map<String, String> _sideMetrics(SideCaptureView c, AppLocalizations loc) {
     final a = c.angles;
     return {
-      'Knee': '${a.kneeAngle.toStringAsFixed(1)}°',
-      'Trunk': '${a.trunkAngle.toStringAsFixed(1)}°',
-      'Elbow': '${a.elbowAngle.toStringAsFixed(1)}°',
-      'Neck': '${a.neckAngle.toStringAsFixed(1)}°',
-      'Neck state': a.neckStateLabel,
-      'Lower body': a.lowerBodyConfidence,
-      'Monitor detected': _yesNo(c.monitorDetected),
-      'Monitor top vs eye level': _monitorHeight(c.monitorHeightFromPhoto),
+      loc.rvwMetricKnee: '${a.kneeAngle.toStringAsFixed(1)}°',
+      loc.rvwMetricTrunk: '${a.trunkAngle.toStringAsFixed(1)}°',
+      loc.rvwMetricElbow: '${a.elbowAngle.toStringAsFixed(1)}°',
+      loc.neck: '${a.neckAngle.toStringAsFixed(1)}°',
+      loc.rvwMetricNeckState: a.neckStateLabel,
+      loc.rvwMetricLowerBody: a.lowerBodyConfidence,
+      loc.rvwMetricMonitorDetected: _yesNo(c.monitorDetected, loc),
+      loc.rvwMetricMonitorTopVsEyeLevel:
+          _monitorHeight(c.monitorHeightFromPhoto, loc),
     };
   }
 
   // Older scans were recorded before the check existed.
-  String _yesNo(bool? v) => v == null ? '—' : (v ? 'Yes' : 'No');
+  String _yesNo(bool? v, AppLocalizations loc) =>
+      v == null ? '—' : (v ? loc.yes : loc.rvwNo);
 
-  // Same wording as the questionnaire's answers.
-  String _monitorHeight(String? v) => switch (v) {
-    'below' => 'Below',
-    'at' => 'At eye level',
-    'above' => 'Above',
+  // Same wording as the questionnaire's answers; the 'below' / 'at' /
+  // 'above' values themselves stay as they are.
+  String _monitorHeight(String? v, AppLocalizations loc) => switch (v) {
+    'below' => loc.rvwMonitorBelow,
+    'at' => loc.rvwMonitorAtEyeLevel,
+    'above' => loc.rvwMonitorAbove,
     _ => '—',
   };
 }

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 
 /// Equipment recommendation card for the deterministic Equipment Engine v1.3
 /// (Postura_Equipment_Engine_v1.3_Enterprise_Copy_Complete.docx §3). Every
 /// text field on the card is fixed copy from the backend — this widget just
-/// lays it out, it never generates any of its own text.
+/// lays it out; only its own section headings are translated in the app.
 class EquipmentRecommendationCardV13 extends StatelessWidget {
   final EquipmentCardV13 card;
 
@@ -31,7 +32,11 @@ class EquipmentRecommendationCardV13 extends StatelessWidget {
     padding: EdgeInsets.only(top: 10.h, bottom: 4.h),
     child: Text(
       text,
-      style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.text),
+      style: TextStyle(
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w600,
+        color: AppColors.text,
+      ),
     ),
   );
 
@@ -39,7 +44,11 @@ class EquipmentRecommendationCardV13 extends StatelessWidget {
     padding: EdgeInsets.only(bottom: 4.h),
     child: Text(
       '• $text',
-      style: TextStyle(fontSize: 12.sp, color: AppColors.secondaryText, height: 1.4),
+      style: TextStyle(
+        fontSize: 12.sp,
+        color: AppColors.secondaryText,
+        height: 1.4,
+      ),
     ),
   );
 
@@ -58,13 +67,16 @@ class EquipmentRecommendationCardV13 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.secondaryText.withValues(alpha: 0.15)),
+        border: Border.all(
+          color: AppColors.secondaryText.withValues(alpha: 0.15),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,7 +87,10 @@ class EquipmentRecommendationCardV13 extends StatelessWidget {
               Expanded(
                 child: Text(
                   card.cardTitle,
-                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               SizedBox(width: 8.w),
@@ -84,7 +99,9 @@ class EquipmentRecommendationCardV13 extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: _priorityColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(color: _priorityColor.withValues(alpha: 0.4)),
+                  border: Border.all(
+                    color: _priorityColor.withValues(alpha: 0.4),
+                  ),
                 ),
                 child: Text(
                   card.priorityLabel,
@@ -109,7 +126,11 @@ class EquipmentRecommendationCardV13 extends StatelessWidget {
           SizedBox(height: 10.h),
           Text(
             card.cardDescription,
-            style: TextStyle(fontSize: 13.sp, color: AppColors.text, height: 1.5),
+            style: TextStyle(
+              fontSize: 13.sp,
+              color: AppColors.text,
+              height: 1.5,
+            ),
           ),
 
           if (card.consolidationNote != null) ...[
@@ -125,28 +146,36 @@ class EquipmentRecommendationCardV13 extends StatelessWidget {
           ],
 
           if (_relatedLabels.isNotEmpty) ...[
-            _sectionLabel('Related findings'),
+            _sectionLabel(loc.rptRelatedFindings),
             ..._relatedLabels.map(_bullet),
           ],
 
           if (card.whyText.isNotEmpty) ...[
-            _sectionLabel('Why this appears'),
+            _sectionLabel(loc.rptWhyThisAppears),
             ...card.whyText.map(_bullet),
           ],
 
           if (card.targetText.isNotEmpty) ...[
-            _sectionLabel('Target'),
+            _sectionLabel(loc.rptTarget),
             Text(
               card.targetText,
-              style: TextStyle(fontSize: 12.sp, color: AppColors.secondaryText, height: 1.4),
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: AppColors.secondaryText,
+                height: 1.4,
+              ),
             ),
           ],
 
           if (card.requiredFeatures.isNotEmpty) ...[
             SizedBox(height: 10.h),
             Text(
-              'Required features',
-              style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w600, color: AppColors.text),
+              loc.rptRequiredFeatures,
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.text,
+              ),
             ),
             SizedBox(height: 4.h),
             Wrap(
@@ -155,14 +184,20 @@ class EquipmentRecommendationCardV13 extends StatelessWidget {
               children: card.requiredFeatures
                   .map(
                     (f) => Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 4.h,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.secondaryText.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(8.r),
                       ),
                       child: Text(
                         f,
-                        style: TextStyle(fontSize: 11.sp, color: AppColors.secondaryText),
+                        style: TextStyle(
+                          fontSize: 11.sp,
+                          color: AppColors.secondaryText,
+                        ),
                       ),
                     ),
                   )
@@ -171,10 +206,14 @@ class EquipmentRecommendationCardV13 extends StatelessWidget {
           ],
 
           if (card.nextStepText.isNotEmpty) ...[
-            _sectionLabel('Next step'),
+            _sectionLabel(loc.rptNextStep),
             Text(
               card.nextStepText,
-              style: TextStyle(fontSize: 12.sp, color: AppColors.text, height: 1.4),
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: AppColors.text,
+                height: 1.4,
+              ),
             ),
           ],
         ],

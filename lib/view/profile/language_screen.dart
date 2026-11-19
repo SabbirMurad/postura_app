@@ -7,11 +7,12 @@ import 'package:posture_detector_app/provider/locale_provider.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/constants/colors.dart';
-import 'package:posture_detector_app/constants/app_text.dart';
 import 'package:posture_detector_app/provider/e_learning.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
 
+// Language names stay in their own language whatever the app language is,
+// so people can always find theirs; that is why they are not translated.
 class LanguageScreen extends ConsumerStatefulWidget {
   const LanguageScreen({super.key});
 
@@ -63,7 +64,7 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
                     height: 17.h,
                     fit: BoxFit.cover,
                   ),
-                  countryName: AppText.english,
+                  countryName: 'English',
                   selectedLanguage: _selectedLanguage,
                   value: 'en',
                 ),
@@ -77,7 +78,7 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
                     height: 17.h,
                     fit: BoxFit.cover,
                   ),
-                  countryName: AppText.dutch,
+                  countryName: 'Nederlands',
                   selectedLanguage: _selectedLanguage,
                   value: 'nl',
                 ),
@@ -91,7 +92,7 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
                     height: 17.h,
                     fit: BoxFit.cover,
                   ),
-                  countryName: AppText.german,
+                  countryName: 'Deutsch',
                   selectedLanguage: _selectedLanguage,
                   value: 'de',
                 ),
@@ -105,7 +106,7 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
                     height: 17.h,
                     fit: BoxFit.cover,
                   ),
-                  countryName: AppText.spanish,
+                  countryName: 'Español',
                   selectedLanguage: _selectedLanguage,
                   value: 'es',
                 ),

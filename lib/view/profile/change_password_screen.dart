@@ -100,7 +100,7 @@ class _ChangePasswordScreenState
                   isPassword: true,
                   validator: (value) {
                     if (value.length < 8) {
-                      return 'password should be 8 character';
+                      return loc.passwordMinLength;
                     }
                     return null;
                   },
@@ -123,7 +123,7 @@ class _ChangePasswordScreenState
                   isPassword: true,
                   validator: (value) {
                     if (value.length < 8) {
-                      return 'password should be 8 character';
+                      return loc.passwordMinLength;
                     }
                     return null;
                   },

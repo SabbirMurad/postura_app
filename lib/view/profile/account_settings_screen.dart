@@ -56,7 +56,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               ProfileInfo(
                 // EN: name = "Name", edit = "Edit"
                 title: loc.name,
-                value: profile?.fullName ?? 'username',
+                value: profile?.fullName ?? loc.userFallbackName,
                 tailingText: loc.edit,
                 iconData: Iconsax.edit,
                 onTap: () {

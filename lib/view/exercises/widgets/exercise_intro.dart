@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/utils/l10n.dart';
 
 /// Fixed copy shown once above the exercise list ("Postura Tier B: 25
 /// employee exercise cards", content source tier-b-2026-11-10-r1). The shared
@@ -9,33 +10,15 @@ import 'package:posture_detector_app/constants/colors.dart';
 class ExerciseIntro extends StatelessWidget {
   const ExerciseIntro({super.key});
 
-  static const title = 'A comfortable movement break, one step at a time';
+  static String get title => l10n.genExerciseIntroTitle;
 
-  static const paragraphs = <(String?, String)>[
-    (
-      null,
-      'Use the exercises selected for you by the app—you do not need to '
-          'complete this whole library. Start gently, breathe normally and '
-          'choose a range that feels comfortable. A small, controlled movement '
-          'is enough; there is no need to force a stretch.',
-    ),
-    (
-      'Your exercise amount',
-      'Follow the sets, repetitions or hold time shown in your programme. The '
-          'descriptions below explain how to move, not a second amount to '
-          'complete.',
-    ),
-    (
-      'The highlighted body area',
-      'The red area is an approximate guide, not a diagnosis or a promise '
-          'that you will feel the movement in exactly that spot.',
-    ),
-    (
-      'When to stop',
-      'Stop for sharp pain, dizziness, numbness, tingling or symptoms that get '
-          'worse. If symptoms continue after stopping, seek professional '
-          'advice. Follow the specific safety advice for each exercise below.',
-    ),
+  // Getters, not constants, so the text follows the selected language. Also
+  // read by the PDF report, which has no BuildContext, hence the global l10n.
+  static List<(String?, String)> get paragraphs => <(String?, String)>[
+    (null, l10n.genExerciseIntroBody),
+    (l10n.genExerciseIntroAmountTitle, l10n.genExerciseIntroAmountBody),
+    (l10n.genExerciseIntroAreaTitle, l10n.genExerciseIntroAreaBody),
+    (l10n.genExerciseIntroStopTitle, l10n.genExerciseIntroStopBody),
   ];
 
   @override

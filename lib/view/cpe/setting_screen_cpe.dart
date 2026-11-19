@@ -38,8 +38,8 @@ class SettingScreenCPE extends ConsumerWidget {
                 ),
                 SizedBox(height: 15.h),
                 ProfileInfoContainer(
-                  userName: profile?.fullName ?? 'username',
-                  role: profile?.role ?? 'role',
+                  userName: profile?.fullName ?? loc.userFallbackName,
+                  role: profile?.role ?? loc.roleLabel,
                 ),
 
                 SizedBox(height: 12.h),

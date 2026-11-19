@@ -8,6 +8,7 @@ import 'package:posture_detector_app/view/exercises/exercise_screen.dart';
 
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 
 class BottomNavBusiness extends StatefulWidget {
   const BottomNavBusiness({super.key});
@@ -32,6 +33,7 @@ class _BottomNavState extends State<BottomNavBusiness> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       body: pages[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -55,7 +57,7 @@ class _BottomNavState extends State<BottomNavBusiness> {
               padding: EdgeInsets.only(top: 4.h, bottom: 5.h),
               child: Assets.icons.nav.home.svg(width: 24.h, height: 24.h),
             ),
-            label: 'Home',
+            label: loc.home,
             activeIcon: Padding(
               padding: EdgeInsets.symmetric(vertical: 4.h),
               child: Assets.icons.nav.homeFilled.svg(
@@ -73,7 +75,7 @@ class _BottomNavState extends State<BottomNavBusiness> {
               padding: EdgeInsets.only(top: 4.h, bottom: 5.h),
               child: Assets.icons.nav.exercise.svg(width: 24.h, height: 24.h),
             ),
-            label: 'Exercise',
+            label: loc.exercise,
             activeIcon: Padding(
               padding: EdgeInsets.only(top: 4.h, bottom: 5.h),
               child: Assets.icons.nav.exerciseFilled.svg(
@@ -91,7 +93,7 @@ class _BottomNavState extends State<BottomNavBusiness> {
               padding: EdgeInsets.only(top: 4.h, bottom: 5.h),
               child: Assets.icons.nav.equipment.svg(width: 24.h, height: 24.h),
             ),
-            label: 'Equipment',
+            label: loc.genEquipment,
             activeIcon: Padding(
               padding: EdgeInsets.only(top: 4.h, bottom: 5.h),
               child: Assets.icons.nav.equipmentFill.svg(
@@ -109,7 +111,7 @@ class _BottomNavState extends State<BottomNavBusiness> {
               padding: EdgeInsets.only(top: 4.h, bottom: 5.h),
               child: Assets.icons.nav.cameraScan.svg(width: 24.h, height: 24.h),
             ),
-            label: 'scan',
+            label: loc.scan,
             activeIcon: Padding(
               padding: EdgeInsets.only(top: 4.h, bottom: 5.h),
               child: Assets.icons.nav.cameraScanFilled.svg(
@@ -138,7 +140,7 @@ class _BottomNavState extends State<BottomNavBusiness> {
                 ),
               ),
             ),
-            label: 'settings',
+            label: loc.settings,
           ),
         ],
       ),

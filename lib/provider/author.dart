@@ -7,6 +7,7 @@ import 'package:posture_detector_app/models/profile/author_model.dart';
 import 'package:posture_detector_app/models/user_type.dart';
 import 'package:posture_detector_app/services/auth/okta_oidc_service.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
+import 'package:posture_detector_app/utils/l10n.dart';
 import 'package:posture_detector_app/utils/media.dart' as media;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -46,7 +47,7 @@ class AuthorNotifier extends _$AuthorNotifier {
     );
 
     if (!response.ok) {
-      showCustomToast(text: response.error ?? 'Something went wrong');
+      showCustomToast(text: response.error ?? l10n.somethingWentWrong);
       return false;
     }
 
@@ -67,7 +68,7 @@ class AuthorNotifier extends _$AuthorNotifier {
       temporary: true,
     );
     if (imageIds == null || imageIds.isEmpty) {
-      showCustomToast(text: 'Failed to upload image');
+      showCustomToast(text: l10n.genFailedToUploadImage);
       return false;
     }
 
@@ -78,7 +79,7 @@ class AuthorNotifier extends _$AuthorNotifier {
       body: {'avatar': imageIds.first},
     );
     if (!response.ok) {
-      showCustomToast(text: response.error ?? 'Something went wrong');
+      showCustomToast(text: response.error ?? l10n.somethingWentWrong);
       return false;
     }
     await refreshProfile();
@@ -177,7 +178,7 @@ class AuthorNotifier extends _$AuthorNotifier {
     );
 
     if (!response.ok) {
-      showCustomToast(text: response.error ?? 'Something went wrong');
+      showCustomToast(text: response.error ?? l10n.somethingWentWrong);
       return false;
     }
     return true;
@@ -191,7 +192,7 @@ class AuthorNotifier extends _$AuthorNotifier {
     );
 
     if (!response.ok) {
-      showCustomToast(text: response.error ?? 'Something went wrong');
+      showCustomToast(text: response.error ?? l10n.somethingWentWrong);
       return false;
     }
 
@@ -215,11 +216,11 @@ class AuthorNotifier extends _$AuthorNotifier {
 
     if (response.ok) {
       showCustomToast(
-        text: response.data?['message'] ?? 'OTP sent to your email',
+        text: response.data?['message'] ?? l10n.otpSentToEmail,
         toastType: ToastTypesInfo(ToastTypes.success),
       );
     } else {
-      showCustomToast(text: response.error ?? 'Something went wrong');
+      showCustomToast(text: response.error ?? l10n.somethingWentWrong);
     }
   }
 
@@ -234,7 +235,7 @@ class AuthorNotifier extends _$AuthorNotifier {
     );
 
     if (!response.ok) {
-      showCustomToast(text: response.error ?? 'Something went wrong');
+      showCustomToast(text: response.error ?? l10n.somethingWentWrong);
       return false;
     }
 
@@ -306,13 +307,13 @@ class AuthorNotifier extends _$AuthorNotifier {
       needAuth: false,
     );
     if (!cfg.ok || cfg.data['sso_enabled'] != true) {
-      showCustomToast(text: 'SSO is not enabled for this company.');
+      showCustomToast(text: l10n.genSsoNotEnabled);
       return null;
     }
     final issuer = cfg.data['okta_issuer'] as String?;
     final clientId = cfg.data['okta_client_id'] as String?;
     if (issuer == null || clientId == null) {
-      showCustomToast(text: 'SSO is not configured for this company.');
+      showCustomToast(text: l10n.genSsoNotConfigured);
       return null;
     }
 
@@ -327,7 +328,7 @@ class AuthorNotifier extends _$AuthorNotifier {
       needAuth: false,
     );
     if (!response.ok) {
-      showCustomToast(text: response.error ?? 'SSO sign-in failed.');
+      showCustomToast(text: response.error ?? l10n.genSsoSignInFailed);
       return null;
     }
 
@@ -354,11 +355,11 @@ class AuthorNotifier extends _$AuthorNotifier {
 
     if (response.ok) {
       showCustomToast(
-        text: 'OTP sent to your email',
+        text: l10n.otpSentToEmail,
         toastType: ToastTypesInfo(ToastTypes.success),
       );
     } else {
-      showCustomToast(text: response.error ?? 'Something went wrong');
+      showCustomToast(text: response.error ?? l10n.somethingWentWrong);
     }
   }
 }

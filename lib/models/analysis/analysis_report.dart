@@ -1,6 +1,7 @@
 import 'package:posture_detector_app/constants/credential.dart';
 import 'package:posture_detector_app/models/analysis/rosa_revision.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
+import 'package:posture_detector_app/utils/l10n.dart';
 
 class AnalysisReport {
   final BodyRegionRisks bodyRegionRisks;
@@ -357,7 +358,7 @@ class EquipmentCardV13 {
     targetText: json['target_text'] ?? '',
     requiredFeatures: List<String>.from(json['required_features'] ?? const []),
     nextStepText: json['next_step_text'] ?? '',
-    relatedActionLabel: json['related_action_label'] ?? 'View related action',
+    relatedActionLabel: json['related_action_label'] ?? l10n.mdlViewRelatedAction,
     consolidationNote: json['consolidation_note'] as String?,
   );
 

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 
 /// Equipment recommendation card — driven by EquipmentEngine output
 class EquipmentRecommendationCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final String source;
-  final String urgencyLabel;    // 'Urgent' | 'Recommended' | 'Preventive'
-  final int urgencyLevel;       // 3 | 2 | 1
-  final String riskBadgeText;   // e.g. 'Monitor risk: 3'
+  final String urgencyLabel; // 'Urgent' | 'Recommended' | 'Preventive'
+  final int urgencyLevel; // 3 | 2 | 1
+  final String riskBadgeText; // e.g. 'Monitor risk: 3'
   final String? cardNote;
   final bool chronicityFlag;
   final String? status; // 'ACTIONED' | 'PENDING' | 'REJECTED' | null
@@ -38,8 +39,23 @@ class EquipmentRecommendationCard extends StatelessWidget {
     }
   }
 
+  /// Translated text for a status code; the code itself drives the colour.
+  String _statusLabel(AppLocalizations loc, String code) {
+    switch (code) {
+      case 'ACTIONED':
+        return loc.rptStatusActioned;
+      case 'PENDING':
+        return loc.pending;
+      case 'REJECTED':
+        return loc.rejected;
+      default:
+        return code;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -77,12 +93,14 @@ class EquipmentRecommendationCard extends StatelessWidget {
                     color: Color(0xFF856404),
                   ),
                   SizedBox(width: 6.w),
-                  Text(
-                    'Long-term condition — consistent use recommended',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFF856404),
+                  Expanded(
+                    child: Text(
+                      loc.rptLongTermCondition,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF856404),
+                      ),
                     ),
                   ),
                 ],
@@ -116,7 +134,9 @@ class EquipmentRecommendationCard extends StatelessWidget {
                           vertical: 4.h,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.secondaryText.withValues(alpha: 0.08),
+                          color: AppColors.secondaryText.withValues(
+                            alpha: 0.08,
+                          ),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Text(
@@ -161,7 +181,7 @@ class EquipmentRecommendationCard extends StatelessWidget {
 
                 /// Source line
                 Text(
-                  'Source: $source',
+                  '${loc.sourceLabel} $source',
                   style: TextStyle(
                     fontSize: 11.sp,
                     color: const Color(0xFFA6A6A6),
@@ -209,7 +229,7 @@ class EquipmentRecommendationCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Text(
-                          status!,
+                          _statusLabel(loc, status!),
                           style: TextStyle(
                             fontSize: 11.sp,
                             fontWeight: FontWeight.w500,

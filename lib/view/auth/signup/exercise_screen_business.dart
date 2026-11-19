@@ -111,8 +111,8 @@ class ExerciseScreenBusiness extends ConsumerWidget {
                             SizedBox(height: 20.h),
                             Text(
                               stopped
-                                  ? 'Please Check In With a Professional'
-                                  : 'No Exercises Yet',
+                                  ? loc.genCheckInWithProfessional
+                                  : loc.noExercisesYet,
                               style: TextStyle(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.w600,
@@ -124,9 +124,8 @@ class ExerciseScreenBusiness extends ConsumerWidget {
                             Text(
                               stopped
                                   ? (exercisesData?.message ??
-                                        'Based on your screening answers, please consult a '
-                                            'healthcare professional before starting exercises.')
-                                  : 'Please complete your assessment first',
+                                        loc.genConsultBeforeExercises)
+                                  : loc.pleaseCompleteAssessmentFirst,
                               style: TextStyle(
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.w400,
@@ -205,10 +204,7 @@ class ExerciseScreenBusiness extends ConsumerWidget {
                                     SizedBox(width: 8.w),
                                     Expanded(
                                       child: Text(
-                                        'Based on your answers, we recommend keeping '
-                                        'these gentle and reviewing them with your CPE '
-                                        'or a healthcare professional. Stop immediately '
-                                        'if any exercise increases your symptoms.',
+                                        loc.genKeepExercisesGentleCpe,
                                         style: TextStyle(
                                           fontSize: 12.sp,
                                           color: const Color(0xFF856404),
@@ -234,7 +230,7 @@ class ExerciseScreenBusiness extends ConsumerWidget {
                               title: exercise.title,
                               subtitle: exercise.cardBodyArea,
                               duration: exercise.recommendedDuration,
-                              sensitivityLabel: 'Gentle',
+                              sensitivityLabel: loc.genTierGentle,
                               purpose: exercise.howToDoIt,
                               musclesAddressed: exercise.musclesAddressed,
                               regionVas: exercise.regionVas,
@@ -331,7 +327,7 @@ class ExerciseScreenBusiness extends ConsumerWidget {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  'Clinical Projection',
+                                                  loc.clinicalProjection,
                                                   style: TextStyle(
                                                     fontSize: 14.sp,
                                                     fontWeight: FontWeight.w700,
@@ -341,7 +337,7 @@ class ExerciseScreenBusiness extends ConsumerWidget {
                                                 ),
                                                 SizedBox(height: 2.h),
                                                 Text(
-                                                  'Evidence-based prediction',
+                                                  loc.evidenceBasedPrediction,
                                                   style: TextStyle(
                                                     fontSize: 10.sp,
                                                     fontWeight: FontWeight.w500,
@@ -375,7 +371,7 @@ class ExerciseScreenBusiness extends ConsumerWidget {
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Text(
-                                                  'Details',
+                                                  loc.details,
                                                   style: TextStyle(
                                                     fontSize: 10.sp,
                                                     fontWeight: FontWeight.w600,

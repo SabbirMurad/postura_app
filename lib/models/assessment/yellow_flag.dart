@@ -5,6 +5,8 @@
 // Chronicity Level (Low / Elevated) from these answers — see
 // `Postura_Yellow_Flag_Chronicity_Implementation.pdf` for the exact rule.
 
+import 'package:posture_detector_app/utils/l10n.dart';
+
 /// Previous work-day absence in the last 12 months (Question 7).
 enum PreviousAbsence {
   zero('0 days'),
@@ -13,8 +15,27 @@ enum PreviousAbsence {
   sixteenToThirty('16-30 days'),
   moreThanThirty('More than 30 days');
 
-  const PreviousAbsence(this.label);
-  final String label;
+  const PreviousAbsence(this.apiValue);
+
+  /// Wire value sent as `previous_absence`. Do not translate.
+  final String apiValue;
+
+  /// Display text in the current language.
+  String get label => switch (this) {
+    PreviousAbsence.zero => l10n.mdlAbsenceZeroDays,
+    PreviousAbsence.oneToFive => l10n.mdlAbsence1To5Days,
+    PreviousAbsence.sixToFifteen => l10n.mdlAbsence6To15Days,
+    PreviousAbsence.sixteenToThirty => l10n.mdlAbsence16To30Days,
+    PreviousAbsence.moreThanThirty => l10n.mdlAbsenceMoreThan30Days,
+  };
+
+  /// The option for a `previous_absence` value read from the server, or null.
+  static PreviousAbsence? fromApi(String? value) {
+    for (final a in PreviousAbsence.values) {
+      if (a.apiValue == value) return a;
+    }
+    return null;
+  }
 }
 
 /// The 8 slider/chip answers for the Work Ability & Recovery Outlook screen.
@@ -73,7 +94,7 @@ class YellowFlagAnswers {
     'light_work_capacity': lightWorkCapacity,
     'sleep_interference': sleepInterference,
     'presenteeism': presenteeism,
-    'previous_absence': previousAbsence.label,
+    'previous_absence': previousAbsence.apiValue,
     'workplace_support': workplaceSupport,
   };
 }

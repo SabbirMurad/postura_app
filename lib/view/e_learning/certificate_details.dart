@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/utils/date_helper.dart';
+import 'package:posture_detector_app/utils/l10n.dart';
 import 'package:posture_detector_app/utils/safe_url.dart';
 import 'package:posture_detector_app/view/e_learning/data/e_learning_module_data.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -32,7 +34,7 @@ class _CertificateDetailsScreenState extends State<CertificateDetailsScreen> {
     );
 
     if (!response.ok) {
-      showCustomToast(text: response.error ?? 'Something went wrong');
+      showCustomToast(text: response.error ?? l10n.somethingWentWrong);
       return;
     }
 
@@ -50,6 +52,7 @@ class _CertificateDetailsScreenState extends State<CertificateDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -94,7 +97,7 @@ class _CertificateDetailsScreenState extends State<CertificateDetailsScreen> {
                             ),
                             Spacer(flex: 2),
                             Text(
-                              'Certificate',
+                              loc.genCertificate,
                               style: TextStyle(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.w600,
@@ -123,7 +126,7 @@ class _CertificateDetailsScreenState extends State<CertificateDetailsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Name: ',
+                            loc.genNameLabel,
                             style: TextStyle(
                               fontSize: 13.sp,
                               color: AppColors.secondaryText,
@@ -145,7 +148,7 @@ class _CertificateDetailsScreenState extends State<CertificateDetailsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'ID: ',
+                            loc.genIdLabel,
                             style: TextStyle(
                               fontSize: 13.sp,
                               color: AppColors.secondaryText,
@@ -210,7 +213,7 @@ class _CertificateDetailsScreenState extends State<CertificateDetailsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Text(
-                                    'Passed On',
+                                    loc.genPassedOn,
                                     style: TextStyle(
                                       fontSize: 12.sp,
                                       color: AppColors.secondaryText,
@@ -231,7 +234,7 @@ class _CertificateDetailsScreenState extends State<CertificateDetailsScreen> {
                       }),
                       SizedBox(height: 48.h),
                       Text(
-                        'Certificate ID',
+                        loc.genCertificateId,
                         style: TextStyle(
                           fontSize: 13.sp,
                           color: AppColors.secondaryText,
@@ -252,7 +255,7 @@ class _CertificateDetailsScreenState extends State<CertificateDetailsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Issued on',
+                                loc.genIssuedOn,
                                 style: TextStyle(
                                   fontSize: 13.sp,
                                   color: AppColors.secondaryText,
@@ -273,7 +276,7 @@ class _CertificateDetailsScreenState extends State<CertificateDetailsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Valid Until',
+                                loc.genValidUntil,
                                 style: TextStyle(
                                   fontSize: 13.sp,
                                   color: AppColors.secondaryText,
@@ -326,7 +329,7 @@ class _CertificateDetailsScreenState extends State<CertificateDetailsScreen> {
                                   ),
                                   SizedBox(width: 12.w),
                                   Text(
-                                    'Download',
+                                    loc.genDownload,
                                     style: TextStyle(
                                       fontSize: 14.sp,
                                       color: Colors.white,

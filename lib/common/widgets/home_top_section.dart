@@ -24,9 +24,8 @@ class HomeTopSection extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // EN: "Hi"
             Text(
-              '${loc.hi} $name 👋',
+              loc.mdlHiName(name),
               style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
             ),
             // EN: "Welcome Home"

@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:posture_detector_app/models/prepared_image.dart';
 import 'package:posture_detector_app/utils/media.dart' as media;
 import 'package:posture_detector_app/l10n/app_localizations.dart';
+import 'package:posture_detector_app/utils/l10n.dart';
 import 'package:posture_detector_app/models/analysis/body_angles.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
 import 'package:posture_detector_app/provider/cpe_home.dart';
@@ -34,18 +35,24 @@ class PainSymptom {
 }
 
 class ApprovalItem {
-  final String label;
   final String apiKey;
   final bool isChecked;
 
   const ApprovalItem({
-    required this.label,
     required this.apiKey,
     this.isChecked = false,
   });
 
+  /// The checklist text shown for [apiKey], in the selected language.
+  String get label => switch (apiKey) {
+    'landmarks_verified' => l10n.rvwApprovalLandmarksVerified,
+    'workstation_verified' => l10n.rvwApprovalWorkstationVerified,
+    'rosa_verified' => l10n.rvwApprovalRosaVerified,
+    'recommendations_verified' => l10n.rvwApprovalRecommendationsVerified,
+    _ => apiKey,
+  };
+
   ApprovalItem copyWith({bool? isChecked}) => ApprovalItem(
-    label: label,
     apiKey: apiKey,
     isChecked: isChecked ?? this.isChecked,
   );
@@ -113,14 +120,21 @@ class FrontCaptureView {
 }
 
 enum ReviewDecision {
-  approved('Approved', 'APPROVED'),
-  followUpRequired('Follow Up Required', 'FOLLOW_UP_REQUIRED'),
-  needChanges('Need Changes', 'NEED_CHANGE'),
-  pending('Pending', 'PENDING');
+  approved('APPROVED'),
+  followUpRequired('FOLLOW_UP_REQUIRED'),
+  needChanges('NEED_CHANGE'),
+  pending('PENDING');
 
-  final String label;
   final String apiValue;
-  const ReviewDecision(this.label, this.apiValue);
+  const ReviewDecision(this.apiValue);
+
+  /// The label shown for this decision, in the selected language.
+  String get label => switch (this) {
+    ReviewDecision.approved => l10n.approved,
+    ReviewDecision.followUpRequired => l10n.rvwFollowUpRequired,
+    ReviewDecision.needChanges => l10n.rvwNeedChanges,
+    ReviewDecision.pending => l10n.pending,
+  };
 
   static ReviewDecision fromApi(String? value) {
     return ReviewDecision.values.firstWhere(
@@ -231,29 +245,41 @@ class CpeAssessmentState {
 
   bool get chronicityElevated => chronicityLevel == 'Elevated';
 
-  String get complianceLabel {
+  /// 'red', 'moderate' or 'good' (internal, never shown).
+  String get _complianceBand {
     switch (riskLevel.toLowerCase()) {
       case 'red':
-        return 'Red';
+        return 'red';
       case 'yellow':
-        return 'Moderate';
+        return 'moderate';
       case 'green':
-        return 'Good';
+        return 'good';
       default:
-        if (compliance < 40) return 'Red';
-        if (compliance < 70) return 'Moderate';
-        return 'Good';
+        if (compliance < 40) return 'red';
+        if (compliance < 70) return 'moderate';
+        return 'good';
+    }
+  }
+
+  String get complianceLabel {
+    switch (_complianceBand) {
+      case 'red':
+        return l10n.scoreRed;
+      case 'moderate':
+        return l10n.scoreModerate;
+      default:
+        return l10n.scoreGood;
     }
   }
 
   String get complianceSubtitle {
-    switch (complianceLabel) {
-      case 'Red':
-        return 'Immediate correction required!';
-      case 'Moderate':
-        return 'Needs improvement.';
+    switch (_complianceBand) {
+      case 'red':
+        return l10n.immediateCorrectRequired;
+      case 'moderate':
+        return l10n.needsImprovement;
       default:
-        return 'Keep it up!';
+        return l10n.keepItUp;
     }
   }
 
@@ -364,22 +390,18 @@ class CpeAssessmentNotifier
       final approvalsMap = d['approvals'] as Map<String, dynamic>? ?? {};
       final approvalItems = [
         ApprovalItem(
-          label: 'Posture landmarks are valid and accurate',
           apiKey: 'landmarks_verified',
           isChecked: approvalsMap['landmarks_verified'] == true,
         ),
         ApprovalItem(
-          label: 'Workstation equipment is correctly identified',
           apiKey: 'workstation_verified',
           isChecked: approvalsMap['workstation_verified'] == true,
         ),
         ApprovalItem(
-          label: 'ROSA score calculation is verified',
           apiKey: 'rosa_verified',
           isChecked: approvalsMap['rosa_verified'] == true,
         ),
         ApprovalItem(
-          label: 'Recommendations are professionally appropriate',
           apiKey: 'recommendations_verified',
           isChecked: approvalsMap['recommendations_verified'] == true,
         ),

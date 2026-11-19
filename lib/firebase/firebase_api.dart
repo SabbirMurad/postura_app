@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/utils/print_helper.dart';
+import 'package:posture_detector_app/utils/l10n.dart';
 import 'package:posture_detector_app/utils/safe_url.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -18,10 +19,12 @@ const _init_settings = InitializationSettings(
   iOS: _ios_settings,
 );
 
-const android_channel = AndroidNotificationChannel(
+// A getter so the channel name and description (shown in the phone's
+// notification settings) follow the selected language. The id stays fixed.
+AndroidNotificationChannel get android_channel => AndroidNotificationChannel(
   'high_importance_channel',
-  'High Importance Notifications',
-  description: 'This channel is used for important notifications.',
+  l10n.genNotificationChannelName,
+  description: l10n.genNotificationChannelDescription,
   importance: Importance.high,
 );
 
@@ -144,18 +147,18 @@ List<AndroidNotificationAction> _build_actions(
   switch (type) {
     case NotificationType.started_following:
       return [
-        const AndroidNotificationAction('follow_back_action_id', 'Follow Back'),
+        AndroidNotificationAction('follow_back_action_id', l10n.genFollowBack),
       ];
 
     case NotificationType.friend_request:
       return [
-        const AndroidNotificationAction(
+        AndroidNotificationAction(
           'accept_friend_request_action_id',
-          'Accept',
+          l10n.genAccept,
         ),
-        const AndroidNotificationAction(
+        AndroidNotificationAction(
           'reject_friend_request_action_id',
-          'Reject',
+          l10n.genReject,
         ),
       ];
 
@@ -163,21 +166,21 @@ List<AndroidNotificationAction> _build_actions(
       return [
         AndroidNotificationAction(
           'reply_action_id',
-          'Reply',
+          l10n.genReply,
           inputs: [
-            const AndroidNotificationActionInput(label: 'Type your reply'),
+            AndroidNotificationActionInput(label: l10n.genTypeYourReply),
           ],
         ),
-        const AndroidNotificationAction(
+        AndroidNotificationAction(
           'mark_as_read_action_id',
-          'Mark as Read',
+          l10n.genMarkAsRead,
         ),
       ];
 
     case NotificationType.incoming_call:
       return [
-        const AndroidNotificationAction('accept_call_action_id', 'Accept'),
-        const AndroidNotificationAction('reject_call_action_id', 'Reject'),
+        AndroidNotificationAction('accept_call_action_id', l10n.genAccept),
+        AndroidNotificationAction('reject_call_action_id', l10n.genReject),
       ];
 
     default:

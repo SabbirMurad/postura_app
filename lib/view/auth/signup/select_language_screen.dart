@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/common/widgets/app_top_section.dart';
-import 'package:posture_detector_app/constants/app_text.dart';
 import 'package:posture_detector_app/view/auth/signup/widgets/language_selected_card.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
@@ -15,6 +14,8 @@ import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/provider/locale_provider.dart';
 import 'package:posture_detector_app/provider/signup.dart';
 
+// Language names stay in their own language whatever the app language is,
+// so people can always find theirs; that is why they are not translated.
 class SelectLanguageScreen extends ConsumerWidget {
   const SelectLanguageScreen({super.key});
 
@@ -52,7 +53,7 @@ class SelectLanguageScreen extends ConsumerWidget {
                     height: 17.h,
                     fit: BoxFit.cover,
                   ),
-                  countryName: AppText.english,
+                  countryName: 'English',
                   selectedLanguage: selectedLanguage,
                   selectedLan: 'en',
                 ),
@@ -66,7 +67,7 @@ class SelectLanguageScreen extends ConsumerWidget {
                     height: 17.h,
                     fit: BoxFit.cover,
                   ),
-                  countryName: AppText.dutch,
+                  countryName: 'Nederlands',
                   selectedLanguage: selectedLanguage,
                   selectedLan: 'nl',
                 ),
@@ -80,7 +81,7 @@ class SelectLanguageScreen extends ConsumerWidget {
                     height: 17.h,
                     fit: BoxFit.cover,
                   ),
-                  countryName: AppText.german,
+                  countryName: 'Deutsch',
                   selectedLanguage: selectedLanguage,
                   selectedLan: 'de',
                 ),
@@ -94,7 +95,7 @@ class SelectLanguageScreen extends ConsumerWidget {
                     height: 17.h,
                     fit: BoxFit.cover,
                   ),
-                  countryName: AppText.spanish,
+                  countryName: 'Español',
                   selectedLanguage: selectedLanguage,
                   selectedLan: 'es',
                 ),

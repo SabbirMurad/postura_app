@@ -62,54 +62,49 @@ class _RedFlagScreeningScreenState
             padding: EdgeInsets.only(top: 12.h, bottom: 96.h),
             children: [
               AppTopSection(
-                title: 'A Few Safety Questions',
-                subtitle:
-                    'These help us make sure exercise is a safe option for '
-                    'you right now. Answer honestly — a "Yes" just means we '
-                    'point you to a healthcare professional instead.',
+                title: loc.asmRedFlagTitle,
+                subtitle: loc.asmRedFlagSubtitle,
               ),
               SizedBox(height: 24.h),
               _BoolQuestion(
                 1,
-                'New loss of bladder or bowel control',
+                loc.asmRedFlagBladderBowel,
                 _newBladderOrBowelDysfunction,
                 (v) => setState(() => _newBladderOrBowelDysfunction = v),
               ),
               _BoolQuestion(
                 2,
-                'Numbness in the saddle area (inner thighs, groin, or genitals)',
+                loc.asmRedFlagSaddleNumbness,
                 _saddleAnaesthesia,
                 (v) => setState(() => _saddleAnaesthesia = v),
               ),
               _BoolQuestion(
                 3,
-                'New or worsening weakness in your legs or arms',
+                loc.asmRedFlagLimbWeakness,
                 _progressiveMotorWeakness,
                 (v) => setState(() => _progressiveMotorWeakness = v),
               ),
               _BoolQuestion(
                 4,
-                'A significant recent trauma (e.g. a fall, accident, or blow '
-                'to your back)',
+                loc.asmRedFlagRecentTrauma,
                 _significantRecentTrauma,
                 (v) => setState(() => _significantRecentTrauma = v),
               ),
               _BoolQuestion(
                 5,
-                'Fever, a recent infection, or a weakened immune system '
-                'along with back pain',
+                loc.asmRedFlagFeverInfection,
                 _feverOrInfectionOrImmunosuppression,
                 (v) => setState(() => _feverOrInfectionOrImmunosuppression = v),
               ),
               _BoolQuestion(
                 6,
-                'A history of cancer, with new or worsening back/spine pain',
+                loc.asmRedFlagCancerHistory,
                 _cancerHistoryWithNewSpinalPain,
                 (v) => setState(() => _cancerHistoryWithNewSpinalPain = v),
               ),
               _BoolQuestion(
                 7,
-                "Severe pain that doesn't ease up, especially at night",
+                loc.asmRedFlagSevereNightPain,
                 _severeUnremittingOrNightPain,
                 (v) => setState(() => _severeUnremittingOrNightPain = v),
               ),
@@ -148,6 +143,7 @@ class _BoolQuestion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.only(bottom: 18.h),
       child: Column(
@@ -184,11 +180,11 @@ class _BoolQuestion extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () => onChanged(true),
-                  child: SelectionChip(title: 'Yes', selected: value),
+                  child: SelectionChip(title: loc.yes, selected: value),
                 ),
                 GestureDetector(
                   onTap: () => onChanged(false),
-                  child: SelectionChip(title: 'No', selected: !value),
+                  child: SelectionChip(title: loc.asmNo, selected: !value),
                 ),
               ],
             ),

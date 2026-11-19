@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/common/widgets/custom_text_field.dart';
 import 'package:posture_detector_app/common/widgets/selection_chip.dart';
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 
 enum _HeightUnit { cm, ftIn }
 
@@ -83,6 +84,7 @@ class _HeightInputFieldState extends State<HeightInputField> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -90,7 +92,7 @@ class _HeightInputFieldState extends State<HeightInputField> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Height',
+              loc.mdlHeight,
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
@@ -126,7 +128,7 @@ class _HeightInputFieldState extends State<HeightInputField> {
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d{0,3}\.?\d{0,1}')),
             ],
-            hintText: 'Height in cm (e.g. 175)',
+            hintText: loc.mdlHeightHintCm,
             onChanged: (_) => _emit(),
           )
         else

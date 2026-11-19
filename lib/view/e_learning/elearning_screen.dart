@@ -7,6 +7,7 @@ import 'package:posture_detector_app/common/widgets/back_button.dart';
 import 'package:posture_detector_app/common/widgets/e_learning_card.dart';
 import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/provider/e_learning.dart';
+import 'package:posture_detector_app/utils/date_helper.dart';
 import 'package:posture_detector_app/view/e_learning/certificate_details.dart';
 import 'package:posture_detector_app/view/e_learning/quiz_screen.dart';
 
@@ -135,6 +136,7 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
   }
 
   Widget _pendingCertCard(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 18.h),
@@ -145,12 +147,12 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
           Assets.icons.auth.lock.svg(width: 24.w, fit: BoxFit.contain),
           SizedBox(height: 6.h),
           Text(
-            'Certificate',
+            loc.genCertificate,
             style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
           ),
           SizedBox(height: 6.h),
           Text(
-            'Complete all the modules to claim your certificate.',
+            loc.genCompleteModulesForCertificate,
             style: TextStyle(
               fontSize: 13.sp,
               fontWeight: FontWeight.w400,
@@ -164,9 +166,10 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
   }
 
   Widget _validCertCard(BuildContext context, DateTime? expiryDate) {
+    final loc = AppLocalizations.of(context)!;
     final expiryText = expiryDate != null
-        ? 'Valid until ${_formatDate(expiryDate)}'
-        : 'Valid';
+        ? loc.genValidUntilDate(shortDate(expiryDate))
+        : loc.genValid;
 
     return Container(
       width: double.infinity,
@@ -193,7 +196,7 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Certificate',
+                loc.genCertificate,
                 style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
               ),
               SizedBox(width: 8.w),
@@ -204,7 +207,7 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Text(
-                  'VALID',
+                  loc.genValidBadge,
                   style: TextStyle(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.w700,
@@ -241,7 +244,7 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
                 borderRadius: BorderRadius.circular(20.r),
               ),
               child: Text(
-                'View Certificate',
+                loc.genViewCertificate,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 13.sp,
@@ -256,6 +259,7 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
   }
 
   Widget _expiredCertCard(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 18.h),
@@ -281,7 +285,7 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Certificate',
+                loc.genCertificate,
                 style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
               ),
               SizedBox(width: 8.w),
@@ -292,7 +296,7 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Text(
-                  'EXPIRED',
+                  loc.genExpiredBadge,
                   style: TextStyle(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.w700,
@@ -305,7 +309,7 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
           ),
           SizedBox(height: 6.h),
           Text(
-            'Your certificate has expired. Complete all modules again to renew it.',
+            loc.genCertificateExpiredBody,
             style: TextStyle(
               fontSize: 13.sp,
               fontWeight: FontWeight.w400,
@@ -323,22 +327,4 @@ class _ELearningScreenState extends ConsumerState<ELearningScreen>
     border: Border.all(color: AppColors.secondaryText.withValues(alpha: 0.15)),
     color: color,
   );
-
-  String _formatDate(DateTime date) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '${months[date.month - 1]} ${date.day}, ${date.year}';
-  }
 }

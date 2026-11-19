@@ -158,7 +158,7 @@ class _EmployeeVerifyEmailScreenState
                           : _resend,
                       child: Text(
                         _resendCooldown > 0
-                            ? '${loc.resendCode} (${_resendCooldown}s)'
+                            ? loc.genResendCodeCountdown(_resendCooldown)
                             : loc.resendCode,
                         style: TextStyle(
                           fontSize: 14.sp,

@@ -1,3 +1,5 @@
+import 'package:posture_detector_app/utils/l10n.dart';
+
 /// Body angles measured by the native PostureEngine for a single side-view shot.
 ///
 /// These are the raw ROSA geometry readings, returned alongside `rosa_scores`
@@ -102,15 +104,15 @@ class BodyAngles {
   String get neckStateLabel {
     switch (neckState) {
       case 'NEUTRAL':
-        return 'Neutral';
+        return l10n.mdlNeckNeutral;
       case 'FORWARD_HEAD':
-        return 'Forward head';
+        return l10n.mdlNeckForwardHead;
       case 'MILD_FLEXION':
-        return 'Mild flexion';
+        return l10n.mdlNeckMildFlexion;
       case 'SEVERE_FLEXION':
-        return 'Severe flexion';
+        return l10n.mdlNeckSevereFlexion;
       case 'HEAD_BACK':
-        return 'Head back';
+        return l10n.mdlNeckHeadBack;
       default:
         return neckState;
     }

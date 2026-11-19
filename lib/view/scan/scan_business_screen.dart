@@ -44,11 +44,11 @@ class _ScanBusinessScreenState extends ConsumerState<ScanBusinessScreen> {
     FocusManager.instance.primaryFocus?.unfocus();
 
     if (_heightCm == null || _heightCm! <= 0) {
-      showCustomToast(text: 'Please enter your height');
+      showCustomToast(text: AppLocalizations.of(context)!.mdlPleaseEnterHeight);
       return;
     }
     if (_heightCm! < 50 || _heightCm! > 250) {
-      showCustomToast(text: 'Height must be between 50 and 250 cm');
+      showCustomToast(text: AppLocalizations.of(context)!.mdlHeightOutOfRange);
       return;
     }
 

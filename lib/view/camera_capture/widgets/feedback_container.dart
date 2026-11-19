@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 
 class FeedBackContainer extends StatelessWidget {
   final String title;
@@ -19,7 +20,7 @@ class FeedBackContainer extends StatelessWidget {
       width: 235.w,
       height: 44.h,
       decoration: BoxDecoration(
-        color: title == 'Perfect posture'
+        color: title == AppLocalizations.of(context)!.perfectPosture
             ? AppColors.greenish
             : AppColors.red.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(92.r),

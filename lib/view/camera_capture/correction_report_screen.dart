@@ -40,9 +40,8 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
               children: [
                 SizedBox(height: 20.h),
                 AppTopSection(
-                  title: 'ROSA Posture Guidance',
-                  subtitle:
-                      'Directional adjustments to improve your ergonomic setup',
+                  title: loc.mdlRosaPostureGuidance,
+                  subtitle: loc.mdlRosaPostureGuidanceSubtitle,
                 ),
                 SizedBox(height: 14.h),
                 if (awaiting)
@@ -79,6 +78,7 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
   }
 
   List<Widget> _buildActionReport(BuildContext context, ActionReportV13 report) {
+    final loc = AppLocalizations.of(context)!;
     return [
       Container(
         width: double.infinity,
@@ -91,7 +91,11 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Tier ${report.tierNumber} - ${report.tierName} | ROSA ${report.rosaScore}/10',
+              loc.mdlTierHeader(
+                report.tierNumber,
+                report.tierName,
+                report.rosaScore,
+              ),
               style: TextStyle(
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
@@ -100,7 +104,7 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
             ),
             SizedBox(height: 6.h),
             Text(
-              'Main risk driver: ${report.mainRiskDriver}',
+              loc.mdlMainRiskDriver(report.mainRiskDriver),
               style: TextStyle(fontSize: 12.sp, color: AppColors.secondaryText),
             ),
             SizedBox(height: 10.h),
@@ -114,7 +118,7 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
       SizedBox(height: 18.h),
 
       if (report.priorityFindings.isNotEmpty) ...[
-        _SectionHeading('Priority Findings'),
+        _SectionHeading(loc.mdlPriorityFindings),
         SizedBox(height: 4.h),
         Text(
           report.priorityFindingsIntro,
@@ -135,7 +139,7 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
       ],
 
       if (report.supplementalCpeFindings.isNotEmpty) ...[
-        _SectionHeading('Supplemental CPE Findings'),
+        _SectionHeading(loc.mdlSupplementalCpeFindings),
         if (report.supplementalCpeIntro != null) ...[
           SizedBox(height: 4.h),
           Text(
@@ -158,7 +162,7 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
       ],
 
       if (report.whatYouCanDoNow.isNotEmpty) ...[
-        _SectionHeading('What You Can Do Right Now'),
+        _SectionHeading(loc.mdlWhatYouCanDoNow),
         SizedBox(height: 8.h),
         ...report.whatYouCanDoNow.map(
           (a) => Padding(
@@ -186,7 +190,7 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
       ],
 
       if (report.equipmentHelpsText != null) ...[
-        _SectionHeading('When Equipment Helps'),
+        _SectionHeading(loc.mdlWhenEquipmentHelps),
         SizedBox(height: 6.h),
         Text(
           report.equipmentHelpsText!,
@@ -196,7 +200,7 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
         GestureDetector(
           onTap: () => context.push(AppRoute.equipmentScreenBusiness),
           child: Text(
-            'View Equipment Recommendations',
+            loc.mdlViewEquipmentRecommendations,
             style: TextStyle(
               fontSize: 13.sp,
               fontWeight: FontWeight.w600,
@@ -208,7 +212,7 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
         SizedBox(height: 12.h),
       ],
 
-      _SectionHeading('General Workstation Habits'),
+      _SectionHeading(loc.mdlGeneralWorkstationHabits),
       SizedBox(height: 6.h),
       Text(
         report.generalWorkstationHabits,

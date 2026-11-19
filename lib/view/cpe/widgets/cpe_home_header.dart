@@ -28,9 +28,8 @@ class CpeHomeHeader extends StatelessWidget {
           children: [
             Row(
               children: [
-                // EN: "Hi"
                 Text(
-                  '${loc.hi} $userName ',
+                  '${loc.rvwGreetingName(userName)} ',
                   style: TextStyle(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w700,

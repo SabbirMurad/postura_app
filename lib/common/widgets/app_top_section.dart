@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:posture_detector_app/routes.dart';
-import 'package:posture_detector_app/constants/app_text.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 
 import 'package:posture_detector_app/constants/colors.dart';
 import 'back_button.dart';
@@ -36,7 +36,7 @@ class AppTopSection extends StatelessWidget {
                   context.push(AppRoute.cameraGuideScreen);
                 },
                 child: Text(
-                  AppText.skip,
+                  AppLocalizations.of(context)!.skip,
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
                     fontSize: 16.sp,

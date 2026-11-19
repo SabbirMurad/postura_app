@@ -36,7 +36,7 @@ class RosaSubScoreItem extends StatelessWidget {
           ),
           SizedBox(height: 6.w),
           Text(
-            item.category,
+            item.displayLabel,
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,

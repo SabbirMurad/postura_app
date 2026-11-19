@@ -30,13 +30,21 @@ class _CameraGuideScreenState extends ConsumerState<CameraGuideScreen> {
     final assessment = ref.read(assessmentNotifierProvider);
     final notifier = ref.read(assessmentNotifierProvider.notifier);
 
+    final loc = AppLocalizations.of(context)!;
+    // The native screen shows its own text in this language (en/de/es/nl,
+    // falling back to English). Text baked into the photos stays English.
+    final language = Localizations.localeOf(context).languageCode;
+
     setState(() => _detecting = true);
     try {
       // Launches the native camera pipeline; blocks until it captures the
       // photos (or the user backs out, which returns null).
       final result = await _channel.invokeMethod<Map>(
         'startDetection',
-        assessment.workstationAnswers.toMap(),
+        {
+          ...assessment.workstationAnswers.toMap(),
+          'language': language,
+        },
       );
       if (!mounted) return;
       if (result == null) return; // user cancelled
@@ -52,7 +60,7 @@ class _CameraGuideScreenState extends ConsumerState<CameraGuideScreen> {
           : FrontViewCapture.fromChannel(Map<String, dynamic>.from(frontMap));
 
       if (sideCaptures.isEmpty) {
-        showCustomToast(text: 'Capture did not complete. Please try again.');
+        showCustomToast(text: loc.capCaptureIncomplete);
         return;
       }
 
@@ -64,7 +72,7 @@ class _CameraGuideScreenState extends ConsumerState<CameraGuideScreen> {
       );
     } on PlatformException catch (e) {
       printLine('Detection error: ${e.message}');
-      if (mounted) showCustomToast(text: 'Posture detection failed.');
+      if (mounted) showCustomToast(text: loc.capDetectionFailed);
     } finally {
       if (mounted) setState(() => _detecting = false);
     }

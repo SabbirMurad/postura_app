@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 
 /// Yellow-flag / chronicity risk banner — shown only when the Chronicity
 /// Level is "Elevated" (see Postura_Yellow_Flag_Chronicity_Implementation.pdf).
@@ -16,6 +17,7 @@ class RecoveryOutlookBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     if (compact) {
       return Container(
         width: double.infinity,
@@ -31,7 +33,7 @@ class RecoveryOutlookBanner extends StatelessWidget {
             SizedBox(width: 6.w),
             Expanded(
               child: Text(
-                'Recovery Outlook: Elevated — early support recommended',
+                loc.mdlRecoveryOutlookElevatedCompact,
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
@@ -62,7 +64,7 @@ class RecoveryOutlookBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Recovery Outlook: Elevated',
+                  loc.mdlRecoveryOutlookElevated,
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w700,
@@ -71,9 +73,7 @@ class RecoveryOutlookBanner extends StatelessWidget {
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  'Your answers indicate a higher risk that the current pain '
-                  'could become longer-term. Early targeted support is '
-                  'recommended in addition to the workstation adjustments below.',
+                  loc.mdlRecoveryOutlookElevatedBody,
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: AppColors.secondaryText,

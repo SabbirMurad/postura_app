@@ -42,6 +42,7 @@ class RosaScoreComparison extends StatelessWidget {
                   subtitle: loc.fromEmployeesAnswers,
                   score: original,
                   highlighted: false,
+                  notAvailable: loc.mdlNotAvailable,
                 ),
               ),
               Padding(
@@ -60,6 +61,7 @@ class RosaScoreComparison extends StatelessWidget {
                       : '${loc.updatedByErgonomist} · $updatedBy',
                   score: revision.rosaScore,
                   highlighted: true,
+                  notAvailable: loc.mdlNotAvailable,
                 ),
               ),
             ],
@@ -79,6 +81,7 @@ class RosaScoreComparison extends StatelessWidget {
     required String subtitle,
     required RosaScore score,
     required bool highlighted,
+    required String notAvailable,
   }) {
     final color = highlighted
         ? _color(score.finalScore)
@@ -109,7 +112,7 @@ class RosaScoreComparison extends StatelessWidget {
           ),
           SizedBox(height: 4.h),
           Text(
-            score.isValid ? '${score.finalScore} / 10' : 'N/A',
+            score.isValid ? '${score.finalScore} / 10' : notAvailable,
             style: TextStyle(
               fontSize: 22.sp,
               fontWeight: FontWeight.w700,

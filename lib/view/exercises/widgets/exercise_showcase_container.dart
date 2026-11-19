@@ -9,7 +9,7 @@ class ExerciseShowCaseContainer extends StatelessWidget {
   final String title;
   final String subtitle;
   final String duration;
-  final String sensitivityLabel; // 'Gentle' | 'Moderate' | 'Active'
+  final String sensitivityLabel; // already translated, e.g. 'Gentle' | 'Moderate'
   final String? videoUrl;
 
   // Session details
@@ -42,10 +42,6 @@ class ExerciseShowCaseContainer extends StatelessWidget {
     this.whenToStop = '',
   });
 
-  static const _programmeNote =
-      'Follow the sets, repetitions or hold time shown in your personalised '
-      'programme.';
-
   Color _getVasColor(int vas) {
     if (vas >= 7) return Colors.red;
     if (vas >= 5) return Colors.orange;
@@ -54,10 +50,10 @@ class ExerciseShowCaseContainer extends StatelessWidget {
 
   /// The dose the backend recommended for this exercise, e.g. "2 sets, hold
   /// 10–15 seconds". Null on old cached reports that don't carry one.
-  String? get _programme {
+  String? _programme(AppLocalizations loc) {
     final sets = recommendedSets ?? 0;
     if (sets <= 0 || duration.isEmpty) return null;
-    return '$sets ${sets == 1 ? 'set' : 'sets'}, hold $duration';
+    return loc.genExerciseSetsHold(sets, duration);
   }
 
   void _showDetailsModal(BuildContext context) {
@@ -89,7 +85,7 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                       children: [
                         SizedBox(width: 24.w),
                         Text(
-                          'Exercise Details',
+                          loc.exerciseDetails,
                           style: TextStyle(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.w700,
@@ -163,7 +159,7 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                     /// Muscles / body area
                     if (musclesText.isNotEmpty)
                       _buildDetailSection(
-                        title: 'Muscles / body area',
+                        title: loc.genMusclesBodyArea,
                         content: musclesText,
                         icon: Icons.accessibility_new_rounded,
                       ),
@@ -171,7 +167,7 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                     /// How to do it
                     if (purpose != null && purpose!.isNotEmpty)
                       _buildDetailSection(
-                        title: 'How to do it',
+                        title: loc.genHowToDoIt,
                         content: purpose!,
                         icon: Icons.play_circle_outline_rounded,
                       ),
@@ -180,7 +176,7 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                     if (whyThisHelps.isNotEmpty ||
                         (musclesAddressed?.isNotEmpty ?? false))
                       _buildDetailSection(
-                        title: 'Why this helps',
+                        title: loc.genWhyThisHelps,
                         content: whyThisHelps.isNotEmpty
                             ? whyThisHelps
                             : musclesAddressed!,
@@ -190,10 +186,10 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                     /// Your programme: the selected amount, shown as-is; none
                     /// is invented when the report doesn't carry one.
                     _buildDetailSection(
-                      title: 'Your programme',
-                      content: _programme == null
-                          ? _programmeNote
-                          : '${_programme!}\n$_programmeNote',
+                      title: loc.genYourProgramme,
+                      content: _programme(loc) == null
+                          ? loc.genProgrammeNote
+                          : '${_programme(loc)!}\n${loc.genProgrammeNote}',
                       icon: Icons.fitness_center_rounded,
                     ),
 
@@ -216,7 +212,7 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                             SizedBox(width: 12.w),
                             Expanded(
                               child: Text(
-                                'Pain level (VAS): $regionVas / 10',
+                                loc.genPainLevelVasOutOf10(regionVas!),
                                 style: TextStyle(
                                   fontSize: 13.sp,
                                   fontWeight: FontWeight.w500,
@@ -235,8 +231,8 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                         (safetyNote?.isNotEmpty ?? false))
                       _buildDetailSection(
                         title: whenToStop.isNotEmpty
-                            ? 'When not to use / when to stop'
-                            : 'When to stop',
+                            ? loc.genWhenNotToUseWhenToStop
+                            : loc.genExerciseIntroStopTitle,
                         content: whenToStop.isNotEmpty
                             ? whenToStop
                             : safetyNote!,
@@ -310,6 +306,7 @@ class ExerciseShowCaseContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () => _showDetailsModal(context),
       child: Container(
@@ -392,7 +389,7 @@ class ExerciseShowCaseContainer extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10.r),
                           ),
                           child: Text(
-                            'VAS $regionVas',
+                            loc.genVasBadge(regionVas!),
                             style: TextStyle(
                               fontSize: 11.sp,
                               fontWeight: FontWeight.w600,

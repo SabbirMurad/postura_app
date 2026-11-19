@@ -430,5 +430,2173 @@
   "updateAnswersOnce": "Update Answers (once)",
   "workstationRevisionPending": "Updated answers ready. The score is re-calculated when you submit the review.",
   "discardChanges": "Discard Changes",
-  "workstationAlreadyRevised": "These answers were already updated by the ergonomist. They can only be updated once."
+  "workstationAlreadyRevised": "These answers were already updated by the ergonomist. They can only be updated once.",
+
+  "asmNo": "No",
+  "@asmNo": {
+    "description": "Answer chip for yes/no questions (workstation questionnaire, safety questions)"
+  },
+  "asmSectionFrontPhoto": "Front Photo",
+  "@asmSectionFrontPhoto": {
+    "description": "Workstation questionnaire, section header"
+  },
+  "asmQuestionFrontPhotoPossible": "Can a photo be taken from the front view?",
+  "@asmQuestionFrontPhotoPossible": {
+    "description": "Workstation questionnaire, front photo section"
+  },
+  "asmSectionChair": "Chair",
+  "@asmSectionChair": {
+    "description": "Workstation questionnaire, section header"
+  },
+  "asmQuestionChairHeightAdjustable": "Chair height is adjustable",
+  "@asmQuestionChairHeightAdjustable": {
+    "description": "Workstation questionnaire, chair section (yes/no statement)"
+  },
+  "asmQuestionUnderDeskSpace": "Enough room under the desk to cross your legs",
+  "@asmQuestionUnderDeskSpace": {
+    "description": "Workstation questionnaire, chair section (yes/no statement)"
+  },
+  "asmQuestionSeatPanDepth": "Seat pan depth (space behind your knees)",
+  "@asmQuestionSeatPanDepth": {
+    "description": "Workstation questionnaire, chair section; followed by three answer chips"
+  },
+  "asmSeatDepthOk": "~3 in (OK)",
+  "@asmSeatDepthOk": {
+    "description": "Seat pan depth answer: about 3 inches (approx. 8 cm) of space behind the knees is correct"
+  },
+  "asmSeatDepthTooLong": "Too long",
+  "@asmSeatDepthTooLong": {
+    "description": "Seat pan depth answer: the seat is too deep"
+  },
+  "asmSeatDepthTooShort": "Too short",
+  "@asmSeatDepthTooShort": {
+    "description": "Seat pan depth answer: the seat is too shallow"
+  },
+  "asmQuestionSeatPanAdjustable": "Seat pan depth is adjustable",
+  "@asmQuestionSeatPanAdjustable": {
+    "description": "Workstation questionnaire, chair section (yes/no statement)"
+  },
+  "asmQuestionArmrestsAdjustable": "Armrests are adjustable",
+  "@asmQuestionArmrestsAdjustable": {
+    "description": "Workstation questionnaire, chair section (yes/no statement)"
+  },
+  "asmQuestionArmrestHardDamaged": "Armrest surface is hard or damaged",
+  "@asmQuestionArmrestHardDamaged": {
+    "description": "Workstation questionnaire, chair section (yes/no statement)"
+  },
+  "asmQuestionUsesArmrests": "Do you use the armrests while working (keyboard/mouse)?",
+  "@asmQuestionUsesArmrests": {
+    "description": "Workstation questionnaire, chair section"
+  },
+  "asmQuestionElbowsSupported": "Your elbows/forearms are supported by the armrests or work surface",
+  "@asmQuestionElbowsSupported": {
+    "description": "Workstation questionnaire, chair section (yes/no statement)"
+  },
+  "asmQuestionArmrestsTooWide": "Armrests are too wide apart",
+  "@asmQuestionArmrestsTooWide": {
+    "description": "Workstation questionnaire, chair section (asked only without a front photo)"
+  },
+  "asmQuestionBackrestAdjustable": "Backrest is adjustable",
+  "@asmQuestionBackrestAdjustable": {
+    "description": "Workstation questionnaire, chair section (yes/no statement)"
+  },
+  "asmQuestionUsableBackrest": "Chair has a usable backrest that supports your back while working",
+  "@asmQuestionUsableBackrest": {
+    "description": "Workstation questionnaire, chair section (yes/no statement)"
+  },
+  "asmQuestionLumbarSupport": "Chair provides lumbar support that contacts your lower back while sitting normally",
+  "@asmQuestionLumbarSupport": {
+    "description": "Workstation questionnaire, chair section (yes/no statement)"
+  },
+  "asmQuestionFeetSupported": "Both feet are flat on the floor or a footrest while typing",
+  "@asmQuestionFeetSupported": {
+    "description": "Workstation questionnaire, chair section (yes/no statement)"
+  },
+  "asmQuestionWorkSurfaceTooHigh": "Desk/work surface is too high (shoulders shrug)",
+  "@asmQuestionWorkSurfaceTooHigh": {
+    "description": "Workstation questionnaire, chair section (yes/no statement)"
+  },
+  "asmSectionMonitorPhone": "Monitor & Telephone",
+  "@asmSectionMonitorPhone": {
+    "description": "Workstation questionnaire, section header"
+  },
+  "asmQuestionMonitorAdjustable": "Monitor position is adjustable",
+  "@asmQuestionMonitorAdjustable": {
+    "description": "Workstation questionnaire, monitor section (yes/no statement)"
+  },
+  "asmQuestionMonitorTopVsEyeLevel": "Top of the monitor relative to eye level",
+  "@asmQuestionMonitorTopVsEyeLevel": {
+    "description": "Workstation questionnaire, monitor section; followed by Below / At eye level / Above chips"
+  },
+  "asmMonitorBelow": "Below",
+  "@asmMonitorBelow": {
+    "description": "Answer: top of the monitor is below eye level"
+  },
+  "asmMonitorAtEyeLevel": "At eye level",
+  "@asmMonitorAtEyeLevel": {
+    "description": "Answer: top of the monitor is at eye level"
+  },
+  "asmMonitorAbove": "Above",
+  "@asmMonitorAbove": {
+    "description": "Answer: top of the monitor is above eye level"
+  },
+  "asmQuestionNeckTurn": "Do you need to turn your head more than about 30 degrees (left or right) to see the monitor?",
+  "@asmQuestionNeckTurn": {
+    "description": "Workstation questionnaire, monitor section. English wording is fixed; do not change."
+  },
+  "asmQuestionMonitorTooFar": "Monitor is farther than arm's length away (>75cm)",
+  "@asmQuestionMonitorTooFar": {
+    "description": "Workstation questionnaire, monitor section (yes/no statement)"
+  },
+  "asmQuestionScreenGlare": "There is glare on the screen",
+  "@asmQuestionScreenGlare": {
+    "description": "Workstation questionnaire, monitor section (yes/no statement)"
+  },
+  "asmQuestionDocumentHolder": "You have a document holder for paper references",
+  "@asmQuestionDocumentHolder": {
+    "description": "Workstation questionnaire, monitor section (yes/no statement)"
+  },
+  "asmQuestionDeskPhoneUsage": "Desk phone usage",
+  "@asmQuestionDeskPhoneUsage": {
+    "description": "Workstation questionnaire, telephone section; followed by three answer chips"
+  },
+  "asmPhoneDontUse": "Don't use",
+  "@asmPhoneDontUse": {
+    "description": "Desk phone answer: I don't use a desk phone"
+  },
+  "asmPhoneHeadsetOneHand": "Headset/1-hand",
+  "@asmPhoneHeadsetOneHand": {
+    "description": "Desk phone answer: with a headset or held in one hand"
+  },
+  "asmPhoneReachFar": "Reach far",
+  "@asmPhoneReachFar": {
+    "description": "Desk phone answer: the phone is far away and I have to reach for it"
+  },
+  "asmQuestionPhoneCradle": "You cradle the phone between ear and shoulder",
+  "@asmQuestionPhoneCradle": {
+    "description": "Workstation questionnaire, telephone section (yes/no statement)"
+  },
+  "asmQuestionHandsFreeOption": "You have a hands-free option (headset/speakerphone)",
+  "@asmQuestionHandsFreeOption": {
+    "description": "Workstation questionnaire, telephone section (yes/no statement)"
+  },
+  "asmQuestionPhoneCradleSupplemental": "Do you hold/cradle the phone between your ear and shoulder during calls?",
+  "@asmQuestionPhoneCradleSupplemental": {
+    "description": "Workstation questionnaire, telephone section (supplemental question)"
+  },
+  "asmQuestionHandsFreeSupplemental": "Do you have a hands-free option available for phone calls (headset, speakerphone, or similar)?",
+  "@asmQuestionHandsFreeSupplemental": {
+    "description": "Workstation questionnaire, telephone section (supplemental question)"
+  },
+  "asmSectionMouseKeyboard": "Mouse & Keyboard",
+  "@asmSectionMouseKeyboard": {
+    "description": "Workstation questionnaire, section header"
+  },
+  "asmQuestionMouseKeyboardDifferentSurfaces": "Mouse and keyboard are on different surfaces/heights",
+  "@asmQuestionMouseKeyboardDifferentSurfaces": {
+    "description": "Workstation questionnaire, mouse & keyboard section (yes/no statement)"
+  },
+  "asmQuestionMousePinchGrip": "You use a pinch grip on the mouse",
+  "@asmQuestionMousePinchGrip": {
+    "description": "Workstation questionnaire, mouse & keyboard section (yes/no statement)"
+  },
+  "asmQuestionMousePalmRest": "There is a palm rest in front of the mouse",
+  "@asmQuestionMousePalmRest": {
+    "description": "Workstation questionnaire, mouse & keyboard section (yes/no statement)"
+  },
+  "asmQuestionMouseAdjustable": "Mouse position is adjustable",
+  "@asmQuestionMouseAdjustable": {
+    "description": "Workstation questionnaire, mouse & keyboard section (yes/no statement)"
+  },
+  "asmQuestionMouseTooFar": "Mouse is positioned far enough away that you have to reach for it",
+  "@asmQuestionMouseTooFar": {
+    "description": "Workstation questionnaire, mouse & keyboard section (yes/no statement)"
+  },
+  "asmQuestionWristDeviation": "Wrists deviate sideways while typing",
+  "@asmQuestionWristDeviation": {
+    "description": "Workstation questionnaire, mouse & keyboard section (asked only without a front photo)"
+  },
+  "asmQuestionKeyboardTooHigh": "Keyboard is too high (shoulders shrug)",
+  "@asmQuestionKeyboardTooHigh": {
+    "description": "Workstation questionnaire, mouse & keyboard section (yes/no statement)"
+  },
+  "asmQuestionReachingOverhead": "You frequently reach overhead for items",
+  "@asmQuestionReachingOverhead": {
+    "description": "Workstation questionnaire, mouse & keyboard section (yes/no statement)"
+  },
+  "asmQuestionKeyboardPlatformAdjustable": "Keyboard platform/tray is adjustable",
+  "@asmQuestionKeyboardPlatformAdjustable": {
+    "description": "Workstation questionnaire, mouse & keyboard section (yes/no statement)"
+  },
+  "asmSectionDailyDuration": "Daily Duration",
+  "@asmSectionDailyDuration": {
+    "description": "Workstation questionnaire, section header"
+  },
+  "asmQuestionContinuousDeskTime": "How long do you typically work continuously at this desk?",
+  "@asmQuestionContinuousDeskTime": {
+    "description": "Workstation questionnaire, duration section; followed by three duration chips"
+  },
+  "asmDeskDurationUnder30Min": "< 30 min",
+  "@asmDeskDurationUnder30Min": {
+    "description": "Continuous desk time answer"
+  },
+  "asmDeskDuration30To60Min": "30-60 min",
+  "@asmDeskDuration30To60Min": {
+    "description": "Continuous desk time answer"
+  },
+  "asmDeskDurationOver1Hour": "> 1 hour",
+  "@asmDeskDurationOver1Hour": {
+    "description": "Continuous desk time answer"
+  },
+  "asmRedFlagTitle": "A Few Safety Questions",
+  "@asmRedFlagTitle": {
+    "description": "Medical red-flag screening screen title"
+  },
+  "asmRedFlagSubtitle": "These help us make sure exercise is a safe option for you right now. Answer honestly — a \"Yes\" just means we point you to a healthcare professional instead.",
+  "@asmRedFlagSubtitle": {
+    "description": "Medical red-flag screening screen subtitle. The quoted Yes must match the Yes answer chip."
+  },
+  "asmRedFlagBladderBowel": "New loss of bladder or bowel control",
+  "@asmRedFlagBladderBowel": {
+    "description": "Medical red-flag question (cauda equina sign); yes/no"
+  },
+  "asmRedFlagSaddleNumbness": "Numbness in the saddle area (inner thighs, groin, or genitals)",
+  "@asmRedFlagSaddleNumbness": {
+    "description": "Medical red-flag question (saddle anaesthesia); yes/no"
+  },
+  "asmRedFlagLimbWeakness": "New or worsening weakness in your legs or arms",
+  "@asmRedFlagLimbWeakness": {
+    "description": "Medical red-flag question (progressive motor weakness); yes/no"
+  },
+  "asmRedFlagRecentTrauma": "A significant recent trauma (e.g. a fall, accident, or blow to your back)",
+  "@asmRedFlagRecentTrauma": {
+    "description": "Medical red-flag question (significant trauma); yes/no"
+  },
+  "asmRedFlagFeverInfection": "Fever, a recent infection, or a weakened immune system along with back pain",
+  "@asmRedFlagFeverInfection": {
+    "description": "Medical red-flag question (infection / immunosuppression); yes/no"
+  },
+  "asmRedFlagCancerHistory": "A history of cancer, with new or worsening back/spine pain",
+  "@asmRedFlagCancerHistory": {
+    "description": "Medical red-flag question (cancer history); yes/no"
+  },
+  "asmRedFlagSevereNightPain": "Severe pain that doesn't ease up, especially at night",
+  "@asmRedFlagSevereNightPain": {
+    "description": "Medical red-flag question (unremitting / night pain); yes/no"
+  },
+  "asmOutlookChronicityRisk": "How large is the risk that your current pain may become persistent or long-term?",
+  "@asmOutlookChronicityRisk": {
+    "description": "Work Ability & Recovery Outlook, slider question 1 (0-10)"
+  },
+  "asmOutlookNoRisk": "No risk",
+  "@asmOutlookNoRisk": {
+    "description": "Slider low end (0)"
+  },
+  "asmOutlookVeryLargeRisk": "Very large risk",
+  "@asmOutlookVeryLargeRisk": {
+    "description": "Slider high end (10)"
+  },
+  "asmOutlookReturnToWork": "What are the chances you will be working your normal duties in 3 months?",
+  "@asmOutlookReturnToWork": {
+    "description": "Work Ability & Recovery Outlook, slider question 2 (0-10)"
+  },
+  "asmOutlookNoChance": "No chance",
+  "@asmOutlookNoChance": {
+    "description": "Slider low end (0)"
+  },
+  "asmOutlookVeryLargeChance": "Very large chance",
+  "@asmOutlookVeryLargeChance": {
+    "description": "Slider high end (10)"
+  },
+  "asmOutlookFearAvoidance": "An increase in pain is an indication that I should stop what I am doing until the pain decreases.",
+  "@asmOutlookFearAvoidance": {
+    "description": "Work Ability & Recovery Outlook, slider statement 3 (0-10, first person)"
+  },
+  "asmOutlookCompletelyDisagree": "Completely disagree",
+  "@asmOutlookCompletelyDisagree": {
+    "description": "Slider low end (0)"
+  },
+  "asmOutlookCompletelyAgree": "Completely agree",
+  "@asmOutlookCompletelyAgree": {
+    "description": "Slider high end (10)"
+  },
+  "asmOutlookLightWork": "I can do light work (or normal light duties) for an hour.",
+  "@asmOutlookLightWork": {
+    "description": "Work Ability & Recovery Outlook, slider statement 4 (0-10, first person)"
+  },
+  "asmOutlookCannotBecauseOfPain": "Cannot do it because of the pain",
+  "@asmOutlookCannotBecauseOfPain": {
+    "description": "Slider low end (0) for the light-work and sleep statements"
+  },
+  "asmOutlookCanWithoutPainProblem": "Can do it without the pain being a problem",
+  "@asmOutlookCanWithoutPainProblem": {
+    "description": "Slider high end (10) for the light-work and sleep statements"
+  },
+  "asmOutlookSleep": "I can sleep at night.",
+  "@asmOutlookSleep": {
+    "description": "Work Ability & Recovery Outlook, slider statement 5 (0-10, first person)"
+  },
+  "asmOutlookPresenteeism": "How much has your pain reduced your productivity or ability to work at full capacity in the past week?",
+  "@asmOutlookPresenteeism": {
+    "description": "Work Ability & Recovery Outlook, slider question 6 (0-10)"
+  },
+  "asmOutlookNotAtAll": "Not at all",
+  "@asmOutlookNotAtAll": {
+    "description": "Slider low end (0)"
+  },
+  "asmOutlookExtremely": "Extremely (unable to work normally)",
+  "@asmOutlookExtremely": {
+    "description": "Slider high end (10)"
+  },
+  "asmOutlookPreviousAbsence": "In the last 12 months, how many work days have you missed because of similar pain or musculoskeletal problems?",
+  "@asmOutlookPreviousAbsence": {
+    "description": "Work Ability & Recovery Outlook, question 7; followed by day-range chips"
+  },
+  "asmOutlookWorkplaceSupport": "I feel I can get support or make reasonable adjustments at work if needed because of this pain.",
+  "@asmOutlookWorkplaceSupport": {
+    "description": "Work Ability & Recovery Outlook, slider statement 8 (0-10, first person)"
+  },
+  "asmOutlookStronglyDisagree": "Strongly disagree",
+  "@asmOutlookStronglyDisagree": {
+    "description": "Slider low end (0)"
+  },
+  "asmOutlookStronglyAgree": "Strongly agree",
+  "@asmOutlookStronglyAgree": {
+    "description": "Slider high end (10)"
+  },
+  "asmPleaseEnterHeight": "Please enter your height",
+  "@asmPleaseEnterHeight": {
+    "description": "Toast on the body region screen when the height field is empty"
+  },
+  "asmHeightRange": "Height must be between 50 and 250 cm",
+  "@asmHeightRange": {
+    "description": "Toast on the body region screen when the height is out of range"
+  },
+  "asmRiskNotAssessed": "Not assessed",
+  "@asmRiskNotAssessed": {
+    "description": "ROSA sub-score status badge (score 0)"
+  },
+  "asmRiskHigh": "High risk",
+  "@asmRiskHigh": {
+    "description": "ROSA sub-score status badge"
+  },
+  "asmRiskReviewNeeded": "Review needed",
+  "@asmRiskReviewNeeded": {
+    "description": "ROSA sub-score status badge"
+  },
+  "asmFinalRiskHigh": "High risk — immediate action required",
+  "@asmFinalRiskHigh": {
+    "description": "Final ROSA score label (7-10)"
+  },
+  "asmFinalRiskModerate": "Moderate risk — further investigation",
+  "@asmFinalRiskModerate": {
+    "description": "Final ROSA score label (4-6)"
+  },
+  "asmFinalRiskLow": "Low risk — no immediate action needed",
+  "@asmFinalRiskLow": {
+    "description": "Final ROSA score label (1-3)"
+  },
+  "asmActionLevel3": "Level 3 — Action required as soon as possible",
+  "@asmActionLevel3": {
+    "description": "ROSA action level (score 7-10)"
+  },
+  "asmActionLevel2": "Level 2 — Further investigation needed",
+  "@asmActionLevel2": {
+    "description": "ROSA action level (score 4-6)"
+  },
+  "asmActionLevel1": "Level 1 — No immediate action needed",
+  "@asmActionLevel1": {
+    "description": "ROSA action level (score 1-3)"
+  },
+  "asmSideViewNumber": "Side view {number}",
+  "@asmSideViewNumber": {
+    "description": "Caption of a side-view capture on the analysis result screen",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "asmFrontView": "Front view",
+  "@asmFrontView": {
+    "description": "Caption of the front-view capture on the analysis result screen"
+  },
+  "asmMetricKnee": "Knee",
+  "@asmMetricKnee": {
+    "description": "Measured angle label on a capture card"
+  },
+  "asmMetricTrunk": "Trunk",
+  "@asmMetricTrunk": {
+    "description": "Measured angle label on a capture card"
+  },
+  "asmMetricElbow": "Elbow",
+  "@asmMetricElbow": {
+    "description": "Measured angle label on a capture card"
+  },
+  "asmMetricNeckState": "Neck state",
+  "@asmMetricNeckState": {
+    "description": "Label for the detected neck posture on a capture card"
+  },
+  "asmMetricLowerBodyConfidence": "Lower body confidence",
+  "@asmMetricLowerBodyConfidence": {
+    "description": "How reliably the lower body (knee angle) was detected; value is High or Low"
+  },
+  "asmConfidenceHigh": "High",
+  "@asmConfidenceHigh": {
+    "description": "Lower body detection confidence value"
+  },
+  "asmConfidenceLow": "Low",
+  "@asmConfidenceLow": {
+    "description": "Lower body detection confidence value"
+  },
+  "asmMetricElbowAbduction": "Elbow abduction",
+  "@asmMetricElbowAbduction": {
+    "description": "Measured angle label on the front-view capture card"
+  },
+  "asmMetricWristDeviation": "Wrist deviation",
+  "@asmMetricWristDeviation": {
+    "description": "Measured angle label on the front-view capture card"
+  },
+  "asmNotMeasured": "Not measured",
+  "@asmNotMeasured": {
+    "description": "Shown instead of an angle that could not be measured"
+  },
+  "asmSubmitResult": "Submit Result",
+  "@asmSubmitResult": {
+    "description": "Button on the analysis result screen"
+  },
+  "capCaptureIncomplete": "Capture did not complete. Please try again.",
+  "@capCaptureIncomplete": {
+    "description": "Toast on the photo capture guide when the native camera returned no side photos"
+  },
+  "capDetectionFailed": "Posture detection failed.",
+  "@capDetectionFailed": {
+    "description": "Toast on the photo capture guide when the native camera screen reported an error"
+  },
+  "genSsoForEmployeesOnly": "SSO sign-in is for company employees.",
+  "@genSsoForEmployeesOnly": {
+    "description": "Login screen toast when a non-employee taps the SSO button"
+  },
+  "genCompanyCode": "Company code",
+  "@genCompanyCode": {
+    "description": "Login screen, title of the dialog asking for the company code before SSO"
+  },
+  "genOr": "or",
+  "@genOr": {
+    "description": "Login screen divider between password login and SSO"
+  },
+  "genContinueWithSso": "Continue with SSO",
+  "@genContinueWithSso": {
+    "description": "Login screen SSO button"
+  },
+  "genExerciseIntroTitle": "A comfortable movement break, one step at a time",
+  "@genExerciseIntroTitle": {
+    "description": "Exercise list intro card title (also in the PDF report)"
+  },
+  "genExerciseIntroBody": "Use the exercises selected for you by the app—you do not need to complete this whole library. Start gently, breathe normally and choose a range that feels comfortable. A small, controlled movement is enough; there is no need to force a stretch.",
+  "@genExerciseIntroBody": {
+    "description": "Exercise list intro card, first paragraph (also in the PDF report)"
+  },
+  "genExerciseIntroAmountTitle": "Your exercise amount",
+  "@genExerciseIntroAmountTitle": {
+    "description": "Exercise intro card, bold lead-in of a paragraph"
+  },
+  "genExerciseIntroAmountBody": "Follow the sets, repetitions or hold time shown in your programme. The descriptions below explain how to move, not a second amount to complete.",
+  "@genExerciseIntroAmountBody": {
+    "description": "Exercise intro card paragraph"
+  },
+  "genExerciseIntroAreaTitle": "The highlighted body area",
+  "@genExerciseIntroAreaTitle": {
+    "description": "Exercise intro card, bold lead-in of a paragraph"
+  },
+  "genExerciseIntroAreaBody": "The red area is an approximate guide, not a diagnosis or a promise that you will feel the movement in exactly that spot.",
+  "@genExerciseIntroAreaBody": {
+    "description": "Exercise intro card paragraph"
+  },
+  "genExerciseIntroStopTitle": "When to stop",
+  "@genExerciseIntroStopTitle": {
+    "description": "Exercise intro card lead-in and exercise detail section title"
+  },
+  "genExerciseIntroStopBody": "Stop for sharp pain, dizziness, numbness, tingling or symptoms that get worse. If symptoms continue after stopping, seek professional advice. Follow the specific safety advice for each exercise below.",
+  "@genExerciseIntroStopBody": {
+    "description": "Exercise intro card paragraph"
+  },
+  "genExerciseSetsHold": "{sets, plural, =1{1 set} other{{sets} sets}}, hold {duration}",
+  "@genExerciseSetsHold": {
+    "description": "Exercise detail, recommended dose. duration comes from the server, e.g. \"10–15 seconds\"",
+    "placeholders": {
+      "sets": {
+        "type": "int"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "genProgrammeNote": "Follow the sets, repetitions or hold time shown in your personalised programme.",
+  "@genProgrammeNote": {
+    "description": "Exercise detail, \"Your programme\" section"
+  },
+  "genMusclesBodyArea": "Muscles / body area",
+  "@genMusclesBodyArea": {
+    "description": "Exercise detail section title"
+  },
+  "genHowToDoIt": "How to do it",
+  "@genHowToDoIt": {
+    "description": "Exercise detail section title"
+  },
+  "genWhyThisHelps": "Why this helps",
+  "@genWhyThisHelps": {
+    "description": "Exercise detail section title"
+  },
+  "genYourProgramme": "Your programme",
+  "@genYourProgramme": {
+    "description": "Exercise detail section title"
+  },
+  "genPainLevelVasOutOf10": "Pain level (VAS): {vas} / 10",
+  "@genPainLevelVasOutOf10": {
+    "description": "Exercise detail, pain score of the body region",
+    "placeholders": {
+      "vas": {
+        "type": "int"
+      }
+    }
+  },
+  "genWhenNotToUseWhenToStop": "When not to use / when to stop",
+  "@genWhenNotToUseWhenToStop": {
+    "description": "Exercise detail section title"
+  },
+  "genTierGentle": "Gentle",
+  "@genTierGentle": {
+    "description": "Exercise programme intensity badge (also in PDF)"
+  },
+  "genTierModerate": "Moderate",
+  "@genTierModerate": {
+    "description": "Exercise programme intensity badge (also in PDF); must differ from genTierGentle, the code compares them"
+  },
+  "genTierModerateMessage": "Balanced programme to reduce discomfort and improve mobility.",
+  "@genTierModerateMessage": {
+    "description": "Exercise programme description for the moderate tier (also in PDF)"
+  },
+  "genTierGentleMessage": "Gentle programme to relieve tension and build resilience.",
+  "@genTierGentleMessage": {
+    "description": "Exercise programme description for the gentle tier (also in PDF)"
+  },
+  "genTierFrequency": "3× per week · {minutes} min sessions",
+  "@genTierFrequency": {
+    "description": "Exercise programme frequency line (also in PDF)",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "genCheckInWithProfessional": "Please Check In With a Professional",
+  "@genCheckInWithProfessional": {
+    "description": "Exercise screen empty state title when exercises are stopped after screening"
+  },
+  "genConsultBeforeExercises": "Based on your screening answers, please consult a healthcare professional before starting exercises.",
+  "@genConsultBeforeExercises": {
+    "description": "Exercise screen empty state, fallback when the server sends no message"
+  },
+  "genKeepExercisesGentleCpe": "Based on your answers, we recommend keeping these gentle and reviewing them with your CPE or a healthcare professional. Stop immediately if any exercise increases your symptoms.",
+  "@genKeepExercisesGentleCpe": {
+    "description": "Exercise screen banner when the CPE should review the programme"
+  },
+  "genSplashTagline": "LET'S IMPROVE YOUR\nPOSTURE",
+  "@genSplashTagline": {
+    "description": "Splash screen tagline under the logo, shown in capitals; keep the line break"
+  },
+  "genResendCodeCountdown": "Resend code ({seconds}s)",
+  "@genResendCodeCountdown": {
+    "description": "Verify email screen, resend button while the cooldown runs",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "genEquipment": "Equipment",
+  "@genEquipment": {
+    "description": "Bottom navigation tab for equipment recommendations"
+  },
+  "genPasswordTooShort": "Password must be at least 8 characters.",
+  "@genPasswordTooShort": {
+    "description": "Password rule error"
+  },
+  "genPasswordTooLong": "Password must be at most 128 characters.",
+  "@genPasswordTooLong": {
+    "description": "Password rule error"
+  },
+  "genPasswordNeedsLettersAndNumbers": "Password must contain both letters and numbers.",
+  "@genPasswordNeedsLettersAndNumbers": {
+    "description": "Password rule error"
+  },
+  "genMonthJan": "Jan",
+  "@genMonthJan": {
+    "description": "Short month name in dates, e.g. \"18 Nov 2026\""
+  },
+  "genMonthFeb": "Feb",
+  "@genMonthFeb": {
+    "description": "Short month name in dates, e.g. \"18 Nov 2026\""
+  },
+  "genMonthMar": "Mar",
+  "@genMonthMar": {
+    "description": "Short month name in dates, e.g. \"18 Nov 2026\""
+  },
+  "genMonthApr": "Apr",
+  "@genMonthApr": {
+    "description": "Short month name in dates, e.g. \"18 Nov 2026\""
+  },
+  "genMonthMay": "May",
+  "@genMonthMay": {
+    "description": "Short month name in dates, e.g. \"18 Nov 2026\""
+  },
+  "genMonthJun": "Jun",
+  "@genMonthJun": {
+    "description": "Short month name in dates, e.g. \"18 Nov 2026\""
+  },
+  "genMonthJul": "Jul",
+  "@genMonthJul": {
+    "description": "Short month name in dates, e.g. \"18 Nov 2026\""
+  },
+  "genMonthAug": "Aug",
+  "@genMonthAug": {
+    "description": "Short month name in dates, e.g. \"18 Nov 2026\""
+  },
+  "genMonthSep": "Sep",
+  "@genMonthSep": {
+    "description": "Short month name in dates, e.g. \"18 Nov 2026\""
+  },
+  "genMonthOct": "Oct",
+  "@genMonthOct": {
+    "description": "Short month name in dates, e.g. \"18 Nov 2026\""
+  },
+  "genMonthNov": "Nov",
+  "@genMonthNov": {
+    "description": "Short month name in dates, e.g. \"18 Nov 2026\""
+  },
+  "genMonthDec": "Dec",
+  "@genMonthDec": {
+    "description": "Short month name in dates, e.g. \"18 Nov 2026\""
+  },
+  "genDateDayMonthYear": "{day} {month} {year}",
+  "@genDateDayMonthYear": {
+    "description": "Date format: two-digit day, short month name, year. Reorder for the language.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "month": {
+        "type": "String"
+      },
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "genCertificate": "Certificate",
+  "@genCertificate": {
+    "description": "E-learning certificate card title"
+  },
+  "genCompleteModulesForCertificate": "Complete all the modules to claim your certificate.",
+  "@genCompleteModulesForCertificate": {
+    "description": "E-learning certificate card while locked"
+  },
+  "genValidUntilDate": "Valid until {date}",
+  "@genValidUntilDate": {
+    "description": "E-learning certificate expiry line",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "genValid": "Valid",
+  "@genValid": {
+    "description": "E-learning certificate status when there is no expiry date"
+  },
+  "genValidBadge": "VALID",
+  "@genValidBadge": {
+    "description": "E-learning certificate badge, capitals"
+  },
+  "genExpiredBadge": "EXPIRED",
+  "@genExpiredBadge": {
+    "description": "E-learning certificate badge, capitals"
+  },
+  "genViewCertificate": "View Certificate",
+  "@genViewCertificate": {
+    "description": "E-learning certificate card button"
+  },
+  "genCertificateExpiredBody": "Your certificate has expired. Complete all modules again to renew it.",
+  "@genCertificateExpiredBody": {
+    "description": "E-learning certificate card when expired"
+  },
+  "genNameLabel": "Name: ",
+  "@genNameLabel": {
+    "description": "Certificate details, label before the user name (keep the trailing space)"
+  },
+  "genIdLabel": "ID: ",
+  "@genIdLabel": {
+    "description": "Certificate details, label before the employee ID (keep the trailing space)"
+  },
+  "genPassedOn": "Passed On",
+  "@genPassedOn": {
+    "description": "Certificate details, above the date a module was passed"
+  },
+  "genCertificateId": "Certificate ID",
+  "@genCertificateId": {
+    "description": "Certificate details label"
+  },
+  "genIssuedOn": "Issued on",
+  "@genIssuedOn": {
+    "description": "Certificate details label above a date"
+  },
+  "genValidUntil": "Valid Until",
+  "@genValidUntil": {
+    "description": "Certificate details label above a date"
+  },
+  "genDownload": "Download",
+  "@genDownload": {
+    "description": "Certificate details button to download the PDF"
+  },
+  "genModuleNumber": "Module {number}",
+  "@genModuleNumber": {
+    "description": "E-learning quiz screen title",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "genIncompleteAnswerAllQuestions": "Incomplete: Please answer all questions",
+  "@genIncompleteAnswerAllQuestions": {
+    "description": "E-learning quiz snackbar when not all questions are answered"
+  },
+  "genQuizQuestionNumbered": "Q{number}. {question}",
+  "@genQuizQuestionNumbered": {
+    "description": "E-learning quiz question with its number; Q = question. question is module content",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      },
+      "question": {
+        "type": "String"
+      }
+    }
+  },
+  "genNoInternetConnection": "No internet connection found!",
+  "@genNoInternetConnection": {
+    "description": "Network error"
+  },
+  "genSessionExpired": "Session expired, Please sign in again!",
+  "@genSessionExpired": {
+    "description": "Network error when the login token cannot be refreshed"
+  },
+  "genRequestTimedOut": "Request timed out. Please try again.",
+  "@genRequestTimedOut": {
+    "description": "Network error"
+  },
+  "genUploadTimedOut": "Upload timed out. Please try again.",
+  "@genUploadTimedOut": {
+    "description": "Network error during a file upload"
+  },
+  "genSomethingWentWrongTryAgain": "Something went wrong. Please try again.",
+  "@genSomethingWentWrongTryAgain": {
+    "description": "Generic network error"
+  },
+  "genSomethingWentWrongDot": "Something went wrong.",
+  "@genSomethingWentWrongDot": {
+    "description": "Generic server error when the server sends no message"
+  },
+  "genEndpointNotFound": "Endpoint not found!",
+  "@genEndpointNotFound": {
+    "description": "Server error 404"
+  },
+  "genCheckInternetConnection": "Failed to establish connection, please check your internet connection",
+  "@genCheckInternetConnection": {
+    "description": "Toast when the device is offline"
+  },
+  "genNetworkStatusUnavailable": "Unable to check network status. Please try again.",
+  "@genNetworkStatusUnavailable": {
+    "description": "Toast when the connectivity check fails"
+  },
+  "genNudgeModule1a": "Nice work starting Module 1. Take 30 seconds to notice any awkward posture or long static sitting — then continue with Module 2 when you have a moment.",
+  "@genNudgeModule1a": {
+    "description": "E-learning reminder nudge shown as an in-app banner"
+  },
+  "genNudgeModule1b": "You've seen the basics of ergonomics in Module 1. One small step: check your posture now and plan when you'll start Module 2.",
+  "@genNudgeModule1b": {
+    "description": "E-learning reminder nudge shown as an in-app banner"
+  },
+  "genNudgeModule2a": "You practiced neutral sitting in Module 2. Today, check your feet, hips, and head position — then move on to Module 3 to optimise your screen and devices.",
+  "@genNudgeModule2a": {
+    "description": "E-learning reminder nudge shown as an in-app banner"
+  },
+  "genNudgeModule2b": "Module 2 tip in action: sit tall with your back supported and head over shoulders. When you're ready, open Module 3 to fine-tune your screen setup.",
+  "@genNudgeModule2b": {
+    "description": "E-learning reminder nudge shown as an in-app banner"
+  },
+  "genNudgeModule3a": "You learned about screens, keyboard, and mouse in Module 3. Do a quick check now, then continue with Module 4 to improve light and microbreaks.",
+  "@genNudgeModule3a": {
+    "description": "E-learning reminder nudge shown as an in-app banner"
+  },
+  "genNudgeModule3b": "Screen height, distance, and mouse position make a big difference. Adjust one thing from Module 3 today, and finish Module 4 when you have 5 minutes.",
+  "@genNudgeModule3b": {
+    "description": "E-learning reminder nudge shown as an in-app banner"
+  },
+  "genNudgeModule4a": "You've reached Module 4: light, noise, and microbreaks. Take a 20–30 second microbreak now — then continue to Module 5 to cover lifting basics.",
+  "@genNudgeModule4a": {
+    "description": "E-learning reminder nudge shown as an in-app banner"
+  },
+  "genNudgeModule4b": "Short microbreaks from Module 4 help your focus. Do one now and schedule time to complete Module 5 for safe handling and lifting.",
+  "@genNudgeModule4b": {
+    "description": "E-learning reminder nudge shown as an in-app banner"
+  },
+  "genNudgeModule5a": "You've seen safe lifting in Module 5. Keep loads close and avoid twisting. When your schedule allows, start Module 6 to apply ergonomics at home or remotely.",
+  "@genNudgeModule5a": {
+    "description": "E-learning reminder nudge shown as an in-app banner"
+  },
+  "genNudgeModule5b": "Think of your last lift at work: did you keep the load close and turn with your feet? When ready, open Module 6 to improve your hybrid/remote setup.",
+  "@genNudgeModule5b": {
+    "description": "E-learning reminder nudge shown as an in-app banner"
+  },
+  "genNudgeModule6a": "Hybrid and remote tips from Module 6 work best with regular movement. Stand up for one call today, then complete Module 7 to learn your daily preventive routine.",
+  "@genNudgeModule6a": {
+    "description": "E-learning reminder nudge shown as an in-app banner"
+  },
+  "genNudgeModule6b": "Raised laptop, external keyboard, and short standing breaks — apply one Module 6 tip now and then finish Module 7 to build a simple daily routine.",
+  "@genNudgeModule6b": {
+    "description": "E-learning reminder nudge shown as an in-app banner"
+  },
+  "genNudgeModule7a": "You're close to the finish line. Use one Module 7 stretch (neck, shoulders, or wrists) now, and complete your remaining quiz steps to get your certificate.",
+  "@genNudgeModule7a": {
+    "description": "E-learning reminder nudge shown as an in-app banner"
+  },
+  "genNudgeModule7b": "Simple stretches from Module 7 help prevent stiffness. Do one round now and finalise any open module quizzes to earn your ergonomics certificate.",
+  "@genNudgeModule7b": {
+    "description": "E-learning reminder nudge shown as an in-app banner"
+  },
+  "genNotificationChannelName": "High Importance Notifications",
+  "@genNotificationChannelName": {
+    "description": "Android notification channel name, shown in the phone's notification settings"
+  },
+  "genNotificationChannelDescription": "This channel is used for important notifications.",
+  "@genNotificationChannelDescription": {
+    "description": "Android notification channel description, shown in the phone's notification settings"
+  },
+  "genFollowBack": "Follow Back",
+  "@genFollowBack": {
+    "description": "Push notification action button"
+  },
+  "genAccept": "Accept",
+  "@genAccept": {
+    "description": "Push notification action button"
+  },
+  "genReject": "Reject",
+  "@genReject": {
+    "description": "Push notification action button"
+  },
+  "genReply": "Reply",
+  "@genReply": {
+    "description": "Push notification action button"
+  },
+  "genTypeYourReply": "Type your reply",
+  "@genTypeYourReply": {
+    "description": "Push notification reply field hint"
+  },
+  "genMarkAsRead": "Mark as Read",
+  "@genMarkAsRead": {
+    "description": "Push notification action button"
+  },
+  "genFailedToUploadImage": "Failed to upload image",
+  "@genFailedToUploadImage": {
+    "description": "Toast when the profile picture upload fails"
+  },
+  "genSsoNotEnabled": "SSO is not enabled for this company.",
+  "@genSsoNotEnabled": {
+    "description": "Login toast"
+  },
+  "genSsoNotConfigured": "SSO is not configured for this company.",
+  "@genSsoNotConfigured": {
+    "description": "Login toast"
+  },
+  "genSsoSignInFailed": "SSO sign-in failed.",
+  "@genSsoSignInFailed": {
+    "description": "Login toast when the server sends no message"
+  },
+  "genVasBadge": "VAS {vas}",
+  "@genVasBadge": {
+    "description": "Small badge on an exercise card with the pain score (VAS = visual analogue scale; Spanish EVA)",
+    "placeholders": {
+      "vas": {
+        "type": "int"
+      }
+    }
+  },
+  "mdlRegionLeftShoulder": "Left Shoulder",
+  "@mdlRegionLeftShoulder": {
+    "description": "Body region for pain reporting"
+  },
+  "mdlRegionRightShoulder": "Right Shoulder",
+  "@mdlRegionRightShoulder": {
+    "description": "Body region for pain reporting"
+  },
+  "mdlRegionLeftWrist": "Left Wrist",
+  "@mdlRegionLeftWrist": {
+    "description": "Body region for pain reporting"
+  },
+  "mdlRegionRightWrist": "Right Wrist",
+  "@mdlRegionRightWrist": {
+    "description": "Body region for pain reporting"
+  },
+  "mdlRegionLeftElbow": "Left Elbow",
+  "@mdlRegionLeftElbow": {
+    "description": "Body region for pain reporting"
+  },
+  "mdlRegionRightElbow": "Right Elbow",
+  "@mdlRegionRightElbow": {
+    "description": "Body region for pain reporting"
+  },
+  "mdlRegionLeftHip": "Left Hip",
+  "@mdlRegionLeftHip": {
+    "description": "Body region for pain reporting"
+  },
+  "mdlRegionRightHip": "Right Hip",
+  "@mdlRegionRightHip": {
+    "description": "Body region for pain reporting"
+  },
+  "mdlRegionLeftKnee": "Left Knee",
+  "@mdlRegionLeftKnee": {
+    "description": "Body region for pain reporting"
+  },
+  "mdlRegionRightKnee": "Right Knee",
+  "@mdlRegionRightKnee": {
+    "description": "Body region for pain reporting"
+  },
+  "mdlRegionShoulder": "Shoulder",
+  "@mdlRegionShoulder": {
+    "description": "Body region tile on the home screen risk grid"
+  },
+  "mdlRegionWrist": "Wrist",
+  "@mdlRegionWrist": {
+    "description": "Body region tile on the home screen risk grid"
+  },
+  "mdlRiskHigh": "High",
+  "@mdlRiskHigh": {
+    "description": "Risk level badge on a body region tile (shown in capitals)"
+  },
+  "mdlPainDurationNone": "No pain",
+  "@mdlPainDurationNone": {
+    "description": "Pain duration option"
+  },
+  "mdlPainDuration1To4Weeks": "1-4 weeks",
+  "@mdlPainDuration1To4Weeks": {
+    "description": "Pain duration option"
+  },
+  "mdlPainDuration6To12Weeks": "6-12 weeks",
+  "@mdlPainDuration6To12Weeks": {
+    "description": "Pain duration option"
+  },
+  "mdlPainDuration1To3Months": "1-3 months",
+  "@mdlPainDuration1To3Months": {
+    "description": "Pain duration option"
+  },
+  "mdlPainDuration3To6Months": "3-6 months",
+  "@mdlPainDuration3To6Months": {
+    "description": "Pain duration option"
+  },
+  "mdlPainDurationMoreThan6Months": "More than 6 months",
+  "@mdlPainDurationMoreThan6Months": {
+    "description": "Pain duration option"
+  },
+  "mdlSymptomNumbness": "Numbness or tingling",
+  "@mdlSymptomNumbness": {
+    "description": "Optional symptom option"
+  },
+  "mdlSymptomSwelling": "Swelling",
+  "@mdlSymptomSwelling": {
+    "description": "Optional symptom option"
+  },
+  "mdlSymptomReducedRange": "Reduced range of motion",
+  "@mdlSymptomReducedRange": {
+    "description": "Optional symptom option"
+  },
+  "mdlSymptomHeadaches": "Headaches",
+  "@mdlSymptomHeadaches": {
+    "description": "Optional symptom option"
+  },
+  "mdlSymptomEyeStrain": "Eye strain",
+  "@mdlSymptomEyeStrain": {
+    "description": "Optional symptom option"
+  },
+  "mdlAbsenceZeroDays": "0 days",
+  "@mdlAbsenceZeroDays": {
+    "description": "Work days missed in the last 12 months (Work Ability & Recovery Outlook)"
+  },
+  "mdlAbsence1To5Days": "1-5 days",
+  "@mdlAbsence1To5Days": {
+    "description": "Work days missed in the last 12 months (Work Ability & Recovery Outlook)"
+  },
+  "mdlAbsence6To15Days": "6-15 days",
+  "@mdlAbsence6To15Days": {
+    "description": "Work days missed in the last 12 months (Work Ability & Recovery Outlook)"
+  },
+  "mdlAbsence16To30Days": "16-30 days",
+  "@mdlAbsence16To30Days": {
+    "description": "Work days missed in the last 12 months (Work Ability & Recovery Outlook)"
+  },
+  "mdlAbsenceMoreThan30Days": "More than 30 days",
+  "@mdlAbsenceMoreThan30Days": {
+    "description": "Work days missed in the last 12 months (Work Ability & Recovery Outlook)"
+  },
+  "mdlNo": "No",
+  "@mdlNo": {
+    "description": "Answer to a yes/no screening question (ergonomist review)"
+  },
+  "mdlRedFlagBladderBowel": "New loss of bladder or bowel control",
+  "@mdlRedFlagBladderBowel": {
+    "description": "Medical red-flag screening question, shown on the ergonomist's review of the employee's answers"
+  },
+  "mdlRedFlagSaddleNumbness": "Numbness in the saddle area (inner thighs, groin, or genitals)",
+  "@mdlRedFlagSaddleNumbness": {
+    "description": "Medical red-flag screening question, shown on the ergonomist's review of the employee's answers"
+  },
+  "mdlRedFlagWeakness": "New or worsening weakness in your legs or arms",
+  "@mdlRedFlagWeakness": {
+    "description": "Medical red-flag screening question, shown on the ergonomist's review of the employee's answers"
+  },
+  "mdlRedFlagTrauma": "A significant recent trauma (e.g. a fall, accident, or blow to your back)",
+  "@mdlRedFlagTrauma": {
+    "description": "Medical red-flag screening question, shown on the ergonomist's review of the employee's answers"
+  },
+  "mdlRedFlagFeverInfection": "Fever, a recent infection, or a weakened immune system along with back pain",
+  "@mdlRedFlagFeverInfection": {
+    "description": "Medical red-flag screening question, shown on the ergonomist's review of the employee's answers"
+  },
+  "mdlRedFlagCancerHistory": "A history of cancer, with new or worsening back/spine pain",
+  "@mdlRedFlagCancerHistory": {
+    "description": "Medical red-flag screening question, shown on the ergonomist's review of the employee's answers"
+  },
+  "mdlRedFlagNightPain": "Severe pain that doesn't ease up, especially at night",
+  "@mdlRedFlagNightPain": {
+    "description": "Medical red-flag screening question, shown on the ergonomist's review of the employee's answers"
+  },
+  "mdlRecoveryQChronicityRisk": "How large is the risk that your current pain may become persistent or long-term?",
+  "@mdlRecoveryQChronicityRisk": {
+    "description": "Work Ability & Recovery Outlook question, shown on the ergonomist's review of the employee's answers"
+  },
+  "mdlRecoveryQRtwExpectancy": "What are the chances you will be working your normal duties in 3 months?",
+  "@mdlRecoveryQRtwExpectancy": {
+    "description": "Work Ability & Recovery Outlook question, shown on the ergonomist's review of the employee's answers"
+  },
+  "mdlRecoveryQFearAvoidance": "An increase in pain is an indication that I should stop what I am doing until the pain decreases.",
+  "@mdlRecoveryQFearAvoidance": {
+    "description": "Work Ability & Recovery Outlook question, shown on the ergonomist's review of the employee's answers"
+  },
+  "mdlRecoveryQLightWork": "I can do light work (or normal light duties) for an hour.",
+  "@mdlRecoveryQLightWork": {
+    "description": "Work Ability & Recovery Outlook question, shown on the ergonomist's review of the employee's answers"
+  },
+  "mdlRecoveryQSleep": "I can sleep at night.",
+  "@mdlRecoveryQSleep": {
+    "description": "Work Ability & Recovery Outlook question, shown on the ergonomist's review of the employee's answers"
+  },
+  "mdlRecoveryQPresenteeism": "How much has your pain reduced your productivity or ability to work at full capacity in the past week?",
+  "@mdlRecoveryQPresenteeism": {
+    "description": "Work Ability & Recovery Outlook question, shown on the ergonomist's review of the employee's answers"
+  },
+  "mdlRecoveryQWorkplaceSupport": "I feel I can get support or make reasonable adjustments at work if needed because of this pain.",
+  "@mdlRecoveryQWorkplaceSupport": {
+    "description": "Work Ability & Recovery Outlook question, shown on the ergonomist's review of the employee's answers"
+  },
+  "mdlRecoveryQPreviousAbsence": "In the last 12 months, how many work days have you missed because of similar pain or musculoskeletal problems?",
+  "@mdlRecoveryQPreviousAbsence": {
+    "description": "Work Ability & Recovery Outlook question, shown on the ergonomist's review of the employee's answers"
+  },
+  "mdlRecoveryScaleNoRisk": "No risk",
+  "@mdlRecoveryScaleNoRisk": {
+    "description": "End label of a 0-10 answer scale (shown as \"0 = ... · 10 = ...\")"
+  },
+  "mdlRecoveryScaleVeryLargeRisk": "Very large risk",
+  "@mdlRecoveryScaleVeryLargeRisk": {
+    "description": "End label of a 0-10 answer scale (shown as \"0 = ... · 10 = ...\")"
+  },
+  "mdlRecoveryScaleNoChance": "No chance",
+  "@mdlRecoveryScaleNoChance": {
+    "description": "End label of a 0-10 answer scale (shown as \"0 = ... · 10 = ...\")"
+  },
+  "mdlRecoveryScaleVeryLargeChance": "Very large chance",
+  "@mdlRecoveryScaleVeryLargeChance": {
+    "description": "End label of a 0-10 answer scale (shown as \"0 = ... · 10 = ...\")"
+  },
+  "mdlRecoveryScaleCompletelyDisagree": "Completely disagree",
+  "@mdlRecoveryScaleCompletelyDisagree": {
+    "description": "End label of a 0-10 answer scale (shown as \"0 = ... · 10 = ...\")"
+  },
+  "mdlRecoveryScaleCompletelyAgree": "Completely agree",
+  "@mdlRecoveryScaleCompletelyAgree": {
+    "description": "End label of a 0-10 answer scale (shown as \"0 = ... · 10 = ...\")"
+  },
+  "mdlRecoveryScaleCannotBecausePain": "Cannot do it because of the pain",
+  "@mdlRecoveryScaleCannotBecausePain": {
+    "description": "End label of a 0-10 answer scale (shown as \"0 = ... · 10 = ...\")"
+  },
+  "mdlRecoveryScaleCanWithoutPainProblem": "Can do it without the pain being a problem",
+  "@mdlRecoveryScaleCanWithoutPainProblem": {
+    "description": "End label of a 0-10 answer scale (shown as \"0 = ... · 10 = ...\")"
+  },
+  "mdlRecoveryScaleNotAtAll": "Not at all",
+  "@mdlRecoveryScaleNotAtAll": {
+    "description": "End label of a 0-10 answer scale (shown as \"0 = ... · 10 = ...\")"
+  },
+  "mdlRecoveryScaleExtremely": "Extremely (unable to work normally)",
+  "@mdlRecoveryScaleExtremely": {
+    "description": "End label of a 0-10 answer scale (shown as \"0 = ... · 10 = ...\")"
+  },
+  "mdlRecoveryScaleStronglyDisagree": "Strongly disagree",
+  "@mdlRecoveryScaleStronglyDisagree": {
+    "description": "End label of a 0-10 answer scale (shown as \"0 = ... · 10 = ...\")"
+  },
+  "mdlRecoveryScaleStronglyAgree": "Strongly agree",
+  "@mdlRecoveryScaleStronglyAgree": {
+    "description": "End label of a 0-10 answer scale (shown as \"0 = ... · 10 = ...\")"
+  },
+  "mdlNeckNeutral": "Neutral",
+  "@mdlNeckNeutral": {
+    "description": "Neck posture measured from the side photo (value next to \"Neck state\")"
+  },
+  "mdlNeckForwardHead": "Forward head",
+  "@mdlNeckForwardHead": {
+    "description": "Neck posture measured from the side photo (value next to \"Neck state\")"
+  },
+  "mdlNeckMildFlexion": "Mild flexion",
+  "@mdlNeckMildFlexion": {
+    "description": "Neck posture measured from the side photo (value next to \"Neck state\")"
+  },
+  "mdlNeckSevereFlexion": "Severe flexion",
+  "@mdlNeckSevereFlexion": {
+    "description": "Neck posture measured from the side photo (value next to \"Neck state\")"
+  },
+  "mdlNeckHeadBack": "Head back",
+  "@mdlNeckHeadBack": {
+    "description": "Neck posture measured from the side photo (value next to \"Neck state\")"
+  },
+  "mdlViewRelatedAction": "View related action",
+  "@mdlViewRelatedAction": {
+    "description": "Fallback link text on an equipment card when the server sends none"
+  },
+  "mdlNoCaptureToSubmit": "No capture to submit",
+  "@mdlNoCaptureToSubmit": {
+    "description": "Error toast when submitting a scan without photos"
+  },
+  "mdlFailedToUploadImages": "Failed to upload images",
+  "@mdlFailedToUploadImages": {
+    "description": "Error toast when the scan photos could not be uploaded"
+  },
+  "mdlRosaPostureGuidance": "ROSA Posture Guidance",
+  "@mdlRosaPostureGuidance": {
+    "description": "ROSA posture guidance (Action Report) screen, title"
+  },
+  "mdlRosaPostureGuidanceSubtitle": "Directional adjustments to improve your ergonomic setup",
+  "@mdlRosaPostureGuidanceSubtitle": {
+    "description": "ROSA posture guidance (Action Report) screen, subtitle"
+  },
+  "mdlTierHeader": "Tier {tier} - {tierName} | ROSA {score}/10",
+  "@mdlTierHeader": {
+    "description": "ROSA posture guidance (Action Report) screen, report header. tierName comes from the server.",
+    "placeholders": {
+      "tier": {
+        "type": "int"
+      },
+      "tierName": {
+        "type": "String"
+      },
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "mdlMainRiskDriver": "Main risk driver: {driver}",
+  "@mdlMainRiskDriver": {
+    "description": "ROSA posture guidance (Action Report) screen. driver comes from the server.",
+    "placeholders": {
+      "driver": {
+        "type": "String"
+      }
+    }
+  },
+  "mdlPriorityFindings": "Priority Findings",
+  "@mdlPriorityFindings": {
+    "description": "ROSA posture guidance (Action Report) screen, section heading"
+  },
+  "mdlSupplementalCpeFindings": "Supplemental CPE Findings",
+  "@mdlSupplementalCpeFindings": {
+    "description": "ROSA posture guidance (Action Report) screen, section heading"
+  },
+  "mdlWhatYouCanDoNow": "What You Can Do Right Now",
+  "@mdlWhatYouCanDoNow": {
+    "description": "ROSA posture guidance (Action Report) screen, section heading"
+  },
+  "mdlWhenEquipmentHelps": "When Equipment Helps",
+  "@mdlWhenEquipmentHelps": {
+    "description": "ROSA posture guidance (Action Report) screen, section heading"
+  },
+  "mdlViewEquipmentRecommendations": "View Equipment Recommendations",
+  "@mdlViewEquipmentRecommendations": {
+    "description": "ROSA posture guidance (Action Report) screen, link"
+  },
+  "mdlGeneralWorkstationHabits": "General Workstation Habits",
+  "@mdlGeneralWorkstationHabits": {
+    "description": "ROSA posture guidance (Action Report) screen, section heading"
+  },
+  "mdlTextLimit": "text limit {current}/{max}",
+  "@mdlTextLimit": {
+    "description": "Character counter under a text field",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "mdlDeviceRootedTitle": "This device may be rooted",
+  "@mdlDeviceRootedTitle": {
+    "description": "Warning shown at startup on a rooted/jailbroken device, title"
+  },
+  "mdlDeviceRootedBody": "Postura found signs that this device is rooted or jailbroken. Other apps on it may be able to read your assessment data and photos. Use an unmodified device if you can.",
+  "@mdlDeviceRootedBody": {
+    "description": "Warning shown at startup on a rooted/jailbroken device, body"
+  },
+  "mdlIUnderstandContinue": "I understand, continue",
+  "@mdlIUnderstandContinue": {
+    "description": "Warning shown at startup on a rooted/jailbroken device, button"
+  },
+  "mdlModuleNumber": "Module {number}",
+  "@mdlModuleNumber": {
+    "description": "E-learning module card, module number",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "mdlHiName": "Hi {name} 👋",
+  "@mdlHiName": {
+    "description": "Greeting at the top of the home screen",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mdlHeight": "Height",
+  "@mdlHeight": {
+    "description": "Height field before a scan, label"
+  },
+  "mdlHeightHintCm": "Height in cm (e.g. 175)",
+  "@mdlHeightHintCm": {
+    "description": "Height field before a scan, hint"
+  },
+  "mdlPleaseEnterHeight": "Please enter your height",
+  "@mdlPleaseEnterHeight": {
+    "description": "Height field before a scan, error toast"
+  },
+  "mdlHeightOutOfRange": "Height must be between 50 and 250 cm",
+  "@mdlHeightOutOfRange": {
+    "description": "Height field before a scan, error toast"
+  },
+  "mdlCouldNotLoadImage": "Couldn't load image",
+  "@mdlCouldNotLoadImage": {
+    "description": "Shown over a blurred placeholder when an image fails to load"
+  },
+  "mdlRecoveryOutlookElevatedCompact": "Recovery Outlook: Elevated — early support recommended",
+  "@mdlRecoveryOutlookElevatedCompact": {
+    "description": "Banner shown when the Recovery Outlook (chronicity level) is Elevated, one-line version"
+  },
+  "mdlRecoveryOutlookElevated": "Recovery Outlook: Elevated",
+  "@mdlRecoveryOutlookElevated": {
+    "description": "Banner shown when the Recovery Outlook (chronicity level) is Elevated, title"
+  },
+  "mdlRecoveryOutlookElevatedBody": "Your answers indicate a higher risk that the current pain could become longer-term. Early targeted support is recommended in addition to the workstation adjustments below.",
+  "@mdlRecoveryOutlookElevatedBody": {
+    "description": "Banner shown when the Recovery Outlook (chronicity level) is Elevated, body"
+  },
+  "mdlNotAvailable": "N/A",
+  "@mdlNotAvailable": {
+    "description": "ROSA score tile when no valid score could be measured"
+  },
+  "rptShareSubject": "Postura Assessment Report",
+  "@rptShareSubject": {
+    "description": "Subject line of the share sheet when exporting the PDF report (home screen)"
+  },
+  "rptPdfExportFailed": "Could not create the PDF. Please try again.",
+  "@rptPdfExportFailed": {
+    "description": "Toast when exporting the PDF report fails"
+  },
+  "rptSubScoreNotAssessed": "Not assessed",
+  "@rptSubScoreNotAssessed": {
+    "description": "ROSA sub-score status when the score is 0 (home screen and PDF)"
+  },
+  "rptSubScoreHighRisk": "High risk",
+  "@rptSubScoreHighRisk": {
+    "description": "ROSA sub-score status, score 3 or more"
+  },
+  "rptSubScoreReviewNeeded": "Review needed",
+  "@rptSubScoreReviewNeeded": {
+    "description": "ROSA sub-score status, score 2"
+  },
+  "rptFinalHighRisk": "High risk — immediate action required",
+  "@rptFinalHighRisk": {
+    "description": "Final ROSA score label, score 7 to 10"
+  },
+  "rptFinalModerateRisk": "Moderate risk — further investigation",
+  "@rptFinalModerateRisk": {
+    "description": "Final ROSA score label, score 4 to 6"
+  },
+  "rptFinalLowRisk": "Low risk — no immediate action needed",
+  "@rptFinalLowRisk": {
+    "description": "Final ROSA score label, score 1 to 3"
+  },
+  "rptActionLevel3": "Level 3 — Action required as soon as possible",
+  "@rptActionLevel3": {
+    "description": "ROSA action level under the final score, score 7 to 10"
+  },
+  "rptActionLevel2": "Level 2 — Further investigation needed",
+  "@rptActionLevel2": {
+    "description": "ROSA action level under the final score, score 4 to 6"
+  },
+  "rptActionLevel1": "Level 1 — No immediate action needed",
+  "@rptActionLevel1": {
+    "description": "ROSA action level under the final score, score 1 to 3"
+  },
+  "rptCategorySeatHeight": "Seat Height",
+  "@rptCategorySeatHeight": {
+    "description": "ROSA sub-score category name"
+  },
+  "rptCategoryBackrest": "Backrest",
+  "@rptCategoryBackrest": {
+    "description": "ROSA sub-score category name"
+  },
+  "rptCategoryArmrest": "Armrest",
+  "@rptCategoryArmrest": {
+    "description": "ROSA sub-score category name"
+  },
+  "rptCategoryChair": "Chair",
+  "@rptCategoryChair": {
+    "description": "ROSA sub-score category name"
+  },
+  "rptCategoryMonitor": "Monitor",
+  "@rptCategoryMonitor": {
+    "description": "ROSA sub-score category name"
+  },
+  "rptCategoryKeyboard": "Keyboard",
+  "@rptCategoryKeyboard": {
+    "description": "ROSA sub-score category name"
+  },
+  "rptCategoryMouse": "Mouse",
+  "@rptCategoryMouse": {
+    "description": "ROSA sub-score category name"
+  },
+  "rptCategoryPeripheral": "Peripheral",
+  "@rptCategoryPeripheral": {
+    "description": "ROSA sub-score category name (phone and other peripherals)"
+  },
+  "rptCpePhoneCradle": "Cradles the phone between ear and shoulder during calls",
+  "@rptCpePhoneCradle": {
+    "description": "Supplemental CPE finding (code B_PHONE_CRADLE)"
+  },
+  "rptCpePhoneHandsfree": "No hands-free option available for phone calls",
+  "@rptCpePhoneHandsfree": {
+    "description": "Supplemental CPE finding (code B_PHONE_HANDSFREE)"
+  },
+  "rptSupplementalCpeFindings": "Supplemental CPE Findings",
+  "@rptSupplementalCpeFindings": {
+    "description": "Section heading on the home screen and in the PDF"
+  },
+  "rptPdfDocumentTitle": "Postura Ergonomic Assessment Report",
+  "@rptPdfDocumentTitle": {
+    "description": "PDF document title (file metadata)"
+  },
+  "rptPdfFooter": "Postura - Ergonomic Assessment Report",
+  "@rptPdfFooter": {
+    "description": "PDF page footer"
+  },
+  "rptPdfPageOf": "Page {page} of {total}",
+  "@rptPdfPageOf": {
+    "description": "PDF page number in the footer",
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "rptPdfTitle": "Ergonomic Assessment Report",
+  "@rptPdfTitle": {
+    "description": "PDF main title under the POSTURA brand"
+  },
+  "rptPdfAssessmentDate": "Assessment date",
+  "@rptPdfAssessmentDate": {
+    "description": "PDF header row label"
+  },
+  "rptPdfHeight": "Height",
+  "@rptPdfHeight": {
+    "description": "PDF header row label: the employee's body height"
+  },
+  "rptNotAvailable": "N/A",
+  "@rptNotAvailable": {
+    "description": "Shown instead of a ROSA score when there is no valid score"
+  },
+  "rptPdfRevisionNoteNamed": "Updated by the ergonomist ({name}). Original score from the employee's answers: {score}",
+  "@rptPdfRevisionNoteNamed": {
+    "description": "PDF note under the ROSA score when the ergonomist revised the answers; name is the ergonomist, score is like '5 / 10' or N/A",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfRevisionNote": "Updated by the ergonomist. Original score from the employee's answers: {score}",
+  "@rptPdfRevisionNote": {
+    "description": "Same as rptPdfRevisionNoteNamed when the ergonomist's name is unknown",
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "rptRecoveryOutlookTitle": "Recovery Outlook: Elevated",
+  "@rptRecoveryOutlookTitle": {
+    "description": "PDF callout title when the chronicity (long-term pain) risk is elevated"
+  },
+  "rptRecoveryOutlookBody": "Your answers indicate a higher risk that the current pain could become longer-term. Early targeted support is recommended in addition to the workstation adjustments below.",
+  "@rptRecoveryOutlookBody": {
+    "description": "PDF callout body when the chronicity risk is elevated"
+  },
+  "rptColumnCategory": "Category",
+  "@rptColumnCategory": {
+    "description": "PDF table column header"
+  },
+  "rptColumnScore": "Score",
+  "@rptColumnScore": {
+    "description": "PDF table column header"
+  },
+  "rptColumnStatus": "Status",
+  "@rptColumnStatus": {
+    "description": "PDF table column header"
+  },
+  "rptColumnBodyRegion": "Body region",
+  "@rptColumnBodyRegion": {
+    "description": "PDF table column header"
+  },
+  "rptColumnRisk": "Risk",
+  "@rptColumnRisk": {
+    "description": "PDF table column header"
+  },
+  "rptColumnPainLevel": "Pain level (0-10)",
+  "@rptColumnPainLevel": {
+    "description": "PDF table column header"
+  },
+  "rptRegionShoulder": "Shoulder",
+  "@rptRegionShoulder": {
+    "description": "Body region row in the PDF 'Risk by Body Region' table"
+  },
+  "rptRegionWrist": "Wrist",
+  "@rptRegionWrist": {
+    "description": "Body region row in the PDF 'Risk by Body Region' table"
+  },
+  "rptPdfReportedPainSymptoms": "Reported Pain & Symptoms",
+  "@rptPdfReportedPainSymptoms": {
+    "description": "PDF section heading"
+  },
+  "rptPdfPainDuration": "Pain duration",
+  "@rptPdfPainDuration": {
+    "description": "PDF label before the reported pain duration"
+  },
+  "rptPdfSymptoms": "Symptoms",
+  "@rptPdfSymptoms": {
+    "description": "PDF label before the reported symptoms"
+  },
+  "rptPdfPostureGuidance": "ROSA Posture Guidance",
+  "@rptPdfPostureGuidance": {
+    "description": "PDF section heading (the correction / action report)"
+  },
+  "rptTierLine": "Tier {number} - {name} | ROSA {score}/10",
+  "@rptTierLine": {
+    "description": "Action report tier line on the equipment screen and in the PDF; name comes from the server",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      },
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfMainRiskDriver": "Main risk driver: {driver}",
+  "@rptPdfMainRiskDriver": {
+    "description": "PDF line; driver comes from the server",
+    "placeholders": {
+      "driver": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfPriorityFindings": "Priority Findings",
+  "@rptPdfPriorityFindings": {
+    "description": "PDF sub-heading"
+  },
+  "rptPdfWhatYouCanDoNow": "What You Can Do Right Now",
+  "@rptPdfWhatYouCanDoNow": {
+    "description": "PDF sub-heading"
+  },
+  "rptPdfWhenEquipmentHelps": "When Equipment Helps",
+  "@rptPdfWhenEquipmentHelps": {
+    "description": "PDF sub-heading"
+  },
+  "rptPdfGeneralWorkstationHabits": "General Workstation Habits",
+  "@rptPdfGeneralWorkstationHabits": {
+    "description": "PDF sub-heading"
+  },
+  "rptPdfExerciseProgramme": "Personalized Exercise Programme",
+  "@rptPdfExerciseProgramme": {
+    "description": "PDF section heading"
+  },
+  "rptPdfCheckInWithProfessional": "Please Check In With a Professional",
+  "@rptPdfCheckInWithProfessional": {
+    "description": "PDF callout title when exercises are stopped for clinical assessment"
+  },
+  "rptPdfConsultBeforeExercises": "Based on your screening answers, please consult a healthcare professional before starting exercises.",
+  "@rptPdfConsultBeforeExercises": {
+    "description": "PDF callout body (fallback when the server sends no message)"
+  },
+  "rptPdfModerateProgramme": "Moderate programme",
+  "@rptPdfModerateProgramme": {
+    "description": "PDF exercise programme intensity (readiness MODERATE)"
+  },
+  "rptPdfGentleProgramme": "Gentle programme",
+  "@rptPdfGentleProgramme": {
+    "description": "PDF exercise programme intensity (any other readiness)"
+  },
+  "rptPdfNeedsCpeReview": "Based on your answers, we recommend keeping these gentle and reviewing them with your CPE or a healthcare professional. Stop immediately if any exercise increases your symptoms.",
+  "@rptPdfNeedsCpeReview": {
+    "description": "PDF callout when the exercises need CPE review"
+  },
+  "rptPdfBodyArea": "Body area: {value}",
+  "@rptPdfBodyArea": {
+    "description": "PDF exercise line; value comes from the server",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfMusclesBodyArea": "Muscles / body area: {value}",
+  "@rptPdfMusclesBodyArea": {
+    "description": "PDF exercise line; value comes from the server",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfHowToDoIt": "How to do it: {value}",
+  "@rptPdfHowToDoIt": {
+    "description": "PDF exercise line; value comes from the server",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfWhyThisHelps": "Why this helps: {value}",
+  "@rptPdfWhyThisHelps": {
+    "description": "PDF exercise line; value comes from the server",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfSets": "Sets: {count}",
+  "@rptPdfSets": {
+    "description": "PDF exercise line: number of sets",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rptPdfDuration": "Duration: {value}",
+  "@rptPdfDuration": {
+    "description": "PDF exercise line; value comes from the server",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfPainLevelVas": "Pain level (VAS): {value} / 10",
+  "@rptPdfPainLevelVas": {
+    "description": "PDF exercise line: the employee's pain rating for the region",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfWhenNotToUse": "When not to use / when to stop: {value}",
+  "@rptPdfWhenNotToUse": {
+    "description": "PDF exercise line; value comes from the server",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfWhenToStop": "When to stop: {value}",
+  "@rptPdfWhenToStop": {
+    "description": "PDF exercise line; value comes from the server",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfRelatedFindings": "Related findings: {value}",
+  "@rptPdfRelatedFindings": {
+    "description": "PDF equipment card line; value is a list from the server",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfWhyThisAppears": "Why this appears: {value}",
+  "@rptPdfWhyThisAppears": {
+    "description": "PDF equipment card line; value comes from the server",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfTarget": "Target: {value}",
+  "@rptPdfTarget": {
+    "description": "PDF equipment card line; value comes from the server",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfRequiredFeatures": "Required features: {value}",
+  "@rptPdfRequiredFeatures": {
+    "description": "PDF equipment card line; value is a list from the server",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfNextStep": "Next step: {value}",
+  "@rptPdfNextStep": {
+    "description": "PDF equipment card line; value comes from the server",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfPriority": "Priority: {value}",
+  "@rptPdfPriority": {
+    "description": "PDF line for older equipment lists; value comes from the server",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "rptPdfStatus": "Status: {value}",
+  "@rptPdfStatus": {
+    "description": "PDF line for older equipment lists; value is a status code from the server",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "rptEquipMonitorRiserTitle": "Adjustable monitor riser",
+  "@rptEquipMonitorRiserTitle": {
+    "description": "Equipment card title (on-device engine for scans before v1.3)"
+  },
+  "rptEquipMonitorRiserDescription": "Height-adjustable stand (8–12 cm) to position monitor at eye level.",
+  "@rptEquipMonitorRiserDescription": {
+    "description": "Equipment card description (on-device engine)"
+  },
+  "rptEquipFootrestTitle": "Adjustable footrest",
+  "@rptEquipFootrestTitle": {
+    "description": "Equipment card title (on-device engine)"
+  },
+  "rptEquipFootrestDescription": "Angled footrest with height adjustment (10–15 cm) for stable foot support.",
+  "@rptEquipFootrestDescription": {
+    "description": "Equipment card description (on-device engine)"
+  },
+  "rptEquipLumbarCushionTitle": "Lumbar support cushion",
+  "@rptEquipLumbarCushionTitle": {
+    "description": "Equipment card title (on-device engine)"
+  },
+  "rptEquipLumbarCushionDescription": "Memory-foam lumbar roll to support the lower back in the chair.",
+  "@rptEquipLumbarCushionDescription": {
+    "description": "Equipment card description (on-device engine)"
+  },
+  "rptEquipWristRestTitle": "Wrist rest",
+  "@rptEquipWristRestTitle": {
+    "description": "Equipment card title (on-device engine)"
+  },
+  "rptEquipWristRestDescription": "Soft wrist rest to support neutral wrist posture while typing.",
+  "@rptEquipWristRestDescription": {
+    "description": "Equipment card description (on-device engine)"
+  },
+  "rptEquipKeyboardTrayTitle": "Keyboard tray",
+  "@rptEquipKeyboardTrayTitle": {
+    "description": "Equipment card title (on-device engine)"
+  },
+  "rptEquipKeyboardTrayDescription": "Under-desk keyboard tray to set keyboard height at elbow level.",
+  "@rptEquipKeyboardTrayDescription": {
+    "description": "Equipment card description (on-device engine)"
+  },
+  "rptEquipErgonomicMouseTitle": "Ergonomic mouse",
+  "@rptEquipErgonomicMouseTitle": {
+    "description": "Equipment card title (on-device engine)"
+  },
+  "rptEquipErgonomicMouseDescription": "Alternative mouse design to reduce lateral wrist and shoulder loading.",
+  "@rptEquipErgonomicMouseDescription": {
+    "description": "Equipment card description (on-device engine)"
+  },
+  "rptEquipArmrestPadsTitle": "Armrest pads/risers",
+  "@rptEquipArmrestPadsTitle": {
+    "description": "Equipment card title (on-device engine)"
+  },
+  "rptEquipArmrestPadsDescription": "Adjustable armrest pads (+3 cm or more) to support forearms at elbow height.",
+  "@rptEquipArmrestPadsDescription": {
+    "description": "Equipment card description (on-device engine)"
+  },
+  "rptEquipAntiFatigueMatTitle": "Anti-fatigue mat",
+  "@rptEquipAntiFatigueMatTitle": {
+    "description": "Equipment card title for standing desks (on-device engine)"
+  },
+  "rptEquipAntiFatigueMatDescription": "Cushioned mat to reduce leg and lower-back fatigue during prolonged standing.",
+  "@rptEquipAntiFatigueMatDescription": {
+    "description": "Equipment card description (on-device engine)"
+  },
+  "rptEquipSourceIsoMonitor": "ISO 9241-5:2024; ROSA monitor section.",
+  "@rptEquipSourceIsoMonitor": {
+    "description": "Equipment card source line (shown after 'Source:')"
+  },
+  "rptEquipSourceIsoChair": "ISO 9241-5:2024; ROSA chair section.",
+  "@rptEquipSourceIsoChair": {
+    "description": "Equipment card source line"
+  },
+  "rptEquipSourceRempelKeyboard": "Rempel et al. 2006; ROSA keyboard section.",
+  "@rptEquipSourceRempelKeyboard": {
+    "description": "Equipment card source line (keep the citation as is)"
+  },
+  "rptEquipSourceIsoKeyboard": "ISO 9241-5:2024; ROSA keyboard section.",
+  "@rptEquipSourceIsoKeyboard": {
+    "description": "Equipment card source line"
+  },
+  "rptEquipSourceVanEerdMouse": "Van Eerd et al. 2016; ROSA mouse section.",
+  "@rptEquipSourceVanEerdMouse": {
+    "description": "Equipment card source line (keep the citation as is)"
+  },
+  "rptEquipSourceVanEerdArmrest": "Van Eerd et al. 2016; ROSA armrest section.",
+  "@rptEquipSourceVanEerdArmrest": {
+    "description": "Equipment card source line (keep the citation as is)"
+  },
+  "rptEquipSourceIsoStanding": "ISO 9241-5:2024; standing workstation section.",
+  "@rptEquipSourceIsoStanding": {
+    "description": "Equipment card source line"
+  },
+  "rptRiskBadgeMonitor": "Monitor risk: {score}",
+  "@rptRiskBadgeMonitor": {
+    "description": "Badge on an equipment card with the ROSA sub-score",
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "rptRiskBadgeChair": "Chair risk: {score}",
+  "@rptRiskBadgeChair": {
+    "description": "Badge on an equipment card with the ROSA sub-score",
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "rptRiskBadgeKeyboard": "Keyboard risk: {score}",
+  "@rptRiskBadgeKeyboard": {
+    "description": "Badge on an equipment card with the ROSA sub-score",
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "rptRiskBadgeMouse": "Mouse risk: {score}",
+  "@rptRiskBadgeMouse": {
+    "description": "Badge on an equipment card with the ROSA sub-score",
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "rptRiskBadgeArmrest": "Armrest risk: {score}",
+  "@rptRiskBadgeArmrest": {
+    "description": "Badge on an equipment card with the ROSA sub-score",
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "rptEquipTierMessageRed": "Immediate ergonomic action required for this workstation.",
+  "@rptEquipTierMessageRed": {
+    "description": "Equipment tier banner message, tier RED (on-device engine)"
+  },
+  "rptEquipTierMessageOrange": "Plan and implement these equipment changes to reduce ergonomic risk.",
+  "@rptEquipTierMessageOrange": {
+    "description": "Equipment tier banner message, tier ORANGE"
+  },
+  "rptEquipTierMessageGreen": "No urgent actions; maintain current setup and continue monitoring.",
+  "@rptEquipTierMessageGreen": {
+    "description": "Equipment tier banner message, tier GREEN"
+  },
+  "rptEquipTierMessageYellow": "Symptoms reported; consider equipment changes and follow-up review.",
+  "@rptEquipTierMessageYellow": {
+    "description": "Equipment tier banner message, tier YELLOW"
+  },
+  "rptTierRed": "RED",
+  "@rptTierRed": {
+    "description": "Equipment tier badge (upper case)"
+  },
+  "rptTierOrange": "ORANGE",
+  "@rptTierOrange": {
+    "description": "Equipment tier badge (upper case)"
+  },
+  "rptTierGreen": "GREEN",
+  "@rptTierGreen": {
+    "description": "Equipment tier badge (upper case)"
+  },
+  "rptTierYellow": "YELLOW",
+  "@rptTierYellow": {
+    "description": "Equipment tier badge (upper case)"
+  },
+  "rptUrgencyUrgent": "Urgent",
+  "@rptUrgencyUrgent": {
+    "description": "Equipment card urgency badge, level 3"
+  },
+  "rptUrgencyRecommended": "Recommended",
+  "@rptUrgencyRecommended": {
+    "description": "Equipment card urgency badge, level 2"
+  },
+  "rptUrgencyPreventive": "Preventive",
+  "@rptUrgencyPreventive": {
+    "description": "Equipment card urgency badge, level 1"
+  },
+  "rptEquipNoteTingling": "Tingling may indicate nerve compression — consult a healthcare provider if symptoms persist.",
+  "@rptEquipNoteTingling": {
+    "description": "Equipment card note (on-device engine)"
+  },
+  "rptEquipNoteFatigue": "Fatigue reported — high desk exposure amplifies strain risk.",
+  "@rptEquipNoteFatigue": {
+    "description": "Equipment card note (on-device engine)"
+  },
+  "rptEquipNoteLaptopStand": "Use a laptop stand + external keyboard.",
+  "@rptEquipNoteLaptopStand": {
+    "description": "Equipment card note (on-device engine)"
+  },
+  "rptEquipNoteDualScreen": "Ensure primary screen is centred; secondary at same height.",
+  "@rptEquipNoteDualScreen": {
+    "description": "Equipment card note (on-device engine)"
+  },
+  "rptEquipNoteNeckRotation": "Neck rotation risk detected — consider single primary screen.",
+  "@rptEquipNoteNeckRotation": {
+    "description": "Equipment card note (on-device engine)"
+  },
+  "rptEquipNoteExternalMouse": "Consider adding an external mouse to reduce wrist load.",
+  "@rptEquipNoteExternalMouse": {
+    "description": "Equipment card note (on-device engine)"
+  },
+  "rptEquipNoteHybrid": "Recommendations apply to your seated setup.",
+  "@rptEquipNoteHybrid": {
+    "description": "Equipment card note for hybrid work zones (on-device engine)"
+  },
+  "rptEquipNoteBreaksRarely": "Take breaks every 30–60 min to allow posture variation.",
+  "@rptEquipNoteBreaksRarely": {
+    "description": "Equipment card note (on-device engine)"
+  },
+  "rptEquipNoteBreaksEvery3h": "Increase break frequency to reduce sustained load.",
+  "@rptEquipNoteBreaksEvery3h": {
+    "description": "Equipment card note (on-device engine)"
+  },
+  "rptUnknown": "Unknown",
+  "@rptUnknown": {
+    "description": "Equipment card source when the server gives none (shown after 'Source:')"
+  },
+  "rptStatusActioned": "Actioned",
+  "@rptStatusActioned": {
+    "description": "Equipment request status chip (code ACTIONED)"
+  },
+  "rptLongTermCondition": "Long-term condition — consistent use recommended",
+  "@rptLongTermCondition": {
+    "description": "Amber banner on an equipment card when pain is long-term"
+  },
+  "rptRelatedFindings": "Related findings",
+  "@rptRelatedFindings": {
+    "description": "Section heading on the v1.3 equipment card"
+  },
+  "rptWhyThisAppears": "Why this appears",
+  "@rptWhyThisAppears": {
+    "description": "Section heading on the v1.3 equipment card"
+  },
+  "rptTarget": "Target",
+  "@rptTarget": {
+    "description": "Section heading on the v1.3 equipment card"
+  },
+  "rptRequiredFeatures": "Required features",
+  "@rptRequiredFeatures": {
+    "description": "Section heading on the v1.3 equipment card"
+  },
+  "rptNextStep": "Next step",
+  "@rptNextStep": {
+    "description": "Section heading on the v1.3 equipment card"
+  },
+  "rvwApprovalLandmarksVerified": "Posture landmarks are valid and accurate",
+  "@rvwApprovalLandmarksVerified": {
+    "description": "Ergonomist review, approvals checklist item"
+  },
+  "rvwApprovalWorkstationVerified": "Workstation equipment is correctly identified",
+  "@rvwApprovalWorkstationVerified": {
+    "description": "Ergonomist review, approvals checklist item"
+  },
+  "rvwApprovalRosaVerified": "ROSA score calculation is verified",
+  "@rvwApprovalRosaVerified": {
+    "description": "Ergonomist review, approvals checklist item"
+  },
+  "rvwApprovalRecommendationsVerified": "Recommendations are professionally appropriate",
+  "@rvwApprovalRecommendationsVerified": {
+    "description": "Ergonomist review, approvals checklist item"
+  },
+  "rvwFollowUpRequired": "Follow Up Required",
+  "@rvwFollowUpRequired": {
+    "description": "Review decision label (value FOLLOW_UP_REQUIRED)"
+  },
+  "rvwNeedChanges": "Need Changes",
+  "@rvwNeedChanges": {
+    "description": "Review decision label (value NEED_CHANGE)"
+  },
+  "rvwHeight": "Height",
+  "@rvwHeight": {
+    "description": "Ergonomist review: employee's body height section title"
+  },
+  "rvwNotProvided": "Not provided",
+  "@rvwNotProvided": {
+    "description": "Ergonomist review: employee height was not given"
+  },
+  "rvwNotAssessed": "Not assessed",
+  "@rvwNotAssessed": {
+    "description": "ROSA sub-score status chip, score 0"
+  },
+  "rvwHighRisk": "High risk",
+  "@rvwHighRisk": {
+    "description": "ROSA sub-score status chip, score 3+"
+  },
+  "rvwReviewNeeded": "Review needed",
+  "@rvwReviewNeeded": {
+    "description": "ROSA sub-score status chip, score 2"
+  },
+  "rvwFinalHighRisk": "High risk — immediate action required",
+  "@rvwFinalHighRisk": {
+    "description": "Final ROSA score band, 7-10"
+  },
+  "rvwFinalModerateRisk": "Moderate risk — further investigation",
+  "@rvwFinalModerateRisk": {
+    "description": "Final ROSA score band, 4-6"
+  },
+  "rvwFinalLowRisk": "Low risk — no immediate action needed",
+  "@rvwFinalLowRisk": {
+    "description": "Final ROSA score band, 1-3"
+  },
+  "rvwActionLevel3": "Level 3 — Action required as soon as possible",
+  "@rvwActionLevel3": {
+    "description": "ROSA action level, final score 7-10"
+  },
+  "rvwActionLevel2": "Level 2 — Further investigation needed",
+  "@rvwActionLevel2": {
+    "description": "ROSA action level, final score 4-6"
+  },
+  "rvwActionLevel1": "Level 1 — No immediate action needed",
+  "@rvwActionLevel1": {
+    "description": "ROSA action level, final score 1-3"
+  },
+  "rvwActionReportTitle": "Action Report v1.3",
+  "@rvwActionReportTitle": {
+    "description": "Ergonomist review: section title for the action report"
+  },
+  "rvwActionReportSummary": "Tier {tierNumber} - {tierName} | ROSA {rosaScore}/10 | Main risk driver: {mainRiskDriver}",
+  "@rvwActionReportSummary": {
+    "description": "Action report summary line; tierName and mainRiskDriver come from the server untranslated",
+    "placeholders": {
+      "tierNumber": {
+        "type": "int"
+      },
+      "tierName": {
+        "type": "String"
+      },
+      "rosaScore": {
+        "type": "int"
+      },
+      "mainRiskDriver": {
+        "type": "String"
+      }
+    }
+  },
+  "rvwPriorityFindings": "Priority Findings",
+  "@rvwPriorityFindings": {
+    "description": "Action report subsection title"
+  },
+  "rvwSupplementalCpeFindings": "Supplemental CPE Findings",
+  "@rvwSupplementalCpeFindings": {
+    "description": "Action report subsection title"
+  },
+  "rvwGreetingName": "Hi {name}",
+  "@rvwGreetingName": {
+    "description": "Ergonomist home header greeting",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "rvwRosaScoreCaps": "ROSA SCORE",
+  "@rvwRosaScoreCaps": {
+    "description": "Caption under the score on an assessment card in the ergonomist's list (upper case)"
+  },
+  "rvwSideViewNumber": "Side view {number}",
+  "@rvwSideViewNumber": {
+    "description": "Photo caption on the ergonomist review",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "rvwFrontView": "Front view",
+  "@rvwFrontView": {
+    "description": "Photo caption on the ergonomist review"
+  },
+  "rvwElbowAbduction": "Elbow abduction",
+  "@rvwElbowAbduction": {
+    "description": "Measured angle chip label, front photo"
+  },
+  "rvwNotMeasured": "Not measured",
+  "@rvwNotMeasured": {
+    "description": "Angle chip value when the angle could not be measured"
+  },
+  "rvwMetricKnee": "Knee",
+  "@rvwMetricKnee": {
+    "description": "Measured angle chip label, side photo"
+  },
+  "rvwMetricTrunk": "Trunk",
+  "@rvwMetricTrunk": {
+    "description": "Measured angle chip label, side photo"
+  },
+  "rvwMetricElbow": "Elbow",
+  "@rvwMetricElbow": {
+    "description": "Measured angle chip label, side photo"
+  },
+  "rvwMetricNeckState": "Neck state",
+  "@rvwMetricNeckState": {
+    "description": "Chip label, side photo: neck posture classification"
+  },
+  "rvwMetricLowerBody": "Lower body",
+  "@rvwMetricLowerBody": {
+    "description": "Chip label, side photo: lower-body detection confidence"
+  },
+  "rvwMetricMonitorDetected": "Monitor detected",
+  "@rvwMetricMonitorDetected": {
+    "description": "Chip label, side photo: whether a monitor was found"
+  },
+  "rvwMetricMonitorTopVsEyeLevel": "Monitor top vs eye level",
+  "@rvwMetricMonitorTopVsEyeLevel": {
+    "description": "Chip label, side photo: top of monitor relative to eye level"
+  },
+  "rvwNo": "No",
+  "@rvwNo": {
+    "description": "Generic answer value"
+  },
+  "rvwMonitorBelow": "Below",
+  "@rvwMonitorBelow": {
+    "description": "Top of monitor is below eye level (value 'below')"
+  },
+  "rvwMonitorAtEyeLevel": "At eye level",
+  "@rvwMonitorAtEyeLevel": {
+    "description": "Top of monitor is at eye level (value 'at')"
+  },
+  "rvwMonitorAbove": "Above",
+  "@rvwMonitorAbove": {
+    "description": "Top of monitor is above eye level (value 'above')"
+  },
+  "rvwChronicityLow": "Low",
+  "@rvwChronicityLow": {
+    "description": "Chronicity risk level 'Low' (risk of long-term problems), shown after 'Recovery outlook:'"
+  },
+  "rvwChronicityElevated": "Elevated",
+  "@rvwChronicityElevated": {
+    "description": "Chronicity risk level 'Elevated' (risk of long-term problems), shown after 'Recovery outlook:'"
+  },
+  "rvwHealthScreening": "Health Screening",
+  "@rvwHealthScreening": {
+    "description": "Ergonomist review: health screening section title"
+  },
+  "rvwHealthScreeningPrivacy": "Visible to ergonomists only. Not shared with the company.",
+  "@rvwHealthScreeningPrivacy": {
+    "description": "Health screening privacy note"
+  },
+  "rvwSafetyQuestionsRedFlags": "Safety Questions (Red Flags)",
+  "@rvwSafetyQuestionsRedFlags": {
+    "description": "Health screening group title"
+  },
+  "rvwRedFlagPositive": "Positive: exercises withheld, refer to a healthcare professional",
+  "@rvwRedFlagPositive": {
+    "description": "Red-flag screening result, positive"
+  },
+  "rvwRedFlagNegative": "Negative",
+  "@rvwRedFlagNegative": {
+    "description": "Red-flag screening result, negative"
+  },
+  "rvwRecoveryOutlookStatus": "Recovery outlook: {level}",
+  "@rvwRecoveryOutlookStatus": {
+    "description": "Work ability group status; level is rvwChronicityLow / rvwChronicityElevated (or the raw server value)",
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  }
 }

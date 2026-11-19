@@ -14,6 +14,7 @@ import 'package:posture_detector_app/models/assessment/yellow_flag.dart';
 import 'package:posture_detector_app/provider/report.dart';
 import 'package:posture_detector_app/models/scan_type.dart';
 import 'package:posture_detector_app/services/network/custom_http.dart';
+import 'package:posture_detector_app/utils/l10n.dart';
 import 'package:posture_detector_app/utils/print_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:posture_detector_app/models/prepared_image.dart';
@@ -289,7 +290,7 @@ class AssessmentNotifier extends _$AssessmentNotifier {
   /// Returns true on success, false on failure.
   Future<bool> submitAnalysis(ScanType type) async {
     if (state.sideCaptures.isEmpty) {
-      showCustomToast(text: 'No capture to submit');
+      showCustomToast(text: l10n.mdlNoCaptureToSubmit);
       return false;
     }
 
@@ -316,7 +317,7 @@ class AssessmentNotifier extends _$AssessmentNotifier {
       temporary: true,
     );
     if (imageIds == null || imageIds.length != prepared.length) {
-      showCustomToast(text: 'Failed to upload images');
+      showCustomToast(text: l10n.mdlFailedToUploadImages);
       return false;
     }
 
@@ -328,14 +329,14 @@ class AssessmentNotifier extends _$AssessmentNotifier {
       endpoint: 'assessments/scan-analyse',
       body: {
         'assessment_mode': state.assessmentMode.apiValue,
-        'symptoms': state.selectedOptionalSymptoms.map((s) => s.label).toList(),
+        'symptoms': state.selectedOptionalSymptoms.map((s) => s.apiValue).toList(),
         // One pain unit per selected region: { body_region, intensity, duration }.
         'pain_units': state.selectedBodyRegions
             .map(
               (r) => {
-                'body_region': r.label,
+                'body_region': r.apiValue,
                 'intensity': (state.painIntensity[r] ?? 0).toInt(),
-                'duration': state.painDuration[r]?.label ?? '',
+                'duration': state.painDuration[r]?.apiValue ?? '',
               },
             )
             .toList(),
@@ -379,7 +380,7 @@ class AssessmentNotifier extends _$AssessmentNotifier {
       return true;
     }
 
-    showCustomToast(text: response.error ?? 'Failed to process analysis');
+    showCustomToast(text: response.error ?? l10n.failedToProcessAnalysis);
 
     return false;
   }

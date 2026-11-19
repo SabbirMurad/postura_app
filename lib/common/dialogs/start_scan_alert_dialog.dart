@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/constants/colors.dart';
-import 'package:posture_detector_app/constants/app_text.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 
 void showStartScanAlert(
@@ -42,7 +41,7 @@ void showStartScanAlert(
                     Navigator.of(context).pop();
                     onCancel?.call();
                   },
-                  text: AppText.cancel,
+                  text: loc.cancel,
                   backgroundColor: AppColors.greyDeemed,
                   textColor: AppColors.text,
                 ),
@@ -52,7 +51,7 @@ void showStartScanAlert(
                 child: PrimaryButton(
                   onTap: onConfirm,
                   height: 48.h,
-                  text: AppText.yesSure,
+                  text: loc.yesSure,
                   backgroundColor: AppColors.primaryColor,
                   textColor: AppColors.surface,
                 ),

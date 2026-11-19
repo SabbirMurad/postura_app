@@ -7,6 +7,7 @@ import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/services/network/connectivity_helper.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/utils/print_helper.dart';
+import 'package:posture_detector_app/utils/l10n.dart';
 
 class CustomHttpResult {
   final dynamic data;
@@ -44,20 +45,20 @@ class CustomHttp {
     Map<String, dynamic>? queries,
   }) async {
     if (!await has_internet(show_error: true)) {
-      return const CustomHttpResult(
+      return CustomHttpResult(
         ok: false,
         status_code: -1,
-        error: 'No internet connection found!',
+        error: l10n.genNoInternetConnection,
       );
     }
 
     try {
       final headers0 = await _buildHeaders(needAuth: needAuth, extra: headers);
       if (headers0 == null) {
-        return const CustomHttpResult(
+        return CustomHttpResult(
           ok: false,
           status_code: 401,
-          error: 'Session expired, Please sign in again!',
+          error: l10n.genSessionExpired,
         );
       }
 
@@ -85,17 +86,17 @@ class CustomHttp {
 
       return _handle_response(response, showFloatingError);
     } on TimeoutException {
-      return const CustomHttpResult(
+      return CustomHttpResult(
         ok: false,
         status_code: -3,
-        error: 'Request timed out. Please try again.',
+        error: l10n.genRequestTimedOut,
       );
     } catch (e) {
       debugPrint('GET ERROR [$endpoint]: $e');
-      return const CustomHttpResult(
+      return CustomHttpResult(
         ok: false,
         status_code: -2,
-        error: 'Something went wrong. Please try again.',
+        error: l10n.genSomethingWentWrongTryAgain,
       );
     }
   }
@@ -199,7 +200,7 @@ class CustomHttp {
         );
       } else {
         final body = await response.stream.bytesToString();
-        String message = 'Something went wrong.';
+        String message = l10n.genSomethingWentWrongDot;
         try {
           message = jsonDecode(body)['message'] as String? ?? message;
         } catch (_) {}
@@ -211,17 +212,17 @@ class CustomHttp {
         );
       }
     } on TimeoutException {
-      return const CustomHttpResult(
+      return CustomHttpResult(
         ok: false,
         status_code: -3,
-        error: 'Upload timed out. Please try again.',
+        error: l10n.genUploadTimedOut,
       );
     } catch (e) {
       debugPrint('MULTIPART ERROR: $e');
-      return const CustomHttpResult(
+      return CustomHttpResult(
         ok: false,
         status_code: -2,
-        error: 'Something went wrong. Please try again.',
+        error: l10n.genSomethingWentWrongTryAgain,
       );
     }
   }
@@ -237,20 +238,20 @@ class CustomHttp {
     bool retry = true,
   }) async {
     if (!await has_internet(show_error: true)) {
-      return const CustomHttpResult(
+      return CustomHttpResult(
         ok: false,
         status_code: -1,
-        error: 'No internet connection found!',
+        error: l10n.genNoInternetConnection,
       );
     }
 
     try {
       final headers0 = await _buildHeaders(needAuth: needAuth, extra: headers);
       if (headers0 == null) {
-        return const CustomHttpResult(
+        return CustomHttpResult(
           ok: false,
           status_code: 401,
-          error: 'Session expired, Please sign in again!',
+          error: l10n.genSessionExpired,
         );
       }
 
@@ -320,17 +321,17 @@ class CustomHttp {
 
       return _handle_response(response, showFloatingError);
     } on TimeoutException {
-      return const CustomHttpResult(
+      return CustomHttpResult(
         ok: false,
         status_code: -3,
-        error: 'Request timed out. Please try again.',
+        error: l10n.genRequestTimedOut,
       );
     } catch (e) {
       debugPrint('${method.name} ERROR [$endpoint]: $e');
-      return const CustomHttpResult(
+      return CustomHttpResult(
         ok: false,
         status_code: -2,
-        error: 'Something went wrong. Please try again.',
+        error: l10n.genSomethingWentWrongTryAgain,
       );
     }
   }
@@ -449,13 +450,13 @@ class CustomHttp {
   static String _parse_error_message(http.Response response) {
     try {
       final body = jsonDecode(response.body);
-      return body['message'] as String? ?? 'Something went wrong.';
+      return body['message'] as String? ?? l10n.genSomethingWentWrongDot;
     } catch (_) {
-      if (response.statusCode == 404) return 'Endpoint not found!';
+      if (response.statusCode == 404) return l10n.genEndpointNotFound;
       debugPrint(
         'Unhandled HTTP error: ${response.statusCode}\n${response.body}',
       );
-      return 'Something went wrong.';
+      return l10n.genSomethingWentWrongDot;
     }
   }
 }

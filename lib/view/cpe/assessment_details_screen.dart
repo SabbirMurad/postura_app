@@ -63,11 +63,11 @@ class CPEAssessmentScreen extends ConsumerWidget {
 
   /// Employee height — context for chair/monitor recommendations. Never
   /// affects ROSA scoring; shown for the ergonomist's reference only.
-  Widget _heightInfo(double? heightCm) {
+  Widget _heightInfo(double? heightCm, AppLocalizations loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionTitle('Height'),
+        SectionTitle(loc.rvwHeight),
         SizedBox(height: 8.h),
         Row(
           children: [
@@ -77,7 +77,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
               // Older first-time scans stored 0 when height was never asked.
               heightCm != null && heightCm > 0
                   ? '${heightCm.round()} cm'
-                  : 'Not provided',
+                  : loc.rvwNotProvided,
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
@@ -106,23 +106,23 @@ class CPEAssessmentScreen extends ConsumerWidget {
 
   // ── Score → label ─────────────────────────────────────────────────────────
 
-  String _subScoreLabel(int score) {
-    if (score == 0) return 'Not assessed';
-    if (score >= 3) return 'High risk';
-    if (score >= 2) return 'Review needed';
-    return 'Optimal';
+  String _subScoreLabel(int score, AppLocalizations loc) {
+    if (score == 0) return loc.rvwNotAssessed;
+    if (score >= 3) return loc.rvwHighRisk;
+    if (score >= 2) return loc.rvwReviewNeeded;
+    return loc.optimal;
   }
 
-  String _finalLabel(int score) {
-    if (score >= 7) return 'High risk — immediate action required';
-    if (score >= 4) return 'Moderate risk — further investigation';
-    return 'Low risk — no immediate action needed';
+  String _finalLabel(int score, AppLocalizations loc) {
+    if (score >= 7) return loc.rvwFinalHighRisk;
+    if (score >= 4) return loc.rvwFinalModerateRisk;
+    return loc.rvwFinalLowRisk;
   }
 
-  String _actionLevel(int score) {
-    if (score >= 7) return 'Level 3 — Action required as soon as possible';
-    if (score >= 4) return 'Level 2 — Further investigation needed';
-    return 'Level 1 — No immediate action needed';
+  String _actionLevel(int score, AppLocalizations loc) {
+    if (score >= 7) return loc.rvwActionLevel3;
+    if (score >= 4) return loc.rvwActionLevel2;
+    return loc.rvwActionLevel1;
   }
 
   Color _riskColor(RosaRisk risk) {
@@ -138,12 +138,12 @@ class CPEAssessmentScreen extends ConsumerWidget {
 
   // ── Sub-score items ───────────────────────────────────────────────────────
 
-  List<RosaItem> _buildRosaItems(RosaScore score) => [
+  List<RosaItem> _buildRosaItems(RosaScore score, AppLocalizations loc) => [
     RosaItem(
       category: 'Seat Height',
       score: '${score.seatHeightScore}',
       status: RosaStatus(
-        _subScoreLabel(score.seatHeightScore),
+        _subScoreLabel(score.seatHeightScore, loc),
         _subScoreRisk(score.seatHeightScore),
       ),
     ),
@@ -151,7 +151,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
       category: 'Backrest',
       score: '${score.backrestScore}',
       status: RosaStatus(
-        _subScoreLabel(score.backrestScore),
+        _subScoreLabel(score.backrestScore, loc),
         _subScoreRisk(score.backrestScore),
       ),
     ),
@@ -159,7 +159,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
       category: 'Armrest',
       score: '${score.armrestScore}',
       status: RosaStatus(
-        _subScoreLabel(score.armrestScore),
+        _subScoreLabel(score.armrestScore, loc),
         _subScoreRisk(score.armrestScore),
       ),
     ),
@@ -167,7 +167,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
       category: 'Chair',
       score: '${score.chairScore}',
       status: RosaStatus(
-        _subScoreLabel(score.chairScore),
+        _subScoreLabel(score.chairScore, loc),
         _subScoreRisk(score.chairScore),
       ),
     ),
@@ -175,7 +175,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
       category: 'Monitor',
       score: '${score.monitorScore}',
       status: RosaStatus(
-        _subScoreLabel(score.monitorScore),
+        _subScoreLabel(score.monitorScore, loc),
         _subScoreRisk(score.monitorScore),
       ),
     ),
@@ -183,7 +183,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
       category: 'Keyboard',
       score: '${score.keyboardScore}',
       status: RosaStatus(
-        _subScoreLabel(score.keyboardScore),
+        _subScoreLabel(score.keyboardScore, loc),
         _subScoreRisk(score.keyboardScore),
       ),
     ),
@@ -191,7 +191,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
       category: 'Mouse',
       score: '${score.mouseScore}',
       status: RosaStatus(
-        _subScoreLabel(score.mouseScore),
+        _subScoreLabel(score.mouseScore, loc),
         _subScoreRisk(score.mouseScore),
       ),
     ),
@@ -199,18 +199,19 @@ class CPEAssessmentScreen extends ConsumerWidget {
       category: 'Peripheral',
       score: '${score.peripheralScore}',
       status: RosaStatus(
-        _subScoreLabel(score.peripheralScore),
+        _subScoreLabel(score.peripheralScore, loc),
         _subScoreRisk(score.peripheralScore),
       ),
     ),
   ];
 
-  Widget _rosaAssessmentSection(RosaScore score) {
+  Widget _rosaAssessmentSection(RosaScore score, AppLocalizations loc) {
     return Wrap(
       spacing: 12.w,
       runSpacing: 12.w,
       children: _buildRosaItems(
         score,
+        loc,
       ).map((item) => RosaSubScoreItem(item: item)).toList(),
     );
   }
@@ -271,7 +272,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _finalLabel(score.finalScore),
+                    _finalLabel(score.finalScore, loc),
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w600,
@@ -280,7 +281,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    _actionLevel(score.finalScore),
+                    _actionLevel(score.finalScore, loc),
                     style: TextStyle(
                       fontSize: 11.sp,
                       color: AppColors.secondaryText,
@@ -353,7 +354,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
                     if (!state.awaitingErgonomist) ...[
                       ..._mainRosaScores(state: state, loc: loc),
                       SizedBox(height: 20.h),
-                      _rosaAssessmentSection(state.currentRosaScore),
+                      _rosaAssessmentSection(state.currentRosaScore, loc),
                       SizedBox(height: 20.h),
                     ],
                     Row(
@@ -366,7 +367,7 @@ class CPEAssessmentScreen extends ConsumerWidget {
                           ),
                         ),
                         SizedBox(width: 16.w),
-                        Expanded(child: _heightInfo(state.heightCm)),
+                        Expanded(child: _heightInfo(state.heightCm, loc)),
                       ],
                     ),
                     SizedBox(height: 20.h),

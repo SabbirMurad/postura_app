@@ -16,6 +16,7 @@ import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:posture_detector_app/helpers/cache_cleaner.dart';
 import 'package:posture_detector_app/provider/locale_provider.dart';
+import 'package:posture_detector_app/utils/l10n.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -55,6 +56,7 @@ void main() async {
 
   final savedLang = await AppHelper.instance.getLanguage();
   final savedLocale = savedLang != null ? Locale(savedLang) : null;
+  L10n.setLocale(savedLocale ?? const Locale('en'));
 
   runApp(
     ProviderScope(
@@ -74,6 +76,8 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeProvider);
+    // Code without a BuildContext (PDF report, service messages) reads this.
+    L10n.setLocale(locale);
 
     return ScreenUtilInit(
       designSize: Size(375, 812),

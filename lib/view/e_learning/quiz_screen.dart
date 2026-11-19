@@ -41,7 +41,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             onPressed: () => context.pop(),
           ),
           title: Text(
-            "${AppLocalizations.of(context)!.moduleLabel} ${module.id}",
+            AppLocalizations.of(context)!.genModuleNumber(module.id),
             style: const TextStyle(
               color: Colors.black,
               fontSize: 18,
@@ -156,7 +156,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      '${AppLocalizations.of(context)!.incomplete}: ${AppLocalizations.of(context)!.pleaseAnswerAllQuestions}',
+                      AppLocalizations.of(context)!.genIncompleteAnswerAllQuestions,
                     ),
                     behavior: SnackBarBehavior.floating,
                   ),
@@ -197,7 +197,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Q${index + 1}. ${quiz.question}',
+          AppLocalizations.of(context)!.genQuizQuestionNumbered(index + 1, quiz.question),
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,

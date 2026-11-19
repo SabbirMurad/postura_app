@@ -67,7 +67,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _submitWithOkta() async {
     // SSO provisions company employees only.
     if (_userType != UserType.EMPLOYEE) {
-      showCustomToast(text: 'SSO sign-in is for company employees.');
+      showCustomToast(text: AppLocalizations.of(context)!.genSsoForEmployeesOnly);
       return;
     }
 
@@ -100,24 +100,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   /// Ask the employee for their company code so we can find the right Okta org.
   Future<String?> _promptCompanyCode() async {
     final controller = TextEditingController();
+    final loc = AppLocalizations.of(context)!;
     return showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Company code'),
+        title: Text(loc.genCompanyCode),
         content: TextField(
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.characters,
-          decoration: const InputDecoration(hintText: 'Enter your company code'),
+          decoration: InputDecoration(hintText: loc.enterYourCompanyCode),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(loc.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, controller.text),
-            child: const Text('Continue'),
+            child: Text(loc.continueButton),
           ),
         ],
       ),
@@ -219,7 +220,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Email is required';
+                        return loc.emailRequired;
                       }
                       return null;
                     },
@@ -262,7 +263,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     isObscureText: _isPasswordObscured,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Password is required';
+                        return loc.passwordRequired;
                       }
                       return null;
                     },
@@ -365,7 +366,7 @@ class _UserTypeDropdown extends StatelessWidget {
     ),
     _UserOption(
       user: UserType.ERGONOMIST,
-      label: 'CPE',
+      label: loc.cpe,
       icon: Icons.medical_services_outlined,
     ),
   ];
@@ -411,7 +412,7 @@ class _UserTypeDropdown extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Login as',
+                    loc.loginAs,
                     style: TextStyle(
                       fontSize: 11.sp,
                       color: AppColors.text.withValues(alpha: 0.45),
@@ -466,7 +467,7 @@ class _UserTypeDropdown extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Select Account Type',
+                  loc.selectAccountType,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w700,
@@ -582,7 +583,7 @@ class _OrDivider extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: Text(
-            'or',
+            AppLocalizations.of(context)!.genOr,
             style: TextStyle(
               fontSize: 13.sp,
               color: AppColors.text.withValues(alpha: 0.4),
@@ -638,7 +639,7 @@ class _Auth0Button extends StatelessWidget {
                   ),
                   SizedBox(width: 8.w),
                   Text(
-                    'Continue with SSO',
+                    AppLocalizations.of(context)!.genContinueWithSso,
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w600,

@@ -117,7 +117,11 @@ class _EquipmentScreenBusinessState
                             ),
                           ),
                           child: Text(
-                            'Tier ${v13Report.tierNumber} - ${v13Report.tierName} | ROSA ${v13Report.rosaScore}/10',
+                            loc.rptTierLine(
+                              '${v13Report.tierNumber}',
+                              v13Report.tierName,
+                              '${v13Report.rosaScore}',
+                            ),
                             style: TextStyle(
                               fontSize: 13.sp,
                               fontWeight: FontWeight.w600,
@@ -162,7 +166,7 @@ class _EquipmentScreenBusinessState
                                   borderRadius: BorderRadius.circular(16.r),
                                 ),
                                 child: Text(
-                                  engineOutput.tier,
+                                  EquipmentEngine.tierLabel(engineOutput.tier),
                                   style: TextStyle(
                                     fontSize: 11.sp,
                                     fontWeight: FontWeight.w700,
@@ -294,12 +298,12 @@ class _EquipmentScreenBusinessState
                           child: EquipmentRecommendationCard(
                             title: equipment.name,
                             subtitle: equipment.description,
-                            source: equipment.source ?? 'Unknown',
+                            source: equipment.source ?? loc.rptUnknown,
                             urgencyLabel: isHigh
-                                ? 'Urgent'
+                                ? loc.rptUrgencyUrgent
                                 : isMedium
-                                ? 'Recommended'
-                                : 'Preventive',
+                                ? loc.rptUrgencyRecommended
+                                : loc.rptUrgencyPreventive,
                             urgencyLevel: isHigh
                                 ? 3
                                 : isMedium

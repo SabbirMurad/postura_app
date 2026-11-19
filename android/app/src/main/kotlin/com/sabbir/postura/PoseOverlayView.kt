@@ -64,6 +64,10 @@ class PoseOverlayView @JvmOverloads constructor(
     // Front-view only: vertical reference line through each shoulder + the
     // shoulder→elbow angle.
     private var showShoulderAngles = false
+    /** App language for the live height-guide label (see CaptureStrings). The
+     *  labels drawn by the shared drawAngles/drawHands helpers are also baked into
+     *  the saved photos, so those stay English. */
+    var language: String = CaptureStrings.DEFAULT_LANGUAGE
 
     fun updateLandmarks(newLandmarks: List<LandmarkPoint>, imgWidth: Int, imgHeight: Int) {
         landmarks = newLandmarks
@@ -119,9 +123,9 @@ class PoseOverlayView @JvmOverloads constructor(
             canvas.drawLine(cx - 40f, lineY, cx - 14f, lineY, guideTickPaint)
             canvas.drawLine(cx + 14f, lineY, cx + 40f, lineY, guideTickPaint)
             val label = when (heightGuideState) {
-                HeightGuideState.TOO_HIGH -> "▼  Lower phone"
-                HeightGuideState.TOO_LOW  -> "▲  Raise phone"
-                HeightGuideState.OK       -> "✓  Height OK"
+                HeightGuideState.TOO_HIGH -> CaptureStrings.get(CaptureStrings.Key.GUIDE_LOWER_PHONE, language)
+                HeightGuideState.TOO_LOW  -> CaptureStrings.get(CaptureStrings.Key.GUIDE_RAISE_PHONE, language)
+                HeightGuideState.OK       -> CaptureStrings.get(CaptureStrings.Key.GUIDE_HEIGHT_OK, language)
                 HeightGuideState.HIDDEN   -> ""
             }
             guideLabelPaint.color = baseColor

@@ -38,22 +38,38 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
   }
 
   String _subScoreLabel(int score) {
-    if (score == 0) return 'Not assessed';
-    if (score >= 3) return 'High risk';
-    if (score >= 2) return 'Review needed';
-    return 'Optimal';
+    final loc = AppLocalizations.of(context)!;
+    if (score == 0) return loc.asmRiskNotAssessed;
+    if (score >= 3) return loc.asmRiskHigh;
+    if (score >= 2) return loc.asmRiskReviewNeeded;
+    return loc.optimal;
   }
 
   String _finalLabel(int score) {
-    if (score >= 7) return 'High risk — immediate action required';
-    if (score >= 4) return 'Moderate risk — further investigation';
-    return 'Low risk — no immediate action needed';
+    final loc = AppLocalizations.of(context)!;
+    if (score >= 7) return loc.asmFinalRiskHigh;
+    if (score >= 4) return loc.asmFinalRiskModerate;
+    return loc.asmFinalRiskLow;
   }
 
   String _actionLevel(int score) {
-    if (score >= 7) return 'Level 3 — Action required as soon as possible';
-    if (score >= 4) return 'Level 2 — Further investigation needed';
-    return 'Level 1 — No immediate action needed';
+    final loc = AppLocalizations.of(context)!;
+    if (score >= 7) return loc.asmActionLevel3;
+    if (score >= 4) return loc.asmActionLevel2;
+    return loc.asmActionLevel1;
+  }
+
+  /// The native engine reports 'HIGH' / 'LOW'; anything else is shown as is.
+  String _confidenceLabel(String raw) {
+    final loc = AppLocalizations.of(context)!;
+    switch (raw) {
+      case 'HIGH':
+        return loc.asmConfidenceHigh;
+      case 'LOW':
+        return loc.asmConfidenceLow;
+      default:
+        return raw;
+    }
   }
 
   Color _riskColor(RosaRisk risk) {
@@ -250,6 +266,7 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
   /// One card per captured shot: the photo plus its measured angles. Side shots
   /// come first (numbered), then the single front-view shot.
   List<Widget> _capturesSection(AssessmentState state) {
+    final loc = AppLocalizations.of(context)!;
     // Flat list of every capture image (side shots, then front) so tapping any
     // one opens a swipeable full-screen gallery at that image.
     final gallery = <ImageProvider>[
@@ -264,17 +281,18 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
       final a = c.bodyAngles;
       cards.add(
         _captureCard(
-          title: 'Side view ${i + 1}',
+          title: loc.asmSideViewNumber(i + 1),
           image: c.image,
           gallery: gallery,
           galleryIndex: galleryIndex++,
           metrics: {
-            'Knee': '${a.kneeAngle.toStringAsFixed(1)}°',
-            'Trunk': '${a.trunkAngle.toStringAsFixed(1)}°',
-            'Elbow': '${a.elbowAngle.toStringAsFixed(1)}°',
-            'Neck': '${a.neckAngle.toStringAsFixed(1)}°',
-            'Neck state': a.neckStateLabel,
-            'Lower body confidence': a.lowerBodyConfidence,
+            loc.asmMetricKnee: '${a.kneeAngle.toStringAsFixed(1)}°',
+            loc.asmMetricTrunk: '${a.trunkAngle.toStringAsFixed(1)}°',
+            loc.asmMetricElbow: '${a.elbowAngle.toStringAsFixed(1)}°',
+            loc.neck: '${a.neckAngle.toStringAsFixed(1)}°',
+            loc.asmMetricNeckState: a.neckStateLabel,
+            loc.asmMetricLowerBodyConfidence:
+                _confidenceLabel(a.lowerBodyConfidence),
           },
         ),
       );
@@ -283,16 +301,16 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
     if (front != null) {
       cards.add(
         _captureCard(
-          title: 'Front view',
+          title: loc.asmFrontView,
           image: front.image,
           gallery: gallery,
           galleryIndex: galleryIndex++,
           metrics: {
-            'Elbow abduction': front.abductionAngle == null
-                ? 'Not measured'
+            loc.asmMetricElbowAbduction: front.abductionAngle == null
+                ? loc.asmNotMeasured
                 : '${front.abductionAngle!.toStringAsFixed(1)}°',
-            'Wrist deviation': front.wristDeviationAngle == null
-                ? 'Not measured'
+            loc.asmMetricWristDeviation: front.wristDeviationAngle == null
+                ? loc.asmNotMeasured
                 : '${front.wristDeviationAngle!.toStringAsFixed(1)}°',
           },
         ),
@@ -443,7 +461,7 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
                 children: [
                   Expanded(
                     child: PrimaryButton(
-                      text: 'Retake',
+                      text: loc.retake,
                       onTap: _retake,
                       backgroundColor: Colors.grey[300],
                       textStyle: TextStyle(
@@ -456,7 +474,7 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
                   SizedBox(width: 12.w),
                   Expanded(
                     child: PrimaryButton(
-                      text: photosOnly ? loc.sendToErgonomist : 'Submit Result',
+                      text: photosOnly ? loc.sendToErgonomist : loc.asmSubmitResult,
                       loading: _submitting,
                       backgroundColor: AppColors.primaryColor,
                       textStyle: TextStyle(

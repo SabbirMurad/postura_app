@@ -40,8 +40,7 @@ class ELearningCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    // EN: moduleLabel = "Module"
-                    '${AppLocalizations.of(context)!.moduleLabel} ${quizModule.id} .',
+                    AppLocalizations.of(context)!.mdlModuleNumber(quizModule.id),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w400,
                       fontSize: 12.sp,

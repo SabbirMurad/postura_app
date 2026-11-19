@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:posture_detector_app/utils/l10n.dart';
 
 /// Release builds check the device before showing the app (security review
 /// finding 7): a rooted or jailbroken device gets a warning the user must
@@ -54,14 +55,11 @@ class _DeviceIntegrityGateState extends State<DeviceIntegrityGate> {
         return _Screen(
           child: _Message(
             icon: Icons.warning_amber_rounded,
-            title: 'This device may be rooted',
-            body: 'Postura found signs that this device is rooted or '
-                'jailbroken. Other apps on it may be able to read your '
-                'assessment data and photos. Use an unmodified device if you '
-                'can.',
+            title: l10n.mdlDeviceRootedTitle,
+            body: l10n.mdlDeviceRootedBody,
             action: FilledButton(
               onPressed: () => setState(() => _status = _Status.ok),
-              child: const Text('I understand, continue'),
+              child: Text(l10n.mdlIUnderstandContinue),
             ),
           ),
         );

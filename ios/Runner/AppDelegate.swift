@@ -34,8 +34,12 @@ import UIKit
           let answers = call.arguments as? [String: Any]
           let mods = RosaScorer.WorkstationModifiers.fromMap(answers)
           let frontPhotoAvailable = answers?["front_photo_available"] as? Bool ?? true
+          // The app's selected language, for the capture screen's own text
+          // (normalized there; missing or unsupported falls back to English).
+          let language = answers?["language"] as? String
           let vc = PoseDetectionViewController(
-            workstationModifiers: mods, frontPhotoAvailable: frontPhotoAvailable)
+            workstationModifiers: mods, frontPhotoAvailable: frontPhotoAvailable,
+            language: language)
           vc.onComplete = { detectionResult in
             // nil on cancel, else ["photo_paths": [String],
             // "rosa_scores": [[String: Any]], "body_angles": [[String: Any]]]

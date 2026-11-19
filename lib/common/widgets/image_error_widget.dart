@@ -1,4 +1,5 @@
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -36,7 +37,7 @@ class ImageErrorWidget extends StatelessWidget {
                 ],
               ),
               child: Text(
-                'Couldn\'t load image',
+                AppLocalizations.of(context)!.mdlCouldNotLoadImage,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 12.sp,

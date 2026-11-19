@@ -1,6 +1,7 @@
 import 'package:posture_detector_app/models/equipment/equipment_output.dart';
 import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
+import 'package:posture_detector_app/utils/l10n.dart';
 
 // ── Input contract (§2.1) ─────────────────────────────────────────────────────
 
@@ -82,73 +83,68 @@ class _LibraryItem {
   });
 }
 
-const List<_LibraryItem> _equipmentLibrary = [
+// A getter, not a const: titles, descriptions and source lines are shown to the
+// user and follow the selected language. Ids, categories and keys never change.
+List<_LibraryItem> get _equipmentLibrary => [
   _LibraryItem(
     id: 'equip_01',
-    title: 'Adjustable monitor riser',
-    description:
-        'Height-adjustable stand (8–12 cm) to position monitor at eye level.',
-    sourceLine: 'ISO 9241-5:2024; ROSA monitor section.',
+    title: l10n.rptEquipMonitorRiserTitle,
+    description: l10n.rptEquipMonitorRiserDescription,
+    sourceLine: l10n.rptEquipSourceIsoMonitor,
     category: 'monitor',
     rosaSourceKey: 'rosaMonitor',
     vasRegions: ['neck'],
   ),
   _LibraryItem(
     id: 'equip_02',
-    title: 'Adjustable footrest',
-    description:
-        'Angled footrest with height adjustment (10–15 cm) for stable foot support.',
-    sourceLine: 'ISO 9241-5:2024; ROSA chair section.',
+    title: l10n.rptEquipFootrestTitle,
+    description: l10n.rptEquipFootrestDescription,
+    sourceLine: l10n.rptEquipSourceIsoChair,
     category: 'chair',
     rosaSourceKey: 'rosaChair',
     vasRegions: ['lowerBack', 'knee', 'feet'],
   ),
   _LibraryItem(
     id: 'equip_03',
-    title: 'Lumbar support cushion',
-    description:
-        'Memory-foam lumbar roll to support the lower back in the chair.',
-    sourceLine: 'ISO 9241-5:2024; ROSA chair section.',
+    title: l10n.rptEquipLumbarCushionTitle,
+    description: l10n.rptEquipLumbarCushionDescription,
+    sourceLine: l10n.rptEquipSourceIsoChair,
     category: 'chair',
     rosaSourceKey: 'rosaChair',
     vasRegions: ['lowerBack', 'hip'],
   ),
   _LibraryItem(
     id: 'equip_04',
-    title: 'Wrist rest',
-    description:
-        'Soft wrist rest to support neutral wrist posture while typing.',
-    sourceLine: 'Rempel et al. 2006; ROSA keyboard section.',
+    title: l10n.rptEquipWristRestTitle,
+    description: l10n.rptEquipWristRestDescription,
+    sourceLine: l10n.rptEquipSourceRempelKeyboard,
     category: 'keyboard',
     rosaSourceKey: 'rosaKeyboard',
     vasRegions: ['wrist', 'elbow'],
   ),
   _LibraryItem(
     id: 'equip_05',
-    title: 'Keyboard tray',
-    description:
-        'Under-desk keyboard tray to set keyboard height at elbow level.',
-    sourceLine: 'ISO 9241-5:2024; ROSA keyboard section.',
+    title: l10n.rptEquipKeyboardTrayTitle,
+    description: l10n.rptEquipKeyboardTrayDescription,
+    sourceLine: l10n.rptEquipSourceIsoKeyboard,
     category: 'keyboard',
     rosaSourceKey: 'rosaKeyboard',
     vasRegions: ['wrist', 'elbow'],
   ),
   _LibraryItem(
     id: 'equip_06',
-    title: 'Ergonomic mouse',
-    description:
-        'Alternative mouse design to reduce lateral wrist and shoulder loading.',
-    sourceLine: 'Van Eerd et al. 2016; ROSA mouse section.',
+    title: l10n.rptEquipErgonomicMouseTitle,
+    description: l10n.rptEquipErgonomicMouseDescription,
+    sourceLine: l10n.rptEquipSourceVanEerdMouse,
     category: 'mouse',
     rosaSourceKey: 'rosaMouse',
     vasRegions: ['wrist', 'shoulder'],
   ),
   _LibraryItem(
     id: 'equip_07',
-    title: 'Armrest pads/risers',
-    description:
-        'Adjustable armrest pads (+3 cm or more) to support forearms at elbow height.',
-    sourceLine: 'Van Eerd et al. 2016; ROSA armrest section.',
+    title: l10n.rptEquipArmrestPadsTitle,
+    description: l10n.rptEquipArmrestPadsDescription,
+    sourceLine: l10n.rptEquipSourceVanEerdArmrest,
     category: 'armrest',
     rosaSourceKey: 'rosaChairArmrest',
     vasRegions: ['shoulder', 'upperBack'],
@@ -157,21 +153,31 @@ const List<_LibraryItem> _equipmentLibrary = [
 
 // ── Lookup maps ───────────────────────────────────────────────────────────────
 
-const Map<String, String> _riskLabelMap = {
-  'rosaMonitor': 'Monitor risk',
-  'rosaChair': 'Chair risk',
-  'rosaKeyboard': 'Keyboard risk',
-  'rosaMouse': 'Mouse risk',
-  'rosaChairArmrest': 'Armrest risk',
-};
+/// Risk badge text ("Monitor risk: 3") for a ROSA source key; '' when the key
+/// has no badge. Keys are internal codes and never change.
+String _riskBadgeText(String rosaSourceKey, int score) {
+  switch (rosaSourceKey) {
+    case 'rosaMonitor':
+      return l10n.rptRiskBadgeMonitor(score);
+    case 'rosaChair':
+      return l10n.rptRiskBadgeChair(score);
+    case 'rosaKeyboard':
+      return l10n.rptRiskBadgeKeyboard(score);
+    case 'rosaMouse':
+      return l10n.rptRiskBadgeMouse(score);
+    case 'rosaChairArmrest':
+      return l10n.rptRiskBadgeArmrest(score);
+    default:
+      return '';
+  }
+}
 
-const Map<String, String> _tierMessageMap = {
-  'RED': 'Immediate ergonomic action required for this workstation.',
-  'ORANGE':
-      'Plan and implement these equipment changes to reduce ergonomic risk.',
-  'GREEN': 'No urgent actions; maintain current setup and continue monitoring.',
-  'YELLOW':
-      'Symptoms reported; consider equipment changes and follow-up review.',
+/// Tier message by tier code (codes 'RED' / 'ORANGE' / ... stay as they are).
+Map<String, String> get _tierMessageMap => {
+  'RED': l10n.rptEquipTierMessageRed,
+  'ORANGE': l10n.rptEquipTierMessageOrange,
+  'GREEN': l10n.rptEquipTierMessageGreen,
+  'YELLOW': l10n.rptEquipTierMessageYellow,
 };
 
 // ── Internal mutable card used during engine processing ───────────────────────
@@ -212,15 +218,14 @@ class _WorkingCard {
   EquipmentCard toCard() {
     final String urgencyLabel;
     if (urgencyLevel >= 3) {
-      urgencyLabel = 'Urgent';
+      urgencyLabel = l10n.rptUrgencyUrgent;
     } else if (urgencyLevel == 2) {
-      urgencyLabel = 'Recommended';
+      urgencyLabel = l10n.rptUrgencyRecommended;
     } else {
-      urgencyLabel = 'Preventive';
+      urgencyLabel = l10n.rptUrgencyPreventive;
     }
 
-    final riskLabel = _riskLabelMap[rosaSourceKey];
-    final riskBadgeText = riskLabel != null ? '$riskLabel: $rosaSubScore' : '';
+    final riskBadgeText = _riskBadgeText(rosaSourceKey, rosaSubScore);
 
     return EquipmentCard(
       equipmentId: equipmentId,
@@ -245,6 +250,23 @@ class _WorkingCard {
 
 class EquipmentEngine {
   EquipmentEngine._();
+
+  /// Translated label for a tier code ('RED', 'ORANGE', 'GREEN', 'YELLOW').
+  /// The code itself is what the logic and colours use; show this instead.
+  static String tierLabel(String tier) {
+    switch (tier.toUpperCase()) {
+      case 'RED':
+        return l10n.rptTierRed;
+      case 'ORANGE':
+        return l10n.rptTierOrange;
+      case 'GREEN':
+        return l10n.rptTierGreen;
+      case 'YELLOW':
+        return l10n.rptTierYellow;
+      default:
+        return tier;
+    }
+  }
 
   /// Equipment output for a pre-v1.3 report (no `action_report_v1_3`), built
   /// from its ROSA score, pain ratings and symptoms. Shared by the equipment
@@ -371,9 +393,7 @@ class EquipmentEngine {
     if (input.symTingling && (input.vasWrist ?? 0) >= 4) {
       _find(cards, 'equip_04')?.let((c) {
         c.urgencyLevel = 3;
-        c.appendNote(
-          'Tingling may indicate nerve compression — consult a healthcare provider if symptoms persist.',
-        );
+        c.appendNote(l10n.rptEquipNoteTingling);
       });
       _find(cards, 'equip_06')?.urgencyLevel = 3;
     }
@@ -388,9 +408,7 @@ class EquipmentEngine {
         (input.hoursAtDesk == 'h6_8' || input.hoursAtDesk == 'h8plus')) {
       for (final card in cards) {
         if (card.urgencyLevel == 3) {
-          card.appendNote(
-            'Fatigue reported — high desk exposure amplifies strain risk.',
-          );
+          card.appendNote(l10n.rptEquipNoteFatigue);
         }
       }
     }
@@ -403,17 +421,13 @@ class EquipmentEngine {
       if (input.rosaScore.monitorScore < 3) {
         _find(cards, 'equip_01')?.suppressed = true;
       } else {
-        _find(cards, 'equip_01')?.cardNote =
-            'Use a laptop stand + external keyboard.';
+        _find(cards, 'equip_01')?.cardNote = l10n.rptEquipNoteLaptopStand;
       }
     } else if (input.deviceSetup == 'dualScreen') {
       _find(cards, 'equip_01')?.let((c) {
-        c.cardNote =
-            'Ensure primary screen is centred; secondary at same height.';
+        c.cardNote = l10n.rptEquipNoteDualScreen;
         if ((input.vasNeck ?? 0) >= 4) {
-          c.appendNote(
-            'Neck rotation risk detected — consider single primary screen.',
-          );
+          c.appendNote(l10n.rptEquipNoteNeckRotation);
         }
       });
     }
@@ -423,9 +437,7 @@ class EquipmentEngine {
     if (input.mouseType == 'trackpadOrNone') {
       _find(cards, 'equip_06')?.suppressed = true;
       if (input.rosaScore.mouseScore >= 2) {
-        _find(cards, 'equip_04')?.appendNote(
-          'Consider adding an external mouse to reduce wrist load.',
-        );
+        _find(cards, 'equip_04')?.appendNote(l10n.rptEquipNoteExternalMouse);
       }
     } else if (input.mouseType == 'smallNotebook' &&
         input.rosaScore.mouseScore >= 2) {
@@ -443,10 +455,9 @@ class EquipmentEngine {
         cards.add(
           _WorkingCard(
             equipmentId: 'equip_S1',
-            title: 'Anti-fatigue mat',
-            description:
-                'Cushioned mat to reduce leg and lower-back fatigue during prolonged standing.',
-            sourceLine: 'ISO 9241-5:2024; standing workstation section.',
+            title: l10n.rptEquipAntiFatigueMatTitle,
+            description: l10n.rptEquipAntiFatigueMatDescription,
+            sourceLine: l10n.rptEquipSourceIsoStanding,
             category: 'other',
             rosaSourceKey: '',
             rosaSubScore: 0,
@@ -461,7 +472,7 @@ class EquipmentEngine {
       // Override all card notes with the hybrid context message.
       for (final card in cards) {
         if (!card.suppressed) {
-          card.cardNote = 'Recommendations apply to your seated setup.';
+          card.cardNote = l10n.rptEquipNoteHybrid;
         }
       }
     }
@@ -471,15 +482,13 @@ class EquipmentEngine {
     if (input.breakHabit == 'rarely') {
       for (final card in cards) {
         if (!card.suppressed) {
-          card.appendNote(
-            'Take breaks every 30–60 min to allow posture variation.',
-          );
+          card.appendNote(l10n.rptEquipNoteBreaksRarely);
         }
       }
     } else if (input.breakHabit == 'every3h') {
       for (final card in cards) {
         if (!card.suppressed && card.urgencyLevel == 3) {
-          card.appendNote('Increase break frequency to reduce sustained load.');
+          card.appendNote(l10n.rptEquipNoteBreaksEvery3h);
         }
       }
     }

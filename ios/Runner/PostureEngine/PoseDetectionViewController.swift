@@ -27,10 +27,15 @@ final class PoseDetectionViewController: UIViewController {
     /// False when the user said a front-view photo can't be taken: the front phase
     /// is skipped and armrestTooWide / keyboardDeviation come from the answers.
     private let frontPhotoAvailable: Bool
+    /// The app's language for the on-screen text (see CaptureStrings). Text baked
+    /// into the saved photos stays English.
+    private let language: String
 
-    init(workstationModifiers: RosaScorer.WorkstationModifiers, frontPhotoAvailable: Bool = true) {
+    init(workstationModifiers: RosaScorer.WorkstationModifiers, frontPhotoAvailable: Bool = true,
+         language: String? = nil) {
         self.workstationModifiers = workstationModifiers
         self.frontPhotoAvailable = frontPhotoAvailable
+        self.language = CaptureStrings.normalize(language)
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .fullScreen
         // Let this screen drive the status bar (light icons over the black view)
@@ -40,6 +45,10 @@ final class PoseDetectionViewController: UIViewController {
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
+
+    private func tr(_ key: CaptureStrings.Key, _ args: [String: CustomStringConvertible] = [:]) -> String {
+        CaptureStrings.get(key, language, args)
+    }
 
     // MARK: - State machine
 
@@ -307,12 +316,13 @@ final class PoseDetectionViewController: UIViewController {
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
                 DispatchQueue.main.async {
-                    if granted { self?.setupCamera() }
-                    else { self?.showToast("Camera permission required") }
+                    guard let self = self else { return }
+                    if granted { self.setupCamera() }
+                    else { self.showToast(self.tr(.cameraPermissionRequired)) }
                 }
             }
         default:
-            showToast("Camera permission required")
+            showToast(tr(.cameraPermissionRequired))
         }
     }
 
@@ -330,7 +340,7 @@ final class PoseDetectionViewController: UIViewController {
                   let input = try? AVCaptureDeviceInput(device: device),
                   self.session.canAddInput(input) else {
                 self.session.commitConfiguration()
-                DispatchQueue.main.async { self.showToast("Camera unavailable") }
+                DispatchQueue.main.async { self.showToast(self.tr(.cameraUnavailable)) }
                 return
             }
             self.session.addInput(input)
@@ -521,7 +531,7 @@ final class PoseDetectionViewController: UIViewController {
         DispatchQueue.main.async {
             self.triggerCaptureFlash()
             self.tvCaptureStatus.isHidden = false
-            self.tvCaptureStatus.text = "Processing photos…"
+            self.tvCaptureStatus.text = self.tr(.processingPhotos)
         }
         // Queued behind this callback, after the live landmarker is released.
         captureQueue.async { [weak self] in self?.processCaptures() }
@@ -691,11 +701,11 @@ final class PoseDetectionViewController: UIViewController {
         let luminance = computeLuminance(pb)
         if luminance < MIN_LUMINANCE {
             DispatchQueue.main.async {
-                self.updatePanel(lightOk: false, message: "Room is too dark — turn on more lights")
+                self.updatePanel(lightOk: false, message: self.tr(.lightTooDark))
             }
         } else if luminance > MAX_LUMINANCE {
             DispatchQueue.main.async {
-                self.updatePanel(lightOk: false, message: "Too bright — reduce glare or step back")
+                self.updatePanel(lightOk: false, message: self.tr(.lightTooBright))
             }
         } else {
             appState = .detecting
@@ -743,7 +753,7 @@ final class PoseDetectionViewController: UIViewController {
             if confirmationCount >= REQUIRED_CONFIRMATIONS {
                 DispatchQueue.main.async {
                     self.updatePanel(lightOk: true, personDetected: true, monitorDetected: true,
-                                     confirmCount: self.REQUIRED_CONFIRMATIONS, message: "Loading…")
+                                     confirmCount: self.REQUIRED_CONFIRMATIONS, message: self.tr(.loading))
                 }
                 initializePoseLandmarker()
                 appState = .pose
@@ -758,7 +768,7 @@ final class PoseDetectionViewController: UIViewController {
                 let c = confirmationCount
                 DispatchQueue.main.async {
                     self.updatePanel(lightOk: true, personDetected: true, monitorDetected: true,
-                                     confirmCount: c, message: "Hold still…")
+                                     confirmCount: c, message: self.tr(.holdStill))
                 }
             }
         } else {
@@ -861,7 +871,7 @@ final class PoseDetectionViewController: UIViewController {
             }
             DispatchQueue.main.async {
                 self.tvSideViewStatus.textColor = sideOk ? self.colorDetected : self.colorNotDetected
-                self.tvSideViewStatus.text = sideOk ? "● Side  OK" : "● Side  Adjust angle"
+                self.tvSideViewStatus.text = self.tr(sideOk ? .chipSideOk : .chipSideAdjust)
                 self.overlayView.setHeightGuide(guideState)
             }
         }
@@ -965,11 +975,12 @@ final class PoseDetectionViewController: UIViewController {
             self.overlayView.updateRosaAngles(rosaAngles)
             if let d = distanceM {
                 let dOk = d >= 1.7 && d <= 2.1
-                let hint = d < 1.7 ? "  ·  Move back" : (d > 2.1 ? "  ·  Move closer" : "")
-                self.tvDistanceStatus.text = String(format: "● Distance  %.2fm%@", d, hint)
+                let key: CaptureStrings.Key = d < 1.7 ? .chipDistanceTooClose
+                    : (d > 2.1 ? .chipDistanceTooFar : .chipDistanceOk)
+                self.tvDistanceStatus.text = self.tr(key, ["value": String(format: "%.2f", d)])
                 self.tvDistanceStatus.textColor = dOk ? self.colorDetected : self.colorNotDetected
             } else {
-                self.tvDistanceStatus.text = "● Distance  --"
+                self.tvDistanceStatus.text = self.tr(.chipDistanceIdle)
                 self.tvDistanceStatus.textColor = self.colorNeutral
             }
         }
@@ -1011,11 +1022,11 @@ final class PoseDetectionViewController: UIViewController {
         }
         levelView.update(roll: rollAngle, pitch: pitchAngle)
         tvTiltStatus.textColor = tOk ? colorDetected : colorNotDetected
-        tvTiltStatus.text = tOk ? String(format: "● Tilt  %.1f°", tiltAngle)
-                                : String(format: "● Tilt  %.1f°  ·  Hold phone upright", tiltAngle)
+        tvTiltStatus.text = tr(tOk ? .chipTiltOk : .chipTiltBad,
+                               ["value": String(format: "%.1f", tiltAngle)])
         tvRotationStatus.textColor = rOk ? colorDetected : colorNotDetected
-        tvRotationStatus.text = rOk ? "● Rotation  OK"
-                                    : String(format: "● Rotation  %.1f°  ·  Level the phone", abs(rollAngle))
+        tvRotationStatus.text = rOk ? tr(.chipRotationOk)
+                                    : tr(.chipRotationBad, ["value": String(format: "%.1f", abs(rollAngle))])
     }
 
     // =========================================================================
@@ -1112,7 +1123,7 @@ final class PoseDetectionViewController: UIViewController {
         // detector was released after the detection phase, so load it once
         // here, off the main thread. A failed check leaves the value out.
         tvCaptureStatus.isHidden = false
-        tvCaptureStatus.text = "Checking photos…"
+        tvCaptureStatus.text = tr(.checkingPhotos)
         let sideFrames = sideMonitorFrames
         DispatchQueue.global(qos: .userInitiated).async {
             let detector = YoloDetector()
@@ -1293,13 +1304,13 @@ final class PoseDetectionViewController: UIViewController {
         tvCaptureStatus.isHidden = false
         let nowMs = CACurrentMediaTime() * 1000
         if done >= TOTAL_SHOTS_NEEDED {
-            tvCaptureStatus.text = "✓ All \(TOTAL_SHOTS_NEEDED) photos captured"
+            tvCaptureStatus.text = tr(.shotsAllDone, ["total": TOTAL_SHOTS_NEEDED])
         } else if nowMs < nextCaptureEarliestAtMs {
-            tvCaptureStatus.text = "✓ Photo \(done) of \(TOTAL_SHOTS_NEEDED) captured — hold your position"
+            tvCaptureStatus.text = tr(.shotDone, ["done": done, "total": TOTAL_SHOTS_NEEDED])
         } else if allOk {
-            tvCaptureStatus.text = "Hold steady — capturing photo \(done + 1) of \(TOTAL_SHOTS_NEEDED)…"
+            tvCaptureStatus.text = tr(.shotCapturing, ["number": done + 1, "total": TOTAL_SHOTS_NEEDED])
         } else {
-            tvCaptureStatus.text = "Get into position for photo \(done + 1) of \(TOTAL_SHOTS_NEEDED)"
+            tvCaptureStatus.text = tr(.shotGetReady, ["number": done + 1, "total": TOTAL_SHOTS_NEEDED])
         }
     }
 
@@ -1331,7 +1342,7 @@ final class PoseDetectionViewController: UIViewController {
                 chip.isHidden = true
             }
             self.tvCaptureStatus.isHidden = false
-            self.tvCaptureStatus.text = "Side photos done — move to the FRONT of the person, behind the monitor"
+            self.tvCaptureStatus.text = self.tr(.sidePhotosDone)
         }
     }
 
@@ -1414,30 +1425,30 @@ final class PoseDetectionViewController: UIViewController {
         tvCaptureStatus.isHidden = false
         let settling = CACurrentMediaTime() * 1000 < frontReadyEarliestAtMs
         if settling {
-            tvCaptureStatus.text = "Move to the FRONT of the person, behind the monitor"
+            tvCaptureStatus.text = tr(.frontMove)
         } else if !frontVisible {
-            tvCaptureStatus.text = "Show the person's face, shoulders and hands"
+            tvCaptureStatus.text = tr(.frontShowBody)
         } else if !frontFacing {
-            tvCaptureStatus.text = "Move to the FRONT of the person, behind the monitor"
+            tvCaptureStatus.text = tr(.frontMove)
         } else if !rotationOk {
-            tvCaptureStatus.text = "Straighten the phone — it's rotated"
+            tvCaptureStatus.text = tr(.frontStraighten)
         } else if !phoneSteady {
-            tvCaptureStatus.text = "Hold the phone still"
+            tvCaptureStatus.text = tr(.frontHoldPhoneStill)
         } else {
-            tvCaptureStatus.text = "Hold steady — capturing front photo…"
+            tvCaptureStatus.text = tr(.frontCapturing)
         }
         let ok = frontVisible && frontFacing && rotationOk && phoneSteady
         tvSideViewStatus.textColor = ok ? colorDetected : colorNotDetected
         if !frontVisible {
-            tvSideViewStatus.text = "● Front  Face/shoulders/hands"
+            tvSideViewStatus.text = tr(.chipFrontShowBody)
         } else if !frontFacing {
-            tvSideViewStatus.text = "● Front  Move to the front"
+            tvSideViewStatus.text = tr(.chipFrontMove)
         } else if !rotationOk {
-            tvSideViewStatus.text = "● Front  Straighten phone"
+            tvSideViewStatus.text = tr(.chipFrontStraighten)
         } else if !phoneSteady {
-            tvSideViewStatus.text = "● Front  Hold still"
+            tvSideViewStatus.text = tr(.chipFrontHoldStill)
         } else {
-            tvSideViewStatus.text = "● Front  OK"
+            tvSideViewStatus.text = tr(.chipFrontOk)
         }
     }
 
@@ -1452,6 +1463,7 @@ final class PoseDetectionViewController: UIViewController {
         view.layer.addSublayer(previewLayer)
 
         overlayView = PoseOverlayView(frame: view.bounds)
+        overlayView.language = language
         view.addSubview(overlayView)
 
         // Level indicator, centered on the preview (positioned in layout).
@@ -1479,6 +1491,7 @@ final class PoseDetectionViewController: UIViewController {
 
         let switchImage = UIImage(named: "ic_switch_camera")?.withRenderingMode(.alwaysTemplate)
         let switchBtn = makeCircleIconButton(image: switchImage, action: #selector(onSwitchCamera))
+        switchBtn.accessibilityLabel = tr(.switchCamera)
         let closeBtn = makeButton("✕", action: #selector(onClose))
         view.addSubview(switchBtn)
         view.addSubview(closeBtn)
@@ -1508,13 +1521,13 @@ final class PoseDetectionViewController: UIViewController {
     /// Light, Person, Monitor, Rotation, Tilt, Distance, Side — followed by the
     /// confirmation progress bar and the general status message.
     private func buildStatusStack() {
-        tvLightStatus.text = "● Light"
-        tvPersonStatus.text = "● Person"
-        tvMonitorStatus.text = "● Monitor"
-        tvRotationStatus.text = "● Rotation  --"
-        tvTiltStatus.text = "● Tilt  --°"
-        tvDistanceStatus.text = "● Distance  --"
-        tvSideViewStatus.text = "● Side  --"
+        tvLightStatus.text = tr(.chipLight)
+        tvPersonStatus.text = tr(.chipPerson)
+        tvMonitorStatus.text = tr(.chipMonitor)
+        tvRotationStatus.text = tr(.chipRotationIdle)
+        tvTiltStatus.text = tr(.chipTiltIdle)
+        tvDistanceStatus.text = tr(.chipDistanceIdle)
+        tvSideViewStatus.text = tr(.chipSideIdle)
 
         let conditions: [UILabel] = [tvLightStatus, tvPersonStatus, tvMonitorStatus,
                                      tvRotationStatus, tvTiltStatus,

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 
 class RiskBodyRegionMenu extends StatelessWidget {
   final String risk;
@@ -14,8 +15,30 @@ class RiskBodyRegionMenu extends StatelessWidget {
     required this.region,
   });
 
+  /// Display name for the English region key passed in by the caller (the key
+  /// also names the icon asset, so it must stay English).
+  String _regionLabel(AppLocalizations loc) => switch (region) {
+    'Elbows' => loc.elbows,
+    'Shoulder' => loc.mdlRegionShoulder,
+    'Wrist' => loc.mdlRegionWrist,
+    'Lower Back' => loc.lowerBack,
+    'Upper Back' => loc.upperBack,
+    'Neck' => loc.neck,
+    'Knees' => loc.knees,
+    _ => region,
+  };
+
+  /// Display text for the server's risk value (`high` / `medium` / `low`).
+  String _riskLabel(AppLocalizations loc) => switch (risk.toLowerCase()) {
+    'high' => loc.mdlRiskHigh,
+    'medium' => loc.medium,
+    'low' => loc.low,
+    _ => risk,
+  };
+
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final bool high = risk.toLowerCase() == 'high';
     final bool medium = risk.toLowerCase() == 'medium';
 
@@ -53,7 +76,7 @@ class RiskBodyRegionMenu extends StatelessWidget {
             ),
             SizedBox(height: 6.w),
             Text(
-              region,
+              _regionLabel(loc),
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
@@ -70,7 +93,7 @@ class RiskBodyRegionMenu extends StatelessWidget {
                 border: Border.all(color: statusColor.withValues(alpha: 0.4)),
               ),
               child: Text(
-                risk.toUpperCase(),
+                _riskLabel(loc).toUpperCase(),
                 style: TextStyle(
                   fontSize: 11.sp,
                   color: statusColor,

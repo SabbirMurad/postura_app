@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 
 import 'package:posture_detector_app/view/cpe/home_screen_cpe.dart';
 import 'package:posture_detector_app/view/cpe/setting_screen_cpe.dart';
@@ -19,6 +20,7 @@ class _BottomNavCPEState extends State<BottomNavCPE> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       body: pages[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -42,7 +44,7 @@ class _BottomNavCPEState extends State<BottomNavCPE> {
               padding: EdgeInsets.only(top: 4.h, bottom: 5.h),
               child: Assets.icons.nav.home.svg(width: 24.h, height: 24.h),
             ),
-            label: 'Home',
+            label: loc.home,
             activeIcon: Padding(
               padding: EdgeInsets.symmetric(vertical: 4.h),
               child: Assets.icons.nav.homeFilled.svg(
@@ -65,7 +67,7 @@ class _BottomNavCPEState extends State<BottomNavCPE> {
                 colorFilter: ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
               ),
             ),
-            label: 'Settings',
+            label: loc.settings,
           ),
         ],
       ),

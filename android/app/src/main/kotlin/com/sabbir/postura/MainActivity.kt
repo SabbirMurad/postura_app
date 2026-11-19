@@ -36,6 +36,11 @@ class MainActivity : FlutterActivity() {
                                 org.json.JSONObject(answers).toString()
                             )
                         }
+                        // The app's selected language, for the capture screen's own text.
+                        intent.putExtra(
+                            PoseDetectionActivity.EXTRA_LANGUAGE,
+                            CaptureStrings.normalize(answers?.get("language") as? String)
+                        )
                         startActivityForResult(intent, REQUEST_CODE)
                     }
                     else -> result.notImplemented()

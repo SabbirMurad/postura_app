@@ -21,6 +21,10 @@ final class PoseOverlayView: UIView {
     // Front-view only: vertical reference line through each shoulder + the
     // shoulder→elbow angle.
     private var showShoulderAngles = false
+    /// App language for the live height-guide label (see CaptureStrings). The
+    /// labels drawn by the shared static helpers are also baked into the saved
+    /// photos, so those stay English.
+    var language: String = CaptureStrings.defaultLanguage
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -96,9 +100,9 @@ final class PoseOverlayView: UIView {
 
             let label: String
             switch heightGuideState {
-            case .tooHigh: label = "▼  Lower phone"
-            case .tooLow: label = "▲  Raise phone"
-            case .ok: label = "✓  Height OK"
+            case .tooHigh: label = CaptureStrings.get(.guideLowerPhone, language)
+            case .tooLow: label = CaptureStrings.get(.guideRaisePhone, language)
+            case .ok: label = CaptureStrings.get(.guideHeightOk, language)
             case .hidden: label = ""
             }
             let attrs: [NSAttributedString.Key: Any] = [

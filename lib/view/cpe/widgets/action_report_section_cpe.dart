@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/common/widgets/expansion_container.dart';
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/provider/cpe_assessment.dart';
 import 'package:posture_detector_app/view/equipment/widgets/equipment_recommendation_card_v13.dart';
@@ -19,12 +20,13 @@ class ActionReportSectionCPE extends StatelessWidget {
   Widget build(BuildContext context) {
     final report = state.actionReportV13;
     if (report == null) return const SizedBox.shrink();
+    final loc = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Action Report v1.3',
+          loc.rvwActionReportTitle,
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w700,
@@ -33,14 +35,20 @@ class ActionReportSectionCPE extends StatelessWidget {
         ),
         SizedBox(height: 4.h),
         Text(
-          'Tier ${report.tierNumber} - ${report.tierName} | ROSA ${report.rosaScore}/10 | Main risk driver: ${report.mainRiskDriver}',
+          // Tier name and main risk driver come from the server as they are.
+          loc.rvwActionReportSummary(
+            report.tierNumber,
+            report.tierName,
+            report.rosaScore,
+            report.mainRiskDriver,
+          ),
           style: TextStyle(fontSize: 12.sp, color: AppColors.secondaryText),
         ),
         SizedBox(height: 12.h),
 
         if (report.priorityFindings.isNotEmpty) ...[
           Text(
-            'Priority Findings',
+            loc.rvwPriorityFindings,
             style: TextStyle(
               fontSize: 13.sp,
               fontWeight: FontWeight.w600,
@@ -63,7 +71,7 @@ class ActionReportSectionCPE extends StatelessWidget {
 
         if (report.supplementalCpeFindings.isNotEmpty) ...[
           Text(
-            'Supplemental CPE Findings',
+            loc.rvwSupplementalCpeFindings,
             style: TextStyle(
               fontSize: 13.sp,
               fontWeight: FontWeight.w600,
@@ -86,7 +94,7 @@ class ActionReportSectionCPE extends StatelessWidget {
 
         if (report.equipmentCards.isNotEmpty) ...[
           Text(
-            'Equipment Recommendations',
+            loc.equipmentRecommendations,
             style: TextStyle(
               fontSize: 13.sp,
               fontWeight: FontWeight.w600,

@@ -21,7 +21,8 @@ The files above exist on disk but are **not yet registered in
 1. Open `ios/Runner.xcworkspace`.
 2. Right-click the **Runner** group → *Add Files to "Runner"…* → select the
    `PostureEngine` folder → **Create groups**, target: **Runner**. Confirm the
-   12 `.swift` files appear under **Build Phases → Compile Sources**.
+   13 `.swift` files (including `CaptureStrings.swift`) appear under
+   **Build Phases → Compile Sources**.
    (`TFLiteCAPI.h` is a header — it should NOT be in Compile Sources.)
 3. Add the `Models` folder the same way. Confirm the two `.task` files and
    `yolov8n_float16.tflite` appear under **Build Phases → Copy Bundle Resources**.

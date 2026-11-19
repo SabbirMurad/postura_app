@@ -7,7 +7,6 @@ import 'package:posture_detector_app/common/widgets/app_top_section.dart';
 import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/common/widgets/custom_toast.dart';
 import 'package:posture_detector_app/common/widgets/height_input_field.dart';
-import 'package:posture_detector_app/constants/app_text.dart';
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/common/widgets/selection_chip.dart';
@@ -54,11 +53,11 @@ class _SelectBodyRegionScreenState
     if (_askHeight) {
       final h = _heightCm;
       if (h == null || h <= 0) {
-        showCustomToast(text: 'Please enter your height');
+        showCustomToast(text: loc.asmPleaseEnterHeight);
         return;
       }
       if (h < 50 || h > 250) {
-        showCustomToast(text: 'Height must be between 50 and 250 cm');
+        showCustomToast(text: loc.asmHeightRange);
         return;
       }
     }
@@ -98,7 +97,7 @@ class _SelectBodyRegionScreenState
                     // EN: "Body Region"
                     AppTopSection(
                       title: loc.bodyRegionTitle,
-                      subtitle: AppText.bodyRegionSubtitle,
+                      subtitle: loc.bodyRegionSubtitle,
                     ),
                     if (_askHeight) ...[
                       SizedBox(height: 32.h),

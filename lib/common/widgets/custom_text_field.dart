@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 
 class CustomTextField extends StatefulWidget {
   final TextEditingController controller;
@@ -96,7 +97,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   required maxLength,
                 }) {
                   return Text(
-                    'text limit $currentLength/$maxLength',
+                    AppLocalizations.of(context)!.mdlTextLimit(
+                      currentLength,
+                      maxLength ?? 0,
+                    ),
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 14.sp,

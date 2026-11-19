@@ -29,8 +29,8 @@ class ProfileScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ProfileInfoContainer(
-                  userName: profile?.fullName ?? 'username',
-                  role: profile?.role ?? 'role',
+                  userName: profile?.fullName ?? loc.userFallbackName,
+                  role: profile?.role ?? loc.role,
                 ),
                 SizedBox(height: 12.h),
                 SettingsContainer(

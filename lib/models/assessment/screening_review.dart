@@ -6,6 +6,9 @@
 // (red_flag_screening_screen.dart and work_ability_recovery_outlook_screen.dart);
 // keep the two in step.
 
+import 'package:posture_detector_app/models/assessment/yellow_flag.dart';
+import 'package:posture_detector_app/utils/l10n.dart';
+
 class ScreeningAnswer {
   final String question;
   final String answer;
@@ -25,19 +28,17 @@ class ScreeningAnswer {
   });
 }
 
-const _redFlagQuestions = <String, String>{
-  'new_bladder_or_bowel_dysfunction': 'New loss of bladder or bowel control',
-  'saddle_anaesthesia':
-      'Numbness in the saddle area (inner thighs, groin, or genitals)',
-  'progressive_motor_weakness': 'New or worsening weakness in your legs or arms',
-  'significant_recent_trauma':
-      'A significant recent trauma (e.g. a fall, accident, or blow to your back)',
+/// Question text per red-flag key. A getter so it follows the current
+/// language; the keys are the backend's snake_case field names.
+Map<String, String> get _redFlagQuestions => {
+  'new_bladder_or_bowel_dysfunction': l10n.mdlRedFlagBladderBowel,
+  'saddle_anaesthesia': l10n.mdlRedFlagSaddleNumbness,
+  'progressive_motor_weakness': l10n.mdlRedFlagWeakness,
+  'significant_recent_trauma': l10n.mdlRedFlagTrauma,
   'fever_or_infection_or_immunosuppression_with_back_pain':
-      'Fever, a recent infection, or a weakened immune system along with back pain',
-  'cancer_history_with_new_spinal_pain':
-      'A history of cancer, with new or worsening back/spine pain',
-  'severe_unremitting_or_night_pain':
-      "Severe pain that doesn't ease up, especially at night",
+      l10n.mdlRedFlagFeverInfection,
+  'cancer_history_with_new_spinal_pain': l10n.mdlRedFlagCancerHistory,
+  'severe_unremitting_or_night_pain': l10n.mdlRedFlagNightPain,
 };
 
 /// The 7 red-flag answers; empty when the scan has none recorded.
@@ -47,7 +48,7 @@ List<ScreeningAnswer> redFlagAnswersFromJson(Map<String, dynamic>? m) {
     final yes = m[q.key] == true;
     return ScreeningAnswer(
       question: q.value,
-      answer: yes ? 'Yes' : 'No',
+      answer: yes ? l10n.yes : l10n.mdlNo,
       flagged: yes,
     );
   }).toList();
@@ -64,62 +65,64 @@ class _Slider {
   const _Slider(this.key, this.question, this.low, this.high, this.flaggedWhen);
 }
 
-final _recoverySliders = <_Slider>[
+/// Getter (not a field) so the wording follows the current language.
+List<_Slider> get _recoverySliders => [
   _Slider(
     'chronicity_risk',
-    'How large is the risk that your current pain may become persistent or long-term?',
-    'No risk',
-    'Very large risk',
+    l10n.mdlRecoveryQChronicityRisk,
+    l10n.mdlRecoveryScaleNoRisk,
+    l10n.mdlRecoveryScaleVeryLargeRisk,
     (v) => v >= 7,
   ),
   _Slider(
     'rtw_expectancy',
-    'What are the chances you will be working your normal duties in 3 months?',
-    'No chance',
-    'Very large chance',
+    l10n.mdlRecoveryQRtwExpectancy,
+    l10n.mdlRecoveryScaleNoChance,
+    l10n.mdlRecoveryScaleVeryLargeChance,
     (v) => v <= 4,
   ),
   _Slider(
     'fear_avoidance',
-    'An increase in pain is an indication that I should stop what I am doing until the pain decreases.',
-    'Completely disagree',
-    'Completely agree',
+    l10n.mdlRecoveryQFearAvoidance,
+    l10n.mdlRecoveryScaleCompletelyDisagree,
+    l10n.mdlRecoveryScaleCompletelyAgree,
     (v) => v >= 7,
   ),
   _Slider(
     'light_work_capacity',
-    'I can do light work (or normal light duties) for an hour.',
-    'Cannot do it because of the pain',
-    'Can do it without the pain being a problem',
+    l10n.mdlRecoveryQLightWork,
+    l10n.mdlRecoveryScaleCannotBecausePain,
+    l10n.mdlRecoveryScaleCanWithoutPainProblem,
     (v) => v <= 4,
   ),
   _Slider(
     'sleep_interference',
-    'I can sleep at night.',
-    'Cannot do it because of the pain',
-    'Can do it without the pain being a problem',
+    l10n.mdlRecoveryQSleep,
+    l10n.mdlRecoveryScaleCannotBecausePain,
+    l10n.mdlRecoveryScaleCanWithoutPainProblem,
     (v) => v <= 4,
   ),
   _Slider(
     'presenteeism',
-    'How much has your pain reduced your productivity or ability to work at full capacity in the past week?',
-    'Not at all',
-    'Extremely (unable to work normally)',
+    l10n.mdlRecoveryQPresenteeism,
+    l10n.mdlRecoveryScaleNotAtAll,
+    l10n.mdlRecoveryScaleExtremely,
     (v) => v >= 7,
   ),
 ];
 
-const _workplaceSupport = _Slider(
+_Slider get _workplaceSupport => _Slider(
   'workplace_support',
-  'I feel I can get support or make reasonable adjustments at work if needed because of this pain.',
-  'Strongly disagree',
-  'Strongly agree',
+  l10n.mdlRecoveryQWorkplaceSupport,
+  l10n.mdlRecoveryScaleStronglyDisagree,
+  l10n.mdlRecoveryScaleStronglyAgree,
   _atMost3,
 );
 
 bool _atMost3(int v) => v <= 3;
 
-/// Absence answers the backend counts towards an Elevated outlook.
+/// Absence answers the backend counts towards an Elevated outlook. These are
+/// the backend's wire values (compared with `previous_absence`), not labels.
 const _flaggedAbsence = {'6-15 days', '16-30 days', 'More than 30 days'};
 
 ScreeningAnswer _slider(_Slider s, Map<String, dynamic> m) {
@@ -140,9 +143,8 @@ List<ScreeningAnswer> recoveryAnswersFromJson(Map<String, dynamic>? m) {
   return [
     ..._recoverySliders.map((s) => _slider(s, m)),
     ScreeningAnswer(
-      question:
-          'In the last 12 months, how many work days have you missed because of similar pain or musculoskeletal problems?',
-      answer: absence ?? '—',
+      question: l10n.mdlRecoveryQPreviousAbsence,
+      answer: PreviousAbsence.fromApi(absence)?.label ?? absence ?? '—',
       flagged: _flaggedAbsence.contains(absence),
     ),
     _slider(_workplaceSupport, m),

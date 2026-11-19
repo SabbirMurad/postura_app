@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'icon_container.dart';
 
 class DetailsAnalysisContainer extends StatelessWidget {
@@ -22,9 +23,9 @@ class DetailsAnalysisContainer extends StatelessWidget {
   });
 
   /// Get display comment based on color status
-  String _getDisplayComment() {
+  String _getDisplayComment(BuildContext context) {
     if (commentColor.toLowerCase() == 'green') {
-      return '✓ Optimal';
+      return '✓ ${AppLocalizations.of(context)!.optimal}';
     }
     return comment;
   }
@@ -76,7 +77,7 @@ class DetailsAnalysisContainer extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         trailing: Text(
-          _getDisplayComment(),
+          _getDisplayComment(context),
           style: TextStyle(
             fontSize: 14.sp,
             fontWeight: FontWeight.w600,

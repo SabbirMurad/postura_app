@@ -73,7 +73,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                   keyboardType: TextInputType.text,
                   validator: (value) {
                     if (value == null || value.toString().isEmpty) {
-                      return 'Email is required';
+                      return loc.emailRequired;
                     }
                     return null;
                   },

@@ -20,6 +20,7 @@ import 'package:posture_detector_app/models/analysis/body_region_risk_model.dart
 import 'package:posture_detector_app/provider/author.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 import 'package:posture_detector_app/utils/assessment_report_pdf.dart';
+import 'package:posture_detector_app/utils/l10n.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -39,14 +40,37 @@ class RosaStatus {
 }
 
 class RosaItem {
+  /// English category name. Also picks the icon
+  /// (`assets/icons/rosa/<category>.svg`), so it must stay untranslated.
   final String category;
+
+  /// Translated name to show; falls back to [category] when not given.
+  final String? label;
   final String score;
   final RosaStatus status;
   const RosaItem({
     required this.category,
+    this.label,
     required this.score,
     required this.status,
   });
+
+  /// The name to show, in the selected language. Screens that pass no [label]
+  /// get the translation of the English [category].
+  String get displayLabel => label ?? categoryLabel(category);
+
+  /// Translated name for one of the eight English ROSA category keys.
+  static String categoryLabel(String category) => switch (category) {
+    'Seat Height' => l10n.rptCategorySeatHeight,
+    'Backrest' => l10n.rptCategoryBackrest,
+    'Armrest' => l10n.rptCategoryArmrest,
+    'Chair' => l10n.rptCategoryChair,
+    'Monitor' => l10n.rptCategoryMonitor,
+    'Keyboard' => l10n.rptCategoryKeyboard,
+    'Mouse' => l10n.rptCategoryMouse,
+    'Peripheral' => l10n.rptCategoryPeripheral,
+    _ => category,
+  };
 }
 
 class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
@@ -81,12 +105,12 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
 
       await Share.shareXFiles(
         [XFile(file.path, mimeType: 'application/pdf')],
-        subject: 'Postura Assessment Report',
+        subject: l10n.rptShareSubject,
         sharePositionOrigin: shareOrigin,
       );
     } catch (e) {
       debugPrint('Export PDF error: $e');
-      showCustomToast(text: 'Could not create the PDF. Please try again.');
+      showCustomToast(text: l10n.rptPdfExportFailed);
     } finally {
       if (mounted) setState(() => _exporting = false);
     }
@@ -116,22 +140,25 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
   }
 
   String _subScoreLabel(int score) {
-    if (score == 0) return 'Not assessed';
-    if (score >= 3) return 'High risk';
-    if (score >= 2) return 'Review needed';
-    return 'Optimal';
+    final loc = AppLocalizations.of(context)!;
+    if (score == 0) return loc.rptSubScoreNotAssessed;
+    if (score >= 3) return loc.rptSubScoreHighRisk;
+    if (score >= 2) return loc.rptSubScoreReviewNeeded;
+    return loc.optimal;
   }
 
   String _finalLabel(int score) {
-    if (score >= 7) return 'High risk — immediate action required';
-    if (score >= 4) return 'Moderate risk — further investigation';
-    return 'Low risk — no immediate action needed';
+    final loc = AppLocalizations.of(context)!;
+    if (score >= 7) return loc.rptFinalHighRisk;
+    if (score >= 4) return loc.rptFinalModerateRisk;
+    return loc.rptFinalLowRisk;
   }
 
   String _actionLevel(int score) {
-    if (score >= 7) return 'Level 3 — Action required as soon as possible';
-    if (score >= 4) return 'Level 2 — Further investigation needed';
-    return 'Level 1 — No immediate action needed';
+    final loc = AppLocalizations.of(context)!;
+    if (score >= 7) return loc.rptActionLevel3;
+    if (score >= 4) return loc.rptActionLevel2;
+    return loc.rptActionLevel1;
   }
 
   Color _riskColor(RosaRisk risk) {
@@ -145,72 +172,83 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
     }
   }
 
-  List<RosaItem> _buildRosaItems(RosaScore score) => [
-    RosaItem(
-      category: 'Seat Height',
-      score: '${score.seatHeightScore}',
-      status: RosaStatus(
-        _subScoreLabel(score.seatHeightScore),
-        _subScoreRisk(score.seatHeightScore),
+  List<RosaItem> _buildRosaItems(RosaScore score) {
+    final loc = AppLocalizations.of(context)!;
+    return [
+      RosaItem(
+        category: 'Seat Height',
+        label: loc.rptCategorySeatHeight,
+        score: '${score.seatHeightScore}',
+        status: RosaStatus(
+          _subScoreLabel(score.seatHeightScore),
+          _subScoreRisk(score.seatHeightScore),
+        ),
       ),
-    ),
-    RosaItem(
-      category: 'Backrest',
-      score: '${score.backrestScore}',
-      status: RosaStatus(
-        _subScoreLabel(score.backrestScore),
-        _subScoreRisk(score.backrestScore),
+      RosaItem(
+        category: 'Backrest',
+        label: loc.rptCategoryBackrest,
+        score: '${score.backrestScore}',
+        status: RosaStatus(
+          _subScoreLabel(score.backrestScore),
+          _subScoreRisk(score.backrestScore),
+        ),
       ),
-    ),
-    RosaItem(
-      category: 'Armrest',
-      score: '${score.armrestScore}',
-      status: RosaStatus(
-        _subScoreLabel(score.armrestScore),
-        _subScoreRisk(score.armrestScore),
+      RosaItem(
+        category: 'Armrest',
+        label: loc.rptCategoryArmrest,
+        score: '${score.armrestScore}',
+        status: RosaStatus(
+          _subScoreLabel(score.armrestScore),
+          _subScoreRisk(score.armrestScore),
+        ),
       ),
-    ),
-    RosaItem(
-      category: 'Chair',
-      score: '${score.chairScore}',
-      status: RosaStatus(
-        _subScoreLabel(score.chairScore),
-        _subScoreRisk(score.chairScore),
+      RosaItem(
+        category: 'Chair',
+        label: loc.rptCategoryChair,
+        score: '${score.chairScore}',
+        status: RosaStatus(
+          _subScoreLabel(score.chairScore),
+          _subScoreRisk(score.chairScore),
+        ),
       ),
-    ),
-    RosaItem(
-      category: 'Monitor',
-      score: '${score.monitorScore}',
-      status: RosaStatus(
-        _subScoreLabel(score.monitorScore),
-        _subScoreRisk(score.monitorScore),
+      RosaItem(
+        category: 'Monitor',
+        label: loc.rptCategoryMonitor,
+        score: '${score.monitorScore}',
+        status: RosaStatus(
+          _subScoreLabel(score.monitorScore),
+          _subScoreRisk(score.monitorScore),
+        ),
       ),
-    ),
-    RosaItem(
-      category: 'Keyboard',
-      score: '${score.keyboardScore}',
-      status: RosaStatus(
-        _subScoreLabel(score.keyboardScore),
-        _subScoreRisk(score.keyboardScore),
+      RosaItem(
+        category: 'Keyboard',
+        label: loc.rptCategoryKeyboard,
+        score: '${score.keyboardScore}',
+        status: RosaStatus(
+          _subScoreLabel(score.keyboardScore),
+          _subScoreRisk(score.keyboardScore),
+        ),
       ),
-    ),
-    RosaItem(
-      category: 'Mouse',
-      score: '${score.mouseScore}',
-      status: RosaStatus(
-        _subScoreLabel(score.mouseScore),
-        _subScoreRisk(score.mouseScore),
+      RosaItem(
+        category: 'Mouse',
+        label: loc.rptCategoryMouse,
+        score: '${score.mouseScore}',
+        status: RosaStatus(
+          _subScoreLabel(score.mouseScore),
+          _subScoreRisk(score.mouseScore),
+        ),
       ),
-    ),
-    RosaItem(
-      category: 'Peripheral',
-      score: '${score.peripheralScore}',
-      status: RosaStatus(
-        _subScoreLabel(score.peripheralScore),
-        _subScoreRisk(score.peripheralScore),
+      RosaItem(
+        category: 'Peripheral',
+        label: loc.rptCategoryPeripheral,
+        score: '${score.peripheralScore}',
+        status: RosaStatus(
+          _subScoreLabel(score.peripheralScore),
+          _subScoreRisk(score.peripheralScore),
+        ),
       ),
-    ),
-  ];
+    ];
+  }
 
   Widget _rosaAssessmentSection(RosaScore score) {
     return Wrap(
@@ -291,9 +329,9 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
   String _cpeFindingLabel(String flag) {
     switch (flag) {
       case 'B_PHONE_CRADLE':
-        return 'Cradles the phone between ear and shoulder during calls';
+        return AppLocalizations.of(context)!.rptCpePhoneCradle;
       case 'B_PHONE_HANDSFREE':
-        return 'No hands-free option available for phone calls';
+        return AppLocalizations.of(context)!.rptCpePhoneHandsfree;
       default:
         return flag;
     }
@@ -314,7 +352,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Supplemental CPE Findings',
+            AppLocalizations.of(context)!.rptSupplementalCpeFindings,
             style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
           ),
           SizedBox(height: 10.h),
@@ -436,7 +474,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                       return Column(
                         children: [
                           HomeTopSection(
-                            name: profileData?.fullName ?? 'User',
+                            name: profileData?.fullName ?? loc.userFallbackName,
                             image: profileData?.avatar,
                           ),
                           SizedBox(height: 24.h),
@@ -464,7 +502,7 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         HomeTopSection(
-                          name: profileData?.fullName ?? 'User',
+                          name: profileData?.fullName ?? loc.userFallbackName,
                           image: profileData?.avatar,
                         ),
 

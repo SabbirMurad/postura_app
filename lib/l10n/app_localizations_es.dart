@@ -387,7 +387,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get equipmentRecommendations => 'Recomendaciones de equipo';
 
   @override
-  String get equipmentRecommendationsSubtitle => 'Con base en su análisis de postura y los principios de la norma ISO 9241-5:2024, se recomienda el siguiente equipo para mejorar su configuración ergonómica';
+  String get equipmentRecommendationsSubtitle => 'Con base en tu análisis de postura y los principios de la norma ISO 9241-5:2024, se recomienda el siguiente equipo para mejorar tu configuración ergonómica';
 
   @override
   String get downloadList => 'Descargar lista';
@@ -558,7 +558,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noDataFound => 'No se encontraron datos';
 
   @override
-  String get waitForCompanyApproval => 'Por favor, espere la aprobación del administrador de la empresa. Póngase en contacto con el administrador de su empresa.';
+  String get waitForCompanyApproval => 'Por favor, espera la aprobación del administrador de la empresa. Ponte en contacto con el administrador de tu empresa.';
 
   @override
   String get complianceLabel => 'CUMPLIMIENTO';
@@ -666,22 +666,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get emailRequired => 'El correo electrónico es obligatorio';
 
   @override
-  String get pleaseSelectUserMode => 'Por favor seleccione un modo de usuario';
+  String get pleaseSelectUserMode => 'Por favor selecciona un modo de usuario';
 
   @override
-  String get pleaseFillAllFields => 'Por favor complete todos los campos';
+  String get pleaseFillAllFields => 'Por favor completa todos los campos';
 
   @override
-  String get pleaseEnterCompanyCode => 'Por favor ingrese el código de empresa';
+  String get pleaseEnterCompanyCode => 'Por favor introduce el código de empresa';
 
   @override
   String get allFieldsMustBeFilled => 'Todos los campos deben estar completos';
 
   @override
-  String get pleaseFillAllRequirements => 'Por favor complete todos los requisitos';
+  String get pleaseFillAllRequirements => 'Por favor completa todos los requisitos';
 
   @override
-  String get pleaseSelectBodyRegion => 'Por favor seleccione la región del cuerpo';
+  String get pleaseSelectBodyRegion => 'Por favor selecciona la región del cuerpo';
 
   @override
   String get passwordNotMatched => 'Las contraseñas no coinciden';
@@ -690,13 +690,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get passwordMinLength => 'La contraseña debe tener al menos 8 caracteres';
 
   @override
-  String get pleaseEnterValidEmail => 'Por favor ingrese un correo válido';
+  String get pleaseEnterValidEmail => 'Por favor introduce un correo válido';
 
   @override
   String get passwordChangedSuccessfully => 'Contraseña cambiada exitosamente';
 
   @override
-  String get otpSentToEmail => 'OTP enviado a su correo';
+  String get otpSentToEmail => 'OTP enviado a tu correo';
 
   @override
   String get updatePassword => 'Actualizar contraseña';
@@ -747,7 +747,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noExercisesYet => 'Aún no hay ejercicios';
 
   @override
-  String get pleaseCompleteAssessmentFirst => 'Por favor complete su evaluación primero';
+  String get pleaseCompleteAssessmentFirst => 'Por favor completa tu evaluación primero';
 
   @override
   String get clinicalProjection => 'Proyección clínica';
@@ -849,7 +849,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get incomplete => 'Incompleto';
 
   @override
-  String get pleaseAnswerAllQuestions => 'Por favor responda todas las preguntas';
+  String get pleaseAnswerAllQuestions => 'Por favor responde todas las preguntas';
 
   @override
   String get greatStart => '¡Gran comienzo!';
@@ -924,7 +924,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get hipsGlutes => 'Caderas/Glúteos';
 
   @override
-  String get failedToProcessAnalysis => 'Error al procesar el análisis. Inténtelo de nuevo.';
+  String get failedToProcessAnalysis => 'Error al procesar el análisis. Inténtalo de nuevo.';
 
   @override
   String get unexpectedError => 'Ocurrió un error inesperado';
@@ -933,10 +933,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get failedToFetchReports => 'Error al obtener los informes';
 
   @override
-  String get pleaseEnterValidOtp => 'Por favor ingrese un OTP válido';
+  String get pleaseEnterValidOtp => 'Por favor introduce un OTP válido';
 
   @override
-  String get pleaseSelectLanguage => 'Por favor seleccione un idioma';
+  String get pleaseSelectLanguage => 'Por favor selecciona un idioma';
 
   @override
   String get yourReportPdf => 'Tu informe PDF';
@@ -1049,13 +1049,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get chairHasArmrests => '¿Tu silla tiene reposabrazos?';
 
   @override
-  String get basedOnPostureAnalysisIso => 'Basado en su análisis de postura y los principios ISO 9241-5:2024...';
+  String get basedOnPostureAnalysisIso => 'Basado en tu análisis de postura y los principios ISO 9241-5:2024...';
 
   @override
-  String get canAdjustChairHeightYes => 'Puede ajustar la altura de la silla';
+  String get canAdjustChairHeightYes => 'Se puede ajustar la altura de la silla';
 
   @override
-  String get cannotAdjustChairHeight => 'No puede ajustar la altura de la silla';
+  String get cannotAdjustChairHeight => 'No se puede ajustar la altura de la silla';
 
   @override
   String get enoughLegRoomYes => 'Suficiente espacio para las piernas bajo el escritorio';
@@ -1182,4 +1182,1525 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get workstationAlreadyRevised => 'El ergónomo ya actualizó estas respuestas. Solo se pueden actualizar una vez.';
+
+  @override
+  String get asmNo => 'No';
+
+  @override
+  String get asmSectionFrontPhoto => 'Foto frontal';
+
+  @override
+  String get asmQuestionFrontPhotoPossible => '¿Se puede tomar una foto desde el frente?';
+
+  @override
+  String get asmSectionChair => 'Silla';
+
+  @override
+  String get asmQuestionChairHeightAdjustable => 'La altura de la silla es regulable';
+
+  @override
+  String get asmQuestionUnderDeskSpace => 'Hay suficiente espacio bajo el escritorio para cruzar las piernas';
+
+  @override
+  String get asmQuestionSeatPanDepth => 'Profundidad del asiento (espacio detrás de tus rodillas)';
+
+  @override
+  String get asmSeatDepthOk => '~8 cm / 3 pulgadas (OK)';
+
+  @override
+  String get asmSeatDepthTooLong => 'Demasiado largo';
+
+  @override
+  String get asmSeatDepthTooShort => 'Demasiado corto';
+
+  @override
+  String get asmQuestionSeatPanAdjustable => 'La profundidad del asiento es regulable';
+
+  @override
+  String get asmQuestionArmrestsAdjustable => 'Los reposabrazos son regulables';
+
+  @override
+  String get asmQuestionArmrestHardDamaged => 'La superficie de los reposabrazos es dura o está dañada';
+
+  @override
+  String get asmQuestionUsesArmrests => '¿Usas los reposabrazos mientras trabajas (teclado/ratón)?';
+
+  @override
+  String get asmQuestionElbowsSupported => 'Tus codos/antebrazos se apoyan en los reposabrazos o en la superficie de trabajo';
+
+  @override
+  String get asmQuestionArmrestsTooWide => 'Los reposabrazos están demasiado separados';
+
+  @override
+  String get asmQuestionBackrestAdjustable => 'El respaldo es regulable';
+
+  @override
+  String get asmQuestionUsableBackrest => 'La silla tiene un respaldo utilizable que sostiene tu espalda mientras trabajas';
+
+  @override
+  String get asmQuestionLumbarSupport => 'La silla tiene un soporte lumbar que toca la parte baja de tu espalda cuando te sientas con normalidad';
+
+  @override
+  String get asmQuestionFeetSupported => 'Al teclear, ambos pies están apoyados en el suelo o en un reposapiés';
+
+  @override
+  String get asmQuestionWorkSurfaceTooHigh => 'El escritorio/la superficie de trabajo está demasiado alto (los hombros se encogen)';
+
+  @override
+  String get asmSectionMonitorPhone => 'Monitor y teléfono';
+
+  @override
+  String get asmQuestionMonitorAdjustable => 'La posición del monitor es regulable';
+
+  @override
+  String get asmQuestionMonitorTopVsEyeLevel => 'Borde superior del monitor respecto al nivel de los ojos';
+
+  @override
+  String get asmMonitorBelow => 'Por debajo';
+
+  @override
+  String get asmMonitorAtEyeLevel => 'A la altura de los ojos';
+
+  @override
+  String get asmMonitorAbove => 'Por encima';
+
+  @override
+  String get asmQuestionNeckTurn => '¿Necesitas girar la cabeza más de unos 30 grados (a la izquierda o a la derecha) para ver el monitor?';
+
+  @override
+  String get asmQuestionMonitorTooFar => 'El monitor está a más de un brazo de distancia (>75 cm)';
+
+  @override
+  String get asmQuestionScreenGlare => 'Hay reflejos en la pantalla';
+
+  @override
+  String get asmQuestionDocumentHolder => 'Tienes un atril para documentos en papel';
+
+  @override
+  String get asmQuestionDeskPhoneUsage => 'Uso del teléfono de escritorio';
+
+  @override
+  String get asmPhoneDontUse => 'No lo uso';
+
+  @override
+  String get asmPhoneHeadsetOneHand => 'Auriculares/1 mano';
+
+  @override
+  String get asmPhoneReachFar => 'Tengo que estirarme';
+
+  @override
+  String get asmQuestionPhoneCradle => 'Sujetas el teléfono entre la oreja y el hombro';
+
+  @override
+  String get asmQuestionHandsFreeOption => 'Tienes una opción de manos libres (auriculares/altavoz)';
+
+  @override
+  String get asmQuestionPhoneCradleSupplemental => '¿Sostienes o sujetas el teléfono entre la oreja y el hombro durante las llamadas?';
+
+  @override
+  String get asmQuestionHandsFreeSupplemental => '¿Tienes una opción de manos libres para las llamadas (auriculares, altavoz o similar)?';
+
+  @override
+  String get asmSectionMouseKeyboard => 'Ratón y teclado';
+
+  @override
+  String get asmQuestionMouseKeyboardDifferentSurfaces => 'El ratón y el teclado están en superficies/alturas diferentes';
+
+  @override
+  String get asmQuestionMousePinchGrip => 'Sujetas el ratón con agarre de pinza';
+
+  @override
+  String get asmQuestionMousePalmRest => 'Hay un reposamuñecas delante del ratón';
+
+  @override
+  String get asmQuestionMouseAdjustable => 'La posición del ratón es ajustable';
+
+  @override
+  String get asmQuestionMouseTooFar => 'El ratón está tan lejos que tienes que estirarte para alcanzarlo';
+
+  @override
+  String get asmQuestionWristDeviation => 'Las muñecas se desvían hacia los lados al teclear';
+
+  @override
+  String get asmQuestionKeyboardTooHigh => 'El teclado está demasiado alto (los hombros se encogen)';
+
+  @override
+  String get asmQuestionReachingOverhead => 'Con frecuencia alcanzas objetos por encima de la cabeza';
+
+  @override
+  String get asmQuestionKeyboardPlatformAdjustable => 'La bandeja/plataforma del teclado es regulable';
+
+  @override
+  String get asmSectionDailyDuration => 'Duración diaria';
+
+  @override
+  String get asmQuestionContinuousDeskTime => '¿Cuánto tiempo sueles trabajar seguido en este escritorio?';
+
+  @override
+  String get asmDeskDurationUnder30Min => '< 30 min';
+
+  @override
+  String get asmDeskDuration30To60Min => '30–60 min';
+
+  @override
+  String get asmDeskDurationOver1Hour => '> 1 hora';
+
+  @override
+  String get asmRedFlagTitle => 'Algunas preguntas de seguridad';
+
+  @override
+  String get asmRedFlagSubtitle => 'Nos ayudan a asegurarnos de que el ejercicio es una opción segura para ti en este momento. Responde con sinceridad: un «Sí» solo significa que te recomendaremos acudir a un profesional sanitario.';
+
+  @override
+  String get asmRedFlagBladderBowel => 'Pérdida de control de la vejiga o del intestino de nueva aparición';
+
+  @override
+  String get asmRedFlagSaddleNumbness => 'Entumecimiento en la zona de la silla de montar (cara interna de los muslos, ingles o genitales)';
+
+  @override
+  String get asmRedFlagLimbWeakness => 'Debilidad nueva o que empeora en las piernas o los brazos';
+
+  @override
+  String get asmRedFlagRecentTrauma => 'Un traumatismo importante reciente (p. ej., una caída, un accidente o un golpe en la espalda)';
+
+  @override
+  String get asmRedFlagFeverInfection => 'Fiebre, una infección reciente o un sistema inmunitario debilitado junto con dolor de espalda';
+
+  @override
+  String get asmRedFlagCancerHistory => 'Antecedentes de cáncer, con dolor de espalda o de columna nuevo o que empeora';
+
+  @override
+  String get asmRedFlagSevereNightPain => 'Dolor intenso que no se alivia, sobre todo por la noche';
+
+  @override
+  String get asmOutlookChronicityRisk => '¿Qué tan grande es el riesgo de que tu dolor actual se vuelva persistente o de larga duración?';
+
+  @override
+  String get asmOutlookNoRisk => 'Ningún riesgo';
+
+  @override
+  String get asmOutlookVeryLargeRisk => 'Riesgo muy grande';
+
+  @override
+  String get asmOutlookReturnToWork => '¿Qué probabilidades hay de que dentro de 3 meses estés realizando tus tareas laborales habituales?';
+
+  @override
+  String get asmOutlookNoChance => 'Ninguna probabilidad';
+
+  @override
+  String get asmOutlookVeryLargeChance => 'Probabilidad muy alta';
+
+  @override
+  String get asmOutlookFearAvoidance => 'Un aumento del dolor es una señal de que debo dejar de hacer lo que estoy haciendo hasta que el dolor disminuya.';
+
+  @override
+  String get asmOutlookCompletelyDisagree => 'Totalmente en desacuerdo';
+
+  @override
+  String get asmOutlookCompletelyAgree => 'Totalmente de acuerdo';
+
+  @override
+  String get asmOutlookLightWork => 'Puedo hacer trabajo ligero (o tareas ligeras habituales) durante una hora.';
+
+  @override
+  String get asmOutlookCannotBecauseOfPain => 'No puedo hacerlo por el dolor';
+
+  @override
+  String get asmOutlookCanWithoutPainProblem => 'Puedo hacerlo sin que el dolor sea un problema';
+
+  @override
+  String get asmOutlookSleep => 'Puedo dormir por la noche.';
+
+  @override
+  String get asmOutlookPresenteeism => '¿Cuánto ha reducido tu dolor tu productividad o tu capacidad de trabajar a pleno rendimiento durante la última semana?';
+
+  @override
+  String get asmOutlookNotAtAll => 'Nada';
+
+  @override
+  String get asmOutlookExtremely => 'Muchísimo (no puedo trabajar con normalidad)';
+
+  @override
+  String get asmOutlookPreviousAbsence => 'En los últimos 12 meses, ¿cuántos días de trabajo has faltado por un dolor similar o por problemas musculoesqueléticos?';
+
+  @override
+  String get asmOutlookWorkplaceSupport => 'Siento que puedo recibir apoyo o hacer ajustes razonables en el trabajo si lo necesito por este dolor.';
+
+  @override
+  String get asmOutlookStronglyDisagree => 'Muy en desacuerdo';
+
+  @override
+  String get asmOutlookStronglyAgree => 'Muy de acuerdo';
+
+  @override
+  String get asmPleaseEnterHeight => 'Introduce tu altura';
+
+  @override
+  String get asmHeightRange => 'La altura debe estar entre 50 y 250 cm';
+
+  @override
+  String get asmRiskNotAssessed => 'No evaluado';
+
+  @override
+  String get asmRiskHigh => 'Riesgo alto';
+
+  @override
+  String get asmRiskReviewNeeded => 'Requiere revisión';
+
+  @override
+  String get asmFinalRiskHigh => 'Riesgo alto — se requiere actuar de inmediato';
+
+  @override
+  String get asmFinalRiskModerate => 'Riesgo moderado — investigar más a fondo';
+
+  @override
+  String get asmFinalRiskLow => 'Riesgo bajo — no se requiere acción inmediata';
+
+  @override
+  String get asmActionLevel3 => 'Nivel 3 — Se requiere actuar lo antes posible';
+
+  @override
+  String get asmActionLevel2 => 'Nivel 2 — Se necesita más investigación';
+
+  @override
+  String get asmActionLevel1 => 'Nivel 1 — No se requiere acción inmediata';
+
+  @override
+  String asmSideViewNumber(int number) {
+    return 'Vista lateral $number';
+  }
+
+  @override
+  String get asmFrontView => 'Vista frontal';
+
+  @override
+  String get asmMetricKnee => 'Rodilla';
+
+  @override
+  String get asmMetricTrunk => 'Tronco';
+
+  @override
+  String get asmMetricElbow => 'Codo';
+
+  @override
+  String get asmMetricNeckState => 'Posición del cuello';
+
+  @override
+  String get asmMetricLowerBodyConfidence => 'Fiabilidad de la parte inferior del cuerpo';
+
+  @override
+  String get asmConfidenceHigh => 'Alta';
+
+  @override
+  String get asmConfidenceLow => 'Baja';
+
+  @override
+  String get asmMetricElbowAbduction => 'Abducción del codo';
+
+  @override
+  String get asmMetricWristDeviation => 'Desviación de la muñeca';
+
+  @override
+  String get asmNotMeasured => 'No medido';
+
+  @override
+  String get asmSubmitResult => 'Enviar resultado';
+
+  @override
+  String get capCaptureIncomplete => 'La captura no se completó. Inténtalo de nuevo.';
+
+  @override
+  String get capDetectionFailed => 'La detección de postura ha fallado.';
+
+  @override
+  String get genSsoForEmployeesOnly => 'El inicio de sesión con SSO es solo para empleados de empresas.';
+
+  @override
+  String get genCompanyCode => 'Código de empresa';
+
+  @override
+  String get genOr => 'o';
+
+  @override
+  String get genContinueWithSso => 'Continuar con SSO';
+
+  @override
+  String get genExerciseIntroTitle => 'Una pausa de movimiento cómoda, paso a paso';
+
+  @override
+  String get genExerciseIntroBody => 'Haz los ejercicios que la app ha seleccionado para ti; no necesitas completar toda la biblioteca. Empieza con suavidad, respira con normalidad y elige un rango de movimiento que te resulte cómodo. Basta con un movimiento pequeño y controlado; no hace falta forzar el estiramiento.';
+
+  @override
+  String get genExerciseIntroAmountTitle => 'Tu cantidad de ejercicio';
+
+  @override
+  String get genExerciseIntroAmountBody => 'Sigue las series, repeticiones o tiempo de mantenimiento que indica tu programa. Las descripciones de abajo explican cómo moverte, no son una segunda cantidad que completar.';
+
+  @override
+  String get genExerciseIntroAreaTitle => 'La zona del cuerpo resaltada';
+
+  @override
+  String get genExerciseIntroAreaBody => 'La zona roja es una guía aproximada, no un diagnóstico ni una promesa de que notarás el movimiento exactamente en ese punto.';
+
+  @override
+  String get genExerciseIntroStopTitle => 'Cuándo parar';
+
+  @override
+  String get genExerciseIntroStopBody => 'Para si notas dolor agudo, mareo, entumecimiento, hormigueo o síntomas que empeoran. Si los síntomas continúan después de parar, consulta a un profesional. Sigue las indicaciones de seguridad específicas de cada ejercicio de abajo.';
+
+  @override
+  String genExerciseSetsHold(int sets, String duration) {
+    String _temp0 = intl.Intl.pluralLogic(
+      sets,
+      locale: localeName,
+      other: '$sets series',
+      one: '1 serie',
+    );
+    return '$_temp0, mantener $duration';
+  }
+
+  @override
+  String get genProgrammeNote => 'Sigue las series, repeticiones o tiempo de mantenimiento de tu programa personalizado.';
+
+  @override
+  String get genMusclesBodyArea => 'Músculos / zona del cuerpo';
+
+  @override
+  String get genHowToDoIt => 'Cómo hacerlo';
+
+  @override
+  String get genWhyThisHelps => 'Por qué ayuda';
+
+  @override
+  String get genYourProgramme => 'Tu programa';
+
+  @override
+  String genPainLevelVasOutOf10(int vas) {
+    return 'Nivel de dolor (EVA): $vas / 10';
+  }
+
+  @override
+  String get genWhenNotToUseWhenToStop => 'Cuándo no hacerlo / cuándo parar';
+
+  @override
+  String get genTierGentle => 'Suave';
+
+  @override
+  String get genTierModerate => 'Moderado';
+
+  @override
+  String get genTierModerateMessage => 'Programa equilibrado para reducir las molestias y mejorar la movilidad.';
+
+  @override
+  String get genTierGentleMessage => 'Programa suave para aliviar la tensión y ganar resistencia.';
+
+  @override
+  String genTierFrequency(int minutes) {
+    return '3 veces por semana · sesiones de $minutes min';
+  }
+
+  @override
+  String get genCheckInWithProfessional => 'Consulta con un profesional';
+
+  @override
+  String get genConsultBeforeExercises => 'Según tus respuestas del cribado, consulta a un profesional sanitario antes de empezar los ejercicios.';
+
+  @override
+  String get genKeepExercisesGentleCpe => 'Según tus respuestas, te recomendamos hacer estos ejercicios con suavidad y revisarlos con tu CPE o un profesional sanitario. Para de inmediato si algún ejercicio aumenta tus síntomas.';
+
+  @override
+  String get genSplashTagline => 'MEJOREMOS\nTU POSTURA';
+
+  @override
+  String genResendCodeCountdown(int seconds) {
+    return 'Reenviar código ($seconds s)';
+  }
+
+  @override
+  String get genEquipment => 'Equipamiento';
+
+  @override
+  String get genPasswordTooShort => 'La contraseña debe tener al menos 8 caracteres.';
+
+  @override
+  String get genPasswordTooLong => 'La contraseña debe tener como máximo 128 caracteres.';
+
+  @override
+  String get genPasswordNeedsLettersAndNumbers => 'La contraseña debe contener letras y números.';
+
+  @override
+  String get genMonthJan => 'ene';
+
+  @override
+  String get genMonthFeb => 'feb';
+
+  @override
+  String get genMonthMar => 'mar';
+
+  @override
+  String get genMonthApr => 'abr';
+
+  @override
+  String get genMonthMay => 'may';
+
+  @override
+  String get genMonthJun => 'jun';
+
+  @override
+  String get genMonthJul => 'jul';
+
+  @override
+  String get genMonthAug => 'ago';
+
+  @override
+  String get genMonthSep => 'sept';
+
+  @override
+  String get genMonthOct => 'oct';
+
+  @override
+  String get genMonthNov => 'nov';
+
+  @override
+  String get genMonthDec => 'dic';
+
+  @override
+  String genDateDayMonthYear(String day, String month, String year) {
+    return '$day $month $year';
+  }
+
+  @override
+  String get genCertificate => 'Certificado';
+
+  @override
+  String get genCompleteModulesForCertificate => 'Completa todos los módulos para obtener tu certificado.';
+
+  @override
+  String genValidUntilDate(String date) {
+    return 'Válido hasta el $date';
+  }
+
+  @override
+  String get genValid => 'Válido';
+
+  @override
+  String get genValidBadge => 'VÁLIDO';
+
+  @override
+  String get genExpiredBadge => 'CADUCADO';
+
+  @override
+  String get genViewCertificate => 'Ver certificado';
+
+  @override
+  String get genCertificateExpiredBody => 'Tu certificado ha caducado. Vuelve a completar todos los módulos para renovarlo.';
+
+  @override
+  String get genNameLabel => 'Nombre: ';
+
+  @override
+  String get genIdLabel => 'ID: ';
+
+  @override
+  String get genPassedOn => 'Aprobado el';
+
+  @override
+  String get genCertificateId => 'ID del certificado';
+
+  @override
+  String get genIssuedOn => 'Emitido el';
+
+  @override
+  String get genValidUntil => 'Válido hasta';
+
+  @override
+  String get genDownload => 'Descargar';
+
+  @override
+  String genModuleNumber(int number) {
+    return 'Módulo $number';
+  }
+
+  @override
+  String get genIncompleteAnswerAllQuestions => 'Incompleto: responde a todas las preguntas';
+
+  @override
+  String genQuizQuestionNumbered(int number, String question) {
+    return 'P$number. $question';
+  }
+
+  @override
+  String get genNoInternetConnection => 'No se ha encontrado conexión a internet.';
+
+  @override
+  String get genSessionExpired => 'La sesión ha caducado. Vuelve a iniciar sesión.';
+
+  @override
+  String get genRequestTimedOut => 'La solicitud ha tardado demasiado. Inténtalo de nuevo.';
+
+  @override
+  String get genUploadTimedOut => 'La subida ha tardado demasiado. Inténtalo de nuevo.';
+
+  @override
+  String get genSomethingWentWrongTryAgain => 'Algo salió mal. Inténtalo de nuevo.';
+
+  @override
+  String get genSomethingWentWrongDot => 'Algo salió mal.';
+
+  @override
+  String get genEndpointNotFound => 'No se ha encontrado el servicio.';
+
+  @override
+  String get genCheckInternetConnection => 'No se pudo establecer la conexión. Comprueba tu conexión a internet.';
+
+  @override
+  String get genNetworkStatusUnavailable => 'No se puede comprobar el estado de la red. Inténtalo de nuevo.';
+
+  @override
+  String get genNudgeModule1a => 'Buen trabajo al empezar el Módulo 1. Tómate 30 segundos para fijarte en cualquier postura incómoda o en si llevas mucho rato sentado sin moverte, y continúa con el Módulo 2 cuando tengas un momento.';
+
+  @override
+  String get genNudgeModule1b => 'En el Módulo 1 has visto los fundamentos de la ergonomía. Un pequeño paso: revisa tu postura ahora y planifica cuándo empezarás el Módulo 2.';
+
+  @override
+  String get genNudgeModule2a => 'En el Módulo 2 practicaste la postura sentada neutra. Hoy revisa la posición de tus pies, caderas y cabeza, y después pasa al Módulo 3 para optimizar tu pantalla y tus dispositivos.';
+
+  @override
+  String get genNudgeModule2b => 'Consejo del Módulo 2 en práctica: siéntate erguido, con la espalda apoyada y la cabeza sobre los hombros. Cuando estés listo, abre el Módulo 3 para ajustar tu pantalla.';
+
+  @override
+  String get genNudgeModule3a => 'En el Módulo 3 aprendiste sobre pantallas, teclado y ratón. Haz una comprobación rápida ahora y luego continúa con el Módulo 4 para mejorar la iluminación y las micropausas.';
+
+  @override
+  String get genNudgeModule3b => 'La altura y la distancia de la pantalla y la posición del ratón marcan una gran diferencia. Ajusta hoy una cosa del Módulo 3 y termina el Módulo 4 cuando tengas 5 minutos.';
+
+  @override
+  String get genNudgeModule4a => 'Has llegado al Módulo 4: iluminación, ruido y micropausas. Haz ahora una micropausa de 20–30 segundos y luego continúa con el Módulo 5 para ver lo básico sobre levantar cargas.';
+
+  @override
+  String get genNudgeModule4b => 'Las micropausas cortas del Módulo 4 ayudan a tu concentración. Haz una ahora y reserva tiempo para completar el Módulo 5 sobre manipulación y levantamiento seguros.';
+
+  @override
+  String get genNudgeModule5a => 'En el Módulo 5 has visto cómo levantar cargas de forma segura. Mantén la carga cerca del cuerpo y evita girar el tronco. Cuando tu agenda lo permita, empieza el Módulo 6 para aplicar la ergonomía en casa o en remoto.';
+
+  @override
+  String get genNudgeModule5b => 'Piensa en la última vez que levantaste algo en el trabajo: ¿mantuviste la carga cerca y giraste con los pies? Cuando estés listo, abre el Módulo 6 para mejorar tu puesto híbrido o remoto.';
+
+  @override
+  String get genNudgeModule6a => 'Los consejos de trabajo híbrido y remoto del Módulo 6 funcionan mejor con movimiento regular. Hoy haz una llamada de pie y luego completa el Módulo 7 para aprender tu rutina preventiva diaria.';
+
+  @override
+  String get genNudgeModule6b => 'Portátil elevado, teclado externo y pausas cortas de pie: aplica ahora un consejo del Módulo 6 y luego termina el Módulo 7 para crear una rutina diaria sencilla.';
+
+  @override
+  String get genNudgeModule7a => 'Estás cerca de la meta. Haz ahora un estiramiento del Módulo 7 (cuello, hombros o muñecas) y completa los cuestionarios que te quedan para obtener tu certificado.';
+
+  @override
+  String get genNudgeModule7b => 'Los estiramientos sencillos del Módulo 7 ayudan a prevenir la rigidez. Haz una ronda ahora y termina los cuestionarios pendientes para conseguir tu certificado de ergonomía.';
+
+  @override
+  String get genNotificationChannelName => 'Notificaciones importantes';
+
+  @override
+  String get genNotificationChannelDescription => 'Este canal se usa para notificaciones importantes.';
+
+  @override
+  String get genFollowBack => 'Seguir también';
+
+  @override
+  String get genAccept => 'Aceptar';
+
+  @override
+  String get genReject => 'Rechazar';
+
+  @override
+  String get genReply => 'Responder';
+
+  @override
+  String get genTypeYourReply => 'Escribe tu respuesta';
+
+  @override
+  String get genMarkAsRead => 'Marcar como leído';
+
+  @override
+  String get genFailedToUploadImage => 'No se pudo subir la imagen';
+
+  @override
+  String get genSsoNotEnabled => 'El SSO no está activado para esta empresa.';
+
+  @override
+  String get genSsoNotConfigured => 'El SSO no está configurado para esta empresa.';
+
+  @override
+  String get genSsoSignInFailed => 'Error al iniciar sesión con SSO.';
+
+  @override
+  String genVasBadge(int vas) {
+    return 'EVA $vas';
+  }
+
+  @override
+  String get mdlRegionLeftShoulder => 'Hombro izquierdo';
+
+  @override
+  String get mdlRegionRightShoulder => 'Hombro derecho';
+
+  @override
+  String get mdlRegionLeftWrist => 'Muñeca izquierda';
+
+  @override
+  String get mdlRegionRightWrist => 'Muñeca derecha';
+
+  @override
+  String get mdlRegionLeftElbow => 'Codo izquierdo';
+
+  @override
+  String get mdlRegionRightElbow => 'Codo derecho';
+
+  @override
+  String get mdlRegionLeftHip => 'Cadera izquierda';
+
+  @override
+  String get mdlRegionRightHip => 'Cadera derecha';
+
+  @override
+  String get mdlRegionLeftKnee => 'Rodilla izquierda';
+
+  @override
+  String get mdlRegionRightKnee => 'Rodilla derecha';
+
+  @override
+  String get mdlRegionShoulder => 'Hombro';
+
+  @override
+  String get mdlRegionWrist => 'Muñeca';
+
+  @override
+  String get mdlRiskHigh => 'Alto';
+
+  @override
+  String get mdlPainDurationNone => 'Sin dolor';
+
+  @override
+  String get mdlPainDuration1To4Weeks => '1-4 semanas';
+
+  @override
+  String get mdlPainDuration6To12Weeks => '6-12 semanas';
+
+  @override
+  String get mdlPainDuration1To3Months => '1-3 meses';
+
+  @override
+  String get mdlPainDuration3To6Months => '3-6 meses';
+
+  @override
+  String get mdlPainDurationMoreThan6Months => 'Más de 6 meses';
+
+  @override
+  String get mdlSymptomNumbness => 'Entumecimiento u hormigueo';
+
+  @override
+  String get mdlSymptomSwelling => 'Hinchazón';
+
+  @override
+  String get mdlSymptomReducedRange => 'Movilidad reducida';
+
+  @override
+  String get mdlSymptomHeadaches => 'Dolores de cabeza';
+
+  @override
+  String get mdlSymptomEyeStrain => 'Fatiga visual';
+
+  @override
+  String get mdlAbsenceZeroDays => '0 días';
+
+  @override
+  String get mdlAbsence1To5Days => '1-5 días';
+
+  @override
+  String get mdlAbsence6To15Days => '6-15 días';
+
+  @override
+  String get mdlAbsence16To30Days => '16-30 días';
+
+  @override
+  String get mdlAbsenceMoreThan30Days => 'Más de 30 días';
+
+  @override
+  String get mdlNo => 'No';
+
+  @override
+  String get mdlRedFlagBladderBowel => 'Pérdida reciente del control de la vejiga o del intestino';
+
+  @override
+  String get mdlRedFlagSaddleNumbness => 'Entumecimiento en la zona de la silla de montar (cara interna de los muslos, ingle o genitales)';
+
+  @override
+  String get mdlRedFlagWeakness => 'Debilidad nueva o que empeora en tus piernas o brazos';
+
+  @override
+  String get mdlRedFlagTrauma => 'Un traumatismo reciente importante (p. ej., una caída, un accidente o un golpe en la espalda)';
+
+  @override
+  String get mdlRedFlagFeverInfection => 'Fiebre, una infección reciente o un sistema inmunitario debilitado junto con dolor de espalda';
+
+  @override
+  String get mdlRedFlagCancerHistory => 'Antecedentes de cáncer, con dolor de espalda/columna nuevo o que empeora';
+
+  @override
+  String get mdlRedFlagNightPain => 'Dolor intenso que no remite, especialmente por la noche';
+
+  @override
+  String get mdlRecoveryQChronicityRisk => '¿Qué tan grande es el riesgo de que tu dolor actual se vuelva persistente o de larga duración?';
+
+  @override
+  String get mdlRecoveryQRtwExpectancy => '¿Qué probabilidades hay de que dentro de 3 meses estés realizando tus tareas habituales?';
+
+  @override
+  String get mdlRecoveryQFearAvoidance => 'Un aumento del dolor es una señal de que debo dejar lo que estoy haciendo hasta que el dolor disminuya.';
+
+  @override
+  String get mdlRecoveryQLightWork => 'Puedo hacer trabajo ligero (o tareas ligeras habituales) durante una hora.';
+
+  @override
+  String get mdlRecoveryQSleep => 'Puedo dormir por la noche.';
+
+  @override
+  String get mdlRecoveryQPresenteeism => '¿Cuánto ha reducido tu dolor tu productividad o tu capacidad para trabajar a pleno rendimiento en la última semana?';
+
+  @override
+  String get mdlRecoveryQWorkplaceSupport => 'Siento que puedo obtener apoyo o hacer ajustes razonables en el trabajo si lo necesito debido a este dolor.';
+
+  @override
+  String get mdlRecoveryQPreviousAbsence => 'En los últimos 12 meses, ¿cuántos días de trabajo has faltado por un dolor similar o problemas musculoesqueléticos?';
+
+  @override
+  String get mdlRecoveryScaleNoRisk => 'Ningún riesgo';
+
+  @override
+  String get mdlRecoveryScaleVeryLargeRisk => 'Riesgo muy grande';
+
+  @override
+  String get mdlRecoveryScaleNoChance => 'Ninguna probabilidad';
+
+  @override
+  String get mdlRecoveryScaleVeryLargeChance => 'Probabilidad muy grande';
+
+  @override
+  String get mdlRecoveryScaleCompletelyDisagree => 'Totalmente en desacuerdo';
+
+  @override
+  String get mdlRecoveryScaleCompletelyAgree => 'Totalmente de acuerdo';
+
+  @override
+  String get mdlRecoveryScaleCannotBecausePain => 'No puedo hacerlo por el dolor';
+
+  @override
+  String get mdlRecoveryScaleCanWithoutPainProblem => 'Puedo hacerlo sin que el dolor sea un problema';
+
+  @override
+  String get mdlRecoveryScaleNotAtAll => 'Nada en absoluto';
+
+  @override
+  String get mdlRecoveryScaleExtremely => 'Muchísimo (no puedo trabajar con normalidad)';
+
+  @override
+  String get mdlRecoveryScaleStronglyDisagree => 'Muy en desacuerdo';
+
+  @override
+  String get mdlRecoveryScaleStronglyAgree => 'Muy de acuerdo';
+
+  @override
+  String get mdlNeckNeutral => 'Neutra';
+
+  @override
+  String get mdlNeckForwardHead => 'Cabeza adelantada';
+
+  @override
+  String get mdlNeckMildFlexion => 'Flexión leve';
+
+  @override
+  String get mdlNeckSevereFlexion => 'Flexión severa';
+
+  @override
+  String get mdlNeckHeadBack => 'Cabeza hacia atrás';
+
+  @override
+  String get mdlViewRelatedAction => 'Ver acción relacionada';
+
+  @override
+  String get mdlNoCaptureToSubmit => 'No hay ninguna captura para enviar';
+
+  @override
+  String get mdlFailedToUploadImages => 'No se pudieron subir las imágenes';
+
+  @override
+  String get mdlRosaPostureGuidance => 'Orientación postural ROSA';
+
+  @override
+  String get mdlRosaPostureGuidanceSubtitle => 'Ajustes concretos para mejorar tu configuración ergonómica';
+
+  @override
+  String mdlTierHeader(int tier, String tierName, int score) {
+    return 'Nivel $tier - $tierName | ROSA $score/10';
+  }
+
+  @override
+  String mdlMainRiskDriver(String driver) {
+    return 'Principal factor de riesgo: $driver';
+  }
+
+  @override
+  String get mdlPriorityFindings => 'Hallazgos prioritarios';
+
+  @override
+  String get mdlSupplementalCpeFindings => 'Hallazgos complementarios del CPE';
+
+  @override
+  String get mdlWhatYouCanDoNow => 'Qué puedes hacer ahora mismo';
+
+  @override
+  String get mdlWhenEquipmentHelps => 'Cuándo ayuda el equipo';
+
+  @override
+  String get mdlViewEquipmentRecommendations => 'Ver recomendaciones de equipo';
+
+  @override
+  String get mdlGeneralWorkstationHabits => 'Hábitos generales en el puesto de trabajo';
+
+  @override
+  String mdlTextLimit(int current, int max) {
+    return 'límite de texto $current/$max';
+  }
+
+  @override
+  String get mdlDeviceRootedTitle => 'Es posible que este dispositivo esté rooteado';
+
+  @override
+  String get mdlDeviceRootedBody => 'Postura ha detectado indicios de que este dispositivo está rooteado o tiene jailbreak. Otras aplicaciones del dispositivo podrían leer tus datos de evaluación y tus fotos. Si puedes, usa un dispositivo sin modificar.';
+
+  @override
+  String get mdlIUnderstandContinue => 'Entendido, continuar';
+
+  @override
+  String mdlModuleNumber(int number) {
+    return 'Módulo $number';
+  }
+
+  @override
+  String mdlHiName(String name) {
+    return 'Hola $name 👋';
+  }
+
+  @override
+  String get mdlHeight => 'Altura';
+
+  @override
+  String get mdlHeightHintCm => 'Altura en cm (p. ej., 175)';
+
+  @override
+  String get mdlPleaseEnterHeight => 'Introduce tu altura';
+
+  @override
+  String get mdlHeightOutOfRange => 'La altura debe estar entre 50 y 250 cm';
+
+  @override
+  String get mdlCouldNotLoadImage => 'No se pudo cargar la imagen';
+
+  @override
+  String get mdlRecoveryOutlookElevatedCompact => 'Perspectiva de recuperación: Elevada — se recomienda apoyo temprano';
+
+  @override
+  String get mdlRecoveryOutlookElevated => 'Perspectiva de recuperación: Elevada';
+
+  @override
+  String get mdlRecoveryOutlookElevatedBody => 'Tus respuestas indican un mayor riesgo de que el dolor actual se vuelva de larga duración. Se recomienda un apoyo específico temprano, además de los ajustes del puesto de trabajo que aparecen a continuación.';
+
+  @override
+  String get mdlNotAvailable => 'N/D';
+
+  @override
+  String get rptShareSubject => 'Informe de evaluación de Postura';
+
+  @override
+  String get rptPdfExportFailed => 'No se pudo crear el PDF. Inténtalo de nuevo.';
+
+  @override
+  String get rptSubScoreNotAssessed => 'No evaluado';
+
+  @override
+  String get rptSubScoreHighRisk => 'Riesgo alto';
+
+  @override
+  String get rptSubScoreReviewNeeded => 'Requiere revisión';
+
+  @override
+  String get rptFinalHighRisk => 'Riesgo alto: se requiere acción inmediata';
+
+  @override
+  String get rptFinalModerateRisk => 'Riesgo moderado: requiere más investigación';
+
+  @override
+  String get rptFinalLowRisk => 'Riesgo bajo: no se requiere acción inmediata';
+
+  @override
+  String get rptActionLevel3 => 'Nivel 3: se requiere acción lo antes posible';
+
+  @override
+  String get rptActionLevel2 => 'Nivel 2: se necesita más investigación';
+
+  @override
+  String get rptActionLevel1 => 'Nivel 1: no se requiere acción inmediata';
+
+  @override
+  String get rptCategorySeatHeight => 'Altura del asiento';
+
+  @override
+  String get rptCategoryBackrest => 'Respaldo';
+
+  @override
+  String get rptCategoryArmrest => 'Reposabrazos';
+
+  @override
+  String get rptCategoryChair => 'Silla';
+
+  @override
+  String get rptCategoryMonitor => 'Monitor';
+
+  @override
+  String get rptCategoryKeyboard => 'Teclado';
+
+  @override
+  String get rptCategoryMouse => 'Ratón';
+
+  @override
+  String get rptCategoryPeripheral => 'Periféricos';
+
+  @override
+  String get rptCpePhoneCradle => 'Sujeta el teléfono entre la oreja y el hombro durante las llamadas';
+
+  @override
+  String get rptCpePhoneHandsfree => 'No hay opción de manos libres para las llamadas';
+
+  @override
+  String get rptSupplementalCpeFindings => 'Hallazgos adicionales del CPE';
+
+  @override
+  String get rptPdfDocumentTitle => 'Informe de evaluación ergonómica de Postura';
+
+  @override
+  String get rptPdfFooter => 'Postura - Informe de evaluación ergonómica';
+
+  @override
+  String rptPdfPageOf(int page, int total) {
+    return 'Página $page de $total';
+  }
+
+  @override
+  String get rptPdfTitle => 'Informe de evaluación ergonómica';
+
+  @override
+  String get rptPdfAssessmentDate => 'Fecha de la evaluación';
+
+  @override
+  String get rptPdfHeight => 'Estatura';
+
+  @override
+  String get rptNotAvailable => 'N/D';
+
+  @override
+  String rptPdfRevisionNoteNamed(String name, String score) {
+    return 'Actualizada por el ergónomo ($name). Puntuación original según las respuestas del empleado: $score';
+  }
+
+  @override
+  String rptPdfRevisionNote(String score) {
+    return 'Actualizada por el ergónomo. Puntuación original según las respuestas del empleado: $score';
+  }
+
+  @override
+  String get rptRecoveryOutlookTitle => 'Perspectiva de recuperación: elevada';
+
+  @override
+  String get rptRecoveryOutlookBody => 'Tus respuestas indican un mayor riesgo de que el dolor actual se prolongue en el tiempo. Se recomienda apoyo específico temprano además de los ajustes del puesto de trabajo que se indican a continuación.';
+
+  @override
+  String get rptColumnCategory => 'Categoría';
+
+  @override
+  String get rptColumnScore => 'Puntuación';
+
+  @override
+  String get rptColumnStatus => 'Estado';
+
+  @override
+  String get rptColumnBodyRegion => 'Región del cuerpo';
+
+  @override
+  String get rptColumnRisk => 'Riesgo';
+
+  @override
+  String get rptColumnPainLevel => 'Nivel de dolor (0-10)';
+
+  @override
+  String get rptRegionShoulder => 'Hombro';
+
+  @override
+  String get rptRegionWrist => 'Muñeca';
+
+  @override
+  String get rptPdfReportedPainSymptoms => 'Dolor y síntomas indicados';
+
+  @override
+  String get rptPdfPainDuration => 'Duración del dolor';
+
+  @override
+  String get rptPdfSymptoms => 'Síntomas';
+
+  @override
+  String get rptPdfPostureGuidance => 'Recomendaciones de postura ROSA';
+
+  @override
+  String rptTierLine(String number, String name, String score) {
+    return 'Nivel $number - $name | ROSA $score/10';
+  }
+
+  @override
+  String rptPdfMainRiskDriver(String driver) {
+    return 'Principal factor de riesgo: $driver';
+  }
+
+  @override
+  String get rptPdfPriorityFindings => 'Hallazgos prioritarios';
+
+  @override
+  String get rptPdfWhatYouCanDoNow => 'Lo que puedes hacer ahora mismo';
+
+  @override
+  String get rptPdfWhenEquipmentHelps => 'Cuándo ayuda el equipo';
+
+  @override
+  String get rptPdfGeneralWorkstationHabits => 'Hábitos generales en el puesto de trabajo';
+
+  @override
+  String get rptPdfExerciseProgramme => 'Programa de ejercicios personalizado';
+
+  @override
+  String get rptPdfCheckInWithProfessional => 'Consulta con un profesional';
+
+  @override
+  String get rptPdfConsultBeforeExercises => 'Según tus respuestas del cuestionario de detección, consulta con un profesional sanitario antes de empezar los ejercicios.';
+
+  @override
+  String get rptPdfModerateProgramme => 'Programa moderado';
+
+  @override
+  String get rptPdfGentleProgramme => 'Programa suave';
+
+  @override
+  String get rptPdfNeedsCpeReview => 'Según tus respuestas, te recomendamos hacer estos ejercicios de forma suave y revisarlos con tu CPE o un profesional sanitario. Detente de inmediato si algún ejercicio aumenta tus síntomas.';
+
+  @override
+  String rptPdfBodyArea(String value) {
+    return 'Zona del cuerpo: $value';
+  }
+
+  @override
+  String rptPdfMusclesBodyArea(String value) {
+    return 'Músculos / zona del cuerpo: $value';
+  }
+
+  @override
+  String rptPdfHowToDoIt(String value) {
+    return 'Cómo hacerlo: $value';
+  }
+
+  @override
+  String rptPdfWhyThisHelps(String value) {
+    return 'Por qué ayuda: $value';
+  }
+
+  @override
+  String rptPdfSets(int count) {
+    return 'Series: $count';
+  }
+
+  @override
+  String rptPdfDuration(String value) {
+    return 'Duración: $value';
+  }
+
+  @override
+  String rptPdfPainLevelVas(String value) {
+    return 'Nivel de dolor (EVA): $value / 10';
+  }
+
+  @override
+  String rptPdfWhenNotToUse(String value) {
+    return 'Cuándo no hacerlo / cuándo parar: $value';
+  }
+
+  @override
+  String rptPdfWhenToStop(String value) {
+    return 'Cuándo parar: $value';
+  }
+
+  @override
+  String rptPdfRelatedFindings(String value) {
+    return 'Hallazgos relacionados: $value';
+  }
+
+  @override
+  String rptPdfWhyThisAppears(String value) {
+    return 'Por qué aparece: $value';
+  }
+
+  @override
+  String rptPdfTarget(String value) {
+    return 'Objetivo: $value';
+  }
+
+  @override
+  String rptPdfRequiredFeatures(String value) {
+    return 'Características necesarias: $value';
+  }
+
+  @override
+  String rptPdfNextStep(String value) {
+    return 'Siguiente paso: $value';
+  }
+
+  @override
+  String rptPdfPriority(String value) {
+    return 'Prioridad: $value';
+  }
+
+  @override
+  String rptPdfStatus(String value) {
+    return 'Estado: $value';
+  }
+
+  @override
+  String get rptEquipMonitorRiserTitle => 'Elevador de monitor regulable';
+
+  @override
+  String get rptEquipMonitorRiserDescription => 'Soporte regulable en altura (8–12 cm) para colocar el monitor a la altura de los ojos.';
+
+  @override
+  String get rptEquipFootrestTitle => 'Reposapiés regulable';
+
+  @override
+  String get rptEquipFootrestDescription => 'Reposapiés inclinado con regulación de altura (10–15 cm) para un apoyo estable de los pies.';
+
+  @override
+  String get rptEquipLumbarCushionTitle => 'Cojín de soporte lumbar';
+
+  @override
+  String get rptEquipLumbarCushionDescription => 'Rollo lumbar de espuma viscoelástica para apoyar la zona lumbar en la silla.';
+
+  @override
+  String get rptEquipWristRestTitle => 'Reposamuñecas';
+
+  @override
+  String get rptEquipWristRestDescription => 'Reposamuñecas blando para mantener una postura neutra de la muñeca al escribir.';
+
+  @override
+  String get rptEquipKeyboardTrayTitle => 'Bandeja para teclado';
+
+  @override
+  String get rptEquipKeyboardTrayDescription => 'Bandeja para teclado bajo el escritorio para situar el teclado a la altura de los codos.';
+
+  @override
+  String get rptEquipErgonomicMouseTitle => 'Ratón ergonómico';
+
+  @override
+  String get rptEquipErgonomicMouseDescription => 'Diseño de ratón alternativo para reducir la carga lateral en la muñeca y el hombro.';
+
+  @override
+  String get rptEquipArmrestPadsTitle => 'Almohadillas/elevadores para reposabrazos';
+
+  @override
+  String get rptEquipArmrestPadsDescription => 'Almohadillas regulables para reposabrazos (+3 cm o más) para apoyar los antebrazos a la altura de los codos.';
+
+  @override
+  String get rptEquipAntiFatigueMatTitle => 'Alfombrilla antifatiga';
+
+  @override
+  String get rptEquipAntiFatigueMatDescription => 'Alfombrilla acolchada para reducir la fatiga de piernas y zona lumbar al estar de pie mucho tiempo.';
+
+  @override
+  String get rptEquipSourceIsoMonitor => 'ISO 9241-5:2024; sección de monitor de ROSA.';
+
+  @override
+  String get rptEquipSourceIsoChair => 'ISO 9241-5:2024; sección de silla de ROSA.';
+
+  @override
+  String get rptEquipSourceRempelKeyboard => 'Rempel et al. 2006; sección de teclado de ROSA.';
+
+  @override
+  String get rptEquipSourceIsoKeyboard => 'ISO 9241-5:2024; sección de teclado de ROSA.';
+
+  @override
+  String get rptEquipSourceVanEerdMouse => 'Van Eerd et al. 2016; sección de ratón de ROSA.';
+
+  @override
+  String get rptEquipSourceVanEerdArmrest => 'Van Eerd et al. 2016; sección de reposabrazos de ROSA.';
+
+  @override
+  String get rptEquipSourceIsoStanding => 'ISO 9241-5:2024; sección de puesto de trabajo de pie.';
+
+  @override
+  String rptRiskBadgeMonitor(int score) {
+    return 'Riesgo del monitor: $score';
+  }
+
+  @override
+  String rptRiskBadgeChair(int score) {
+    return 'Riesgo de la silla: $score';
+  }
+
+  @override
+  String rptRiskBadgeKeyboard(int score) {
+    return 'Riesgo del teclado: $score';
+  }
+
+  @override
+  String rptRiskBadgeMouse(int score) {
+    return 'Riesgo del ratón: $score';
+  }
+
+  @override
+  String rptRiskBadgeArmrest(int score) {
+    return 'Riesgo de los reposabrazos: $score';
+  }
+
+  @override
+  String get rptEquipTierMessageRed => 'Se requiere una acción ergonómica inmediata en este puesto de trabajo.';
+
+  @override
+  String get rptEquipTierMessageOrange => 'Planifica y aplica estos cambios de equipo para reducir el riesgo ergonómico.';
+
+  @override
+  String get rptEquipTierMessageGreen => 'No hay acciones urgentes; mantén la configuración actual y sigue haciendo seguimiento.';
+
+  @override
+  String get rptEquipTierMessageYellow => 'Se han indicado síntomas; considera cambios de equipo y una revisión de seguimiento.';
+
+  @override
+  String get rptTierRed => 'ROJO';
+
+  @override
+  String get rptTierOrange => 'NARANJA';
+
+  @override
+  String get rptTierGreen => 'VERDE';
+
+  @override
+  String get rptTierYellow => 'AMARILLO';
+
+  @override
+  String get rptUrgencyUrgent => 'Urgente';
+
+  @override
+  String get rptUrgencyRecommended => 'Recomendado';
+
+  @override
+  String get rptUrgencyPreventive => 'Preventivo';
+
+  @override
+  String get rptEquipNoteTingling => 'El hormigueo puede indicar una compresión nerviosa: consulta con un profesional sanitario si los síntomas persisten.';
+
+  @override
+  String get rptEquipNoteFatigue => 'Se ha indicado fatiga: muchas horas en el escritorio aumentan el riesgo de sobrecarga.';
+
+  @override
+  String get rptEquipNoteLaptopStand => 'Usa un soporte para portátil + un teclado externo.';
+
+  @override
+  String get rptEquipNoteDualScreen => 'Asegúrate de que la pantalla principal esté centrada y la secundaria a la misma altura.';
+
+  @override
+  String get rptEquipNoteNeckRotation => 'Se ha detectado riesgo por rotación del cuello: considera usar una sola pantalla principal.';
+
+  @override
+  String get rptEquipNoteExternalMouse => 'Considera añadir un ratón externo para reducir la carga en la muñeca.';
+
+  @override
+  String get rptEquipNoteHybrid => 'Las recomendaciones se aplican a tu puesto de trabajo sentado.';
+
+  @override
+  String get rptEquipNoteBreaksRarely => 'Haz pausas cada 30–60 min para variar de postura.';
+
+  @override
+  String get rptEquipNoteBreaksEvery3h => 'Haz pausas con más frecuencia para reducir la carga sostenida.';
+
+  @override
+  String get rptUnknown => 'Desconocida';
+
+  @override
+  String get rptStatusActioned => 'Gestionado';
+
+  @override
+  String get rptLongTermCondition => 'Afección de larga duración: se recomienda un uso constante';
+
+  @override
+  String get rptRelatedFindings => 'Hallazgos relacionados';
+
+  @override
+  String get rptWhyThisAppears => 'Por qué aparece';
+
+  @override
+  String get rptTarget => 'Objetivo';
+
+  @override
+  String get rptRequiredFeatures => 'Características necesarias';
+
+  @override
+  String get rptNextStep => 'Siguiente paso';
+
+  @override
+  String get rvwApprovalLandmarksVerified => 'Los puntos de referencia de la postura son válidos y precisos';
+
+  @override
+  String get rvwApprovalWorkstationVerified => 'El equipo del puesto de trabajo está correctamente identificado';
+
+  @override
+  String get rvwApprovalRosaVerified => 'El cálculo de la puntuación ROSA está verificado';
+
+  @override
+  String get rvwApprovalRecommendationsVerified => 'Las recomendaciones son profesionalmente adecuadas';
+
+  @override
+  String get rvwFollowUpRequired => 'Requiere seguimiento';
+
+  @override
+  String get rvwNeedChanges => 'Requiere cambios';
+
+  @override
+  String get rvwHeight => 'Estatura';
+
+  @override
+  String get rvwNotProvided => 'No indicado';
+
+  @override
+  String get rvwNotAssessed => 'No evaluado';
+
+  @override
+  String get rvwHighRisk => 'Riesgo alto';
+
+  @override
+  String get rvwReviewNeeded => 'Requiere revisión';
+
+  @override
+  String get rvwFinalHighRisk => 'Riesgo alto — se requiere acción inmediata';
+
+  @override
+  String get rvwFinalModerateRisk => 'Riesgo moderado — investigación adicional';
+
+  @override
+  String get rvwFinalLowRisk => 'Riesgo bajo — no se requiere acción inmediata';
+
+  @override
+  String get rvwActionLevel3 => 'Nivel 3 — Se requiere acción lo antes posible';
+
+  @override
+  String get rvwActionLevel2 => 'Nivel 2 — Se requiere investigación adicional';
+
+  @override
+  String get rvwActionLevel1 => 'Nivel 1 — No se requiere acción inmediata';
+
+  @override
+  String get rvwActionReportTitle => 'Informe de acciones v1.3';
+
+  @override
+  String rvwActionReportSummary(int tierNumber, String tierName, int rosaScore, String mainRiskDriver) {
+    return 'Nivel $tierNumber - $tierName | ROSA $rosaScore/10 | Principal factor de riesgo: $mainRiskDriver';
+  }
+
+  @override
+  String get rvwPriorityFindings => 'Hallazgos prioritarios';
+
+  @override
+  String get rvwSupplementalCpeFindings => 'Hallazgos complementarios del CPE';
+
+  @override
+  String rvwGreetingName(String name) {
+    return 'Hola, $name';
+  }
+
+  @override
+  String get rvwRosaScoreCaps => 'PUNTUACIÓN ROSA';
+
+  @override
+  String rvwSideViewNumber(int number) {
+    return 'Vista lateral $number';
+  }
+
+  @override
+  String get rvwFrontView => 'Vista frontal';
+
+  @override
+  String get rvwElbowAbduction => 'Abducción del codo';
+
+  @override
+  String get rvwNotMeasured => 'No medido';
+
+  @override
+  String get rvwMetricKnee => 'Rodilla';
+
+  @override
+  String get rvwMetricTrunk => 'Tronco';
+
+  @override
+  String get rvwMetricElbow => 'Codo';
+
+  @override
+  String get rvwMetricNeckState => 'Estado del cuello';
+
+  @override
+  String get rvwMetricLowerBody => 'Parte inferior del cuerpo';
+
+  @override
+  String get rvwMetricMonitorDetected => 'Monitor detectado';
+
+  @override
+  String get rvwMetricMonitorTopVsEyeLevel => 'Borde superior del monitor respecto a los ojos';
+
+  @override
+  String get rvwNo => 'No';
+
+  @override
+  String get rvwMonitorBelow => 'Por debajo';
+
+  @override
+  String get rvwMonitorAtEyeLevel => 'A la altura de los ojos';
+
+  @override
+  String get rvwMonitorAbove => 'Por encima';
+
+  @override
+  String get rvwChronicityLow => 'Riesgo bajo';
+
+  @override
+  String get rvwChronicityElevated => 'Riesgo elevado';
+
+  @override
+  String get rvwHealthScreening => 'Cribado de salud';
+
+  @override
+  String get rvwHealthScreeningPrivacy => 'Visible solo para ergónomos. No se comparte con la empresa.';
+
+  @override
+  String get rvwSafetyQuestionsRedFlags => 'Preguntas de seguridad (señales de alarma)';
+
+  @override
+  String get rvwRedFlagPositive => 'Positivo: ejercicios suspendidos, derivar a un profesional sanitario';
+
+  @override
+  String get rvwRedFlagNegative => 'Negativo';
+
+  @override
+  String rvwRecoveryOutlookStatus(String level) {
+    return 'Perspectiva de recuperación: $level';
+  }
 }

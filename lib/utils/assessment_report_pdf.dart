@@ -8,6 +8,7 @@ import 'package:posture_detector_app/models/analysis/analysis_report.dart';
 import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 import 'package:posture_detector_app/models/profile/author_model.dart';
 import 'package:posture_detector_app/services/equipment_engine.dart';
+import 'package:posture_detector_app/utils/l10n.dart';
 import 'package:posture_detector_app/view/exercises/exercise_screen.dart';
 
 /// Builds the employee's assessment report as a PDF, entirely on-device, from
@@ -47,10 +48,7 @@ class AssessmentReportPdf {
       await rootBundle.load('assets/fonts/pdf/NotoSans-Bold.ttf'),
     );
 
-    final doc = pw.Document(
-      title: 'Postura Ergonomic Assessment Report',
-      author: 'Postura',
-    );
+    final doc = pw.Document(title: l10n.rptPdfDocumentTitle, author: 'Postura');
     final builder = AssessmentReportPdf._(report, profile);
 
     doc.addPage(
@@ -91,11 +89,11 @@ class AssessmentReportPdf {
       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
       children: [
         pw.Text(
-          'Postura - Ergonomic Assessment Report',
+          l10n.rptPdfFooter,
           style: const pw.TextStyle(fontSize: 8, color: _muted),
         ),
         pw.Text(
-          'Page ${context.pageNumber} of ${context.pagesCount}',
+          l10n.rptPdfPageOf(context.pageNumber, context.pagesCount),
           style: const pw.TextStyle(fontSize: 8, color: _muted),
         ),
       ],
@@ -105,13 +103,13 @@ class AssessmentReportPdf {
   List<pw.Widget> _header() {
     final rows = <List<String>>[
       if (_profile != null && _profile.fullName.isNotEmpty)
-        ['Name', _profile.fullName],
+        [l10n.name, _profile.fullName],
       if (_profile != null && _profile.email.isNotEmpty)
-        ['Email', _profile.email],
+        [l10n.email, _profile.email],
       if (_report.createdAt != null)
-        ['Assessment date', _formatDate(_report.createdAt!)],
+        [l10n.rptPdfAssessmentDate, _formatDate(_report.createdAt!)],
       if (_report.heightCm != null && _report.heightCm! > 0)
-        ['Height', '${_report.heightCm!.round()} cm'],
+        [l10n.rptPdfHeight, '${_report.heightCm!.round()} cm'],
     ];
     return [
       pw.Text(
@@ -125,7 +123,7 @@ class AssessmentReportPdf {
       ),
       pw.SizedBox(height: 4),
       pw.Text(
-        'Ergonomic Assessment Report',
+        l10n.rptPdfTitle,
         style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
       ),
       pw.SizedBox(height: 12),
@@ -158,8 +156,11 @@ class AssessmentReportPdf {
     final score = _report.currentRosaScore;
     final revision = _report.rosaRevision;
     final color = _finalScoreColor(score.finalScore);
+    final originalScore = _report.rosaScore.isValid
+        ? '${_report.rosaScore.finalScore} / 10'
+        : l10n.rptNotAvailable;
     return [
-      _heading('ROSA Ergonomic Analysis'),
+      _heading(l10n.rosaErgonomicAnalysis),
       pw.Container(
         padding: const pw.EdgeInsets.all(12),
         decoration: pw.BoxDecoration(
@@ -170,7 +171,7 @@ class AssessmentReportPdf {
         child: pw.Row(
           children: [
             pw.Text(
-              score.isValid ? '${score.finalScore} / 10' : 'N/A',
+              score.isValid ? '${score.finalScore} / 10' : l10n.rptNotAvailable,
               style: pw.TextStyle(
                 fontSize: 24,
                 fontWeight: pw.FontWeight.bold,
@@ -197,9 +198,12 @@ class AssessmentReportPdf {
                   if (revision != null) ...[
                     pw.SizedBox(height: 4),
                     pw.Text(
-                      'Updated by the ergonomist${revision.revisedBy?.isNotEmpty == true ? ' (${revision.revisedBy})' : ''}. '
-                      "Original score from the employee's answers: "
-                      '${_report.rosaScore.isValid ? '${_report.rosaScore.finalScore} / 10' : 'N/A'}',
+                      revision.revisedBy?.isNotEmpty == true
+                          ? l10n.rptPdfRevisionNoteNamed(
+                              revision.revisedBy!,
+                              originalScore,
+                            )
+                          : l10n.rptPdfRevisionNote(originalScore),
                       style: const pw.TextStyle(fontSize: 9, color: _muted),
                     ),
                   ],
@@ -212,17 +216,18 @@ class AssessmentReportPdf {
       if (_report.chronicityElevated) ...[
         pw.SizedBox(height: 8),
         _callout(
-          title: 'Recovery Outlook: Elevated',
-          body:
-              'Your answers indicate a higher risk that the current pain could '
-              'become longer-term. Early targeted support is recommended in '
-              'addition to the workstation adjustments below.',
+          title: l10n.rptRecoveryOutlookTitle,
+          body: l10n.rptRecoveryOutlookBody,
         ),
       ],
       pw.SizedBox(height: 12),
-      _subHeading('Detailed Analysis'),
+      _subHeading(l10n.detailedAnalysis),
       _table(
-        headers: const ['Category', 'Score', 'Status'],
+        headers: [
+          l10n.rptColumnCategory,
+          l10n.rptColumnScore,
+          l10n.rptColumnStatus,
+        ],
         rows: _rosaItems(
           score,
         ).map((i) => [i.$1, '${i.$2}', _subScoreLabel(i.$2)]).toList(),
@@ -236,16 +241,16 @@ class AssessmentReportPdf {
     final r = _report.bodyRegionRisks;
     // Same four regions the home screen shows.
     final rows = [
-      ['Elbows', r.elbows],
-      ['Shoulder', r.shoulder],
-      ['Wrist', r.wrist],
-      ['Lower Back', r.lowerBack],
+      [l10n.elbows, r.elbows],
+      [l10n.rptRegionShoulder, r.shoulder],
+      [l10n.rptRegionWrist, r.wrist],
+      [l10n.lowerBack, r.lowerBack],
     ].where((e) => e[1].isNotEmpty).toList();
     if (rows.isEmpty) return const [];
     return [
-      _heading('Risk by Body Region'),
+      _heading(l10n.riskByBodyRegion),
       _table(
-        headers: const ['Body region', 'Risk'],
+        headers: [l10n.rptColumnBodyRegion, l10n.rptColumnRisk],
         rows: rows.map((e) => [e[0], _capitalize(e[1])]).toList(),
         flex: const [3, 4],
       ),
@@ -261,10 +266,10 @@ class AssessmentReportPdf {
       return const [];
     }
     return [
-      _heading('Reported Pain & Symptoms'),
+      _heading(l10n.rptPdfReportedPainSymptoms),
       if (pain.isNotEmpty)
         _table(
-          headers: const ['Body region', 'Pain level (0-10)'],
+          headers: [l10n.rptColumnBodyRegion, l10n.rptColumnPainLevel],
           rows: pain
               .map((p) => [_humanize(p.bodyRegion), '${p.intensity}'])
               .toList(),
@@ -272,11 +277,11 @@ class AssessmentReportPdf {
         ),
       if (_report.painDuration.isNotEmpty) ...[
         pw.SizedBox(height: 6),
-        _keyValue('Pain duration', _report.painDuration),
+        _keyValue(l10n.rptPdfPainDuration, _report.painDuration),
       ],
       if (symptoms.isNotEmpty) ...[
         pw.SizedBox(height: 4),
-        _keyValue('Symptoms', symptoms.join(', ')),
+        _keyValue(l10n.rptPdfSymptoms, symptoms.join(', ')),
       ],
       pw.SizedBox(height: 16),
     ];
@@ -291,10 +296,10 @@ class AssessmentReportPdf {
       final legacyFlags = _report.supplementalCpeFindings.flags;
       if (corrections.isEmpty && legacyFlags.isEmpty) return const [];
       return [
-        _heading('ROSA Posture Guidance'),
+        _heading(l10n.rptPdfPostureGuidance),
         for (final c in corrections) ..._item(c.title, [c.description]),
         if (legacyFlags.isNotEmpty) ...[
-          _subHeading('Supplemental CPE Findings'),
+          _subHeading(l10n.rptSupplementalCpeFindings),
           for (final f in legacyFlags) _bullet(_cpeFindingLabel(f)),
           pw.SizedBox(height: 8),
         ],
@@ -303,15 +308,18 @@ class AssessmentReportPdf {
     }
 
     return [
-      _heading('ROSA Posture Guidance'),
+      _heading(l10n.rptPdfPostureGuidance),
       pw.Text(
-        'Tier ${report.tierNumber} - ${report.tierName} | '
-        'ROSA ${report.rosaScore}/10',
+        l10n.rptTierLine(
+          '${report.tierNumber}',
+          report.tierName,
+          '${report.rosaScore}',
+        ),
         style: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: _primary),
       ),
       if (report.mainRiskDriver.isNotEmpty)
         pw.Text(
-          'Main risk driver: ${report.mainRiskDriver}',
+          l10n.rptPdfMainRiskDriver(report.mainRiskDriver),
           style: const pw.TextStyle(color: _muted),
         ),
       pw.SizedBox(height: 6),
@@ -319,33 +327,33 @@ class AssessmentReportPdf {
       pw.SizedBox(height: 10),
 
       if (report.priorityFindings.isNotEmpty) ...[
-        _subHeading('Priority Findings'),
+        _subHeading(l10n.rptPdfPriorityFindings),
         if (report.priorityFindingsIntro.isNotEmpty)
           _intro(report.priorityFindingsIntro),
         for (final f in report.priorityFindings) ..._finding(f),
       ],
 
       if (report.supplementalCpeFindings.isNotEmpty) ...[
-        _subHeading('Supplemental CPE Findings'),
+        _subHeading(l10n.rptSupplementalCpeFindings),
         if (report.supplementalCpeIntro != null)
           _intro(report.supplementalCpeIntro!),
         for (final f in report.supplementalCpeFindings) ..._finding(f),
       ],
 
       if (report.whatYouCanDoNow.isNotEmpty) ...[
-        _subHeading('What You Can Do Right Now'),
+        _subHeading(l10n.rptPdfWhatYouCanDoNow),
         for (final a in report.whatYouCanDoNow) _bullet(a),
         pw.SizedBox(height: 8),
       ],
 
       if (report.equipmentHelpsText != null) ...[
-        _subHeading('When Equipment Helps'),
+        _subHeading(l10n.rptPdfWhenEquipmentHelps),
         pw.Text(report.equipmentHelpsText!),
         pw.SizedBox(height: 8),
       ],
 
       if (report.generalWorkstationHabits.isNotEmpty) ...[
-        _subHeading('General Workstation Habits'),
+        _subHeading(l10n.rptPdfGeneralWorkstationHabits),
         pw.Text(report.generalWorkstationHabits),
         pw.SizedBox(height: 8),
       ],
@@ -383,13 +391,10 @@ class AssessmentReportPdf {
     if (exercises.isEmpty) {
       if (!stopped) return const [];
       return [
-        _heading('Personalized Exercise Programme'),
+        _heading(l10n.rptPdfExerciseProgramme),
         _callout(
-          title: 'Please Check In With a Professional',
-          body:
-              data.message ??
-              'Based on your screening answers, please consult a healthcare '
-                  'professional before starting exercises.',
+          title: l10n.rptPdfCheckInWithProfessional,
+          body: data.message ?? l10n.rptPdfConsultBeforeExercises,
         ),
         pw.SizedBox(height: 16),
       ];
@@ -397,9 +402,11 @@ class AssessmentReportPdf {
 
     final label = ExerciseBusinessScreen.sensitivityLabel(data.readiness);
     return [
-      _heading('Personalized Exercise Programme'),
+      _heading(l10n.rptPdfExerciseProgramme),
       pw.Text(
-        '$label programme',
+        data.readiness == 'MODERATE'
+            ? l10n.rptPdfModerateProgramme
+            : l10n.rptPdfGentleProgramme,
         style: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: _primary),
       ),
       pw.Text(ExerciseBusinessScreen.tierMessage(label)),
@@ -409,12 +416,7 @@ class AssessmentReportPdf {
       ),
       if (data.needsCpeReview) ...[
         pw.SizedBox(height: 6),
-        _callout(
-          body:
-              'Based on your answers, we recommend keeping these gentle and '
-              'reviewing them with your CPE or a healthcare professional. Stop '
-              'immediately if any exercise increases your symptoms.',
-        ),
+        _callout(body: l10n.rptPdfNeedsCpeReview),
       ],
       pw.SizedBox(height: 8),
       for (final (lead, text) in ExerciseIntro.paragraphs)
@@ -422,23 +424,24 @@ class AssessmentReportPdf {
       pw.SizedBox(height: 8),
       for (final e in exercises)
         ..._item(e.title.isNotEmpty ? e.title : e.bodyRegion, [
-          'Body area: ${e.cardBodyArea}',
-          if (e.musclesText.isNotEmpty) 'Muscles / body area: ${e.musclesText}',
-          if (e.howToDoIt.isNotEmpty) 'How to do it: ${e.howToDoIt}',
+          l10n.rptPdfBodyArea(e.cardBodyArea),
+          if (e.musclesText.isNotEmpty)
+            l10n.rptPdfMusclesBodyArea(e.musclesText),
+          if (e.howToDoIt.isNotEmpty) l10n.rptPdfHowToDoIt(e.howToDoIt),
           if (e.whyThisHelps.isNotEmpty)
-            'Why this helps: ${e.whyThisHelps}'
+            l10n.rptPdfWhyThisHelps(e.whyThisHelps)
           else if (e.musclesAddressed?.isNotEmpty ?? false)
-            'Why this helps: ${e.musclesAddressed}',
+            l10n.rptPdfWhyThisHelps(e.musclesAddressed!),
           _join([
-            if (e.recommendedSets > 0) 'Sets: ${e.recommendedSets}',
+            if (e.recommendedSets > 0) l10n.rptPdfSets(e.recommendedSets),
             if (e.recommendedDuration.isNotEmpty)
-              'Duration: ${e.recommendedDuration}',
-            if (e.regionVas != null) 'Pain level (VAS): ${e.regionVas} / 10',
+              l10n.rptPdfDuration(e.recommendedDuration),
+            if (e.regionVas != null) l10n.rptPdfPainLevelVas('${e.regionVas}'),
           ]),
           if (e.contraindications?.isNotEmpty ?? false)
-            'When not to use / when to stop: ${e.contraindications}'
+            l10n.rptPdfWhenNotToUse(e.contraindications!)
           else if (e.safetyNote.isNotEmpty)
-            'When to stop: ${e.safetyNote}',
+            l10n.rptPdfWhenToStop(e.safetyNote),
         ]),
       pw.SizedBox(height: 8),
     ];
@@ -451,20 +454,20 @@ class AssessmentReportPdf {
     if (v13 != null) {
       if (v13.equipmentCards.isEmpty) return const [];
       return [
-        _heading('Equipment Recommendations'),
+        _heading(l10n.equipmentRecommendations),
         for (final c in v13.equipmentCards)
           ..._item('${c.cardTitle}  -  ${c.priorityLabel}', [
             c.priorityText,
             c.cardDescription,
             c.consolidationNote ?? '',
             if (_relatedLabels(c, v13).isNotEmpty)
-              'Related findings: ${_relatedLabels(c, v13).join('; ')}',
+              l10n.rptPdfRelatedFindings(_relatedLabels(c, v13).join('; ')),
             if (c.whyText.isNotEmpty)
-              'Why this appears: ${c.whyText.join(' ')}',
-            if (c.targetText.isNotEmpty) 'Target: ${c.targetText}',
+              l10n.rptPdfWhyThisAppears(c.whyText.join(' ')),
+            if (c.targetText.isNotEmpty) l10n.rptPdfTarget(c.targetText),
             if (c.requiredFeatures.isNotEmpty)
-              'Required features: ${c.requiredFeatures.join(', ')}',
-            if (c.nextStepText.isNotEmpty) 'Next step: ${c.nextStepText}',
+              l10n.rptPdfRequiredFeatures(c.requiredFeatures.join(', ')),
+            if (c.nextStepText.isNotEmpty) l10n.rptPdfNextStep(c.nextStepText),
           ]),
       ];
     }
@@ -472,9 +475,9 @@ class AssessmentReportPdf {
     final engine = EquipmentEngine.legacyOutputFor(_report);
     if (engine.equipmentCards.isNotEmpty) {
       return [
-        _heading('Equipment Recommendations'),
+        _heading(l10n.equipmentRecommendations),
         pw.Text(
-          engine.tier,
+          EquipmentEngine.tierLabel(engine.tier),
           style: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: _primary),
         ),
         pw.Text(engine.tierMessage),
@@ -492,13 +495,14 @@ class AssessmentReportPdf {
     final list = _report.equipment;
     if (list.isEmpty) return const [];
     return [
-      _heading('Equipment Recommendations'),
+      _heading(l10n.equipmentRecommendations),
       for (final e in list)
         ..._item(e.name, [
           e.description,
           _join([
-            if (e.priority.isNotEmpty) 'Priority: ${_capitalize(e.priority)}',
-            if (e.status.isNotEmpty) 'Status: ${e.status}',
+            if (e.priority.isNotEmpty)
+              l10n.rptPdfPriority(_capitalize(e.priority)),
+            if (e.status.isNotEmpty) l10n.rptPdfStatus(e.status),
           ]),
         ]),
     ];
@@ -536,11 +540,11 @@ class AssessmentReportPdf {
   /// Same names the equipment screen shows for a card's related findings.
   List<String> _relatedLabels(EquipmentCardV13 c, ActionReportV13 report) =>
       c.relatedFindingLabels.isNotEmpty
-          ? c.relatedFindingLabels
-          : c.relatedFindings
-                .map((id) => report.findingLabels[id])
-                .whereType<String>()
-                .toList();
+      ? c.relatedFindingLabels
+      : c.relatedFindings
+            .map((id) => report.findingLabels[id])
+            .whereType<String>()
+            .toList();
 
   List<pw.Widget> _item(String title, List<String> paragraphs) => [
     pw.Padding(
@@ -626,21 +630,21 @@ class AssessmentReportPdf {
   // ── Copy & thresholds (same as the app screens) ────────────────────────────
 
   List<(String, int)> _rosaItems(RosaScore s) => [
-    ('Seat Height', s.seatHeightScore),
-    ('Backrest', s.backrestScore),
-    ('Armrest', s.armrestScore),
-    ('Chair', s.chairScore),
-    ('Monitor', s.monitorScore),
-    ('Keyboard', s.keyboardScore),
-    ('Mouse', s.mouseScore),
-    ('Peripheral', s.peripheralScore),
+    (l10n.rptCategorySeatHeight, s.seatHeightScore),
+    (l10n.rptCategoryBackrest, s.backrestScore),
+    (l10n.rptCategoryArmrest, s.armrestScore),
+    (l10n.rptCategoryChair, s.chairScore),
+    (l10n.rptCategoryMonitor, s.monitorScore),
+    (l10n.rptCategoryKeyboard, s.keyboardScore),
+    (l10n.rptCategoryMouse, s.mouseScore),
+    (l10n.rptCategoryPeripheral, s.peripheralScore),
   ];
 
   String _subScoreLabel(int score) {
-    if (score == 0) return 'Not assessed';
-    if (score >= 3) return 'High risk';
-    if (score >= 2) return 'Review needed';
-    return 'Optimal';
+    if (score == 0) return l10n.rptSubScoreNotAssessed;
+    if (score >= 3) return l10n.rptSubScoreHighRisk;
+    if (score >= 2) return l10n.rptSubScoreReviewNeeded;
+    return l10n.optimal;
   }
 
   PdfColor _finalScoreColor(int score) {
@@ -650,23 +654,23 @@ class AssessmentReportPdf {
   }
 
   String _finalLabel(int score) {
-    if (score >= 7) return 'High risk — immediate action required';
-    if (score >= 4) return 'Moderate risk — further investigation';
-    return 'Low risk — no immediate action needed';
+    if (score >= 7) return l10n.rptFinalHighRisk;
+    if (score >= 4) return l10n.rptFinalModerateRisk;
+    return l10n.rptFinalLowRisk;
   }
 
   String _actionLevel(int score) {
-    if (score >= 7) return 'Level 3 — Action required as soon as possible';
-    if (score >= 4) return 'Level 2 — Further investigation needed';
-    return 'Level 1 — No immediate action needed';
+    if (score >= 7) return l10n.rptActionLevel3;
+    if (score >= 4) return l10n.rptActionLevel2;
+    return l10n.rptActionLevel1;
   }
 
   String _cpeFindingLabel(String flag) {
     switch (flag) {
       case 'B_PHONE_CRADLE':
-        return 'Cradles the phone between ear and shoulder during calls';
+        return l10n.rptCpePhoneCradle;
       case 'B_PHONE_HANDSFREE':
-        return 'No hands-free option available for phone calls';
+        return l10n.rptCpePhoneHandsfree;
       default:
         return flag;
     }

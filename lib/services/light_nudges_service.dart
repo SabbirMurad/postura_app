@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:posture_detector_app/main.dart';
+import 'package:posture_detector_app/utils/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Light Nudges V2 Service
@@ -101,44 +102,21 @@ class LightNudgesService {
   List<String> _getNudgesForModule(int moduleIndex) {
     switch (moduleIndex) {
       case 0: // Module 1 started
-        return [
-          "Nice work starting Module 1. Take 30 seconds to notice any awkward posture or long static sitting — then continue with Module 2 when you have a moment.",
-          "You've seen the basics of ergonomics in Module 1. One small step: check your posture now and plan when you'll start Module 2.",
-        ];
+        return [l10n.genNudgeModule1a, l10n.genNudgeModule1b];
       case 1: // Module 2 started
-        return [
-          "You practiced neutral sitting in Module 2. Today, check your feet, hips, and head position — then move on to Module 3 to optimise your screen and devices.",
-          "Module 2 tip in action: sit tall with your back supported and head over shoulders. When you're ready, open Module 3 to fine-tune your screen setup.",
-        ];
+        return [l10n.genNudgeModule2a, l10n.genNudgeModule2b];
       case 2: // Module 3 started
-        return [
-          "You learned about screens, keyboard, and mouse in Module 3. Do a quick check now, then continue with Module 4 to improve light and microbreaks.",
-          "Screen height, distance, and mouse position make a big difference. Adjust one thing from Module 3 today, and finish Module 4 when you have 5 minutes.",
-        ];
+        return [l10n.genNudgeModule3a, l10n.genNudgeModule3b];
       case 3: // Module 4 started
-        return [
-          "You've reached Module 4: light, noise, and microbreaks. Take a 20–30 second microbreak now — then continue to Module 5 to cover lifting basics.",
-          "Short microbreaks from Module 4 help your focus. Do one now and schedule time to complete Module 5 for safe handling and lifting.",
-        ];
+        return [l10n.genNudgeModule4a, l10n.genNudgeModule4b];
       case 4: // Module 5 started
-        return [
-          "You've seen safe lifting in Module 5. Keep loads close and avoid twisting. When your schedule allows, start Module 6 to apply ergonomics at home or remotely.",
-          "Think of your last lift at work: did you keep the load close and turn with your feet? When ready, open Module 6 to improve your hybrid/remote setup.",
-        ];
+        return [l10n.genNudgeModule5a, l10n.genNudgeModule5b];
       case 5: // Module 6 started
-        return [
-          "Hybrid and remote tips from Module 6 work best with regular movement. Stand up for one call today, then complete Module 7 to learn your daily preventive routine.",
-          "Raised laptop, external keyboard, and short standing breaks — apply one Module 6 tip now and then finish Module 7 to build a simple daily routine.",
-        ];
+        return [l10n.genNudgeModule6a, l10n.genNudgeModule6b];
       case 6: // Module 7 started
-        return [
-          "You're close to the finish line. Use one Module 7 stretch (neck, shoulders, or wrists) now, and complete your remaining quiz steps to get your certificate.",
-          "Simple stretches from Module 7 help prevent stiffness. Do one round now and finalise any open module quizzes to earn your ergonomics certificate.",
-        ];
+        return [l10n.genNudgeModule7a, l10n.genNudgeModule7b];
       default:
-        return [
-          "Nice work starting Module 1. Take 30 seconds to notice any awkward posture or long static sitting — then continue with Module 2 when you have a moment.",
-        ];
+        return [l10n.genNudgeModule1a];
     }
   }
 

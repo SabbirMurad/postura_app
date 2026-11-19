@@ -8,6 +8,7 @@ import 'package:posture_detector_app/provider/report.dart';
 
 import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/utils/l10n.dart';
 
 class ExerciseBusinessScreen extends ConsumerWidget {
   const ExerciseBusinessScreen({super.key});
@@ -18,35 +19,32 @@ class ExerciseBusinessScreen extends ConsumerWidget {
   /// the exact bug the client's audit flagged; GENTLE/GENTLE_MAINTENANCE
   /// both read as "Gentle" here, MODERATE as "Moderate" — there is no
   /// "Active"/higher-intensity tier).
+  ///
+  /// Returns the translated label (also used by the PDF report, so it reads
+  /// the global l10n); [tierMessage], [frequency] and the tier colour compare
+  /// against the same translated label.
   static String sensitivityLabel(String readiness) {
-    return readiness == 'MODERATE' ? 'Moderate' : 'Gentle';
+    return readiness == 'MODERATE' ? l10n.genTierModerate : l10n.genTierGentle;
   }
 
+  static bool _isModerate(String label) => label == l10n.genTierModerate;
+
   Color _tierColor(String label) {
-    switch (label) {
-      case 'Moderate':
-        return const Color(0xFFDA7101);
-      default:
-        return const Color(0xFF437A22);
-    }
+    return _isModerate(label)
+        ? const Color(0xFFDA7101)
+        : const Color(0xFF437A22);
   }
 
   static String tierMessage(String label) {
-    switch (label) {
-      case 'Moderate':
-        return 'Balanced programme to reduce discomfort and improve mobility.';
-      default:
-        return 'Gentle programme to relieve tension and build resilience.';
-    }
+    return _isModerate(label)
+        ? l10n.genTierModerateMessage
+        : l10n.genTierGentleMessage;
   }
 
   static String frequency(String label) {
-    switch (label) {
-      case 'Moderate':
-        return '3× per week · 12 min sessions';
-      default:
-        return '3× per week · 10 min sessions';
-    }
+    return _isModerate(label)
+        ? l10n.genTierFrequency(12)
+        : l10n.genTierFrequency(10);
   }
 
   @override
@@ -124,8 +122,8 @@ class ExerciseBusinessScreen extends ConsumerWidget {
                             SizedBox(height: 20.h),
                             Text(
                               stopped
-                                  ? 'Please Check In With a Professional'
-                                  : 'No Exercises Yet',
+                                  ? loc.genCheckInWithProfessional
+                                  : loc.noExercisesYet,
                               style: TextStyle(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.w600,
@@ -137,9 +135,8 @@ class ExerciseBusinessScreen extends ConsumerWidget {
                             Text(
                               stopped
                                   ? (exercisesData?.message ??
-                                        'Based on your screening answers, please consult a '
-                                            'healthcare professional before starting exercises.')
-                                  : 'Please complete your assessment first',
+                                        loc.genConsultBeforeExercises)
+                                  : loc.pleaseCompleteAssessmentFirst,
                               style: TextStyle(
                                 fontSize: 13.sp,
                                 color: AppColors.secondaryText.withValues(
@@ -261,10 +258,7 @@ class ExerciseBusinessScreen extends ConsumerWidget {
                                       SizedBox(width: 8.w),
                                       Expanded(
                                         child: Text(
-                                          'Based on your answers, we recommend keeping these '
-                                          'gentle and reviewing them with your CPE or a healthcare '
-                                          'professional. Stop immediately if any exercise increases '
-                                          'your symptoms.',
+                                          loc.genKeepExercisesGentleCpe,
                                           style: TextStyle(
                                             fontSize: 12.sp,
                                             color: const Color(0xFF856404),

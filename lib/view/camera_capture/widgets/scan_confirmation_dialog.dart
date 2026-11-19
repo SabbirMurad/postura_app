@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/common/widgets/primary_button.dart';
 import 'package:posture_detector_app/constants/colors.dart';
-import 'package:posture_detector_app/constants/app_text.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 
 void showScanConfirmationDialog(
   BuildContext context, {
@@ -12,6 +12,7 @@ void showScanConfirmationDialog(
   required VoidCallback onCancel,
   required VoidCallback onConfirm,
 }) {
+  final loc = AppLocalizations.of(context)!;
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -35,7 +36,7 @@ void showScanConfirmationDialog(
               child: PrimaryButton(
                 height: 48.h,
                 onTap: onCancel,
-                text: AppText.cancel,
+                text: loc.cancel,
                 backgroundColor: AppColors.greyDeemed,
               ),
             ),
@@ -44,7 +45,7 @@ void showScanConfirmationDialog(
               child: PrimaryButton(
                 onTap: onConfirm,
                 height: 48.h,
-                text: AppText.yesSure,
+                text: loc.yesSure,
                 backgroundColor: AppColors.primaryColor,
                 textColor: AppColors.onBoardingSurface,
               ),

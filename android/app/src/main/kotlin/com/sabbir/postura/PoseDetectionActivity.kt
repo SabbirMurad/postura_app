@@ -61,6 +61,9 @@ class PoseDetectionActivity : AppCompatActivity() {
         const val EXTRA_RESULT  = "result"
         /** Launch extra: JSON object string of the manual workstation questionnaire answers. */
         const val EXTRA_WORKSTATION_ANSWERS = "workstation_answers"
+        /** Launch extra: the app's language code ("en", "de", "es", "nl") for the
+         *  on-screen text; missing or unsupported falls back to English. */
+        const val EXTRA_LANGUAGE = "language"
 
         /** Pose landmark indices omitted in the front view (both the baked photo and
          *  the live overlay): face/eyes/ears/mouth (0..10), wrist/palm (15..22) — the
@@ -212,6 +215,13 @@ class PoseDetectionActivity : AppCompatActivity() {
     private var frontPhotoAvailable = true
     private val TOTAL_SHOTS_NEEDED = 3
 
+    /** The app's language for the on-screen text (see CaptureStrings). Text baked
+     *  into the saved photos stays English. */
+    private var language = CaptureStrings.DEFAULT_LANGUAGE
+
+    private fun tr(key: CaptureStrings.Key, vararg args: Pair<String, Any>): String =
+        CaptureStrings.get(key, language, *args)
+
     // Elbow abduction (front-view shoulder→elbow angle from vertical) at or above
     // this many degrees is scored as "armrests too wide / elbows pushed outward".
     private val ARMREST_ABDUCTION_MAX_DEG = 20.0
@@ -302,6 +312,8 @@ class PoseDetectionActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setupEdgeToEdge()
 
+        language = CaptureStrings.normalize(intent.getStringExtra(EXTRA_LANGUAGE))
+
         val answersJson = intent.getStringExtra(EXTRA_WORKSTATION_ANSWERS)
         workstationModifiers = if (!answersJson.isNullOrEmpty()) {
             val obj = org.json.JSONObject(answersJson)
@@ -329,6 +341,19 @@ class PoseDetectionActivity : AppCompatActivity() {
         flashOverlay            = findViewById(R.id.flashOverlay)
         cameraLevel             = findViewById(R.id.cameraLevel)
 
+        // Initial chip text in the app's language (the layout holds English
+        // placeholders only).
+        poseOverlayView.language = language
+        tvLightStatus.text    = tr(CaptureStrings.Key.CHIP_LIGHT)
+        tvPersonStatus.text   = tr(CaptureStrings.Key.CHIP_PERSON)
+        tvMonitorStatus.text  = tr(CaptureStrings.Key.CHIP_MONITOR)
+        tvRotationStatus.text = tr(CaptureStrings.Key.CHIP_ROTATION_IDLE)
+        tvTiltStatus.text     = tr(CaptureStrings.Key.CHIP_TILT_IDLE)
+        tvDistanceStatus.text = tr(CaptureStrings.Key.CHIP_DISTANCE_IDLE)
+        tvSideViewStatus.text = tr(CaptureStrings.Key.CHIP_SIDE_IDLE)
+        findViewById<View>(R.id.btnSwitchCamera).contentDescription =
+            tr(CaptureStrings.Key.SWITCH_CAMERA)
+
         tiltMonitor = TiltMonitor(this) { tiltAngle, rollAngle, pitchAngle, motion ->
             val tOk = TiltMonitor.isTiltAcceptable(tiltAngle)
             val rOk = TiltMonitor.isRollAcceptable(rollAngle)
@@ -342,13 +367,14 @@ class PoseDetectionActivity : AppCompatActivity() {
 
             val tiltStr = "%.1f".format(tiltAngle)
             tvTiltStatus.setTextColor(if (tOk) COLOR_DETECTED else COLOR_NOT_DETECTED)
-            tvTiltStatus.text = if (tOk) "● Tilt  $tiltStr°"
-                                else     "● Tilt  $tiltStr°  ·  Hold phone upright"
+            tvTiltStatus.text = tr(
+                if (tOk) CaptureStrings.Key.CHIP_TILT_OK else CaptureStrings.Key.CHIP_TILT_BAD,
+                "value" to tiltStr)
 
             val rollStr = "%.1f".format(kotlin.math.abs(rollAngle))
             tvRotationStatus.setTextColor(if (rOk) COLOR_DETECTED else COLOR_NOT_DETECTED)
-            tvRotationStatus.text = if (rOk) "● Rotation  OK"
-                                    else     "● Rotation  $rollStr°  ·  Level the phone"
+            tvRotationStatus.text = if (rOk) tr(CaptureStrings.Key.CHIP_ROTATION_OK)
+                                    else     tr(CaptureStrings.Key.CHIP_ROTATION_BAD, "value" to rollStr)
         }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -529,7 +555,7 @@ class PoseDetectionActivity : AppCompatActivity() {
         runOnUiThread {
             triggerCaptureFlash()
             tvCaptureStatus.visibility = View.VISIBLE
-            tvCaptureStatus.text = "Processing photos…"
+            tvCaptureStatus.text = tr(CaptureStrings.Key.PROCESSING_PHOTOS)
             // pauseCameraPipeline queues the live landmarker's close on
             // cameraExecutor; the processing is queued behind it, so it starts
             // only once the live pipeline (and its GPU context) is gone.
@@ -626,7 +652,7 @@ class PoseDetectionActivity : AppCompatActivity() {
             Log.e("PoseDetection", "Processing the captured photos failed", t)
             runOnUiThread {
                 if (isFinishing || isDestroyed) return@runOnUiThread
-                Toast.makeText(this, "Couldn't process the photos. Please try again.", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, tr(CaptureStrings.Key.PROCESS_FAILED), Toast.LENGTH_LONG).show()
                 setResult(Activity.RESULT_CANCELED)
                 finish()
             }
@@ -733,7 +759,8 @@ class PoseDetectionActivity : AppCompatActivity() {
                     }
                     runOnUiThread {
                         tvSideViewStatus.setTextColor(if (sideOk) COLOR_DETECTED else COLOR_NOT_DETECTED)
-                        tvSideViewStatus.text = if (sideOk) "● Side  OK" else "● Side  Adjust angle"
+                        tvSideViewStatus.text = tr(
+                            if (sideOk) CaptureStrings.Key.CHIP_SIDE_OK else CaptureStrings.Key.CHIP_SIDE_ADJUST)
                         poseOverlayView.setHeightGuide(guideState)
                     }
                 }
@@ -846,16 +873,16 @@ class PoseDetectionActivity : AppCompatActivity() {
                     poseOverlayView.updateRosaAngles(rosaAngles)
                     if (distanceM != null) {
                         val dOk = distanceM in 1.7f..2.1f
-                        val hint = when {
-                            distanceM < 1.7f -> "  ·  Move back"
-                            distanceM > 2.1f -> "  ·  Move closer"
-                            else             -> ""
+                        val key = when {
+                            distanceM < 1.7f -> CaptureStrings.Key.CHIP_DISTANCE_TOO_CLOSE
+                            distanceM > 2.1f -> CaptureStrings.Key.CHIP_DISTANCE_TOO_FAR
+                            else             -> CaptureStrings.Key.CHIP_DISTANCE_OK
                         }
-                        tvDistanceStatus.text = "● Distance  ${"%.2f".format(distanceM)}m$hint"
+                        tvDistanceStatus.text = tr(key, "value" to "%.2f".format(distanceM))
                         tvDistanceStatus.setTextColor(if (dOk) COLOR_DETECTED else COLOR_NOT_DETECTED)
                     } else {
                         distanceIsOk = false
-                        tvDistanceStatus.text = "● Distance  --"
+                        tvDistanceStatus.text = tr(CaptureStrings.Key.CHIP_DISTANCE_IDLE)
                         tvDistanceStatus.setTextColor(COLOR_NEUTRAL)
                     }
                 }
@@ -893,7 +920,7 @@ class PoseDetectionActivity : AppCompatActivity() {
     private val cameraPermissionLauncher: ActivityResultLauncher<String> =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) setupCamera()
-            else Toast.makeText(this, "Camera permission required", Toast.LENGTH_SHORT).show()
+            else Toast.makeText(this, tr(CaptureStrings.Key.CAMERA_PERMISSION_REQUIRED), Toast.LENGTH_SHORT).show()
         }
 
     private fun requestCameraPermission() {
@@ -1018,10 +1045,10 @@ class PoseDetectionActivity : AppCompatActivity() {
         val luminance = computeLuminance(mediaImage)
         when {
             luminance < MIN_LUMINANCE -> runOnUiThread {
-                updatePanel(lightOk = false, message = "Room is too dark — turn on more lights")
+                updatePanel(lightOk = false, message = tr(CaptureStrings.Key.LIGHT_TOO_DARK))
             }
             luminance > MAX_LUMINANCE -> runOnUiThread {
-                updatePanel(lightOk = false, message = "Too bright — reduce glare or step back")
+                updatePanel(lightOk = false, message = tr(CaptureStrings.Key.LIGHT_TOO_BRIGHT))
             }
             else -> {
                 // Light is good — start YOLO detection
@@ -1074,7 +1101,7 @@ class PoseDetectionActivity : AppCompatActivity() {
                         personDetected  = true,
                         monitorDetected = true,
                         confirmCount    = REQUIRED_CONFIRMATIONS,
-                        message         = "Loading…"
+                        message         = tr(CaptureStrings.Key.LOADING)
                     )
                 }
                 if (!initializePoseLandmarker()) {
@@ -1084,7 +1111,7 @@ class PoseDetectionActivity : AppCompatActivity() {
                             lightOk         = true,
                             personDetected  = true,
                             monitorDetected = true,
-                            message         = "Pose detection couldn't start on this device"
+                            message         = tr(CaptureStrings.Key.POSE_INIT_FAILED)
                         )
                     }
                     imageProxy.close()
@@ -1106,7 +1133,7 @@ class PoseDetectionActivity : AppCompatActivity() {
                         personDetected  = true,
                         monitorDetected = true,
                         confirmCount    = confirmationCount,
-                        message         = "Hold still…"
+                        message         = tr(CaptureStrings.Key.HOLD_STILL)
                     )
                 }
             }
@@ -1250,7 +1277,7 @@ class PoseDetectionActivity : AppCompatActivity() {
         // photo and record whether it finds a monitor in it. The live
         // detector was released after the detection phase, so load it once
         // here, off the UI thread. A failed check leaves the value out.
-        tvCaptureStatus.text = "Checking photos…"
+        tvCaptureStatus.text = tr(CaptureStrings.Key.CHECKING_PHOTOS)
         val sideFrames = sideMonitorFrames.toList()
         Thread {
             val detector = try {
@@ -1579,13 +1606,13 @@ class PoseDetectionActivity : AppCompatActivity() {
         tvCaptureStatus.visibility = View.VISIBLE
         tvCaptureStatus.text = when {
             done >= TOTAL_SHOTS_NEEDED ->
-                "✓ All $TOTAL_SHOTS_NEEDED photos captured"
+                tr(CaptureStrings.Key.SHOTS_ALL_DONE, "total" to TOTAL_SHOTS_NEEDED)
             android.os.SystemClock.elapsedRealtime() < nextCaptureEarliestAtMs ->
-                "✓ Photo $done of $TOTAL_SHOTS_NEEDED captured — hold your position"
+                tr(CaptureStrings.Key.SHOT_DONE, "done" to done, "total" to TOTAL_SHOTS_NEEDED)
             allOk ->
-                "Hold steady — capturing photo ${done + 1} of $TOTAL_SHOTS_NEEDED…"
+                tr(CaptureStrings.Key.SHOT_CAPTURING, "number" to done + 1, "total" to TOTAL_SHOTS_NEEDED)
             else ->
-                "Get into position for photo ${done + 1} of $TOTAL_SHOTS_NEEDED"
+                tr(CaptureStrings.Key.SHOT_GET_READY, "number" to done + 1, "total" to TOTAL_SHOTS_NEEDED)
         }
     }
 
@@ -1620,7 +1647,7 @@ class PoseDetectionActivity : AppCompatActivity() {
             tvTiltStatus.visibility     = View.GONE
             tvDistanceStatus.visibility = View.GONE
             tvCaptureStatus.visibility  = View.VISIBLE
-            tvCaptureStatus.text = "Side photos done — move to the FRONT of the person, behind the monitor"
+            tvCaptureStatus.text = tr(CaptureStrings.Key.SIDE_PHOTOS_DONE)
         }
     }
 
@@ -1705,21 +1732,21 @@ class PoseDetectionActivity : AppCompatActivity() {
         tvCaptureStatus.visibility = View.VISIBLE
         val settling = android.os.SystemClock.elapsedRealtime() < frontReadyEarliestAtMs
         tvCaptureStatus.text = when {
-            settling         -> "Move to the FRONT of the person, behind the monitor"
-            !frontVisible    -> "Show the person's face, shoulders and hands"
-            !frontFacing     -> "Move to the FRONT of the person, behind the monitor"
-            !rotationOk      -> "Straighten the phone — it's rotated"
-            !phoneSteady     -> "Hold the phone still"
-            else             -> "Hold steady — capturing front photo…"
+            settling         -> tr(CaptureStrings.Key.FRONT_MOVE)
+            !frontVisible    -> tr(CaptureStrings.Key.FRONT_SHOW_BODY)
+            !frontFacing     -> tr(CaptureStrings.Key.FRONT_MOVE)
+            !rotationOk      -> tr(CaptureStrings.Key.FRONT_STRAIGHTEN)
+            !phoneSteady     -> tr(CaptureStrings.Key.FRONT_HOLD_PHONE_STILL)
+            else             -> tr(CaptureStrings.Key.FRONT_CAPTURING)
         }
         val ok = frontVisible && frontFacing && rotationOk && phoneSteady
         tvSideViewStatus.setTextColor(if (ok) COLOR_DETECTED else COLOR_NOT_DETECTED)
         tvSideViewStatus.text = when {
-            !frontVisible -> "● Front  Face/shoulders/hands"
-            !frontFacing  -> "● Front  Move to the front"
-            !rotationOk   -> "● Front  Straighten phone"
-            !phoneSteady  -> "● Front  Hold still"
-            else          -> "● Front  OK"
+            !frontVisible -> tr(CaptureStrings.Key.CHIP_FRONT_SHOW_BODY)
+            !frontFacing  -> tr(CaptureStrings.Key.CHIP_FRONT_MOVE)
+            !rotationOk   -> tr(CaptureStrings.Key.CHIP_FRONT_STRAIGHTEN)
+            !phoneSteady  -> tr(CaptureStrings.Key.CHIP_FRONT_HOLD_STILL)
+            else          -> tr(CaptureStrings.Key.CHIP_FRONT_OK)
         }
     }
 

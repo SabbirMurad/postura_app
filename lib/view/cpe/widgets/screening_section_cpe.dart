@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/constants/colors.dart';
+import 'package:posture_detector_app/l10n/app_localizations.dart';
 import 'package:posture_detector_app/models/assessment/screening_review.dart';
 import 'package:posture_detector_app/provider/cpe_assessment.dart';
 
@@ -19,11 +20,18 @@ class ScreeningSectionCPE extends StatelessWidget {
     if (state.redFlagAnswers.isEmpty && state.recoveryAnswers.isEmpty) {
       return const SizedBox.shrink();
     }
+    final loc = AppLocalizations.of(context)!;
+    // chronicity_level arrives as 'Low' or 'Elevated'; translate only the label.
+    final chronicityLabel = switch (state.chronicityLevel) {
+      'Low' => loc.rvwChronicityLow,
+      'Elevated' => loc.rvwChronicityElevated,
+      _ => state.chronicityLevel,
+    };
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Health Screening',
+          loc.rvwHealthScreening,
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w700,
@@ -32,16 +40,16 @@ class ScreeningSectionCPE extends StatelessWidget {
         ),
         SizedBox(height: 4.h),
         Text(
-          'Visible to ergonomists only. Not shared with the company.',
+          loc.rvwHealthScreeningPrivacy,
           style: TextStyle(fontSize: 12.sp, color: AppColors.secondaryText),
         ),
         if (state.redFlagAnswers.isNotEmpty) ...[
           SizedBox(height: 12.h),
           _Group(
-            title: 'Safety Questions (Red Flags)',
+            title: loc.rvwSafetyQuestionsRedFlags,
             status: state.redFlagPositive
-                ? 'Positive: exercises withheld, refer to a healthcare professional'
-                : 'Negative',
+                ? loc.rvwRedFlagPositive
+                : loc.rvwRedFlagNegative,
             statusColor: state.redFlagPositive ? _red : AppColors.secondaryText,
             answers: state.redFlagAnswers,
             flagColor: _red,
@@ -50,8 +58,8 @@ class ScreeningSectionCPE extends StatelessWidget {
         if (state.recoveryAnswers.isNotEmpty) ...[
           SizedBox(height: 12.h),
           _Group(
-            title: 'Work Ability & Recovery Outlook',
-            status: 'Recovery outlook: ${state.chronicityLevel}',
+            title: loc.workAbilityRecoveryOutlook,
+            status: loc.rvwRecoveryOutlookStatus(chronicityLabel),
             statusColor:
                 state.chronicityElevated ? _amber : AppColors.secondaryText,
             answers: state.recoveryAnswers,

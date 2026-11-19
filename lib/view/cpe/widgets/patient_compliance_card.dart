@@ -158,7 +158,7 @@ class PatientComplianceCard extends StatelessWidget {
               ),
               SizedBox(height: 2.h),
               Text(
-                'ROSA SCORE',
+                AppLocalizations.of(context)!.rvwRosaScoreCaps,
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,

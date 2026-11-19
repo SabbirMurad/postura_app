@@ -271,166 +271,163 @@ class _WorkstationQuestionnaireScreenState
                   ),
                 SizedBox(height: 8.h),
 
-                _SectionHeader('Front Photo'),
+                _SectionHeader(loc.asmSectionFrontPhoto),
                 _BoolQuestion(
                   ++q,
-                  'Can a photo be taken from the front view?',
+                  loc.asmQuestionFrontPhotoPossible,
                   _frontPhotoAvailable,
                   (v) => setState(() => _frontPhotoAvailable = v),
                 ),
               ],
 
               if (!_photosOnly) ...[
-              _SectionHeader('Chair'),
+              _SectionHeader(loc.asmSectionChair),
               _BoolQuestion(
                 ++q,
-                'Chair height is adjustable',
+                loc.asmQuestionChairHeightAdjustable,
                 _chairHeightAdjustable,
                 (v) => setState(() => _chairHeightAdjustable = v),
               ),
               _BoolQuestion(
                 ++q,
-                'Enough room under the desk to cross your legs',
+                loc.asmQuestionUnderDeskSpace,
                 _enoughUnderDeskSpace,
                 (v) => setState(() => _enoughUnderDeskSpace = v),
               ),
-              _SegmentLabel(++q, 'Seat pan depth (space behind your knees)'),
+              _SegmentLabel(++q, loc.asmQuestionSeatPanDepth),
               _Segments<SeatDepthFit>(
-                segments: const {
-                  SeatDepthFit.ok: '~3 in (OK)',
-                  SeatDepthFit.tooLong: 'Too long',
-                  SeatDepthFit.tooShort: 'Too short',
+                segments: {
+                  SeatDepthFit.ok: loc.asmSeatDepthOk,
+                  SeatDepthFit.tooLong: loc.asmSeatDepthTooLong,
+                  SeatDepthFit.tooShort: loc.asmSeatDepthTooShort,
                 },
                 selected: _seatDepthFit,
                 onChanged: (v) => setState(() => _seatDepthFit = v),
               ),
               _BoolQuestion(
                 ++q,
-                'Seat pan depth is adjustable',
+                loc.asmQuestionSeatPanAdjustable,
                 _seatPanAdjustable,
                 (v) => setState(() => _seatPanAdjustable = v),
               ),
               _BoolQuestion(
                 ++q,
-                'Does your chair have armrests?',
+                loc.chairHasArmrests,
                 _chairHasArmrests,
                 (v) => setState(() => _chairHasArmrests = v),
               ),
               if (_chairHasArmrests) ...[
                 _BoolQuestion(
                   ++q,
-                  'Armrests are adjustable',
+                  loc.asmQuestionArmrestsAdjustable,
                   _armrestAdjustable,
                   (v) => setState(() => _armrestAdjustable = v),
                 ),
                 _BoolQuestion(
                   ++q,
-                  'Armrest surface is hard or damaged',
+                  loc.asmQuestionArmrestHardDamaged,
                   _armrestHardDamaged,
                   (v) => setState(() => _armrestHardDamaged = v),
                 ),
                 // Action/Equipment Report only — does not affect ROSA.
                 _BoolQuestion(
                   ++q,
-                  'Do you use the armrests while working (keyboard/mouse)?',
+                  loc.asmQuestionUsesArmrests,
                   _usesArmrests,
                   (v) => setState(() => _usesArmrests = v),
                 ),
                 _BoolQuestion(
                   ++q,
-                  'Your elbows/forearms are supported by the armrests or work '
-                  'surface',
+                  loc.asmQuestionElbowsSupported,
                   _elbowsSupported,
                   (v) => setState(() => _elbowsSupported = v),
                 ),
                 if (!_frontPhotoAvailable)
                   _BoolQuestion(
                     ++q,
-                    'Armrests are too wide apart',
+                    loc.asmQuestionArmrestsTooWide,
                     _armrestTooWide,
                     (v) => setState(() => _armrestTooWide = v),
                   ),
               ],
               _BoolQuestion(
                 ++q,
-                'Backrest is adjustable',
+                loc.asmQuestionBackrestAdjustable,
                 _backrestAdjustable,
                 (v) => setState(() => _backrestAdjustable = v),
               ),
               _BoolQuestion(
                 ++q,
-                'Chair has a usable backrest that supports your back while '
-                'working',
+                loc.asmQuestionUsableBackrest,
                 _usableBackrest,
                 (v) => setState(() => _usableBackrest = v),
               ),
               _BoolQuestion(
                 ++q,
-                'Chair provides lumbar support that contacts your lower back '
-                'while sitting normally',
+                loc.asmQuestionLumbarSupport,
                 _lumbarSupport,
                 (v) => setState(() => _lumbarSupport = v),
               ),
               _BoolQuestion(
                 ++q,
-                'Both feet are flat on the floor or a footrest while typing',
+                loc.asmQuestionFeetSupported,
                 _feetSupported,
                 (v) => setState(() => _feetSupported = v),
               ),
               _BoolQuestion(
                 ++q,
-                'Desk/work surface is too high (shoulders shrug)',
+                loc.asmQuestionWorkSurfaceTooHigh,
                 _workSurfaceTooHigh,
                 (v) => setState(() => _workSurfaceTooHigh = v),
               ),
 
-              _SectionHeader('Monitor & Telephone'),
+              _SectionHeader(loc.asmSectionMonitorPhone),
               _BoolQuestion(
                 ++q,
-                'Monitor position is adjustable',
+                loc.asmQuestionMonitorAdjustable,
                 _monitorAdjustable,
                 (v) => setState(() => _monitorAdjustable = v),
               ),
-              _SegmentLabel(++q, 'Top of the monitor relative to eye level'),
+              _SegmentLabel(++q, loc.asmQuestionMonitorTopVsEyeLevel),
               _Segments<MonitorHeightDirection>(
-                segments: const {
-                  MonitorHeightDirection.below: 'Below',
-                  MonitorHeightDirection.atEyeLevel: 'At eye level',
-                  MonitorHeightDirection.above: 'Above',
+                segments: {
+                  MonitorHeightDirection.below: loc.asmMonitorBelow,
+                  MonitorHeightDirection.atEyeLevel: loc.asmMonitorAtEyeLevel,
+                  MonitorHeightDirection.above: loc.asmMonitorAbove,
                 },
                 selected: _monitorHeightDirection,
                 onChanged: (v) => setState(() => _monitorHeightDirection = v),
               ),
               _BoolQuestion(
                 ++q,
-                'Do you need to turn your head more than about 30 degrees (left or right) to see the monitor?',
+                loc.asmQuestionNeckTurn,
                 _neckTwistOver30,
                 (v) => setState(() => _neckTwistOver30 = v),
               ),
               _BoolQuestion(
                 ++q,
-                'Monitor is farther than arm\'s length away (>75cm)',
+                loc.asmQuestionMonitorTooFar,
                 _monitorTooFar,
                 (v) => setState(() => _monitorTooFar = v),
               ),
               _BoolQuestion(
                 ++q,
-                'There is glare on the screen',
+                loc.asmQuestionScreenGlare,
                 _screenGlare,
                 (v) => setState(() => _screenGlare = v),
               ),
               _BoolQuestion(
                 ++q,
-                'You have a document holder for paper references',
+                loc.asmQuestionDocumentHolder,
                 _hasDocumentHolder,
                 (v) => setState(() => _hasDocumentHolder = v),
               ),
-              _SegmentLabel(++q, 'Desk phone usage'),
+              _SegmentLabel(++q, loc.asmQuestionDeskPhoneUsage),
               _Segments<PhoneUsage>(
-                segments: const {
-                  PhoneUsage.none: 'Don\'t use',
-                  PhoneUsage.headsetOrOneHand: 'Headset/1-hand',
-                  PhoneUsage.reachFar: 'Reach far',
+                segments: {
+                  PhoneUsage.none: loc.asmPhoneDontUse,
+                  PhoneUsage.headsetOrOneHand: loc.asmPhoneHeadsetOneHand,
+                  PhoneUsage.reachFar: loc.asmPhoneReachFar,
                 },
                 selected: _phoneUsage,
                 onChanged: (v) => setState(() => _phoneUsage = v),
@@ -438,13 +435,13 @@ class _WorkstationQuestionnaireScreenState
               if (_phoneUsage != PhoneUsage.none) ...[
                 _BoolQuestion(
                   ++q,
-                  'You cradle the phone between ear and shoulder',
+                  loc.asmQuestionPhoneCradle,
                   _phoneCradleNeckShoulder,
                   (v) => setState(() => _phoneCradleNeckShoulder = v),
                 ),
                 _BoolQuestion(
                   ++q,
-                  'You have a hands-free option (headset/speakerphone)',
+                  loc.asmQuestionHandsFreeOption,
                   _hasHandsFreeOption,
                   (v) => setState(() => _hasHandsFreeOption = v),
                 ),
@@ -452,87 +449,84 @@ class _WorkstationQuestionnaireScreenState
               // Supplemental — informational only, never affects ROSA scoring.
               _BoolQuestion(
                 ++q,
-                'Do you hold/cradle the phone between your ear and shoulder '
-                'during calls?',
+                loc.asmQuestionPhoneCradleSupplemental,
                 _phoneCradleSupplemental,
                 (v) => setState(() => _phoneCradleSupplemental = v),
               ),
               _BoolQuestion(
                 ++q,
-                'Do you have a hands-free option available for phone calls '
-                '(headset, speakerphone, or similar)?',
+                loc.asmQuestionHandsFreeSupplemental,
                 _handsFreeAvailableSupplemental,
                 (v) => setState(() => _handsFreeAvailableSupplemental = v),
               ),
 
-              _SectionHeader('Mouse & Keyboard'),
+              _SectionHeader(loc.asmSectionMouseKeyboard),
               _BoolQuestion(
                 ++q,
-                'Mouse and keyboard are on different surfaces/heights',
+                loc.asmQuestionMouseKeyboardDifferentSurfaces,
                 _mouseKeyboardDifferentSurfaces,
                 (v) => setState(() => _mouseKeyboardDifferentSurfaces = v),
               ),
               _BoolQuestion(
                 ++q,
-                'You use a pinch grip on the mouse',
+                loc.asmQuestionMousePinchGrip,
                 _mousePinchGrip,
                 (v) => setState(() => _mousePinchGrip = v),
               ),
               _BoolQuestion(
                 ++q,
-                'There is a palm rest in front of the mouse',
+                loc.asmQuestionMousePalmRest,
                 _mousePalmrest,
                 (v) => setState(() => _mousePalmrest = v),
               ),
               _BoolQuestion(
                 ++q,
-                'Mouse position is adjustable',
+                loc.asmQuestionMouseAdjustable,
                 _mouseAdjustable,
                 (v) => setState(() => _mouseAdjustable = v),
               ),
               _BoolQuestion(
                 ++q,
-                'Mouse is positioned far enough away that you have to reach '
-                'for it',
+                loc.asmQuestionMouseTooFar,
                 _mouseTooFar,
                 (v) => setState(() => _mouseTooFar = v),
               ),
               if (!_frontPhotoAvailable)
                 _BoolQuestion(
                   ++q,
-                  'Wrists deviate sideways while typing',
+                  loc.asmQuestionWristDeviation,
                   _wristDeviation,
                   (v) => setState(() => _wristDeviation = v),
                 ),
               _BoolQuestion(
                 ++q,
-                'Keyboard is too high (shoulders shrug)',
+                loc.asmQuestionKeyboardTooHigh,
                 _keyboardTooHigh,
                 (v) => setState(() => _keyboardTooHigh = v),
               ),
               _BoolQuestion(
                 ++q,
-                'You frequently reach overhead for items',
+                loc.asmQuestionReachingOverhead,
                 _reachingOverhead,
                 (v) => setState(() => _reachingOverhead = v),
               ),
               _BoolQuestion(
                 ++q,
-                'Keyboard platform/tray is adjustable',
+                loc.asmQuestionKeyboardPlatformAdjustable,
                 _keyboardPlatformAdjustable,
                 (v) => setState(() => _keyboardPlatformAdjustable = v),
               ),
 
-              _SectionHeader('Daily Duration'),
+              _SectionHeader(loc.asmSectionDailyDuration),
               _SegmentLabel(
                 ++q,
-                'How long do you typically work continuously at this desk?',
+                loc.asmQuestionContinuousDeskTime,
               ),
               _Segments<DeskDuration>(
-                segments: const {
-                  DeskDuration.short: '< 30 min',
-                  DeskDuration.medium: '30-60 min',
-                  DeskDuration.long: '> 1 hour',
+                segments: {
+                  DeskDuration.short: loc.asmDeskDurationUnder30Min,
+                  DeskDuration.medium: loc.asmDeskDuration30To60Min,
+                  DeskDuration.long: loc.asmDeskDurationOver1Hour,
                 },
                 selected: _deskDuration,
                 onChanged: (v) => setState(() => _deskDuration = v),
@@ -645,6 +639,7 @@ class _BoolQuestion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.only(bottom: 18.h),
       child: Column(
@@ -660,11 +655,11 @@ class _BoolQuestion extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () => onChanged(true),
-                  child: SelectionChip(title: 'Yes', selected: value),
+                  child: SelectionChip(title: loc.yes, selected: value),
                 ),
                 GestureDetector(
                   onTap: () => onChanged(false),
-                  child: SelectionChip(title: 'No', selected: !value),
+                  child: SelectionChip(title: loc.asmNo, selected: !value),
                 ),
               ],
             ),
