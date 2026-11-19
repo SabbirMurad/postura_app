@@ -38,6 +38,11 @@ class _ScanBusinessScreenState extends ConsumerState<ScanBusinessScreen> {
   void _onStartScan() {
     if (_startScanShown) return;
 
+    // Close the keyboard before leaving the page. Otherwise the height field
+    // keeps focus, and when the assessment flow returns here Flutter restores
+    // that focus and the keyboard pops up on its own.
+    FocusManager.instance.primaryFocus?.unfocus();
+
     if (_heightCm == null || _heightCm! <= 0) {
       showCustomToast(text: 'Please enter your height');
       return;
@@ -52,6 +57,11 @@ class _ScanBusinessScreenState extends ConsumerState<ScanBusinessScreen> {
     showStartScanAlert(
       context,
       onConfirm: () {
+        // The flag only guards against opening the dialog twice. It has to be
+        // cleared here too: this page stays alive under the assessment flow,
+        // and a flag left set made "Start Scan" do nothing on return until the
+        // page was rebuilt by switching tabs.
+        _startScanShown = false;
         context.pop();
         context.push(AppRoute.employeeSelectBodyRegion);
       },
