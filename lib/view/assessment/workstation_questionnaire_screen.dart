@@ -403,7 +403,7 @@ class _WorkstationQuestionnaireScreenState
               ),
               _BoolQuestion(
                 ++q,
-                'You twist your neck more than 30° to view the monitor',
+                'Do you need to turn your head more than about 30 degrees (left or right) to see the monitor?',
                 _neckTwistOver30,
                 (v) => setState(() => _neckTwistOver30 = v),
               ),
