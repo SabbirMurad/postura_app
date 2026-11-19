@@ -96,7 +96,6 @@ flutter:
   generate: true
 
   assets:
-    - assets/ml/yolov8n_float16.tflite
     # Icons
     - assets/icons/
     - assets/icons/flags/
