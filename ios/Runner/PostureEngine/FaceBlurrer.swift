@@ -12,10 +12,14 @@ enum FaceBlurrer {
     private static let RADIUS_MARGIN: CGFloat = 1.25
     private static let FALLBACK_RADIUS_FRACTION: CGFloat = 0.06
     private static let DOWNSCALE_FACTOR: CGFloat = 12
+    /// The front photo shows the face straight on, so it gets a stronger blur.
+    static let FRONT_DOWNSCALE_FACTOR: CGFloat = 24
 
     /// Returns a new image with the face region pixelated. If anything is
     /// degenerate it returns `source` unchanged.
-    static func blurFace(_ source: UIImage, landmarks: [LandmarkPoint]) -> UIImage {
+    /// `downscale` sets the strength: higher = blurrier.
+    static func blurFace(_ source: UIImage, landmarks: [LandmarkPoint],
+                         downscale: CGFloat = DOWNSCALE_FACTOR) -> UIImage {
         guard landmarks.count > RIGHT_EAR_INDEX, let cg = source.cgImage else { return source }
 
         let w = CGFloat(cg.width)
@@ -53,8 +57,8 @@ enum FaceBlurrer {
         guard let regionCg = cg.cropping(to: regionRect) else { return source }
 
         // Pixelate: downscale hard, then upscale back to region size (nearest-ish).
-        let smallW = max(1, Int(regionW / DOWNSCALE_FACTOR))
-        let smallH = max(1, Int(regionH / DOWNSCALE_FACTOR))
+        let smallW = max(1, Int(regionW / downscale))
+        let smallH = max(1, Int(regionH / downscale))
         let regionImage = UIImage(cgImage: regionCg)
         let smallImage = regionImage.resized(to: CGSize(width: smallW, height: smallH))
         let pixelated = smallImage.resized(to: CGSize(width: regionW, height: regionH))

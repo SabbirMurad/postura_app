@@ -25,9 +25,16 @@ object FaceBlurrer {
     private const val FALLBACK_RADIUS_FRACTION = 0.06f
     // Downscale factor for the pixelation blur — higher = stronger blur
     private const val DOWNSCALE_FACTOR = 12
+    // The front photo shows the face straight on, so it gets a stronger blur.
+    const val FRONT_DOWNSCALE_FACTOR = 24
 
-    /** Blurs the face region of [source] in place using [landmarks]; returns [source]. */
-    fun blurFace(source: Bitmap, landmarks: List<LandmarkPoint>): Bitmap {
+    /** Blurs the face region of [source] in place using [landmarks]; returns [source].
+     *  [downscale] sets the strength: higher = blurrier. */
+    fun blurFace(
+        source: Bitmap,
+        landmarks: List<LandmarkPoint>,
+        downscale: Int = DOWNSCALE_FACTOR,
+    ): Bitmap {
         if (landmarks.size <= RIGHT_EAR_INDEX) return source
 
         val w = source.width
@@ -57,8 +64,8 @@ object FaceBlurrer {
         if (regionW <= 0 || regionH <= 0) return source
 
         val region = Bitmap.createBitmap(source, left, top, regionW, regionH)
-        val smallW = max(1, regionW / DOWNSCALE_FACTOR)
-        val smallH = max(1, regionH / DOWNSCALE_FACTOR)
+        val smallW = max(1, regionW / downscale)
+        val smallH = max(1, regionH / downscale)
         val pixelated = Bitmap.createScaledBitmap(
             Bitmap.createScaledBitmap(region, smallW, smallH, true),
             regionW, regionH, true

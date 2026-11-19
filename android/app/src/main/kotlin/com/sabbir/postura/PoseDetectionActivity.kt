@@ -617,7 +617,7 @@ class PoseDetectionActivity : AppCompatActivity() {
                 // Detect hands on the CLEAN frame first (before face blur /
                 // skeleton bake mutate it), then draw them on the baked photo.
                 val handResult = detectHands(frame)
-                val blurred = FaceBlurrer.blurFace(frame, captured)
+                val blurred = FaceBlurrer.blurFace(frame, captured, FaceBlurrer.FRONT_DOWNSCALE_FACTOR)
                 // Front view is upper-body only: no legs (25+), no face/ear points
                 // (0..10, the face is blurred) and no pose wrist/palm points
                 // (15..22) — the hand landmarker supplies those, and the elbow is

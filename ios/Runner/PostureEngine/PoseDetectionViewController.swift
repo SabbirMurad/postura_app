@@ -594,7 +594,8 @@ final class PoseDetectionViewController: UIViewController {
                                          fromStill: still != nil)
             // Detect hands on the clean frame, then draw them on the baked photo.
             let handResult = detectHands(frame)
-            let blurred = FaceBlurrer.blurFace(frame, landmarks: captured)
+            let blurred = FaceBlurrer.blurFace(frame, landmarks: captured,
+                                                 downscale: FaceBlurrer.FRONT_DOWNSCALE_FACTOR)
             // Front view is upper-body only: no legs (25+), no face/ear points
             // (0...10, the face is blurred) and no pose wrist/palm points
             // (15...22) — the hand landmarker supplies those, and the elbow is
