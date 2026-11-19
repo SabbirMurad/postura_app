@@ -598,7 +598,11 @@ final class PoseDetectionViewController: UIViewController {
             let frame = shot.frame
             let wPx = frame.cgImage?.width ?? 1
             let hPx = frame.cgImage?.height ?? 1
-            let still = detectStillPose(frame, live: shot.liveRaw)
+            // A still fit that is upside down (see isUprightFrontPose) is discarded;
+            // the live pose that passed the capture check is used instead.
+            let still = detectStillPose(frame, live: shot.liveRaw).flatMap { s in
+                isUprightFrontPose(s.map { LandmarkPoint(x: $0.x, y: $0.y) }) ? s : nil
+            }
             let captured = still?.map { LandmarkPoint(x: $0.x, y: $0.y) } ?? shot.livePoints
             frontRawPose = rawPoseRecord(still ?? shot.liveRaw, width: wPx, height: hPx,
                                          fromStill: still != nil)
@@ -945,10 +949,12 @@ final class PoseDetectionViewController: UIViewController {
             let nowMs = tSec * 1000
             let phoneSteady = nowMs - lastShakeAtMs >= PHONE_STEADY_SETTLE_MS
             let frontFacing = isFacingCamera(smoothed, width: w, height: h)
+            let frontUpright = isUprightFrontPose(smoothed)
             let rotationOk = frontRotationIsOk
-            let frontOk = frontVisible && frontFacing && rotationOk && phoneSteady
+            let frontOk = frontVisible && frontUpright && frontFacing && rotationOk && phoneSteady
             DispatchQueue.main.async {
-                self.updateFrontCue(frontVisible: frontVisible, frontFacing: frontFacing,
+                self.updateFrontCue(frontVisible: frontVisible, frontUpright: frontUpright,
+                                    frontFacing: frontFacing,
                                     rotationOk: rotationOk, phoneSteady: phoneSteady)
             }
             if frontOk && nowMs >= frontReadyEarliestAtMs {
@@ -1572,19 +1578,45 @@ final class PoseDetectionViewController: UIViewController {
     private func isFacingCamera(_ landmarks: [LandmarkPoint], width: Int, height: Int) -> Bool {
         if landmarks.count < 13 { return false }
         let shoulderWidth = abs(landmarks[11].x - landmarks[12].x) * Float(width)
-        let neckHeight = abs((landmarks[11].y + landmarks[12].y) / 2 - landmarks[0].y) * Float(height)
+        // Signed: the shoulders must be BELOW the nose. The absolute value used
+        // before also accepted shoulders above the nose (an upside-down fit).
+        let neckHeight = ((landmarks[11].y + landmarks[12].y) / 2 - landmarks[0].y) * Float(height)
         if neckHeight < 1 { return false }
         return shoulderWidth / neckHeight >= FRONT_FACING_MIN_RATIO
     }
 
+    /// The pose is the right way up for a seated person seen from the front:
+    /// nose above the shoulders, each elbow below its shoulder, and the hips
+    /// below the shoulders. The hips are usually hidden behind the desk, but the
+    /// model still places them, and where it places them gives a failed
+    /// detection away.
+    ///
+    /// When the phone looks down steeply on someone whose lower body is hidden,
+    /// the model can fit the skeleton upside down: shoulders at the top of the
+    /// head, elbows at the real shoulders, hips above the frame. The photo then
+    /// looks wrong and the abduction and wrist-deviation angles measured from it
+    /// are meaningless, so such a pose must never be captured.
+    private func isUprightFrontPose(_ lm: [LandmarkPoint]) -> Bool {
+        if lm.count < 25 { return false }
+        let shoulderY = (lm[11].y + lm[12].y) / 2
+        let hipY = (lm[23].y + lm[24].y) / 2
+        return lm[0].y < min(lm[11].y, lm[12].y)
+            && lm[13].y > lm[11].y && lm[14].y > lm[12].y
+            && hipY > shoulderY
+    }
+
     /// Drives the capture banner + (repurposed) side chip during the front phase.
-    private func updateFrontCue(frontVisible: Bool, frontFacing: Bool, rotationOk: Bool, phoneSteady: Bool) {
+    private func updateFrontCue(frontVisible: Bool, frontUpright: Bool, frontFacing: Bool,
+                                rotationOk: Bool, phoneSteady: Bool) {
         tvCaptureStatus.isHidden = false
         let settling = CACurrentMediaTime() * 1000 < frontReadyEarliestAtMs
         if settling {
             tvCaptureStatus.text = tr(.frontMove)
         } else if !frontVisible {
             tvCaptureStatus.text = tr(.frontShowBody)
+        } else if !frontUpright {
+            // An upside-down fit almost always comes from looking down steeply.
+            tvCaptureStatus.text = tr(.frontHoldLower)
         } else if !frontFacing {
             tvCaptureStatus.text = tr(.frontMove)
         } else if !rotationOk {
@@ -1594,10 +1626,12 @@ final class PoseDetectionViewController: UIViewController {
         } else {
             tvCaptureStatus.text = tr(.frontCapturing)
         }
-        let ok = frontVisible && frontFacing && rotationOk && phoneSteady
+        let ok = frontVisible && frontUpright && frontFacing && rotationOk && phoneSteady
         tvSideViewStatus.textColor = ok ? colorDetected : colorNotDetected
         if !frontVisible {
             tvSideViewStatus.text = tr(.chipFrontShowBody)
+        } else if !frontUpright {
+            tvSideViewStatus.text = tr(.chipFrontHoldLower)
         } else if !frontFacing {
             tvSideViewStatus.text = tr(.chipFrontMove)
         } else if !rotationOk {

@@ -33,7 +33,7 @@ object CaptureStrings {
         CHIP_TILT_IDLE, CHIP_TILT_OK, CHIP_TILT_BAD,
         CHIP_DISTANCE_IDLE, CHIP_DISTANCE_OK, CHIP_DISTANCE_TOO_CLOSE, CHIP_DISTANCE_TOO_FAR,
         CHIP_SIDE_IDLE, CHIP_SIDE_OK, CHIP_SIDE_ADJUST,
-        CHIP_FRONT_SHOW_BODY, CHIP_FRONT_MOVE, CHIP_FRONT_STRAIGHTEN, CHIP_FRONT_HOLD_STILL, CHIP_FRONT_OK,
+        CHIP_FRONT_SHOW_BODY, CHIP_FRONT_MOVE, CHIP_FRONT_STRAIGHTEN, CHIP_FRONT_HOLD_STILL, CHIP_FRONT_OK, CHIP_FRONT_HOLD_LOWER,
         // Status messages
         LIGHT_TOO_DARK, LIGHT_TOO_BRIGHT, LOADING, HOLD_STILL, POSE_INIT_FAILED,
         PROCESSING_PHOTOS, CHECKING_PHOTOS, PROCESS_FAILED,
@@ -41,7 +41,7 @@ object CaptureStrings {
         // Side-shot capture banner
         SHOTS_ALL_DONE, SHOT_DONE, SHOT_CAPTURING, SHOT_GET_READY,
         // Front-shot capture banner
-        SIDE_PHOTOS_DONE, FRONT_MOVE, FRONT_SHOW_BODY, FRONT_STRAIGHTEN, FRONT_HOLD_PHONE_STILL, FRONT_CAPTURING,
+        SIDE_PHOTOS_DONE, FRONT_MOVE, FRONT_SHOW_BODY, FRONT_STRAIGHTEN, FRONT_HOLD_PHONE_STILL, FRONT_CAPTURING, FRONT_HOLD_LOWER,
         // Live height guide (overlay only, never baked into photos)
         GUIDE_LOWER_PHONE, GUIDE_RAISE_PHONE, GUIDE_HEIGHT_OK,
         // Accessibility
@@ -181,6 +181,16 @@ object CaptureStrings {
             "Gesicht, Schultern und Hände der Person müssen zu sehen sein",
             "Encuadra la cara, los hombros y las manos de la persona",
             "Breng het gezicht, de schouders en de handen van de persoon in beeld"),
+        Key.FRONT_HOLD_LOWER to T(
+            "Hold the phone lower, level with the person's shoulders",
+            "Halte das Handy tiefer, auf Schulterhöhe der Person",
+            "Baja el teléfono a la altura de los hombros de la persona",
+            "Houd de telefoon lager, op schouderhoogte van de persoon"),
+        Key.CHIP_FRONT_HOLD_LOWER to T(
+            "● Front  Hold phone lower",
+            "● Vorne  Handy tiefer halten",
+            "● Frontal  Baja el teléfono",
+            "● Voorkant  Telefoon lager houden"),
         Key.FRONT_STRAIGHTEN to T(
             "Straighten the phone — it's rotated",
             "Halte das Handy gerade – es ist verdreht",
@@ -208,7 +218,7 @@ object CaptureStrings {
         Key.FRONT_GUIDE_A4 to T("Look at the screen naturally", "Schau ganz natürlich auf den Bildschirm", "Mira la pantalla con naturalidad", "Kijk op een natuurlijke manier naar het scherm"),
         Key.FRONT_GUIDE_PHOTOGRAPHER to T("B (Photographer)", "B (Fotograf)", "B (Fotógrafo)", "B (Fotograaf)"),
         Key.FRONT_GUIDE_B1 to T("Stand behind the monitor, facing the worker", "Stell dich hinter den Monitor, mit Blick zur Person", "Colócate detrás del monitor, frente al trabajador", "Ga achter de monitor staan, met je gezicht naar de medewerker"),
-        Key.FRONT_GUIDE_B2 to T("Hold the phone upright at chest height", "Halte das Handy aufrecht auf Brusthöhe", "Sujeta el teléfono en vertical a la altura del pecho", "Houd de telefoon rechtop op borsthoogte"),
+        Key.FRONT_GUIDE_B2 to T("Hold the phone upright, level with the worker's shoulders", "Halte das Handy aufrecht, auf Schulterhöhe der Person", "Sujeta el teléfono en vertical, a la altura de los hombros del trabajador", "Houd de telefoon rechtop, op schouderhoogte van de medewerker"),
         Key.FRONT_GUIDE_B3 to T("Make sure the head, shoulders and both hands are visible", "Achte darauf, dass Kopf, Schultern und beide Hände zu sehen sind", "Asegúrate de que se vean la cabeza, los hombros y ambas manos", "Zorg dat het hoofd, de schouders en beide handen zichtbaar zijn"),
         Key.FRONT_GUIDE_B4 to T("Hold the phone still until the photo is taken", "Halte das Handy still, bis das Foto aufgenommen ist", "Mantén el teléfono quieto hasta que se tome la foto", "Houd de telefoon stil tot de foto is gemaakt"),
         Key.FRONT_GUIDE_CONTINUE to T("Continue", "Weiter", "Continuar", "Doorgaan"),

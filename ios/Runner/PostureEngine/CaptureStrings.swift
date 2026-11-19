@@ -33,7 +33,7 @@ enum CaptureStrings {
         case chipTiltIdle, chipTiltOk, chipTiltBad
         case chipDistanceIdle, chipDistanceOk, chipDistanceTooClose, chipDistanceTooFar
         case chipSideIdle, chipSideOk, chipSideAdjust
-        case chipFrontShowBody, chipFrontMove, chipFrontStraighten, chipFrontHoldStill, chipFrontOk
+        case chipFrontShowBody, chipFrontMove, chipFrontStraighten, chipFrontHoldStill, chipFrontOk, chipFrontHoldLower
         // Status messages
         case lightTooDark, lightTooBright, loading, holdStill, poseInitFailed
         case processingPhotos, checkingPhotos, processFailed
@@ -41,7 +41,7 @@ enum CaptureStrings {
         // Side-shot capture banner
         case shotsAllDone, shotDone, shotCapturing, shotGetReady
         // Front-shot capture banner
-        case sidePhotosDone, frontMove, frontShowBody, frontStraighten, frontHoldPhoneStill, frontCapturing
+        case sidePhotosDone, frontMove, frontShowBody, frontStraighten, frontHoldPhoneStill, frontCapturing, frontHoldLower
         // Live height guide (overlay only, never baked into photos)
         case guideLowerPhone, guideRaisePhone, guideHeightOk
         // Accessibility
@@ -222,6 +222,14 @@ enum CaptureStrings {
         case .guideHeightOk:
             return T(en: "✓  Height OK", de: "✓  Höhe OK", es: "✓  Altura OK", nl: "✓  Hoogte OK")
 
+        case .frontHoldLower:
+            return T(en: "Hold the phone lower, level with the person's shoulders",
+                     de: "Halte das Handy tiefer, auf Schulterhöhe der Person",
+                     es: "Baja el teléfono a la altura de los hombros de la persona",
+                     nl: "Houd de telefoon lager, op schouderhoogte van de persoon")
+        case .chipFrontHoldLower:
+            return T(en: "● Front  Hold phone lower", de: "● Vorne  Handy tiefer halten",
+                     es: "● Frontal  Baja el teléfono", nl: "● Voorkant  Telefoon lager houden")
         case .switchCamera:
             return T(en: "Switch camera", de: "Kamera wechseln",
                      es: "Cambiar de cámara", nl: "Camera wisselen")
@@ -250,8 +258,8 @@ enum CaptureStrings {
             return T(en: "Stand behind the monitor, facing the worker", de: "Stell dich hinter den Monitor, mit Blick zur Person",
                      es: "Colócate detrás del monitor, frente al trabajador", nl: "Ga achter de monitor staan, met je gezicht naar de medewerker")
         case .frontGuideB2:
-            return T(en: "Hold the phone upright at chest height", de: "Halte das Handy aufrecht auf Brusthöhe",
-                     es: "Sujeta el teléfono en vertical a la altura del pecho", nl: "Houd de telefoon rechtop op borsthoogte")
+            return T(en: "Hold the phone upright, level with the worker's shoulders", de: "Halte das Handy aufrecht, auf Schulterhöhe der Person",
+                     es: "Sujeta el teléfono en vertical, a la altura de los hombros del trabajador", nl: "Houd de telefoon rechtop, op schouderhoogte van de medewerker")
         case .frontGuideB3:
             return T(en: "Make sure the head, shoulders and both hands are visible", de: "Achte darauf, dass Kopf, Schultern und beide Hände zu sehen sind",
                      es: "Asegúrate de que se vean la cabeza, los hombros y ambas manos", nl: "Zorg dat het hoofd, de schouders en beide handen zichtbaar zijn")

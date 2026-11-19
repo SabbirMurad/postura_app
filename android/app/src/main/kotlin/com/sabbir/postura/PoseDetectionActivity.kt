@@ -627,7 +627,10 @@ class PoseDetectionActivity : AppCompatActivity() {
             var mods = workstationModifiers
             pendingFrontShot?.let { shot ->
                 val frame = shot.frame
+                // A still fit that is upside down (see isUprightFrontPose) is discarded;
+                // the live pose that passed the capture check is used instead.
                 val still = detectStillPose(frame, shot.liveRaw)
+                    ?.takeIf { s -> isUprightFrontPose(s.map { LandmarkPoint(it.x(), it.y()) }) }
                 val captured = still?.map { LandmarkPoint(it.x(), it.y()) } ?: shot.livePoints
                 (still ?: shot.liveRaw)?.let {
                     frontRawPose = rawPoseRecord(it, frame.width, frame.height, still != null)
@@ -846,9 +849,10 @@ class PoseDetectionActivity : AppCompatActivity() {
                     val nowF = android.os.SystemClock.elapsedRealtime()
                     val phoneSteady = nowF - lastShakeAtMs >= PHONE_STEADY_SETTLE_MS
                     val frontFacing = sm != null && isFacingCamera(sm, w, h)
+                    val frontUpright = sm != null && isUprightFrontPose(sm)
                     val frontRotOk = frontRotationIsOk
-                    val frontOk = frontVisible && frontFacing && frontRotOk && phoneSteady
-                    runOnUiThread { updateFrontCue(frontVisible, frontFacing, frontRotOk, phoneSteady) }
+                    val frontOk = frontVisible && frontUpright && frontFacing && frontRotOk && phoneSteady
+                    runOnUiThread { updateFrontCue(frontVisible, frontUpright, frontFacing, frontRotOk, phoneSteady) }
                     if (frontOk && nowF >= frontReadyEarliestAtMs) {
                         // Capture once the condition has held for FRONT_STEADY_MS
                         // consecutive frames past the entry settle.
@@ -1887,29 +1891,57 @@ class PoseDetectionActivity : AppCompatActivity() {
     private fun isFacingCamera(landmarks: List<LandmarkPoint>, w: Int, h: Int): Boolean {
         if (landmarks.size < 13) return false
         val shoulderWidth = kotlin.math.abs(landmarks[11].x - landmarks[12].x) * w
-        val neckHeight = kotlin.math.abs((landmarks[11].y + landmarks[12].y) / 2f - landmarks[0].y) * h
+        // Signed: the shoulders must be BELOW the nose. The absolute value used
+        // before also accepted shoulders above the nose (an upside-down fit).
+        val neckHeight = ((landmarks[11].y + landmarks[12].y) / 2f - landmarks[0].y) * h
         if (neckHeight < 1f) return false
         return shoulderWidth / neckHeight >= FRONT_FACING_MIN_RATIO
     }
 
+    /**
+     * The pose is the right way up for a seated person seen from the front:
+     * nose above the shoulders, each elbow below its shoulder, and the hips
+     * below the shoulders. The hips are usually hidden behind the desk, but the
+     * model still places them, and where it places them gives a failed
+     * detection away.
+     *
+     * When the phone looks down steeply on someone whose lower body is hidden,
+     * the model can fit the skeleton upside down: shoulders at the top of the
+     * head, elbows at the real shoulders, hips above the frame. The photo then
+     * looks wrong and the abduction and wrist-deviation angles measured from it
+     * are meaningless, so such a pose must never be captured.
+     */
+    private fun isUprightFrontPose(lm: List<LandmarkPoint>): Boolean {
+        if (lm.size < 25) return false
+        val shoulderY = (lm[11].y + lm[12].y) / 2f
+        val hipY = (lm[23].y + lm[24].y) / 2f
+        return lm[0].y < minOf(lm[11].y, lm[12].y) &&
+            lm[13].y > lm[11].y && lm[14].y > lm[12].y &&
+            hipY > shoulderY
+    }
+
     /** Drives the capture banner + (repurposed) side chip during the front phase. */
     private fun updateFrontCue(
-        frontVisible: Boolean, frontFacing: Boolean, rotationOk: Boolean, phoneSteady: Boolean,
+        frontVisible: Boolean, frontUpright: Boolean, frontFacing: Boolean,
+        rotationOk: Boolean, phoneSteady: Boolean,
     ) {
         tvCaptureStatus.visibility = View.VISIBLE
         val settling = android.os.SystemClock.elapsedRealtime() < frontReadyEarliestAtMs
         tvCaptureStatus.text = when {
             settling         -> tr(CaptureStrings.Key.FRONT_MOVE)
             !frontVisible    -> tr(CaptureStrings.Key.FRONT_SHOW_BODY)
+            // An upside-down fit almost always comes from looking down steeply.
+            !frontUpright    -> tr(CaptureStrings.Key.FRONT_HOLD_LOWER)
             !frontFacing     -> tr(CaptureStrings.Key.FRONT_MOVE)
             !rotationOk      -> tr(CaptureStrings.Key.FRONT_STRAIGHTEN)
             !phoneSteady     -> tr(CaptureStrings.Key.FRONT_HOLD_PHONE_STILL)
             else             -> tr(CaptureStrings.Key.FRONT_CAPTURING)
         }
-        val ok = frontVisible && frontFacing && rotationOk && phoneSteady
+        val ok = frontVisible && frontUpright && frontFacing && rotationOk && phoneSteady
         tvSideViewStatus.setTextColor(if (ok) COLOR_DETECTED else COLOR_NOT_DETECTED)
         tvSideViewStatus.text = when {
             !frontVisible -> tr(CaptureStrings.Key.CHIP_FRONT_SHOW_BODY)
+            !frontUpright -> tr(CaptureStrings.Key.CHIP_FRONT_HOLD_LOWER)
             !frontFacing  -> tr(CaptureStrings.Key.CHIP_FRONT_MOVE)
             !rotationOk   -> tr(CaptureStrings.Key.CHIP_FRONT_STRAIGHTEN)
             !phoneSteady  -> tr(CaptureStrings.Key.CHIP_FRONT_HOLD_STILL)
