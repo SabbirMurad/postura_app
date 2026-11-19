@@ -12,7 +12,11 @@ import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import android.util.Size
+import android.graphics.drawable.GradientDrawable
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -258,6 +262,10 @@ class PoseDetectionActivity : AppCompatActivity() {
     // starts from it is well under 0.5, so the shot can't fire before they move.
     private val FRONT_FACING_MIN_RATIO = 0.9f
     @Volatile private var frontReadyEarliestAtMs = 0L
+    // True while the front-photo guide covers the camera after the side photos.
+    // Front capture waits until the photographer taps Continue.
+    @Volatile private var frontGuideShowing = false
+    private var frontGuideView: View? = null
 
     // Phone-steadiness gate for the front shot: dynamic acceleration (m/s²) above
     // PHONE_MOTION_MAX counts as movement, and the capture waits until the phone has
@@ -431,6 +439,9 @@ class PoseDetectionActivity : AppCompatActivity() {
             frontWristDeviationAngle = null
             nextCaptureEarliestAtMs = 0L
             frontReadyEarliestAtMs = 0L
+            frontGuideShowing = false
+            frontGuideView?.let { (it.parent as? ViewGroup)?.removeView(it) }
+            frontGuideView = null
             lastFrameBitmap = null
             okSinceMs = 0L
             distanceIsOk = false
@@ -822,7 +833,7 @@ class PoseDetectionActivity : AppCompatActivity() {
                 // upright, only un-rotated and still. Uses the raw
                 // (un-leg-estimated) smoothed landmarks and bakes the skeleton with
                 // no ROSA arcs. The photo carries no score.
-                if (currentState == AppState.FRONT) {
+                if (currentState == AppState.FRONT && !frontGuideShowing) {
                     val raw = landmarks.getOrNull(0)
                     val frontVisible = raw != null && frontLandmarksVisible(raw)
                     val nowF = android.os.SystemClock.elapsedRealtime()
@@ -1632,7 +1643,10 @@ class PoseDetectionActivity : AppCompatActivity() {
         legEstimator.reset()
         // Prepare the hand landmarker now so it's ready to run on the front still.
         initializeHandLandmarker()
+        // Front capture waits behind the guide until Continue is tapped.
+        frontGuideShowing = true
         runOnUiThread {
+            showFrontGuide()
             poseOverlayView.setHeightGuide(PoseOverlayView.HeightGuideState.HIDDEN)
             // Live overlay mirrors the captured front photo: drop face/ears,
             // wrist/palm and legs from the skeleton, and show the shoulder verticals.
@@ -1649,6 +1663,138 @@ class PoseDetectionActivity : AppCompatActivity() {
             tvCaptureStatus.visibility  = View.VISIBLE
             tvCaptureStatus.text = tr(CaptureStrings.Key.SIDE_PHOTOS_DONE)
         }
+    }
+
+    /**
+     * Full-screen guide shown after the side photos and before the front photo:
+     * the front-view illustration plus what the worker (A) and the photographer
+     * (B) should do. It has only a Continue button, no back button. Continue
+     * removes it and arms the usual settle delay before front capture starts.
+     */
+    private fun showFrontGuide() {
+        if (frontGuideView != null) return
+        val density = resources.displayMetrics.density
+        fun dp(v: Int) = (v * density).toInt()
+        val textColor = Color.parseColor("#202020")
+        val primary = Color.parseColor("#2180E6")
+
+        fun card(header: String, items: List<String>): View =
+            LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(dp(16), dp(16), dp(16), dp(16))
+                background = GradientDrawable().apply {
+                    setColor(Color.WHITE)
+                    cornerRadius = dp(12).toFloat()
+                    setStroke(dp(1), Color.parseColor("#264A4A4A"))
+                }
+                addView(TextView(this@PoseDetectionActivity).apply {
+                    text = header
+                    setTextColor(textColor)
+                    textSize = 16f
+                    setTypeface(typeface, android.graphics.Typeface.BOLD)
+                })
+                items.forEachIndexed { i, item ->
+                    addView(LinearLayout(this@PoseDetectionActivity).apply {
+                        orientation = LinearLayout.HORIZONTAL
+                        gravity = android.view.Gravity.CENTER_VERTICAL
+                        setPadding(0, dp(12), 0, 0)
+                        addView(TextView(this@PoseDetectionActivity).apply {
+                            text = "${i + 1}"
+                            setTextColor(textColor)
+                            textSize = 12f
+                            gravity = android.view.Gravity.CENTER
+                            background = GradientDrawable().apply {
+                                shape = GradientDrawable.OVAL
+                                setColor(Color.parseColor("#EDEDED"))
+                            }
+                        }, LinearLayout.LayoutParams(dp(20), dp(20)))
+                        addView(TextView(this@PoseDetectionActivity).apply {
+                            text = item
+                            setTextColor(textColor)
+                            textSize = 14f
+                        }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply {
+                            marginStart = dp(8)
+                        })
+                    })
+                }
+            }
+
+        val content = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(20), dp(16), dp(20), dp(104))
+            addView(TextView(this@PoseDetectionActivity).apply {
+                text = tr(CaptureStrings.Key.FRONT_GUIDE_TITLE)
+                setTextColor(textColor)
+                textSize = 24f
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                gravity = android.view.Gravity.CENTER
+            })
+            addView(ImageView(this@PoseDetectionActivity).apply {
+                setImageResource(R.drawable.guide_frontview)
+                adjustViewBounds = true
+                scaleType = ImageView.ScaleType.FIT_CENTER
+                clipToOutline = true
+                background = GradientDrawable().apply { cornerRadius = dp(12).toFloat() }
+            }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                topMargin = dp(8)
+            })
+            addView(card(tr(CaptureStrings.Key.FRONT_GUIDE_WORKER), listOf(
+                tr(CaptureStrings.Key.FRONT_GUIDE_A1), tr(CaptureStrings.Key.FRONT_GUIDE_A2),
+                tr(CaptureStrings.Key.FRONT_GUIDE_A3), tr(CaptureStrings.Key.FRONT_GUIDE_A4),
+            )), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                topMargin = dp(20)
+            })
+            addView(card(tr(CaptureStrings.Key.FRONT_GUIDE_PHOTOGRAPHER), listOf(
+                tr(CaptureStrings.Key.FRONT_GUIDE_B1), tr(CaptureStrings.Key.FRONT_GUIDE_B2),
+                tr(CaptureStrings.Key.FRONT_GUIDE_B3), tr(CaptureStrings.Key.FRONT_GUIDE_B4),
+            )), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                topMargin = dp(12)
+            })
+        }
+
+        val continueButton = TextView(this).apply {
+            text = tr(CaptureStrings.Key.FRONT_GUIDE_CONTINUE)
+            setTextColor(Color.WHITE)
+            textSize = 16f
+            gravity = android.view.Gravity.CENTER
+            background = GradientDrawable().apply {
+                setColor(primary)
+                cornerRadius = dp(14).toFloat()
+            }
+            isClickable = true
+            isFocusable = true
+            setOnClickListener { dismissFrontGuide() }
+        }
+
+        val overlay = FrameLayout(this).apply {
+            setBackgroundColor(Color.parseColor("#F7F8FA"))
+            isClickable = true // keep touches off the camera screen underneath
+            addView(android.widget.ScrollView(this@PoseDetectionActivity).apply {
+                addView(content)
+            }, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+            addView(continueButton, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(52)).apply {
+                gravity = android.view.Gravity.BOTTOM
+                setMargins(dp(20), 0, dp(20), dp(20))
+            })
+        }
+        // The app draws edge to edge: keep the guide clear of the system bars.
+        ViewCompat.setOnApplyWindowInsetsListener(overlay) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            insets
+        }
+        addContentView(overlay, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        ViewCompat.requestApplyInsets(overlay)
+        frontGuideView = overlay
+    }
+
+    /** Removes the front-photo guide and starts the front capture's settle delay. */
+    private fun dismissFrontGuide() {
+        frontGuideView?.let { (it.parent as? ViewGroup)?.removeView(it) }
+        frontGuideView = null
+        okSinceMs = 0L
+        frontReadyEarliestAtMs = android.os.SystemClock.elapsedRealtime() + FRONT_READY_DELAY_MS
+        frontGuideShowing = false
     }
 
     /** Max elbow abduction (shoulder→elbow angle from vertical, degrees) across both

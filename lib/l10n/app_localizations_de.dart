@@ -279,7 +279,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get photoCaptureGuide => 'Fotoanleitung';
 
   @override
-  String get personA => 'Person A (Du)';
+  String get personA => 'A (Mitarbeiter)';
 
   @override
   String get guideA1 => 'Setze dich genau so, wie du normalerweise arbeitest';
@@ -294,7 +294,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get guideA4 => 'Behalte deine natürliche Haltung bei';
 
   @override
-  String get personB => 'Person B (Fotograf)';
+  String get personB => 'B (Fotograf)';
 
   @override
   String get guideB1 => 'Halte das Telefon auf Augenhöhe der Person';

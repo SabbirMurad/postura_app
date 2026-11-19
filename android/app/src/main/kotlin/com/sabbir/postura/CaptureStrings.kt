@@ -46,6 +46,8 @@ object CaptureStrings {
         GUIDE_LOWER_PHONE, GUIDE_RAISE_PHONE, GUIDE_HEIGHT_OK,
         // Accessibility
         SWITCH_CAMERA,
+        // Front-photo guide shown between the side photos and the front photo
+        FRONT_GUIDE_TITLE, FRONT_GUIDE_WORKER, FRONT_GUIDE_A1, FRONT_GUIDE_A2, FRONT_GUIDE_A3, FRONT_GUIDE_A4, FRONT_GUIDE_PHOTOGRAPHER, FRONT_GUIDE_B1, FRONT_GUIDE_B2, FRONT_GUIDE_B3, FRONT_GUIDE_B4, FRONT_GUIDE_CONTINUE,
     }
 
     private class T(val en: String, val de: String, val es: String, val nl: String)
@@ -197,6 +199,19 @@ object CaptureStrings {
         Key.GUIDE_HEIGHT_OK to T("✓  Height OK", "✓  Höhe OK", "✓  Altura OK", "✓  Hoogte OK"),
 
         Key.SWITCH_CAMERA to T("Switch camera", "Kamera wechseln", "Cambiar de cámara", "Camera wisselen"),
+
+        Key.FRONT_GUIDE_TITLE to T("Front Photo Guide", "Anleitung Frontfoto", "Guía de la foto frontal", "Gids voor de frontfoto"),
+        Key.FRONT_GUIDE_WORKER to T("A (Worker)", "A (Mitarbeiter)", "A (Trabajador)", "A (Medewerker)"),
+        Key.FRONT_GUIDE_A1 to T("Stay seated exactly as you normally work", "Bleib so sitzen, wie du normalerweise arbeitest", "Sigue sentado tal como trabajas normalmente", "Blijf zitten zoals je normaal werkt"),
+        Key.FRONT_GUIDE_A2 to T("Face the screen with your hands on the keyboard", "Schau zum Bildschirm, die Hände auf der Tastatur", "Mira la pantalla con las manos sobre el teclado", "Kijk naar het scherm met je handen op het toetsenbord"),
+        Key.FRONT_GUIDE_A3 to T("Keep your shoulders relaxed", "Halte die Schultern locker", "Mantén los hombros relajados", "Houd je schouders ontspannen"),
+        Key.FRONT_GUIDE_A4 to T("Look at the screen naturally", "Schau ganz natürlich auf den Bildschirm", "Mira la pantalla con naturalidad", "Kijk op een natuurlijke manier naar het scherm"),
+        Key.FRONT_GUIDE_PHOTOGRAPHER to T("B (Photographer)", "B (Fotograf)", "B (Fotógrafo)", "B (Fotograaf)"),
+        Key.FRONT_GUIDE_B1 to T("Stand behind the monitor, facing the worker", "Stell dich hinter den Monitor, mit Blick zur Person", "Colócate detrás del monitor, frente al trabajador", "Ga achter de monitor staan, met je gezicht naar de medewerker"),
+        Key.FRONT_GUIDE_B2 to T("Hold the phone upright at chest height", "Halte das Handy aufrecht auf Brusthöhe", "Sujeta el teléfono en vertical a la altura del pecho", "Houd de telefoon rechtop op borsthoogte"),
+        Key.FRONT_GUIDE_B3 to T("Make sure the head, shoulders and both hands are visible", "Achte darauf, dass Kopf, Schultern und beide Hände zu sehen sind", "Asegúrate de que se vean la cabeza, los hombros y ambas manos", "Zorg dat het hoofd, de schouders en beide handen zichtbaar zijn"),
+        Key.FRONT_GUIDE_B4 to T("Hold the phone still until the photo is taken", "Halte das Handy still, bis das Foto aufgenommen ist", "Mantén el teléfono quieto hasta que se tome la foto", "Houd de telefoon stil tot de foto is gemaakt"),
+        Key.FRONT_GUIDE_CONTINUE to T("Continue", "Weiter", "Continuar", "Doorgaan"),
     )
 
     /**

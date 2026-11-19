@@ -46,6 +46,8 @@ enum CaptureStrings {
         case guideLowerPhone, guideRaisePhone, guideHeightOk
         // Accessibility
         case switchCamera
+        // Front-photo guide shown between the side photos and the front photo
+        case frontGuideTitle, frontGuideWorker, frontGuideA1, frontGuideA2, frontGuideA3, frontGuideA4, frontGuidePhotographer, frontGuideB1, frontGuideB2, frontGuideB3, frontGuideB4, frontGuideContinue
     }
 
     private struct T {
@@ -223,6 +225,42 @@ enum CaptureStrings {
         case .switchCamera:
             return T(en: "Switch camera", de: "Kamera wechseln",
                      es: "Cambiar de cámara", nl: "Camera wisselen")
+        case .frontGuideTitle:
+            return T(en: "Front Photo Guide", de: "Anleitung Frontfoto",
+                     es: "Guía de la foto frontal", nl: "Gids voor de frontfoto")
+        case .frontGuideWorker:
+            return T(en: "A (Worker)", de: "A (Mitarbeiter)",
+                     es: "A (Trabajador)", nl: "A (Medewerker)")
+        case .frontGuideA1:
+            return T(en: "Stay seated exactly as you normally work", de: "Bleib so sitzen, wie du normalerweise arbeitest",
+                     es: "Sigue sentado tal como trabajas normalmente", nl: "Blijf zitten zoals je normaal werkt")
+        case .frontGuideA2:
+            return T(en: "Face the screen with your hands on the keyboard", de: "Schau zum Bildschirm, die Hände auf der Tastatur",
+                     es: "Mira la pantalla con las manos sobre el teclado", nl: "Kijk naar het scherm met je handen op het toetsenbord")
+        case .frontGuideA3:
+            return T(en: "Keep your shoulders relaxed", de: "Halte die Schultern locker",
+                     es: "Mantén los hombros relajados", nl: "Houd je schouders ontspannen")
+        case .frontGuideA4:
+            return T(en: "Look at the screen naturally", de: "Schau ganz natürlich auf den Bildschirm",
+                     es: "Mira la pantalla con naturalidad", nl: "Kijk op een natuurlijke manier naar het scherm")
+        case .frontGuidePhotographer:
+            return T(en: "B (Photographer)", de: "B (Fotograf)",
+                     es: "B (Fotógrafo)", nl: "B (Fotograaf)")
+        case .frontGuideB1:
+            return T(en: "Stand behind the monitor, facing the worker", de: "Stell dich hinter den Monitor, mit Blick zur Person",
+                     es: "Colócate detrás del monitor, frente al trabajador", nl: "Ga achter de monitor staan, met je gezicht naar de medewerker")
+        case .frontGuideB2:
+            return T(en: "Hold the phone upright at chest height", de: "Halte das Handy aufrecht auf Brusthöhe",
+                     es: "Sujeta el teléfono en vertical a la altura del pecho", nl: "Houd de telefoon rechtop op borsthoogte")
+        case .frontGuideB3:
+            return T(en: "Make sure the head, shoulders and both hands are visible", de: "Achte darauf, dass Kopf, Schultern und beide Hände zu sehen sind",
+                     es: "Asegúrate de que se vean la cabeza, los hombros y ambas manos", nl: "Zorg dat het hoofd, de schouders en beide handen zichtbaar zijn")
+        case .frontGuideB4:
+            return T(en: "Hold the phone still until the photo is taken", de: "Halte das Handy still, bis das Foto aufgenommen ist",
+                     es: "Mantén el teléfono quieto hasta que se tome la foto", nl: "Houd de telefoon stil tot de foto is gemaakt")
+        case .frontGuideContinue:
+            return T(en: "Continue", de: "Weiter",
+                     es: "Continuar", nl: "Doorgaan")
         }
     }
 

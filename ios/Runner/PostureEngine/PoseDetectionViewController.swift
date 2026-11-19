@@ -187,6 +187,10 @@ final class PoseDetectionViewController: UIViewController {
     // starts from it is well under 0.5, so the shot can't fire before they move.
     private let FRONT_FACING_MIN_RATIO: Float = 0.9
     private var frontReadyEarliestAtMs: Double = 0
+    // True while the front-photo guide covers the camera after the side photos.
+    // Front capture waits until the photographer taps Continue.
+    private var frontGuideShowing = false
+    private var frontGuideView: UIView?
 
     // Phone-steadiness gate for the front shot: dynamic acceleration (m/s²) above
     // PHONE_MOTION_MAX counts as movement, and the capture waits until the phone has
@@ -422,6 +426,9 @@ final class PoseDetectionViewController: UIViewController {
             self.frontWristDeviationAngle = nil
             self.nextCaptureEarliestAtMs = 0
             self.frontReadyEarliestAtMs = 0
+            self.frontGuideShowing = false
+            self.frontGuideView?.removeFromSuperview()
+            self.frontGuideView = nil
             self.lastFrameImage = nil
             self.pendingFrames.removeAll()
             self.okSinceMs = 0
@@ -926,7 +933,7 @@ final class PoseDetectionViewController: UIViewController {
         // shot doesn't need the phone held perfectly upright. Uses the raw
         // (un-leg-estimated) smoothed landmarks and bakes the skeleton with no
         // ROSA arcs. The photo carries no score.
-        if currentState == .front {
+        if currentState == .front && !frontGuideShowing {
             let frontVisible = frontLandmarksVisible(rawLandmarks)
             let nowMs = tSec * 1000
             let phoneSteady = nowMs - lastShakeAtMs >= PHONE_STEADY_SETTLE_MS
@@ -1330,7 +1337,10 @@ final class PoseDetectionViewController: UIViewController {
         legEstimator.reset()
         // Prepare the hand landmarker now so it's ready to run on the front still.
         initializeHandLandmarker()
+        // Front capture waits behind the guide until Continue is tapped.
+        frontGuideShowing = true
         DispatchQueue.main.async {
+            self.showFrontGuide()
             self.overlayView.setHeightGuide(.hidden)
             // Live overlay mirrors the captured front photo: drop face/ears,
             // wrist/palm and legs from the skeleton, and show the shoulder verticals.
@@ -1344,6 +1354,145 @@ final class PoseDetectionViewController: UIViewController {
             }
             self.tvCaptureStatus.isHidden = false
             self.tvCaptureStatus.text = self.tr(.sidePhotosDone)
+        }
+    }
+
+    /// Full-screen guide shown after the side photos and before the front photo:
+    /// the front-view illustration plus what the worker (A) and the photographer
+    /// (B) should do. It has only a Continue button, no back button. Continue
+    /// removes it and arms the usual settle delay before front capture starts.
+    private func showFrontGuide() {
+        guard frontGuideView == nil else { return }
+        let textColor = UIColor(red: 0x20 / 255.0, green: 0x20 / 255.0, blue: 0x20 / 255.0, alpha: 1)
+        let primary = UIColor(red: 33 / 255.0, green: 128 / 255.0, blue: 230 / 255.0, alpha: 1)
+
+        func label(_ text: String, size: CGFloat, weight: UIFont.Weight) -> UILabel {
+            let l = UILabel()
+            l.text = text
+            l.textColor = textColor
+            l.font = .systemFont(ofSize: size, weight: weight)
+            l.numberOfLines = 0
+            return l
+        }
+
+        func card(_ header: String, _ items: [String]) -> UIView {
+            let box = UIView()
+            box.backgroundColor = .white
+            box.layer.cornerRadius = 12
+            box.layer.borderWidth = 1
+            box.layer.borderColor = UIColor(white: 0.29, alpha: 0.15).cgColor
+            let stack = UIStackView()
+            stack.axis = .vertical
+            stack.spacing = 12
+            stack.translatesAutoresizingMaskIntoConstraints = false
+            stack.addArrangedSubview(label(header, size: 16, weight: .bold))
+            for (i, item) in items.enumerated() {
+                let number = UILabel()
+                number.text = "\(i + 1)"
+                number.textColor = textColor
+                number.font = .systemFont(ofSize: 12)
+                number.textAlignment = .center
+                number.backgroundColor = UIColor(white: 0xED / 255.0, alpha: 1)
+                number.layer.cornerRadius = 10
+                number.clipsToBounds = true
+                number.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    number.widthAnchor.constraint(equalToConstant: 20),
+                    number.heightAnchor.constraint(equalToConstant: 20),
+                ])
+                let row = UIStackView(arrangedSubviews: [number, label(item, size: 14, weight: .regular)])
+                row.axis = .horizontal
+                row.alignment = .center
+                row.spacing = 8
+                stack.addArrangedSubview(row)
+            }
+            box.addSubview(stack)
+            NSLayoutConstraint.activate([
+                stack.topAnchor.constraint(equalTo: box.topAnchor, constant: 16),
+                stack.bottomAnchor.constraint(equalTo: box.bottomAnchor, constant: -16),
+                stack.leadingAnchor.constraint(equalTo: box.leadingAnchor, constant: 16),
+                stack.trailingAnchor.constraint(equalTo: box.trailingAnchor, constant: -16),
+            ])
+            return box
+        }
+
+        let overlay = UIView()
+        overlay.backgroundColor = UIColor(red: 0xF7 / 255.0, green: 0xF8 / 255.0, blue: 0xFA / 255.0, alpha: 1)
+        overlay.translatesAutoresizingMaskIntoConstraints = false
+
+        let title = label(tr(.frontGuideTitle), size: 24, weight: .semibold)
+        title.textAlignment = .center
+
+        let imageView = UIImageView()
+        if let path = Bundle.main.path(forResource: "guide_frontview", ofType: "jpg") {
+            imageView.image = UIImage(contentsOfFile: path)
+        }
+        imageView.contentMode = .scaleAspectFit
+        imageView.layer.cornerRadius = 12
+        imageView.clipsToBounds = true
+        let ratio: CGFloat = imageView.image.map { $0.size.height / max($0.size.width, 1) } ?? 0.56
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: ratio).isActive = true
+
+        let content = UIStackView(arrangedSubviews: [
+            title,
+            imageView,
+            card(tr(.frontGuideWorker), [tr(.frontGuideA1), tr(.frontGuideA2), tr(.frontGuideA3), tr(.frontGuideA4)]),
+            card(tr(.frontGuidePhotographer), [tr(.frontGuideB1), tr(.frontGuideB2), tr(.frontGuideB3), tr(.frontGuideB4)]),
+        ])
+        content.axis = .vertical
+        content.spacing = 16
+        content.translatesAutoresizingMaskIntoConstraints = false
+
+        let scroll = UIScrollView()
+        scroll.translatesAutoresizingMaskIntoConstraints = false
+        scroll.addSubview(content)
+
+        let button = UIButton(type: .system)
+        button.setTitle(tr(.frontGuideContinue), for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        button.backgroundColor = primary
+        button.layer.cornerRadius = 14
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(dismissFrontGuide), for: .touchUpInside)
+
+        overlay.addSubview(scroll)
+        overlay.addSubview(button)
+        view.addSubview(overlay)
+        let safe = overlay.safeAreaLayoutGuide
+        NSLayoutConstraint.activate([
+            overlay.topAnchor.constraint(equalTo: view.topAnchor),
+            overlay.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            overlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            overlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            scroll.topAnchor.constraint(equalTo: safe.topAnchor),
+            scroll.bottomAnchor.constraint(equalTo: button.topAnchor, constant: -12),
+            scroll.leadingAnchor.constraint(equalTo: safe.leadingAnchor),
+            scroll.trailingAnchor.constraint(equalTo: safe.trailingAnchor),
+
+            content.topAnchor.constraint(equalTo: scroll.contentLayoutGuide.topAnchor, constant: 16),
+            content.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor, constant: -16),
+            content.leadingAnchor.constraint(equalTo: scroll.frameLayoutGuide.leadingAnchor, constant: 20),
+            content.trailingAnchor.constraint(equalTo: scroll.frameLayoutGuide.trailingAnchor, constant: -20),
+
+            button.leadingAnchor.constraint(equalTo: safe.leadingAnchor, constant: 20),
+            button.trailingAnchor.constraint(equalTo: safe.trailingAnchor, constant: -20),
+            button.bottomAnchor.constraint(equalTo: safe.bottomAnchor, constant: -20),
+            button.heightAnchor.constraint(equalToConstant: 52),
+        ])
+        frontGuideView = overlay
+    }
+
+    /// Removes the front-photo guide and starts the front capture's settle delay.
+    @objc private func dismissFrontGuide() {
+        frontGuideView?.removeFromSuperview()
+        frontGuideView = nil
+        captureQueue.async {
+            self.okSinceMs = 0
+            self.frontReadyEarliestAtMs = CACurrentMediaTime() * 1000 + self.FRONT_READY_DELAY_MS
+            self.frontGuideShowing = false
         }
     }
 

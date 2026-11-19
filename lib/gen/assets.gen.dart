@@ -338,16 +338,16 @@ class $AssetsIconsWorkplaceGen {
 class $AssetsImagesCameraGen {
   const $AssetsImagesCameraGen();
 
-  /// File path: assets/images/camera/camera_guided.png
-  AssetGenImage get cameraGuided =>
-      const AssetGenImage('assets/images/camera/camera_guided.png');
+  /// File path: assets/images/camera/guide_frontview.png
+  AssetGenImage get guideFrontview =>
+      const AssetGenImage('assets/images/camera/guide_frontview.png');
 
-  /// File path: assets/images/camera/photo_frame.png
-  AssetGenImage get photoFrame =>
-      const AssetGenImage('assets/images/camera/photo_frame.png');
+  /// File path: assets/images/camera/guide_sideview.png
+  AssetGenImage get guideSideview =>
+      const AssetGenImage('assets/images/camera/guide_sideview.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [cameraGuided, photoFrame];
+  List<AssetGenImage> get values => [guideFrontview, guideSideview];
 }
 
 class $AssetsImagesGeneralGen {

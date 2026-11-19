@@ -103,12 +103,12 @@ class _CameraGuideScreenState extends ConsumerState<CameraGuideScreen> {
                   ),
                 ),
                 SizedBox(height: 6.h),
+                // Wide illustration (about 2:1): shown at full width, uncropped.
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12.r),
-                  child: Assets.images.camera.cameraGuided.image(
-                    width: 335.w,
-                    height: 335.h,
-                    fit: BoxFit.cover,
+                  child: Assets.images.camera.guideSideview.image(
+                    width: double.infinity,
+                    fit: BoxFit.contain,
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -125,7 +125,7 @@ class _CameraGuideScreenState extends ConsumerState<CameraGuideScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // EN: "Person A (Subject)"
+                      // EN: "A (Worker)"
                       Text(
                         loc.personA,
                         style: TextStyle(
@@ -163,7 +163,7 @@ class _CameraGuideScreenState extends ConsumerState<CameraGuideScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // EN: "Person B (Photographer)"
+                      // EN: "B (Photographer)"
                       Text(
                         loc.personB,
                         style: TextStyle(

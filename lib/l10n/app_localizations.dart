@@ -642,7 +642,7 @@ abstract class AppLocalizations {
   /// No description provided for @personA.
   ///
   /// In en, this message translates to:
-  /// **'Person A (You)'**
+  /// **'A (Worker)'**
   String get personA;
 
   /// No description provided for @guideA1.
@@ -672,7 +672,7 @@ abstract class AppLocalizations {
   /// No description provided for @personB.
   ///
   /// In en, this message translates to:
-  /// **'Person B (Photo Taker)'**
+  /// **'B (Photographer)'**
   String get personB;
 
   /// No description provided for @guideB1.

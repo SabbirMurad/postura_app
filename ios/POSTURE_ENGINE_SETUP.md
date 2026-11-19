@@ -5,7 +5,7 @@ The native iOS posture-detection engine was copied into this project from the
 done:
 
 - `Runner/PostureEngine/*.swift` + `TFLiteCAPI.h` — copied in.
-- `Runner/Models/{pose_landmarker_full.task, hand_landmarker.task, yolov8n_float16.tflite}` — copied in.
+- `Runner/Models/{pose_landmarker_full.task, hand_landmarker.task, yolov8n_float16.tflite, guide_frontview.jpg}` — copied in.
 - `Runner/AppDelegate.swift` — registers the `posture_detection` MethodChannel
   and presents `PoseDetectionViewController`.
 - `Runner/Runner-Bridging-Header.h` — imports `PostureEngine/TFLiteCAPI.h`.
@@ -25,7 +25,7 @@ The files above exist on disk but are **not yet registered in
    **Build Phases → Compile Sources**.
    (`TFLiteCAPI.h` is a header — it should NOT be in Compile Sources.)
 3. Add the `Models` folder the same way. Confirm the two `.task` files and
-   `yolov8n_float16.tflite` appear under **Build Phases → Copy Bundle Resources**.
+   `yolov8n_float16.tflite` and `guide_frontview.jpg` appear under **Build Phases → Copy Bundle Resources**.
 4. **Build Settings → Objective-C Bridging Header** should be
    `Runner/Runner-Bridging-Header.h` (Flutter projects usually set this already).
 5. From `ios/`: `pod install`.
