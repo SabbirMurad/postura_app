@@ -266,6 +266,8 @@ class PoseDetectionActivity : AppCompatActivity() {
     // Front capture waits until the photographer taps Continue.
     @Volatile private var frontGuideShowing = false
     private var frontGuideView: View? = null
+    // Swallows the back gesture and back button while the guide is showing.
+    private var frontGuideBackBlocker: androidx.activity.OnBackPressedCallback? = null
 
     // Phone-steadiness gate for the front shot: dynamic acceleration (m/s²) above
     // PHONE_MOTION_MAX counts as movement, and the capture waits until the phone has
@@ -440,8 +442,13 @@ class PoseDetectionActivity : AppCompatActivity() {
             nextCaptureEarliestAtMs = 0L
             frontReadyEarliestAtMs = 0L
             frontGuideShowing = false
-            frontGuideView?.let { (it.parent as? ViewGroup)?.removeView(it) }
-            frontGuideView = null
+            // Views and the back dispatcher belong to the UI thread.
+            runOnUiThread {
+                frontGuideView?.let { (it.parent as? ViewGroup)?.removeView(it) }
+                frontGuideView = null
+                frontGuideBackBlocker?.remove()
+                frontGuideBackBlocker = null
+            }
             lastFrameBitmap = null
             okSinceMs = 0L
             distanceIsOk = false
@@ -1024,6 +1031,10 @@ class PoseDetectionActivity : AppCompatActivity() {
     @OptIn(ExperimentalGetImage::class)
     private fun analyzeImage(imageProxy: ImageProxy) {
         if (++frameCounter % processEveryNFrames != 0) { imageProxy.close(); return }
+        // The front-photo guide covers the camera: drop frames without running
+        // the pose model. The camera itself stays open so front capture can
+        // start straight away after Continue.
+        if (frontGuideShowing) { imageProxy.close(); return }
 
         val mediaImage = imageProxy.image
         if (mediaImage == null || imageProxy.format != ImageFormat.YUV_420_888) {
@@ -1786,12 +1797,22 @@ class PoseDetectionActivity : AppCompatActivity() {
         addContentView(overlay, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
         ViewCompat.requestApplyInsets(overlay)
         frontGuideView = overlay
+
+        // No way back from here: the back gesture and button do nothing while the
+        // guide is up; Continue is the only way on.
+        val blocker = object : androidx.activity.OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() { /* intentionally ignored */ }
+        }
+        onBackPressedDispatcher.addCallback(this, blocker)
+        frontGuideBackBlocker = blocker
     }
 
     /** Removes the front-photo guide and starts the front capture's settle delay. */
     private fun dismissFrontGuide() {
         frontGuideView?.let { (it.parent as? ViewGroup)?.removeView(it) }
         frontGuideView = null
+        frontGuideBackBlocker?.remove()
+        frontGuideBackBlocker = null
         okSinceMs = 0L
         frontReadyEarliestAtMs = android.os.SystemClock.elapsedRealtime() + FRONT_READY_DELAY_MS
         frontGuideShowing = false

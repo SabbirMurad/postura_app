@@ -427,8 +427,11 @@ final class PoseDetectionViewController: UIViewController {
             self.nextCaptureEarliestAtMs = 0
             self.frontReadyEarliestAtMs = 0
             self.frontGuideShowing = false
-            self.frontGuideView?.removeFromSuperview()
-            self.frontGuideView = nil
+            // Views belong to the main thread.
+            DispatchQueue.main.async {
+                self.frontGuideView?.removeFromSuperview()
+                self.frontGuideView = nil
+            }
             self.lastFrameImage = nil
             self.pendingFrames.removeAll()
             self.okSinceMs = 0
@@ -672,6 +675,10 @@ final class PoseDetectionViewController: UIViewController {
     // =========================================================================
 
     fileprivate func analyze(sampleBuffer: CMSampleBuffer) {
+        // The front-photo guide covers the camera: drop frames without running
+        // the pose model. The session stays running so front capture can start
+        // straight away after Continue.
+        if frontGuideShowing { return }
         guard let pb = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         readIntrinsics(from: sampleBuffer)
 
