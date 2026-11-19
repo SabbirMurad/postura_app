@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/provider/cpe_home.dart';
+import 'package:posture_detector_app/utils/date_helper.dart';
 
 enum ComplianceStatus { excellent, good, moderate, low }
 
@@ -85,6 +86,18 @@ class PatientComplianceCard extends StatelessWidget {
                   ),
                   label: scan.deskLocation,
                 ),
+                // When the employee took the assessment, in the phone's time.
+                if (scan.createdAt.isNotEmpty) ...[
+                  SizedBox(height: 5.h),
+                  _InfoRow(
+                    icon: Icon(
+                      Icons.schedule,
+                      size: 16.w,
+                      color: const Color(0xFF0078B5),
+                    ),
+                    label: prettyDateTime(scan.createdAt),
+                  ),
+                ],
               ],
             ),
           ),
