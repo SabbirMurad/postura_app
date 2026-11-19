@@ -23,6 +23,15 @@ class AppHelper {
   /// (auth-gated capture images). Warmed in [init] and updated on token writes.
   static String? _accessTokenCache;
 
+  /// The user's height in cm, last entered on a scan. Kept on the device only
+  /// (in the encrypted store, with the other personal values) so it is
+  /// pre-filled on the next scan, and removed at sign-out. Cached so screens
+  /// can read it synchronously; warmed in [init].
+  static double? _heightCmCache;
+
+  /// The saved height, or null if none has been entered since sign-in.
+  static double? get savedHeightCm => _heightCmCache;
+
   /// Bearer auth headers for authenticated image requests, or null when signed
   /// out. Sending these to public images (avatars) is harmless — the server
   /// ignores auth there and only enforces it for capture (Post) images.
@@ -43,6 +52,14 @@ class AppHelper {
     await _prefs!.remove('cookie');
     await _migrateIdentityToSecureStore();
     _accessTokenCache = await _secure.read(key: 'access_token');
+    _heightCmCache = double.tryParse(await _secure.read(key: 'height_cm') ?? '');
+  }
+
+  /// Saves the height entered on the scan page (only when it changed).
+  Future<void> setHeightCm(double heightCm) async {
+    if (heightCm <= 0 || heightCm == _heightCmCache) return;
+    _heightCmCache = heightCm;
+    await _secure.write(key: 'height_cm', value: heightCm.toString());
   }
 
   /// Identity fields that used to sit in plain SharedPreferences. They say who
@@ -89,6 +106,7 @@ class AppHelper {
     }
     // Auth secrets live in the encrypted store, not prefs — wipe them too.
     _accessTokenCache = null;
+    _heightCmCache = null;
     await _secure.deleteAll();
   }
 
@@ -198,6 +216,7 @@ class AppHelper {
       }
       await pref.reload();
       _accessTokenCache = null;
+      _heightCmCache = null;
       await _secure.deleteAll();
       return true;
     } catch (e) {

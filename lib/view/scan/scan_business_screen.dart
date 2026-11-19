@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -28,7 +29,10 @@ class _ScanBusinessScreenState extends ConsumerState<ScanBusinessScreen> {
     super.initState();
     // Height never changes between scans — prefill from whatever was entered
     // last time so a returning user only has to confirm it.
-    _heightCm = ref.read(assessmentNotifierProvider).scanSupplemental.heightCm;
+    // The height saved on this device by an earlier scan, if any. Read from
+    // the device, not the in-memory scan state, which can still hold the
+    // previous user's value right after a sign-out.
+    _heightCm = AppHelper.savedHeightCm;
   }
 
   void _onStartScan() {

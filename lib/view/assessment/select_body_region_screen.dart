@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:posture_detector_app/helpers/app_helper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -33,7 +34,10 @@ class _SelectBodyRegionScreenState
   @override
   void initState() {
     super.initState();
-    _heightCm = ref.read(assessmentNotifierProvider).scanSupplemental.heightCm;
+    // The height saved on this device by an earlier scan, if any. Read from
+    // the device, not the in-memory scan state, which can still hold the
+    // previous user's value right after a sign-out.
+    _heightCm = AppHelper.savedHeightCm;
     _askHeight = _heightCm == null || _heightCm! <= 0;
     // First screen of a new scan: clear anything left from a previous
     // assessment. The notifier is keepAlive, so without this the old pain

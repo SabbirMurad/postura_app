@@ -158,7 +158,10 @@ class AssessmentState {
 @Riverpod(keepAlive: true)
 class AssessmentNotifier extends _$AssessmentNotifier {
   @override
-  AssessmentState build() => const AssessmentState();
+  // Height is pre-filled from the device, where the last scan saved it.
+  AssessmentState build() => AssessmentState(
+    scanSupplemental: ScanSupplemental(heightCm: AppHelper.savedHeightCm),
+  );
 
   void toggleRegion(BodyRegion region) {
     final regions = Set<BodyRegion>.from(state.selectedBodyRegions);
@@ -226,7 +229,14 @@ class AssessmentNotifier extends _$AssessmentNotifier {
 
   /// Height doesn't change scan-to-scan, so it's set independently of (and
   /// earlier than) the two supplemental phone answers below.
-  void setHeightCm(double heightCm) => state = state.copyWith(
+  /// Sets the height for this scan and saves it on the device, so the next
+  /// scan is pre-filled. A changed value replaces the saved one.
+  void setHeightCm(double heightCm) {
+    AppHelper.instance.setHeightCm(heightCm);
+    _setHeightInState(heightCm);
+  }
+
+  void _setHeightInState(double heightCm) => state = state.copyWith(
     scanSupplemental: state.scanSupplemental.copyWith(heightCm: heightCm),
   );
 
@@ -375,8 +385,10 @@ class AssessmentNotifier extends _$AssessmentNotifier {
   }
 
   /// Resets for a new scan. Height never changes between scans, so it's the
-  /// one piece of state carried forward — everything else starts fresh.
+  /// one piece of state carried forward — everything else starts fresh. It is
+  /// taken from the device rather than the old state, so after a sign-out
+  /// (which removes it) the next user is asked again.
   void reset() => state = AssessmentState(
-    scanSupplemental: ScanSupplemental(heightCm: state.scanSupplemental.heightCm),
+    scanSupplemental: ScanSupplemental(heightCm: AppHelper.savedHeightCm),
   );
 }
