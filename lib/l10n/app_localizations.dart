@@ -5294,6 +5294,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recovery outlook: {level}'**
   String rvwRecoveryOutlookStatus(String level);
+
+  /// No description provided for @flagSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review flags'**
+  String get flagSectionTitle;
+
+  /// No description provided for @flagSectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Where the photos were uncertain or don\'t match the answers.'**
+  String get flagSectionSubtitle;
+
+  /// No description provided for @flagNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No flags. The photos and answers agree.'**
+  String get flagNone;
+
+  /// Badge on an ergonomist list row: number of review flags to check
+  ///
+  /// In en, this message translates to:
+  /// **'{count} to check'**
+  String flagToCheck(int count);
+
+  /// No description provided for @flagLowerBodyHiddenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Knee or ankle hidden'**
+  String get flagLowerBodyHiddenTitle;
+
+  /// No description provided for @flagLowerBodyHiddenText.
+  ///
+  /// In en, this message translates to:
+  /// **'The seat-height score is estimated, because the knee or ankle wasn\'t visible.'**
+  String get flagLowerBodyHiddenText;
+
+  /// No description provided for @flagFeetAnswerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Feet answer decides seat height'**
+  String get flagFeetAnswerTitle;
+
+  /// No description provided for @flagFeetAnswerText.
+  ///
+  /// In en, this message translates to:
+  /// **'The employee said their feet aren\'t supported, so that answer sets the seat-height score instead of the knee angle.'**
+  String get flagFeetAnswerText;
+
+  /// No description provided for @flagFrontPhotoMissingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No front photo'**
+  String get flagFrontPhotoMissingTitle;
+
+  /// No description provided for @flagFrontPhotoMissingText.
+  ///
+  /// In en, this message translates to:
+  /// **'Armrest width and wrist deviation come from the answers, not a photo.'**
+  String get flagFrontPhotoMissingText;
+
+  /// No description provided for @flagFrontUnmeasuredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Front angle not measured'**
+  String get flagFrontUnmeasuredTitle;
+
+  /// No description provided for @flagFrontUnmeasuredText.
+  ///
+  /// In en, this message translates to:
+  /// **'The front photo couldn\'t measure elbow or wrist angle, so that item counts as no problem. Check it on the photo.'**
+  String get flagFrontUnmeasuredText;
+
+  /// No description provided for @flagMonitorHeightMismatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor height doesn\'t match'**
+  String get flagMonitorHeightMismatchTitle;
+
+  /// No description provided for @flagMonitorHeightMismatchText.
+  ///
+  /// In en, this message translates to:
+  /// **'The photos show a different monitor height than the employee\'s answer.'**
+  String get flagMonitorHeightMismatchText;
+
+  /// No description provided for @flagMonitorNotDetectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor not found in photos'**
+  String get flagMonitorNotDetectedTitle;
+
+  /// No description provided for @flagMonitorNotDetectedText.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor height couldn\'t be read from the photos; the answer is used.'**
+  String get flagMonitorNotDetectedText;
+
+  /// No description provided for @flagMouseReachMismatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mouse reach doesn\'t match'**
+  String get flagMouseReachMismatchTitle;
+
+  /// No description provided for @flagMouseReachMismatchText.
+  ///
+  /// In en, this message translates to:
+  /// **'The photos and the answer disagree on whether the mouse is too far away. The photo is scored.'**
+  String get flagMouseReachMismatchText;
+
+  /// No description provided for @flagShotDisagreementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos disagree'**
+  String get flagShotDisagreementTitle;
+
+  /// No description provided for @flagShotDisagreementText.
+  ///
+  /// In en, this message translates to:
+  /// **'The side photos gave scores 2 or more points apart, so the average may be off.'**
+  String get flagShotDisagreementText;
+
+  /// No description provided for @flagNearCutoffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Close to a cutoff'**
+  String get flagNearCutoffTitle;
+
+  /// No description provided for @flagNearCutoffText.
+  ///
+  /// In en, this message translates to:
+  /// **'The knee or trunk angle sits right at a score boundary, so a small difference could change the score.'**
+  String get flagNearCutoffText;
+
+  /// No description provided for @provResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Provisional result'**
+  String get provResultTitle;
+
+  /// No description provided for @provResultBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ergonomist will check this scan. The result may change after their review.'**
+  String get provResultBody;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

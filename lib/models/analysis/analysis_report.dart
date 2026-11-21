@@ -54,6 +54,10 @@ class AnalysisReport {
   /// exercises yet), otherwise `completed`.
   final String status;
 
+  /// True while the server has asked an ergonomist to check this scan and no
+  /// ergonomist has reviewed it yet: the result may still change.
+  final bool provisional;
+
   AnalysisReport({
     required this.workPattern,
     required this.bodyRegionRisks,
@@ -72,6 +76,7 @@ class AnalysisReport {
     this.actionReportV13,
     this.createdAt,
     this.status = 'completed',
+    this.provisional = false,
   });
 
   bool get chronicityElevated => chronicityLevel == 'Elevated';
@@ -131,6 +136,7 @@ class AnalysisReport {
         json['created_at'] as String? ?? '',
       )?.toLocal(),
       status: json['status'] as String? ?? 'completed',
+      provisional: json['provisional'] == true,
     );
   }
 
@@ -152,6 +158,7 @@ class AnalysisReport {
     'action_report_v1_3': actionReportV13?.toJson(),
     'created_at': createdAt?.toUtc().toIso8601String(),
     'status': status,
+    'provisional': provisional,
   };
 }
 

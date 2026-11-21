@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:posture_detector_app/common/widgets/awaiting_ergonomist_card.dart';
+import 'package:posture_detector_app/common/widgets/provisional_result_card.dart';
 import 'package:posture_detector_app/common/widgets/rosa_score_comparison.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -507,6 +508,11 @@ class _HomeScreenBusinessState extends ConsumerState<HomeScreenBusiness> {
                         ),
 
                         SizedBox(height: 24.h),
+                        // An ergonomist still has to check this scan.
+                        if (analysisData.provisional) ...[
+                          const ProvisionalResultCard(),
+                          SizedBox(height: 16.h),
+                        ],
                         // EN: "ISO Ergonomic Analysis"
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,

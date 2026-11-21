@@ -10,6 +10,7 @@ import 'package:posture_detector_app/routes.dart';
 import 'package:posture_detector_app/provider/report.dart';
 
 import 'package:posture_detector_app/common/widgets/awaiting_ergonomist_card.dart';
+import 'package:posture_detector_app/common/widgets/provisional_result_card.dart';
 import 'package:posture_detector_app/common/widgets/bottom_button.dart';
 import 'package:posture_detector_app/common/widgets/expansion_container.dart';
 
@@ -44,6 +45,11 @@ class CorrectionReportScreenBusiness extends ConsumerWidget {
                   subtitle: loc.mdlRosaPostureGuidanceSubtitle,
                 ),
                 SizedBox(height: 14.h),
+                if (!awaiting &&
+                    (reportState.analysisReport?.provisional ?? false)) ...[
+                  const ProvisionalResultCard(),
+                  SizedBox(height: 14.h),
+                ],
                 if (awaiting)
                   const AwaitingErgonomistCard()
                 else if (report != null)

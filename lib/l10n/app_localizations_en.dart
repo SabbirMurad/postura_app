@@ -2703,4 +2703,78 @@ class AppLocalizationsEn extends AppLocalizations {
   String rvwRecoveryOutlookStatus(String level) {
     return 'Recovery outlook: $level';
   }
+
+  @override
+  String get flagSectionTitle => 'Review flags';
+
+  @override
+  String get flagSectionSubtitle => 'Where the photos were uncertain or don\'t match the answers.';
+
+  @override
+  String get flagNone => 'No flags. The photos and answers agree.';
+
+  @override
+  String flagToCheck(int count) {
+    return '$count to check';
+  }
+
+  @override
+  String get flagLowerBodyHiddenTitle => 'Knee or ankle hidden';
+
+  @override
+  String get flagLowerBodyHiddenText => 'The seat-height score is estimated, because the knee or ankle wasn\'t visible.';
+
+  @override
+  String get flagFeetAnswerTitle => 'Feet answer decides seat height';
+
+  @override
+  String get flagFeetAnswerText => 'The employee said their feet aren\'t supported, so that answer sets the seat-height score instead of the knee angle.';
+
+  @override
+  String get flagFrontPhotoMissingTitle => 'No front photo';
+
+  @override
+  String get flagFrontPhotoMissingText => 'Armrest width and wrist deviation come from the answers, not a photo.';
+
+  @override
+  String get flagFrontUnmeasuredTitle => 'Front angle not measured';
+
+  @override
+  String get flagFrontUnmeasuredText => 'The front photo couldn\'t measure elbow or wrist angle, so that item counts as no problem. Check it on the photo.';
+
+  @override
+  String get flagMonitorHeightMismatchTitle => 'Monitor height doesn\'t match';
+
+  @override
+  String get flagMonitorHeightMismatchText => 'The photos show a different monitor height than the employee\'s answer.';
+
+  @override
+  String get flagMonitorNotDetectedTitle => 'Monitor not found in photos';
+
+  @override
+  String get flagMonitorNotDetectedText => 'Monitor height couldn\'t be read from the photos; the answer is used.';
+
+  @override
+  String get flagMouseReachMismatchTitle => 'Mouse reach doesn\'t match';
+
+  @override
+  String get flagMouseReachMismatchText => 'The photos and the answer disagree on whether the mouse is too far away. The photo is scored.';
+
+  @override
+  String get flagShotDisagreementTitle => 'Photos disagree';
+
+  @override
+  String get flagShotDisagreementText => 'The side photos gave scores 2 or more points apart, so the average may be off.';
+
+  @override
+  String get flagNearCutoffTitle => 'Close to a cutoff';
+
+  @override
+  String get flagNearCutoffText => 'The knee or trunk angle sits right at a score boundary, so a small difference could change the score.';
+
+  @override
+  String get provResultTitle => 'Provisional result';
+
+  @override
+  String get provResultBody => 'Your ergonomist will check this scan. The result may change after their review.';
 }

@@ -47,6 +47,9 @@ class ScanItem {
   /// the scan has none yet.
   final int? rosaFinal;
 
+  /// Flags that ask the ergonomist to check this scan (`review_flag_count`).
+  final int reviewFlagCount;
+
   const ScanItem({
     required this.scanId,
     required this.assessmentId,
@@ -64,6 +67,7 @@ class ScanItem {
     this.reviewedAt,
     required this.createdAt,
     this.rosaFinal,
+    this.reviewFlagCount = 0,
   });
 
   factory ScanItem.fromJson(Map<String, dynamic> json) {
@@ -85,6 +89,7 @@ class ScanItem {
       reviewedAt: json['reviewed_at'],
       createdAt: json['created_at'] ?? '',
       rosaFinal: (json['rosa_final'] as num?)?.toInt(),
+      reviewFlagCount: (json['review_flag_count'] as num?)?.toInt() ?? 0,
     );
   }
 

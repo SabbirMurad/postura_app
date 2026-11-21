@@ -16,6 +16,7 @@ import 'package:posture_detector_app/models/analysis/rosa_score.dart';
 import 'package:posture_detector_app/view/cpe/widgets/assessment_helpers.dart';
 import 'package:posture_detector_app/view/cpe/widgets/patient_info_card_cpe.dart';
 import 'package:posture_detector_app/view/cpe/widgets/photo_section_cpe.dart';
+import 'package:posture_detector_app/view/cpe/widgets/review_flags_section_cpe.dart';
 import 'package:posture_detector_app/view/cpe/widgets/screening_section_cpe.dart';
 import 'package:posture_detector_app/view/cpe/widgets/action_report_section_cpe.dart';
 import 'package:posture_detector_app/view/cpe/widgets/approvals_section_cpe.dart';
@@ -344,6 +345,8 @@ class CPEAssessmentScreen extends ConsumerWidget {
                     ),
                     SizedBox(height: 16.h),
                     PatientInfoCardCPE(state: state),
+                    SizedBox(height: 12.h),
+                    ReviewFlagsSectionCPE(flags: state.reviewFlags),
                     if (state.chronicityElevated) ...[
                       SizedBox(height: 12.h),
                       const RecoveryOutlookBanner(compact: true),

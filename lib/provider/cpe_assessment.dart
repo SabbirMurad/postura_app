@@ -18,6 +18,7 @@ import 'package:posture_detector_app/models/assessment/screening_review.dart';
 import 'package:posture_detector_app/models/assessment/workstation_answers.dart';
 import 'package:posture_detector_app/models/analysis/analysis_report.dart'
     show ActionReportV13;
+import 'package:posture_detector_app/models/analysis/review_flag.dart';
 
 // ─────────────────────────────────────────
 // Models
@@ -209,6 +210,10 @@ class CpeAssessmentState {
   final bool redFlagPositive;
   final List<ScreeningAnswer> recoveryAnswers;
 
+  /// Why the server marked this scan for review (uncertain or conflicting
+  /// photo readings); empty when there is nothing to check.
+  final List<ReviewFlag> reviewFlags;
+
   const CpeAssessmentState({
     this.isLoading = true,
     this.isSubmitting = false,
@@ -239,6 +244,7 @@ class CpeAssessmentState {
     this.redFlagAnswers = const [],
     this.redFlagPositive = false,
     this.recoveryAnswers = const [],
+    this.reviewFlags = const [],
   });
 
   double get compliancePercent => (compliance / 100.0).clamp(0.0, 1.0);
@@ -340,6 +346,7 @@ class CpeAssessmentState {
     redFlagAnswers: redFlagAnswers,
     redFlagPositive: redFlagPositive,
     recoveryAnswers: recoveryAnswers,
+    reviewFlags: reviewFlags,
   );
 }
 
@@ -463,6 +470,7 @@ class CpeAssessmentNotifier
         recoveryAnswers: recoveryAnswersFromJson(
           (d['yellow_flag_answers'] as Map?)?.cast<String, dynamic>(),
         ),
+        reviewFlags: ReviewFlag.listFromJson(d['review_flags']),
       );
     } catch (e) {
       final loc = AppLocalizations.of(scaffoldMessengerKey.currentContext!)!;

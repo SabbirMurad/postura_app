@@ -2598,5 +2598,38 @@
         "type": "String"
       }
     }
+  },
+
+  "flagSectionTitle": "Review flags",
+  "flagSectionSubtitle": "Where the photos were uncertain or don't match the answers.",
+  "flagNone": "No flags. The photos and answers agree.",
+  "flagToCheck": "{count} to check",
+  "@flagToCheck": {
+  "description": "Badge on an ergonomist list row: number of review flags to check",
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
   }
+},
+  "flagLowerBodyHiddenTitle": "Knee or ankle hidden",
+  "flagLowerBodyHiddenText": "The seat-height score is estimated, because the knee or ankle wasn't visible.",
+  "flagFeetAnswerTitle": "Feet answer decides seat height",
+  "flagFeetAnswerText": "The employee said their feet aren't supported, so that answer sets the seat-height score instead of the knee angle.",
+  "flagFrontPhotoMissingTitle": "No front photo",
+  "flagFrontPhotoMissingText": "Armrest width and wrist deviation come from the answers, not a photo.",
+  "flagFrontUnmeasuredTitle": "Front angle not measured",
+  "flagFrontUnmeasuredText": "The front photo couldn't measure elbow or wrist angle, so that item counts as no problem. Check it on the photo.",
+  "flagMonitorHeightMismatchTitle": "Monitor height doesn't match",
+  "flagMonitorHeightMismatchText": "The photos show a different monitor height than the employee's answer.",
+  "flagMonitorNotDetectedTitle": "Monitor not found in photos",
+  "flagMonitorNotDetectedText": "Monitor height couldn't be read from the photos; the answer is used.",
+  "flagMouseReachMismatchTitle": "Mouse reach doesn't match",
+  "flagMouseReachMismatchText": "The photos and the answer disagree on whether the mouse is too far away. The photo is scored.",
+  "flagShotDisagreementTitle": "Photos disagree",
+  "flagShotDisagreementText": "The side photos gave scores 2 or more points apart, so the average may be off.",
+  "flagNearCutoffTitle": "Close to a cutoff",
+  "flagNearCutoffText": "The knee or trunk angle sits right at a score boundary, so a small difference could change the score.",
+  "provResultTitle": "Provisional result",
+  "provResultBody": "Your ergonomist will check this scan. The result may change after their review."
 }

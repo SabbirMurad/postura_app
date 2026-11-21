@@ -2703,4 +2703,78 @@ class AppLocalizationsNl extends AppLocalizations {
   String rvwRecoveryOutlookStatus(String level) {
     return 'Herstelvooruitzicht: $level';
   }
+
+  @override
+  String get flagSectionTitle => 'Controlepunten';
+
+  @override
+  String get flagSectionSubtitle => 'Waar de foto\'s onzeker waren of niet bij de antwoorden passen.';
+
+  @override
+  String get flagNone => 'Geen controlepunten. Foto\'s en antwoorden komen overeen.';
+
+  @override
+  String flagToCheck(int count) {
+    return '$count te controleren';
+  }
+
+  @override
+  String get flagLowerBodyHiddenTitle => 'Knie of enkel verborgen';
+
+  @override
+  String get flagLowerBodyHiddenText => 'De score voor zithoogte is geschat, omdat de knie of enkel niet zichtbaar was.';
+
+  @override
+  String get flagFeetAnswerTitle => 'Voetenantwoord bepaalt zithoogte';
+
+  @override
+  String get flagFeetAnswerText => 'De medewerker gaf aan dat de voeten niet ondersteund zijn, dus dat antwoord bepaalt de zithoogte in plaats van de kniehoek.';
+
+  @override
+  String get flagFrontPhotoMissingTitle => 'Geen vooraanzicht';
+
+  @override
+  String get flagFrontPhotoMissingText => 'Armleuningbreedte en polsafwijking komen uit de antwoorden, niet uit een foto.';
+
+  @override
+  String get flagFrontUnmeasuredTitle => 'Hoek vooraanzicht niet gemeten';
+
+  @override
+  String get flagFrontUnmeasuredText => 'Het vooraanzicht kon de elleboog- of polshoek niet meten, dus dat punt telt als geen probleem. Controleer het op de foto.';
+
+  @override
+  String get flagMonitorHeightMismatchTitle => 'Monitorhoogte komt niet overeen';
+
+  @override
+  String get flagMonitorHeightMismatchText => 'De foto\'s tonen een andere monitorhoogte dan het antwoord van de medewerker.';
+
+  @override
+  String get flagMonitorNotDetectedTitle => 'Monitor niet gevonden op foto\'s';
+
+  @override
+  String get flagMonitorNotDetectedText => 'De monitorhoogte kon niet uit de foto\'s worden gehaald; het antwoord wordt gebruikt.';
+
+  @override
+  String get flagMouseReachMismatchTitle => 'Muisafstand komt niet overeen';
+
+  @override
+  String get flagMouseReachMismatchText => 'Foto\'s en antwoord zijn het oneens of de muis te ver weg ligt. De foto telt voor de score.';
+
+  @override
+  String get flagShotDisagreementTitle => 'Foto\'s spreken elkaar tegen';
+
+  @override
+  String get flagShotDisagreementText => 'De zijfoto\'s verschillen 2 punten of meer, dus het gemiddelde kan afwijken.';
+
+  @override
+  String get flagNearCutoffTitle => 'Dicht bij een grenswaarde';
+
+  @override
+  String get flagNearCutoffText => 'De knie- of romphoek zit precies op een scoregrens, dus een klein verschil kan de score veranderen.';
+
+  @override
+  String get provResultTitle => 'Voorlopig resultaat';
+
+  @override
+  String get provResultBody => 'Je ergonoom controleert deze scan nog. Het resultaat kan daarna veranderen.';
 }

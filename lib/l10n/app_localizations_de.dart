@@ -2703,4 +2703,78 @@ class AppLocalizationsDe extends AppLocalizations {
   String rvwRecoveryOutlookStatus(String level) {
     return 'Genesungsaussicht: $level';
   }
+
+  @override
+  String get flagSectionTitle => 'Prüfhinweise';
+
+  @override
+  String get flagSectionSubtitle => 'Wo die Fotos unsicher waren oder nicht zu den Antworten passen.';
+
+  @override
+  String get flagNone => 'Keine Hinweise. Fotos und Antworten passen zusammen.';
+
+  @override
+  String flagToCheck(int count) {
+    return '$count zu prüfen';
+  }
+
+  @override
+  String get flagLowerBodyHiddenTitle => 'Knie oder Knöchel verdeckt';
+
+  @override
+  String get flagLowerBodyHiddenText => 'Die Sitzhöhenbewertung ist geschätzt, weil Knie oder Knöchel nicht sichtbar waren.';
+
+  @override
+  String get flagFeetAnswerTitle => 'Fußantwort bestimmt die Sitzhöhe';
+
+  @override
+  String get flagFeetAnswerText => 'Laut Mitarbeiter stehen die Füße nicht fest, deshalb bestimmt diese Antwort die Sitzhöhe statt des Kniewinkels.';
+
+  @override
+  String get flagFrontPhotoMissingTitle => 'Kein Frontfoto';
+
+  @override
+  String get flagFrontPhotoMissingText => 'Armlehnenbreite und Handgelenkabknickung stammen aus den Antworten, nicht aus einem Foto.';
+
+  @override
+  String get flagFrontUnmeasuredTitle => 'Frontwinkel nicht gemessen';
+
+  @override
+  String get flagFrontUnmeasuredText => 'Das Frontfoto konnte den Ellbogen- oder Handgelenkwinkel nicht messen, deshalb zählt der Punkt als unauffällig. Prüf ihn auf dem Foto.';
+
+  @override
+  String get flagMonitorHeightMismatchTitle => 'Monitorhöhe passt nicht';
+
+  @override
+  String get flagMonitorHeightMismatchText => 'Die Fotos zeigen eine andere Monitorhöhe als die Antwort des Mitarbeiters.';
+
+  @override
+  String get flagMonitorNotDetectedTitle => 'Monitor auf Fotos nicht erkannt';
+
+  @override
+  String get flagMonitorNotDetectedText => 'Die Monitorhöhe ließ sich nicht aus den Fotos ablesen; die Antwort wird verwendet.';
+
+  @override
+  String get flagMouseReachMismatchTitle => 'Mausabstand passt nicht';
+
+  @override
+  String get flagMouseReachMismatchText => 'Fotos und Antwort sind sich uneinig, ob die Maus zu weit weg ist. Bewertet wird das Foto.';
+
+  @override
+  String get flagShotDisagreementTitle => 'Fotos widersprechen sich';
+
+  @override
+  String get flagShotDisagreementText => 'Die Seitenfotos liegen 2 oder mehr Punkte auseinander, der Durchschnitt kann daneben liegen.';
+
+  @override
+  String get flagNearCutoffTitle => 'Nahe an einem Grenzwert';
+
+  @override
+  String get flagNearCutoffText => 'Knie- oder Rumpfwinkel liegt genau an einer Bewertungsgrenze, schon eine kleine Abweichung kann die Bewertung ändern.';
+
+  @override
+  String get provResultTitle => 'Vorläufiges Ergebnis';
+
+  @override
+  String get provResultBody => 'Dein Ergonom prüft diesen Scan noch. Das Ergebnis kann sich danach ändern.';
 }

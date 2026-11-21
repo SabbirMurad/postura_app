@@ -2703,4 +2703,78 @@ class AppLocalizationsEs extends AppLocalizations {
   String rvwRecoveryOutlookStatus(String level) {
     return 'Perspectiva de recuperación: $level';
   }
+
+  @override
+  String get flagSectionTitle => 'Avisos de revisión';
+
+  @override
+  String get flagSectionSubtitle => 'Donde las fotos no eran fiables o no coinciden con las respuestas.';
+
+  @override
+  String get flagNone => 'Sin avisos. Las fotos y las respuestas coinciden.';
+
+  @override
+  String flagToCheck(int count) {
+    return '$count por revisar';
+  }
+
+  @override
+  String get flagLowerBodyHiddenTitle => 'Rodilla o tobillo oculto';
+
+  @override
+  String get flagLowerBodyHiddenText => 'La puntuación de altura del asiento es una estimación, porque la rodilla o el tobillo no se veían.';
+
+  @override
+  String get flagFeetAnswerTitle => 'La respuesta de los pies decide la altura';
+
+  @override
+  String get flagFeetAnswerText => 'El empleado indicó que sus pies no están apoyados, así que esa respuesta fija la altura del asiento en lugar del ángulo de rodilla.';
+
+  @override
+  String get flagFrontPhotoMissingTitle => 'Sin foto frontal';
+
+  @override
+  String get flagFrontPhotoMissingText => 'La anchura de los reposabrazos y la desviación de muñeca vienen de las respuestas, no de una foto.';
+
+  @override
+  String get flagFrontUnmeasuredTitle => 'Ángulo frontal sin medir';
+
+  @override
+  String get flagFrontUnmeasuredText => 'La foto frontal no pudo medir el ángulo del codo o de la muñeca, así que ese punto cuenta como sin problema. Revísalo en la foto.';
+
+  @override
+  String get flagMonitorHeightMismatchTitle => 'La altura del monitor no coincide';
+
+  @override
+  String get flagMonitorHeightMismatchText => 'Las fotos muestran una altura del monitor distinta a la respuesta del empleado.';
+
+  @override
+  String get flagMonitorNotDetectedTitle => 'Monitor no detectado en las fotos';
+
+  @override
+  String get flagMonitorNotDetectedText => 'No se pudo leer la altura del monitor en las fotos; se usa la respuesta.';
+
+  @override
+  String get flagMouseReachMismatchTitle => 'El alcance del ratón no coincide';
+
+  @override
+  String get flagMouseReachMismatchText => 'Las fotos y la respuesta no coinciden sobre si el ratón está demasiado lejos. Se puntúa la foto.';
+
+  @override
+  String get flagShotDisagreementTitle => 'Las fotos no coinciden';
+
+  @override
+  String get flagShotDisagreementText => 'Las fotos laterales difieren en 2 puntos o más, así que la media puede no ser exacta.';
+
+  @override
+  String get flagNearCutoffTitle => 'Cerca de un umbral';
+
+  @override
+  String get flagNearCutoffText => 'El ángulo de rodilla o de tronco está justo en un límite, así que una pequeña diferencia podría cambiar la puntuación.';
+
+  @override
+  String get provResultTitle => 'Resultado provisional';
+
+  @override
+  String get provResultBody => 'Tu ergónomo revisará este escaneo. El resultado puede cambiar después de su revisión.';
 }

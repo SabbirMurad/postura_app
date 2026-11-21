@@ -5,6 +5,7 @@ import 'package:posture_detector_app/constants/colors.dart';
 import 'package:posture_detector_app/gen/assets.gen.dart';
 import 'package:posture_detector_app/provider/cpe_home.dart';
 import 'package:posture_detector_app/utils/date_helper.dart';
+import 'package:posture_detector_app/view/cpe/widgets/review_flags_section_cpe.dart';
 
 enum ComplianceStatus { excellent, good, moderate, low }
 
@@ -97,6 +98,11 @@ class PatientComplianceCard extends StatelessWidget {
                     ),
                     label: prettyDateTime(scan.createdAt),
                   ),
+                ],
+                // Photo readings the server asks the ergonomist to check.
+                if (scan.reviewFlagCount > 0) ...[
+                  SizedBox(height: 8.h),
+                  ReviewFlagBadge(count: scan.reviewFlagCount),
                 ],
               ],
             ),
